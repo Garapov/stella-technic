@@ -1,6 +1,6 @@
 <header>
     <div class="bg-gray-100 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
-        <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+        <div class="flex flex-wrap justify-between items-center mx-auto container">
             <div class="hidden justify-between items-center w-full lg:flex lg:w-auto">
                 <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                     <li>
@@ -72,7 +72,7 @@
     </div>
 
     <div class="bg-gray-100 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
-        <div class="flex flex-wrap gap-8 justify-between items-center mx-auto max-w-screen-xl">
+        <div class="flex flex-wrap gap-8 justify-between items-center mx-auto container">
             <a href="/" class="flex items-center" wire:navigate>
                 <img src="{{ asset('assets/logo.svg') }}" class="mr-3 h-6 sm:h-9 block dark:hidden"
                     alt="Stella-tech Logo" />
@@ -143,7 +143,7 @@
     </div>
 
 	<div class="bg-gray-200 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-700">
-        <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+        <div class="flex flex-wrap justify-between items-center mx-auto container">
             <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
 				<x-fas-list-ul class="w-3.5 h-3.5 me-2" />
 				Каталог

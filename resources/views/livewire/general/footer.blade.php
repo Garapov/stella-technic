@@ -1,6 +1,6 @@
 <footer>
     <div class="bg-gray-200 border-gray-200 px-4 lg:px-6 dark:bg-gray-700">
-        <div class="py-8 flex flex-wrap gap-8 justify-between items-center mx-auto max-w-screen-xl border-b-2 border-gray-400">
+        <div class="py-8 flex flex-wrap gap-8 justify-between items-center mx-auto container border-b-2 border-gray-400">
             <div class="flex flex-col gap-2">
                 <a href="/" class="flex items-center" wire:navigate>
                     <img src="{{ asset('assets/logo.svg') }}" class="mr-3 h-6 sm:h-9 block dark:hidden"
@@ -109,7 +109,7 @@
         </div>
     </div>
     <div class="bg-gray-200 border-gray-200 px-4 lg:px-6 dark:bg-gray-700">
-        <div class="py-8 flex gap-12 justify-between items-center mx-auto max-w-screen-xl">
+        <div class="py-8 flex gap-12 justify-between items-center mx-auto container">
             <div class="flex items-center gap-4">
                 <x-fas-phone class="w-4 h-4 text-gray-900 dark:text-gray-300" />
                 <div class="flex flex-col gap-2">
@@ -165,7 +165,7 @@
         </div>
     </div>
     <div class="bg-gray-100 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
-        <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+        <div class="flex flex-wrap justify-between items-center mx-auto container">
             <span class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white">© 1991-2024 Все права защищены</span>
             <div class="flex items-center gap-4">
                 <a href="#" class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Политика конфиденциальности</a>
