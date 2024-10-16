@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="grid grid-cols-3 gap-4 mx-auto container">
+    <div class="grid grid-cols-3 gap-4 pt-8 mx-auto container">
         <div class="col-span-2">
             @livewire('main.slider')
         </div>

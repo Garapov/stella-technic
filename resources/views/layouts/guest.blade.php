@@ -17,7 +17,7 @@
     </head>
     <body class="font-sans text-gray-900 antialiased">
         @livewire('general.header')
-        <div class="min-h-screen pt-8 bg-gray-100 dark:bg-gray-800">
+        <div class="min-h-screen bg-gray-100 dark:bg-gray-800">
             
                 {{ $slot }}
         </div>
