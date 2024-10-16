@@ -5,10 +5,10 @@
         </div>
         <div class="flex flex-col gap-4">
             <div>
-                <img class="h-auto max-w-full rounded-lg" src="https://place-hold.it/700x320" alt="">
+                <img class="h-auto max-w-full rounded-lg" src="https://placehold.co/700x320" alt="">
             </div>
             <div>
-                <img class="h-auto max-w-full rounded-lg" src="https://place-hold.it/700x485" alt="">
+                <img class="h-auto max-w-full rounded-lg" src="https://placehold.co/700x485" alt="">
             </div>
         </div>
     </div>
