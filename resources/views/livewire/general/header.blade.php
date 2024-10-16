@@ -207,13 +207,13 @@
                         20</div>
                 </button>
 
-                <button type="button"
-                    class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <a href="{{ route('client.cart') }}"
+                    class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>
                     <x-fas-cart-arrow-down class="w-4 h-4" />
                     <div
                         class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-gray-200 rounded-full -top-2 -end-2 dark:border-gray-700">
                         20</div>
-                </button>
+                </a>
             </div>
         </div>
     </div>

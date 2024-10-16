@@ -7,6 +7,7 @@ Route::prefix('/')->name('client.')->group(function () {
     Route::view('/', 'client.index')->name('index');
     Route::view('/catalog', 'client.catalog')->name('catalog');
     Route::view('/product_detail', 'client.product_detail')->name('product_detail');
+    Route::view('/cart', 'client.cart')->name('cart');
 });
 
 // Route::get('/dashboard', function () {
