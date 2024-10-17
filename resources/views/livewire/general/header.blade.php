@@ -4,26 +4,26 @@
             <div class="hidden justify-between items-center w-full lg:flex lg:w-auto">
                 <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                     <li>
-                        <a href="#"
+                        <a href="{{ route('client.simple') }}" wire:navigate
                             class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
                             aria-current="page">О компании</a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('client.simple') }}" wire:navigate
                             class="block py-2 pr-4 pl-3 text-sm text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Оплата
                             и доставка</a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('client.simple') }}" wire:navigate
                             class="block py-2 pr-4 pl-3 text-sm text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Ремонт
                             и сервис</a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('client.simple') }}" wire:navigate
                             class="block py-2 pr-4 pl-3 text-sm text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Контакты</a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('client.simple') }}" wire:navigate
                             class="block py-2 pr-4 pl-3 text-sm text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Блог</a>
                     </li>
                 </ul>
@@ -199,13 +199,13 @@
             </div>
 
             <div class="flex gap-2">
-                <button type="button"
-                    class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <a href="{{ route('client.favorites') }}"
+                    class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>
                     <x-fas-heart class="w-4 h-4" />
                     <div
                         class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-gray-200 rounded-full -top-2 -end-2 dark:border-gray-700">
                         20</div>
-                </button>
+                </a>
 
                 <a href="{{ route('client.cart') }}"
                     class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>

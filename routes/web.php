@@ -9,6 +9,8 @@ Route::prefix('/')->name('client.')->group(function () {
     Route::view('/product_detail', 'client.product_detail')->name('product_detail');
     Route::view('/cart', 'client.cart')->name('cart');
     Route::view('/checkout', 'client.checkout')->name('checkout');
+    Route::view('/simple', 'client.simple')->name('simple');
+    Route::view('/favorites', 'client.favorites')->name('favorites');
     Route::view('/checkout/thanks', 'client.thanks')->name('thanks');
 });
 
