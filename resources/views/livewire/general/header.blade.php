@@ -150,6 +150,11 @@
                         661-17-17</a>
                     <div class="text-xs text-gray-400">(пн-пт: с 9:30 до 18:00)</div>
                 </div>
+
+                <a href="{{ route('login') }}"
+                    class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>
+                    <x-fas-user class="w-4 h-4" />
+                </a>
             </div>
         </div>
     </div>
@@ -198,7 +203,7 @@
                 </ul>
             </div>
 
-            <div class="flex gap-2">
+            <div class="flex items-center gap-2">
                 <a href="{{ route('client.favorites') }}"
                     class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>
                     <x-fas-heart class="w-4 h-4" />
@@ -236,7 +241,7 @@
                         <div>
                             <h6
                                 class="flex items-center font-sans text-sm font-bold tracking-normal text-blue-gray-900 antialiased">
-                                Products
+                                Каталог v1
                             </h6>
                             <p class="block font-sans text-xs !font-medium text-blue-gray-500 antialiased">
                                 Find the perfect solution for your needs.
@@ -244,7 +249,7 @@
                         </div>
                     </button>
                 </a>
-                <a href="{{ route('client.catalog') }}" wire:navigate>
+                <a href="{{ route('client.catalog-alt') }}" wire:navigate>
                     <button role="menuitem"
                         class="flex w-full cursor-pointer select-none items-center gap-3 rounded-lg px-3 pb-2 pt-[9px] text-start leading-tight outline-none transition-all hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900">
                         <div class="flex items-center justify-center rounded-lg !bg-blue-gray-50 p-2 ">
@@ -262,7 +267,7 @@
                         <div>
                             <h6
                                 class="flex items-center font-sans text-sm font-bold tracking-normal text-blue-gray-900 antialiased">
-                                About Us
+                                Каталог v2
                             </h6>
                             <p class="block font-sans text-xs  !font-medium text-blue-gray-500 antialiased">
                                 Meet and learn about our dedication
@@ -432,6 +437,8 @@
                         </div>
                     </button>
                 </a>
+
+                
             </ul>
         </div>
     @endif

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('/')->name('client.')->group(function () {
     Route::view('/', 'client.index')->name('index');
     Route::view('/catalog', 'client.catalog')->name('catalog');
+    Route::view('/catalog-alt', 'client.catalog_alt')->name('catalog-alt');
     Route::view('/product_detail', 'client.product_detail')->name('product_detail');
     Route::view('/cart', 'client.cart')->name('cart');
     Route::view('/checkout', 'client.checkout')->name('checkout');
