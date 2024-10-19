@@ -1,6 +1,6 @@
-<x-guest-layout>
-    <section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased min-h-screen flex items-center">
-        <div class="mx-auto container">
+<x-auth-layout>
+    <section class="py-16 bg-white md:py-24 dark:bg-gray-900 antialiased flex items-center">
+        <div class="mx-auto w-full max-w-md">
             <!-- Session Status -->
             <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -27,16 +27,21 @@
                 </div>
 
                 <!-- Remember Me -->
-                <div class="block mt-4">
+                <div class="flex items-center justify-between mt-4">
                     <label for="remember_me" class="inline-flex items-center">
                         <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
                         <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
                     </label>
+                    @if (Route::has('register'))
+                        <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('register') }}" wire:navigate>
+                            {{ __('Register') }}
+                        </a>
+                    @endif
                 </div>
 
                 <div class="flex items-center justify-end mt-4">
                     @if (Route::has('password.request'))
-                        <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
+                        <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}" wire:navigate>
                             {{ __('Forgot your password?') }}
                         </a>
                     @endif
@@ -48,4 +53,4 @@
             </form>
         </div>
     </section>
-</x-guest-layout>
+</x-auth-layout>
