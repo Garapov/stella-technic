@@ -8,6 +8,7 @@ class Header extends Component
 {
     public $isCatalogOpened = false;
     public $isPopularOpened = false;
+    public $isUserMenuOpened = false;
 
     public function render()
     {
@@ -30,5 +31,14 @@ class Header extends Component
     public function closePopular()
     {
         $this->isPopularOpened = false;
+    }
+
+    public function toggleUserMenu()
+    {
+        $this->isUserMenuOpened = !$this->isUserMenuOpened;
+    }
+    public function closeUserMenu()
+    {
+        $this->isUserMenuOpened = false;
     }
 }

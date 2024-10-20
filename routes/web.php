@@ -15,6 +15,10 @@ Route::prefix('/')->name('client.')->group(function () {
     Route::view('/checkout/thanks', 'client.thanks')->name('thanks');
 });
 
+Route::prefix('/dashboard')->name('dashboard.')->group(function () {
+    Route::view('/', 'dashboard.index')->name('index');
+})->middleware(['auth', 'verified']);
+
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
@@ -23,6 +27,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::view('/profile/orders', 'orders.index')->name('orders.index');
 });
 
 require __DIR__.'/auth.php';

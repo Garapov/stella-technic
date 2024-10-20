@@ -64,6 +64,48 @@
                 <x-input-error :messages="$errors->get('phone')" class="mt-2" />
             </div>
         </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <x-input-label for="inn" :value="__('INN')" />
+                <x-text-input id="inn" class="block mt-1 w-full" type="text" name="inn" :value="old('inn')" required autofocus autocomplete="inn" />
+                <x-input-error :messages="$errors->get('inn')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="kpp" :value="__('KPP')" />
+                <x-text-input id="kpp" class="block mt-1 w-full" type="text" name="kpp" :value="old('kpp')" required autofocus autocomplete="kpp" />
+                <x-input-error :messages="$errors->get('kpp')" class="mt-2" />
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <x-input-label for="bik" :value="__('BIK')" />
+                <x-text-input id="bik" class="block mt-1 w-full" type="text" name="bik" :value="old('bik')" required autofocus autocomplete="bik" />
+                <x-input-error :messages="$errors->get('bik')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="correspondent_account" :value="__('correspondent account')" />
+                <x-text-input id="correspondent_account" class="block mt-1 w-full" type="text" name="correspondent_account" :value="old('correspondent_account')" required autofocus autocomplete="correspondent_account" />
+                <x-input-error :messages="$errors->get('correspondent_account')" class="mt-2" />
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <x-input-label for="bank_account" :value="__('bank account')" />
+                <x-text-input id="bank_account" class="block mt-1 w-full" type="text" name="bank_account" :value="old('bank_account')" required autofocus autocomplete="bank_account" />
+                <x-input-error :messages="$errors->get('bank_account')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="yur_address" :value="__('yur address')" />
+                <x-text-input id="yur_address" class="block mt-1 w-full" type="text" name="yur_address" :value="old('yur_address')" required autofocus autocomplete="yur_address" />
+                <x-input-error :messages="$errors->get('yur_address')" class="mt-2" />
+            </div>
+        </div>
     @endif
 
     <div class="flex items-center justify-end mt-4">
