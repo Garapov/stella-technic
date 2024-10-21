@@ -17,6 +17,7 @@ Route::prefix('/')->name('client.')->group(function () {
 
 Route::prefix('/dashboard')->name('dashboard.')->group(function () {
     Route::view('/', 'dashboard.index')->name('index');
+    Route::view('/categories', 'dashboard.categories')->name('categories');
 })->middleware(['auth', 'verified']);
 
 // Route::get('/dashboard', function () {

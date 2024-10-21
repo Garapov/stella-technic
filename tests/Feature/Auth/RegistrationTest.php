@@ -12,8 +12,9 @@ test('new users can register', function () {
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
+        'phone' => '+7 (999) 999-99-99',
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard.index', absolute: false));
+    $response->assertRedirect(route('profile.edit', absolute: false));
 });

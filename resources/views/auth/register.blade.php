@@ -3,5 +3,7 @@
         <div class="mx-auto w-full max-w-lg">
             @livewire('auth.register')
         </div>
+
+        
     </section>
 </x-guest-layout>
