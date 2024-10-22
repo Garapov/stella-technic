@@ -17,7 +17,12 @@ Route::prefix('/')->name('client.')->group(function () {
 
 Route::prefix('/dashboard')->name('dashboard.')->group(function () {
     Route::view('/', 'dashboard.index')->name('index');
-    Route::view('/categories', 'dashboard.categories')->name('categories');
+
+    Route::prefix('/categories')->name('categories.')->group(function () {
+        Route::view('/', 'dashboard.categories.index')->name('index');
+        Route::view('/create', 'dashboard.categories.add')->name('add');
+    });
+    
 })->middleware(['auth', 'verified']);
 
 // Route::get('/dashboard', function () {

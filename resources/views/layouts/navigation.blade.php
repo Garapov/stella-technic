@@ -15,7 +15,7 @@
                     <x-nav-link :href="route('dashboard.index')" :active="request()->routeIs('dashboard.index')" wire:navigate>
                         Заказы
                     </x-nav-link>
-                    <x-nav-link :href="route('dashboard.categories')" :active="request()->routeIs('dashboard.categories')" wire:navigate>
+                    <x-nav-link :href="route('dashboard.categories.index')" :active="request()->routeIs('dashboard.categories.*')" wire:navigate>
                         Категории товаров
                     </x-nav-link>
                 </div>
