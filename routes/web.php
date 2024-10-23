@@ -21,6 +21,7 @@ Route::prefix('/dashboard')->name('dashboard.')->group(function () {
     Route::prefix('/categories')->name('categories.')->group(function () {
         Route::view('/', 'dashboard.categories.index')->name('index');
         Route::view('/create', 'dashboard.categories.add')->name('add');
+        Route::view('/edit/{slug}', 'dashboard.categories.edit')->name('edit');
     });
     
 })->middleware(['auth', 'verified']);

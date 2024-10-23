@@ -12,11 +12,14 @@ class Add extends Component
 
 
     public string $name = "";
+    public $parent = '0';
     public $file;
 
     public function render()
     {
-        return view('livewire.dashboard.categories.add');
+        return view('livewire.dashboard.categories.add', [
+            'categories' => Category::all()
+        ]);
     }
 
     public function rules() 
@@ -41,6 +44,7 @@ class Add extends Component
 
         Category::create([
             'name' => $this->name,
+            'category_id' => $this->parent,
             'image' => $this->file->storePublicly('categories', 'public'),
         ]);
           

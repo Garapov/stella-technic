@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('image');
+            $table->integer('category_id ')->nullable();
+            $table->string('slug'); // Field name same as your `saveSlugsTo`
             $table->timestamps();
         });
     }
