@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard\Categories;
 
 use App\Models\Category;
+use Livewire\Attributes\Url;
 use Livewire\WithFileUploads;
 use Livewire\Component;
 
@@ -12,6 +13,8 @@ class Add extends Component
 
 
     public string $name = "";
+
+    #[Url()]
     public $parent = '0';
     public $file;
 
@@ -44,11 +47,18 @@ class Add extends Component
 
         Category::create([
             'name' => $this->name,
-            'category_id' => $this->parent,
+            'category_id' => $this->parent != "0" ? $this->parent : null,
             'image' => $this->file->storePublicly('categories', 'public'),
         ]);
-          
-        $this->redirect(route('dashboard.categories.index'));
+
+        if ($this->parent && $this->parent != "0") {
+
+            $parent = Category::where('id', $this->parent)->first();
+            $this->redirect(route('dashboard.categories.edit', $parent->slug));
+
+        } else {
+            $this->redirect(route('dashboard.categories.index'));
+        }
 
     }
 }

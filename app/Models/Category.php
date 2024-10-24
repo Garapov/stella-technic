@@ -20,6 +20,10 @@ class Category extends Model
         'category_id'
     ];
 
+    protected $with = [
+        'categories',
+    ];
+
     /**
      * Get the options for generating the slug.
      */

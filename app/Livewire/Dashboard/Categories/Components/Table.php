@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Livewire\Dashboard\Categories;
+namespace App\Livewire\Dashboard\Categories\Components;
 
 use Livewire\Attributes\Url;
 use App\Models\Category;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class Index extends Component
+class Table extends Component
 {
     use WithPagination;
+
+    public $category_id = null;
 
     #[Url()] 
     public ?string $query = '';
@@ -19,22 +21,20 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function render()
+    public function mount($category_id = null)
     {
-        // dd($this->search);
-        $search = '%'.$this->query.'%';
-        return view('livewire.dashboard.categories.index', [
-            'categories' => Category::where([
-                ['name','like', $search],
-                ['category_id', '=', null]
-            ])->paginate(5),
-        ]);
+        $this->category_id = $category_id;
     }
 
-    public function delete($category_id)
+    public function render()
     {
-        $category = Category::findOrFail($category_id); 
-        $category->delete();
-        // dd($category_id);
+        $search = '%'.$this->query.'%';
+
+        return view('livewire.dashboard.categories.components.table', [
+            'categories' => Category::where([
+                ['name','like', $search],
+                ['category_id', '=', $this->category_id]
+            ])->paginate(5),
+        ]);
     }
 }

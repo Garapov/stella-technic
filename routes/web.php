@@ -15,7 +15,7 @@ Route::prefix('/')->name('client.')->group(function () {
     Route::view('/checkout/thanks', 'client.thanks')->name('thanks');
 });
 
-Route::prefix('/dashboard')->name('dashboard.')->group(function () {
+Route::middleware(['auth', 'verified'])->prefix('/dashboard')->name('dashboard.')->group(function () {
     Route::view('/', 'dashboard.index')->name('index');
 
     Route::prefix('/categories')->name('categories.')->group(function () {
@@ -24,7 +24,7 @@ Route::prefix('/dashboard')->name('dashboard.')->group(function () {
         Route::view('/edit/{slug}', 'dashboard.categories.edit')->name('edit');
     });
     
-})->middleware(['auth', 'verified']);
+});
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
