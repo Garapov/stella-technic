@@ -23,6 +23,12 @@ Route::middleware(['auth', 'verified'])->prefix('/dashboard')->name('dashboard.'
         Route::view('/create', 'dashboard.categories.add')->name('add');
         Route::view('/edit/{slug}', 'dashboard.categories.edit')->name('edit');
     });
+
+    Route::prefix('/products')->name('products.')->group(function () {
+        Route::view('/', 'dashboard.products.index')->name('index');
+        Route::view('/create', 'dashboard.products.add')->name('add');
+        Route::view('/edit/{slug}', 'dashboard.products.edit')->name('edit');
+    });
     
 });
 

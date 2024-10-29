@@ -2,12 +2,15 @@
 
 namespace App\Livewire\Main;
 
+use App\Models\Category;
 use Livewire\Component;
 
 class Features extends Component
 {
     public function render()
     {
-        return view('livewire.main.features');
+        return view('livewire.main.features', [
+            'categories' => Category::where('category_id', null)->get(),
+        ]);
     }
 }
