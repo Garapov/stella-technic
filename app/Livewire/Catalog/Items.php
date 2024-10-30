@@ -2,12 +2,20 @@
 
 namespace App\Livewire\Catalog;
 
+use App\Models\Category;
 use Livewire\Component;
 
 class Items extends Component
 {
     public $isFiltersOpened = false;
     public $isSortingOpened = false;
+
+    public ?Category $category = null;
+
+    public function mount($slug)
+    {
+        $this->category = Category::where('slug', $slug)->first();
+    }
     public function render()
     {
         return view('livewire.catalog.items');

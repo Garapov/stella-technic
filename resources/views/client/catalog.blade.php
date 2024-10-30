@@ -1,5 +1,7 @@
 <x-guest-layout>
-    @livewire('catalog.items')
+    @livewire('catalog.items', [
+        'slug' => $slug
+    ])
     @livewire('main.articles')
     @livewire('main.customers')
     @livewire('main.news')
