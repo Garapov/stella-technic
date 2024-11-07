@@ -14,22 +14,22 @@ Route::prefix('/')->name('client.')->group(function () {
     Route::view('/checkout/thanks', 'client.thanks')->name('thanks');
 });
 
-Route::middleware(['auth', 'verified'])->prefix('/dashboard')->name('dashboard.')->group(function () {
-    Route::view('/', 'dashboard.index')->name('index');
+// Route::middleware(['auth', 'verified'])->prefix('/dashboard')->name('dashboard.')->group(function () {
+//     Route::view('/', 'dashboard.index')->name('index');
 
-    Route::prefix('/categories')->name('categories.')->group(function () {
-        Route::view('/', 'dashboard.categories.index')->name('index');
-        Route::view('/create', 'dashboard.categories.add')->name('add');
-        Route::view('/edit/{slug}', 'dashboard.categories.edit')->name('edit');
-    });
+//     Route::prefix('/categories')->name('categories.')->group(function () {
+//         Route::view('/', 'dashboard.categories.index')->name('index');
+//         Route::view('/create', 'dashboard.categories.add')->name('add');
+//         Route::view('/edit/{slug}', 'dashboard.categories.edit')->name('edit');
+//     });
 
-    Route::prefix('/products')->name('products.')->group(function () {
-        Route::view('/', 'dashboard.products.index')->name('index');
-        Route::view('/create', 'dashboard.products.add')->name('add');
-        Route::view('/edit/{slug}', 'dashboard.products.edit')->name('edit');
-    });
+//     Route::prefix('/products')->name('products.')->group(function () {
+//         Route::view('/', 'dashboard.products.index')->name('index');
+//         Route::view('/create', 'dashboard.products.add')->name('add');
+//         Route::view('/edit/{slug}', 'dashboard.products.edit')->name('edit');
+//     });
     
-});
+// });
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');

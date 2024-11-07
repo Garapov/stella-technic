@@ -2,9 +2,7 @@
     <div class="h-56 w-full">
         <a href="#">
             <img class="mx-auto h-full dark:hidden"
-                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg" alt="" />
-            <img class="mx-auto hidden h-full dark:block"
-                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg" alt="" />
+                src="{{ asset($product->image) }}" alt="" />
         </a>
     </div>
     <div class="pt-6">
@@ -51,8 +49,7 @@
         </div>
 
         <a href="{{ route('client.product_detail') }}"
-            class="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate>Apple
-            iMac 27", 1TB HDD, Retina 5K Display, M3 Max</a>
+            class="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate>{{ $product->name }}</a>
 
         <div class="mt-2 flex items-center gap-2">
             <div class="flex items-center">
@@ -113,7 +110,7 @@
         </ul>
 
         <div class="mt-4 flex items-center justify-between gap-4">
-            <p class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">$1,699</p>
+            <p class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">{{$product->price}} р.</p>
 
             <button type="button"
                 class="inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">

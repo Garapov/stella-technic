@@ -173,7 +173,7 @@
                                         <a href="{{ route('profile.edit') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" wire:navigate>Личный кабинет</a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('dashboard.index') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" wire:navigate>Админка</a>
+                                        <a href="{{ route('filament.admin.resources.users.index') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Админка</a>
                                     </li>
                                 </ul>
                                 <div class="py-2">
