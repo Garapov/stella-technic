@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -62,7 +63,12 @@ class AdminPanelProvider extends PanelProvider
                 'Настройки сайта',
             ])
             ->plugins([
-                FilamentFabricatorPlugin::make()
+                FilamentFabricatorPlugin::make(),
+                FilamentMenuBuilderPlugin::make()
+                    ->addLocations([
+                        'top_menu' => 'Верхнее меню',
+                        'header' => 'Главное меню',
+                    ])
             ]);
     }
 }
