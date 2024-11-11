@@ -83,45 +83,7 @@
             </a>
             <form class="grow">
                 <div class="flex">
-                    <div class="relative">
-                        <button id="dropdown-button" data-dropdown-toggle="dropdown"
-                            class="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600 whitespace-nowrap"
-                            type="button" wire:click="togglePopular">
-                            Популярные категории
-                            @if (!$isPopularOpened)
-                                <x-fas-arrow-down class="w-2.5 h-2.5 ms-2.5" wire:loading.remove wire:target="togglePopular" />
-                            @else
-                                <x-fas-arrow-up class="w-2.5 h-2.5 ms-2.5" wire:loading.remove wire:target="togglePopular" />
-                            @endif
-
-                            <svg aria-hidden="true" class="inline w-2.5 h-2.5 ms-2.5 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg" wire:loading wire:target="togglePopular">
-                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                            </svg>
-                        </button>
-                        @if ($isPopularOpened)
-                            <div class="absolute top-[calc(100%+10px)] w-full z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700" wire:click.outside="closePopular">
-                                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
-                                    <li>
-                                        <button type="button"
-                                            class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Mockups</button>
-                                    </li>
-                                    <li>
-                                        <button type="button"
-                                            class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Templates</button>
-                                    </li>
-                                    <li>
-                                        <button type="button"
-                                            class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Design</button>
-                                    </li>
-                                    <li>
-                                        <button type="button"
-                                            class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Logos</button>
-                                    </li>
-                                </ul>
-                            </div>
-                        @endif
-                    </div>
+                    @livewire('general.header.popular')
                     <div class="relative w-full">
                         <input type="search" id="search-dropdown"
                             class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
@@ -150,73 +112,14 @@
                         661-17-17</a>
                     <div class="text-xs text-gray-400">(пн-пт: с 9:30 до 18:00)</div>
                 </div>
-                @auth
-                    <div class="relative">
-                        <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center" wire:click="toggleUserMenu">
-                            <x-fas-user class="w-4 h-4 me-3" />                        
-                            {{ auth()->user()->name }}
-                            @if (!$isUserMenuOpened)
-                                <x-fas-arrow-down class="w-3 h-3 ms-2.5" wire:loading.remove wire:target="toggleUserMenu" />
-                            @else
-                                <x-fas-arrow-up class="w-3 h-3 ms-2.5" wire:loading.remove wire:target="toggleUserMenu" />
-                            @endif
-
-                            <svg aria-hidden="true" class="inline w-3 h-3 ms-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg" wire:loading wire:target="toggleUserMenu">
-                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/>
-                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"/>
-                            </svg>
-                        </button>
-                        @if ($isUserMenuOpened)
-                            <div class="absolute top-[calc(100%+10px)] right-0 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-                                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDividerButton">
-                                    <li>
-                                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" wire:navigate>Личный кабинет</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('filament.admin.resources.users.index') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Админка</a>
-                                    </li>
-                                </ul>
-                                <div class="py-2">
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-            
-                                        <a href="route('logout')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                                                onclick="event.preventDefault();
-                                                            this.closest('form').submit();">
-                                            {{ __('Log Out') }}
-                                        </a>
-                                    </form>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-                @endauth
-
-                @guest
-                    <a href="{{ route('login') }}"
-                        class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>
-                        <x-fas-user class="w-4 h-4" />
-                    </a>
-                @endguest
+                @livewire('general.header.auth')
             </div>
         </div>
     </div>
 
-    <div class="bg-gray-200 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-700">
+    <div class="bg-gray-200 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-700 relative">
         <div class="flex flex-wrap justify-between items-center mx-auto container">
-            <button type="button"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:click="toggleCatalog">
-                @if (!$isCatalogOpened)
-                    <x-fas-list-ul class="w-3.5 h-3.5 me-2" wire:loading.remove wire:target="toggleCatalog" />
-                @else
-                    <x-fas-xmark class="w-3.5 h-3.5 me-2" wire:loading.remove wire:target="toggleCatalog" />
-                @endif
-                <svg aria-hidden="true" class="inline w-4 h-4 me-2 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg" wire:loading wire:target="toggleCatalog" >
-                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                </svg>
-                Каталог
-            </button>
+            @livewire('general.header.catalog')
 
             <div class="hidden justify-between items-center w-full lg:flex lg:w-auto">
                 <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
@@ -266,32 +169,5 @@
         </div>
     </div>
 
-    @if ($isCatalogOpened)
-        <div class="absolute left-[50%] transform translate-x-[-50%] z-[999] hidden container overflow-auto border border-blue-gray-50 bg-white p-3 font-sans text-sm font-normal text-blue-gray-500  shadow-lg shadow-blue-gray-500/10 focus:outline-none lg:block" role="menu" wire:click.outside="closeCatalog">
-            <ul class="grid grid-cols-3 gap-y-2 outline-none outline-0" role="menuitem">
-
-                @foreach ($categories as $category)
-                    <a href="{{ route('client.catalog', $category->slug) }}" wire:navigate>
-                        <button role="menuitem"
-                            class="flex w-full cursor-pointer select-none items-center gap-3 rounded-lg px-3 pb-2 pt-[9px] text-start leading-tight outline-none transition-all hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900">
-                            <div class="flex items-center justify-center rounded-lg !bg-blue-gray-50 p-2 ">
-                                <img src="{{ asset('storage/'. $category->image) }}" class="w-6" alt="">
-                            </div>
-                            <div>
-                                <h6
-                                    class="flex items-center font-sans text-sm font-bold tracking-normal text-blue-gray-900 antialiased">
-                                    {{ $category->name }}
-                                </h6>
-                                {{-- <p class="block font-sans text-xs !font-medium text-blue-gray-500 antialiased">
-                                    Find the perfect solution for your needs.
-                                </p> --}}
-                            </div>
-                        </button>
-                    </a>
-                @endforeach
-
-                
-            </ul>
-        </div>
-    @endif
+    
 </header>
