@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin;
+use Datlechin\FilamentMenuBuilder\MenuPanel\ModelMenuPanel;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -68,6 +69,10 @@ class AdminPanelProvider extends PanelProvider
                     ->addLocations([
                         'top_menu' => 'Верхнее меню',
                         'header' => 'Главное меню',
+                    ])
+                    ->addMenuPanels([
+                        ModelMenuPanel::make()
+                            ->model(\App\Models\Page::class),
                     ])
             ]);
     }

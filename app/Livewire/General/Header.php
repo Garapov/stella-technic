@@ -3,6 +3,7 @@
 namespace App\Livewire\General;
 
 use App\Models\Category;
+use Datlechin\FilamentMenuBuilder\Models\Menu;
 use Livewire\Component;
 
 class Header extends Component
@@ -11,6 +12,7 @@ class Header extends Component
     {
         return view('livewire.general.header', [
             'categories' => Category::where('category_id', null)->get(),
+            'topmenu' => Menu::location('top_menu')
         ]);
     }
 }
