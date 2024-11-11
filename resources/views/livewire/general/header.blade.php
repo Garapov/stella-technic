@@ -119,8 +119,12 @@
 
     <div class="bg-gray-200 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-700 relative">
         <div class="flex flex-wrap justify-between items-center mx-auto container">
-            @livewire('general.header.catalog')
 
+            @if (count($categories) > 0)
+                @livewire('general.header.catalog', [
+                    'categories' => $categories
+                ])
+            @endif
             <div class="hidden justify-between items-center w-full lg:flex lg:w-auto">
                 <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                     <li>
