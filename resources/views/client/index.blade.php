@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="grid grid-cols-3 gap-4 pt-8 mx-auto container">
+    {{-- <div class="grid grid-cols-3 gap-4 pt-8 mx-auto container">
         <div class="col-span-2">
             @livewire('main.slider')
         </div>
@@ -11,8 +11,10 @@
                 <img class="h-auto max-w-full rounded-lg" src="https://placehold.co/700x485" alt="">
             </div>
         </div>
-    </div>
+    </div> --}}
 
+
+    @livewire('main.slider')
     @livewire('main.brands')
     @livewire('main.features')
     @livewire('main.popular')
