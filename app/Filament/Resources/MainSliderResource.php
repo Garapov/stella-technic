@@ -18,6 +18,8 @@ class MainSliderResource extends Resource
     protected static ?string $model = MainSlider::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Слайды на главной';
+    protected static ?string $navigationGroup = 'Настройки сайта';
 
     public static function form(Form $form): Form
     {
@@ -86,4 +88,5 @@ class MainSliderResource extends Resource
             'edit' => Pages\EditMainSlider::route('/{record}/edit'),
         ];
     }
+    
 }

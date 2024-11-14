@@ -60,7 +60,6 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
                 'Магазин',
-                'Блог',
                 'Настройки сайта',
             ])
             ->plugins([

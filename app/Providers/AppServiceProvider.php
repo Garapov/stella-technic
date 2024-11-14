@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use Datlechin\FilamentMenuBuilder\Resources\MenuResource;
 use Illuminate\Support\ServiceProvider;
+use Z3d0X\FilamentFabricator\Resources\PageResource;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        PageResource::navigationGroup('Настройки сайта');
+        MenuResource::navigationGroup('Настройки сайта');
+        // PageResource::navigationLabel('Страницы');
+        // MenuResource::navigationLabel('Меню');
     }
 }
