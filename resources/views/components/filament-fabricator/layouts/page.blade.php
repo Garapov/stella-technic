@@ -13,7 +13,5 @@
             
         </div>
     </section>
-    <div class="container mx-auto px-4 py-8">
-        <x-filament-fabricator::page-blocks :blocks="$page->blocks" />
-    </div>
+    <x-filament-fabricator::page-blocks :blocks="$page->blocks" />
 </x-guest-layout>
