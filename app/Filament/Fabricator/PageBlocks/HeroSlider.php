@@ -33,7 +33,7 @@ class HeroSlider extends PageBlock
             $data['slides'] = Cache::get('slides');
         } else {
             $data['slides'] = MainSlider::findMany($data['slides']);
-            Cache::add('slides', $data['slides'], now()->addSeconds(30));
+            Cache::add('slides', $data['slides'], now()->addHours(24));
         }
 
 
