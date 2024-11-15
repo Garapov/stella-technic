@@ -6,6 +6,7 @@ use App\Models\MainSlider;
 use Filament\Forms\Components\Builder\Block;
 use Z3d0X\FilamentFabricator\PageBlocks\PageBlock;
 use Filament\Forms\Components\Select;
+use Illuminate\Support\Facades\Cache;
 
 class HeroSlider extends PageBlock
 {
@@ -26,7 +27,15 @@ class HeroSlider extends PageBlock
     public static function mutateData(array $data): array
     {
         // Process the selected slides and get the model data for each of id.
-        $data['slides'] = MainSlider::findMany($data['slides']);
+        // $data['slides'] = MainSlider::findMany($data['slides']);
+
+        if (Cache::has('slides')) {
+            $data['slides'] = Cache::get('slides');
+        } else {
+            $data['slides'] = MainSlider::findMany($data['slides']);
+            Cache::add('slides', $data['slides'], now()->addSeconds(30));
+        }
+
 
         return $data;
     }
