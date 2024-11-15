@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use CmsMulti\FilamentClearCache\FilamentClearCachePlugin;
 use Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin;
 use Datlechin\FilamentMenuBuilder\MenuPanel\ModelMenuPanel;
 use Filament\Http\Middleware\Authenticate;
@@ -67,8 +68,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
-                FilamentFabricatorPlugin::make(),
                 BlogPlugin::make(),
+                FilamentClearCachePlugin::make(),
+                FilamentFabricatorPlugin::make(),
                 FilamentMenuBuilderPlugin::make()
                     ->addLocations([
                         'top_menu' => 'Верхнее меню',

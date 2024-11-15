@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "cms-multi/filament-clear-cache": "^2.0",
         "datlechin/filament-menu-builder": "^0.6.0",
         "filament/filament": "3.2.57",
         "guava/filament-icon-picker": "^2.0",

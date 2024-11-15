@@ -19,7 +19,7 @@ class Clients extends PageBlock
             ])
             ->schema([
                 TextInput::make('title')
-                    ->label('title'),
+                    ->label('Заголовок'),
                 Toggle::make('mainlink')
                     ->inline(false)
                     ->label('Показать общую ссылку'),

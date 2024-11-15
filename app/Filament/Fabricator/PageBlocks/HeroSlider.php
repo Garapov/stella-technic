@@ -27,15 +27,7 @@ class HeroSlider extends PageBlock
     public static function mutateData(array $data): array
     {
         // Process the selected slides and get the model data for each of id.
-        // $data['slides'] = MainSlider::findMany($data['slides']);
-
-        if (Cache::has('slides')) {
-            $data['slides'] = Cache::get('slides');
-        } else {
-            $data['slides'] = MainSlider::findMany($data['slides']);
-            Cache::add('slides', $data['slides'], now()->addHours(24));
-        }
-
+        $data['slides'] = MainSlider::findMany($data['slides']);
 
         return $data;
     }

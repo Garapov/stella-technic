@@ -1,8 +1,18 @@
 <div>
     @if (count($slides) > 0)
-        <div class="py-24  bg-gray-200 dark:bg-gray-700">
+        <div class="py-24  bg-gray-200 dark:bg-gray-700" x-data="{
+            slider: new window.glide($refs.slider, {
+                autoplay: 5000,
+            }).mount(),
+            index: 0,
+            init() {
+                this.slider.on('move.after', () => {
+                    this.index = this.slider.index;
+                })
+            },
+        }">
             <div class="m-auto container">
-                <div class="glide" id="main-slider" x-data="main_slider">
+                <div class="glide" x-ref="slider">
                     <div class="glide__track" data-glide-el="track">
                         <div class="glide__slides">
                             @foreach ($slides as $slide)

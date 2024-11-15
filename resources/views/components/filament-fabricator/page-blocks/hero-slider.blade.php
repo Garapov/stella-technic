@@ -1,9 +1,28 @@
 @aware(['page'])
+{{-- @php
+    $cache_indicator = 'slides' . $page->id;
+    if (Illuminate\Support\Facades\Cache::has($cache_indicator)) {
+        $slides = Illuminate\Support\Facades\Cache::get($cache_indicator);
+    } else {
+        $slides = App\Models\MainSlider::findMany($slides);
+        Illuminate\Support\Facades\Cache::add($cache_indicator, $slides, now()->addHours(24));
+    }
+@endphp --}}
 <div>
     @if (count($slides) > 0)
-        <div class="py-24  bg-gray-200 dark:bg-gray-700">
+        <div class="py-24  bg-gray-200 dark:bg-gray-700" x-data="{
+            slider: new window.glide($refs.slider, {
+                autoplay: 5000,
+            }).mount(),
+            index: 0,
+            init() {
+                this.slider.on('move.after', () => {
+                    this.index = this.slider.index;
+                })
+            },
+        }">
             <div class="m-auto container">
-                <div class="glide" id="main-slider" x-data="main_slider">
+                <div class="glide" x-ref="slider">
                     <div class="glide__track" data-glide-el="track">
                         <div class="glide__slides">
                             @foreach ($slides as $slide)
@@ -47,5 +66,7 @@
         </div>
     @endif
 </div>
+
+
 
 

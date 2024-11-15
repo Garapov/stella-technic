@@ -12,6 +12,7 @@ Route::prefix('/')->name('client.')->group(function () {
     Route::view('/simple', 'client.simple')->name('simple');
     Route::view('/favorites', 'client.favorites')->name('favorites');
     Route::view('/checkout/thanks', 'client.thanks')->name('thanks');
+    Route::view('/blog/{category_slug}/{slug}', 'client.posts.show')->name('posts.show');
 });
 
 // Route::middleware(['auth', 'verified'])->prefix('/dashboard')->name('dashboard.')->group(function () {
