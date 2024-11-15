@@ -23,10 +23,12 @@ class PartnerResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\FileUpload::make('image')
-                    ->image()
+                Forms\Components\TextInput::make('name')
                     ->required(),
                 Forms\Components\TextInput::make('link')
+                    ->required(),
+                Forms\Components\FileUpload::make('image')
+                    ->image()
                     ->required(),
             ]);
     }
@@ -36,6 +38,8 @@ class PartnerResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image'),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('link')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
