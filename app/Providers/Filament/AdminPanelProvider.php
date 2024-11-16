@@ -75,6 +75,7 @@ class AdminPanelProvider extends PanelProvider
                     ->addLocations([
                         'top_menu' => 'Верхнее меню',
                         'header' => 'Главное меню',
+                        'footer' => 'Меню в подвале',
                     ])
                     ->addMenuPanels([
                         ModelMenuPanel::make()

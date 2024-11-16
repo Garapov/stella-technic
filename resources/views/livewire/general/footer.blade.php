@@ -38,74 +38,27 @@
                     <label for="default-checkbox" class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Я даю согласие на обработку персональных данных</label>
                 </div>
             </div>
-            <div class="flex items-start">
-                <ul class="space-y-4" aria-labelledby="mega-menu-dropdown-button">
-                    <li>
-                        <a href="#" class="text-xl font-bold text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-500">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
-                            Library
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
-                            Resources
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
-                            Pro Version
-                        </a>
-                    </li>
-                </ul>
-                <ul class="space-y-4 ms-24" aria-labelledby="mega-menu-dropdown-button">
-                    <li>
-                        <a href="#" class="text-xl font-bold text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-500">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
-                            Library
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
-                            Resources
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
-                            Pro Version
-                        </a>
-                    </li>
-                </ul>
-                <ul class="space-y-4 ms-24" aria-labelledby="mega-menu-dropdown-button">
-                    <li>
-                        <a href="#" class="text-xl font-bold text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-500">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
-                            Library
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
-                            Resources
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
-                            Pro Version
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            @if ($menu && count($menu->menuItems) > 0)
+                <div class="flex items-start gap-20">
+                    @foreach ($menu->menuItems as $manuItem)
+                    
+                        <ul class="space-y-4" aria-labelledby="mega-menu-dropdown-button">
+                            <li>
+                                <a href="{{ $manuItem->url }}" class="text-xl font-bold text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-500" wire:navigate>
+                                    {{ $manuItem->title }}
+                                </a>
+                            </li>
+                            @foreach ($manuItem->children as $childMenuItem)
+                                <li>
+                                    <a href="{{ $childMenuItem->url }}" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500" wire:navigate>
+                                        {{ $childMenuItem->title }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endforeach
+                </div>
+            @endif
         </div>
     </div>
     <div class="bg-gray-200 border-gray-200 px-4 lg:px-6 dark:bg-gray-700">
