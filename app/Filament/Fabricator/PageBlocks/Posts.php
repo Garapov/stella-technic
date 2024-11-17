@@ -23,8 +23,9 @@ class Posts extends PageBlock
                     ->label('Показать общую ссылку'),
                 Select::make('news')
                     ->label('Посты')
-                    ->options(Post::all()->pluck('title', 'id'))
                     ->searchable()
+                    ->getSearchResultsUsing(fn (string $search): array => Post::where('title', 'like', "%{$search}%")->limit(50)->pluck('title', 'id')->toArray())
+                    ->getOptionLabelsUsing(fn (array $values): array => Post::whereIn('id', $values)->pluck('title', 'id')->toArray())
                     ->multiple()
                     ->required()
                     ->columnSpan(2)

@@ -15,8 +15,10 @@ class Partners extends PageBlock
             ->schema([
                 Select::make('partners')
                     ->label('Партнеры')
-                    ->options(Partner::all()->pluck('name', 'id'))
+                    // ->options(Partner::all()->pluck('name', 'id'))
                     ->searchable()
+                    ->getSearchResultsUsing(fn (string $search): array => Partner::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
+                    ->getOptionLabelsUsing(fn (array $values): array => Partner::whereIn('id', $values)->pluck('name', 'id')->toArray())
                     ->multiple()
                     ->required()
             ]);

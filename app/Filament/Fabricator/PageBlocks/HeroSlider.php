@@ -17,8 +17,10 @@ class HeroSlider extends PageBlock
             ->schema([
                 Select::make('slides')
                     ->label('Слайды')
-                    ->options(MainSlider::all()->pluck('title', 'id'))
+                    // ->options(MainSlider::all()->pluck('title', 'id'))
                     ->searchable()
+                    ->getSearchResultsUsing(fn (string $search): array => MainSlider::where('title', 'like', "%{$search}%")->limit(50)->pluck('title', 'id')->toArray())
+                    ->getOptionLabelsUsing(fn (array $values): array => MainSlider::whereIn('id', $values)->pluck('title', 'id')->toArray())
                     ->multiple()
                     ->required()
             ]);

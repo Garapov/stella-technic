@@ -22,8 +22,10 @@ class Features extends PageBlock
                     ->required(),
                 Select::make('features')
                     ->label('Преимущества')
-                    ->options(Feature::all()->pluck('text', 'id'))
+                    // ->options(Feature::all()->pluck('text', 'id'))
                     ->searchable()
+                    ->getSearchResultsUsing(fn (string $search): array => Feature::where('text', 'like', "%{$search}%")->limit(50)->pluck('text', 'id')->toArray())
+                    ->getOptionLabelsUsing(fn (array $values): array => Feature::whereIn('id', $values)->pluck('text', 'id')->toArray())
                     ->multiple()
                     ->required()
             ]);
