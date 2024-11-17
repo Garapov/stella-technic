@@ -3,6 +3,7 @@
 namespace App\Livewire\General;
 
 use App\Models\Former;
+use App\Models\FormResult;
 use Livewire\Component;
 
 class Formblock extends Component
@@ -43,7 +44,14 @@ class Formblock extends Component
 
     public function save()
     {
+        // dd($this->form);
         $validated = $this->validate();
+
+        FormResult::create([
+            'name' => $this->form->name,
+            'results' => json_encode($this->fields),
+            'former_id' => $this->form->id
+        ]);
 
         session()->flash('success', $this->form->thanks_text);
     }
