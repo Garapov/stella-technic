@@ -2,7 +2,7 @@
     $state = json_decode($getState());
     $is_valid_json = json_last_error() == JSON_ERROR_NONE;
 @endphp
-<div class="w-full">
+<div class="w-full px-3 py-3.5">
     @if ($is_valid_json)
         @foreach ($state as $item)
             <div class="flex align-center justify-between">

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Mail\FormSened;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
 
 class FormResult extends Model
 {
@@ -19,4 +21,13 @@ class FormResult extends Model
     protected $casts = [
         'results' => 'array'
     ];
+
+    public static function boot(): void
+    {
+        parent::boot();
+
+        static::created(function (Model $model) {
+            Mail::to(env('MAIL_ADMIN_ADDRESS', 'ruslangarapov@yandex.ru'))->send(new FormSened($model));
+        });
+    }
 }
