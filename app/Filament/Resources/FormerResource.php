@@ -6,11 +6,11 @@ use App\Filament\Resources\FormerResource\Pages;
 use App\Filament\Resources\FormerResource\RelationManagers;
 use App\Models\Former;
 use Filament\Forms;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -37,6 +37,10 @@ class FormerResource extends Resource
                     ->required()
                     ->label('Текст спасибо')
                     ->columnSpanFull(),
+                TextInput::make('button_text')
+                    ->required()
+                    ->label('Текст кнопки')
+                    ->columnSpanFull(),
                 Repeater::make('fields')
                     ->schema([
                         TextInput::make('name')
@@ -58,9 +62,10 @@ class FormerResource extends Resource
                             ->label('Опции (разделять запятой)')
                             ->hidden(fn (Get $get): bool => $get('type') != 'select')
                             ->required(fn (Get $get): bool => $get('type') != 'select'),
-                        Toggle::make('required')
-                            ->label('Обязательное поле')
-                            ->inline(false)
+                        TextInput::make('rules')
+                            ->label('Правила валидации')
+                            ->columnSpanFull(),
+                        Hidden::make('value')
                     ])
                     ->label('Поля формы')
                     ->reorderableWithButtons()
