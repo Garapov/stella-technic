@@ -11,8 +11,10 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -54,16 +56,32 @@ class FormerResource extends Resource
                                 'text' => 'Текстовое поле',
                                 'textarea' => 'Область текста',
                                 'select' => 'Выпадающий список',
+                                'email' => 'Email',
                             ])
                             ->live()
                             ->label('Тип поля')
-                            ->required(),
+                            ->required()
+                            ->afterStateUpdated(function (?string $state, ?string $old, Set $set) {
+                                if ($state == 'select') {
+                                    $set('mask_enabled', false);
+                                    // dd($get('mask_enabled'));
+                                }
+                            }),
                         Textarea::make('options')
                             ->label('Опции (разделять запятой)')
                             ->hidden(fn (Get $get): bool => $get('type') != 'select')
                             ->required(fn (Get $get): bool => $get('type') != 'select'),
                         TextInput::make('rules')
                             ->label('Правила валидации')
+                            ->hidden(fn (Get $get): bool => $get('type') === 'select')
+                            ->columnSpanFull(),
+                        Toggle::make('mask_enabled')
+                            ->hidden(fn (Get $get): bool => $get('type') === 'select')
+                            ->label('Включить маску ввода')
+                            ->live(),
+                        TextInput::make('mask')
+                            ->label('Маска ввода')
+                            ->hidden(fn (Get $get): bool => $get('mask_enabled') === false || $get('type') === 'select')
                             ->columnSpanFull(),
                         Hidden::make('value')
                     ])
@@ -94,11 +112,16 @@ class FormerResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -117,5 +140,13 @@ class FormerResource extends Resource
             'create' => Pages\CreateFormer::route('/create'),
             'edit' => Pages\EditFormer::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

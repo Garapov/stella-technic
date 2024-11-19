@@ -30,7 +30,7 @@ class FormSened extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Form Sened',
+            subject: 'Новая заявка с формы "' . $this->model->name . '"',
         );
     }
 

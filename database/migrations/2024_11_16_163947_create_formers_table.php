@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->longText('fields');
             $table->string('name');
+            $table->string('button_text');
             $table->text('thanks_text');
             $table->timestamps();
         });

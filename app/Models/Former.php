@@ -15,6 +15,7 @@ class Former extends Model
         'name',
         'thanks_text',
         'fields',
+        'button_text',
     ];
 
     protected $casts = [

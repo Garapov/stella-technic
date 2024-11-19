@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->longText('results');
-            $table->foreignId('former_id')->constrained();
+            $table->foreignId('former_id');
             $table->timestamps();
         });
     }

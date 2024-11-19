@@ -22,6 +22,8 @@ class Formblock extends Component
                 'label' => $field['label'],
                 'type' => $field['type'],
                 'options' => $field['options'],
+                'mask_enabled' => $field['mask_enabled'],
+                'mask' => $field['mask'],
                 'value' => $field['value'] ?? ''
             );
         };
