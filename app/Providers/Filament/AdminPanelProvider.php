@@ -5,6 +5,8 @@ namespace App\Providers\Filament;
 use CmsMulti\FilamentClearCache\FilamentClearCachePlugin;
 use Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin;
 use Datlechin\FilamentMenuBuilder\MenuPanel\ModelMenuPanel;
+use App\Filament\Plugins\BlogPlugin;
+use App\Filament\Plugins\MenuBuilderPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -21,7 +23,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Stephenjude\FilamentBlog\BlogPlugin;
+// use Stephenjude\FilamentBlog\BlogPlugin;
 use Z3d0X\FilamentFabricator\FilamentFabricatorPlugin;
 
 class AdminPanelProvider extends PanelProvider
@@ -71,7 +73,7 @@ class AdminPanelProvider extends PanelProvider
                 BlogPlugin::make(),
                 FilamentClearCachePlugin::make(),
                 FilamentFabricatorPlugin::make(),
-                FilamentMenuBuilderPlugin::make()
+                MenuBuilderPlugin::make()
                     ->addLocations([
                         'top_menu' => 'Верхнее меню',
                         'header' => 'Главное меню',
