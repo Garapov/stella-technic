@@ -16,7 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
-
+    protected static ?string $navigationLabel = 'Клиенты';
+    protected static ?string $navigationGroup = 'Настройки сайта';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form

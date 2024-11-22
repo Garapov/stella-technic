@@ -24,7 +24,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class FormerResource extends Resource
 {
     protected static ?string $model = Former::class;
-
+    protected static ?string $navigationLabel = 'Формы';
+    protected static ?string $navigationGroup = 'Настройки сайта';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form

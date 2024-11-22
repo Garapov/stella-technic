@@ -21,8 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        PageResource::navigationGroup('Настройки сайта');
-        MenuResource::navigationGroup('Настройки сайта');
+        // PageResource::navigationGroup('Настройки сайта');
+        // MenuResource::navigationGroup('Настройки сайта');
         // PageResource::navigationLabel('Страницы');
         // MenuResource::navigationLabel('Меню');
     }
