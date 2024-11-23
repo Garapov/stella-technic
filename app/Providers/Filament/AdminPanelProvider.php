@@ -23,6 +23,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Outerweb\FilamentImageLibrary\Filament\Plugins\FilamentImageLibraryPlugin;
 // use Stephenjude\FilamentBlog\BlogPlugin;
 use Z3d0X\FilamentFabricator\FilamentFabricatorPlugin;
 
@@ -32,6 +33,7 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->id('admin')
             ->path('admin')
             ->login()
@@ -73,6 +75,7 @@ class AdminPanelProvider extends PanelProvider
                 BlogPlugin::make(),
                 FilamentClearCachePlugin::make(),
                 FilamentFabricatorPlugin::make(),
+                FilamentImageLibraryPlugin::make(),
                 MenuBuilderPlugin::make()
                     ->addLocations([
                         'top_menu' => 'Верхнее меню',

@@ -16,7 +16,12 @@ class Product extends Model
         'image',
         'price',
         'new_price',
-        'count'
+        'count',
+        'gallery'
+    ];
+
+    protected $casts = [
+        'gallery' => 'array'
     ];
 
 

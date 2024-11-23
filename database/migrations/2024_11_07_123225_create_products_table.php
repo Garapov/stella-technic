@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('image');
+            $table->longText('gallery');
             $table->integer('price');
             $table->integer('new_price')->nullable();
             $table->boolean('is_popular')->default(false);

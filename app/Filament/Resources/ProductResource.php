@@ -4,14 +4,19 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
+use App\Forms\Components\ImagePicker;
 use App\Models\Product;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Outerweb\FilamentImageLibrary\Filament\Forms\Components\ImageLibraryPicker;
 
 class ProductResource extends Resource
 {
@@ -26,28 +31,59 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->label('Название'),
-                Forms\Components\FileUpload::make('image')
-                    ->image()
-                    ->required()
-                    ->label('Картинка'),
-                Forms\Components\TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('р.')
-                    ->label('Цена'),
-                Forms\Components\TextInput::make('new_price')
-                    ->numeric()
-                    ->prefix('р.')
-                    ->label('Цена со скидкой'),
-                Forms\Components\TextInput::make('count')
-                    ->required()
-                    ->numeric()
-                    ->label('Количество'),
-                Forms\Components\Toggle::make('is_popular')
-                    ->label('Популярный'),
+                Tabs::make('Tabs')
+                    ->tabs([
+                        Tab::make('Основная информация')->schema([
+                            Section::make()->columns([
+                                'sm' => 1,
+                                'xl' => 2,
+                                '2xl' => 3,
+                            ])
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->label('Название'),
+                                Forms\Components\TextInput::make('price')
+                                    ->required()
+                                    ->numeric()
+                                    ->prefix('р.')
+                                    ->label('Цена'),
+                                Forms\Components\TextInput::make('new_price')
+                                    ->numeric()
+                                    ->prefix('р.')
+                                    ->label('Цена со скидкой'),
+                                Forms\Components\TextInput::make('count')
+                                    ->required()
+                                    ->numeric()
+                                    ->label('Остаток'),
+                                Forms\Components\Toggle::make('is_popular')
+                                    ->label('Популярный')
+                                    ->inline(false),
+                            ])
+                        ])->columnSpan('full'),
+                        Tab::make('Изображения')->schema([
+                            Section::make()->columns([
+                                'sm' => 1,
+                                'xl' => 2,
+                                '2xl' => 3,
+                            ])
+                            ->schema([
+                                ImagePicker::make('image')
+                                    ->label('Картинка')
+                                    ->columnSpan('1'),
+                                ImagePicker::make('gallery')
+                                    ->label('Галерея')
+                                    ->multiple()
+                                    ->columnSpan('2')
+                            ])
+                        ])->columnSpan('full'),
+                        Tab::make('Категории')->schema([
+
+                        ])->columnSpan('full'),
+                    ])->columnSpan('full'), 
+                
+                
+                
             ]);
     }
 
