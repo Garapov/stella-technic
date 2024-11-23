@@ -77,7 +77,7 @@
             </div>
             <div class="grid grid-cols-4 gap-4">
                 <div>
-                    @if (count($category->categories))
+                    {{-- @if (count($category->categories))
                         <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900 mb-4">
                             <ul class="space-y-2">
                                 @foreach ($category->categories as $subcategory)
@@ -113,7 +113,7 @@
                                 @endforeach
                             </ul>
                         </div>
-                    @endif
+                    @endif --}}
                     <div
                         class="sticky top-10 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                         <div>
@@ -562,7 +562,7 @@
                 </div>
                 <div class="flex flex-col gap-4 col-span-3">
                     <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 lg:grid-cols-2 xl:grid-cols-3">
-                        @livewire('general.product')
+                        {{-- @livewire('general.product') --}}
                     </div>
                     <div class="flex justify-center">
                         <nav aria-label="Page navigation example">

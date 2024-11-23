@@ -10,8 +10,9 @@ class Header extends Component
 {
     public function render()
     {
+        // dd(ProductCategory::all());
         return view('livewire.general.header', [
-            'categories' => ProductCategory::where('category_id', null)->get(),
+            'categories' => ProductCategory::where('parent_id', -1)->get(),
             'topmenu' => Menu::location('top_menu')
         ]);
     }

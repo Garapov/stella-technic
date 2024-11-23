@@ -3,6 +3,7 @@
 namespace App\Livewire\Catalog;
 
 use App\Models\Category;
+use App\Models\ProductCategory;
 use Livewire\Component;
 
 class Items extends Component
@@ -10,11 +11,11 @@ class Items extends Component
     public $isFiltersOpened = false;
     public $isSortingOpened = false;
 
-    public ?Category $category = null;
+    public ?ProductCategory $category = null;
 
     public function mount($slug)
     {
-        $this->category = Category::where('slug', $slug)->first();
+        $this->category = ProductCategory::where('slug', $slug)->first();
     }
     public function render()
     {

@@ -1,7 +1,7 @@
 @props(['id'])
 
 @php
-    $category = \App\Models\Category::where('id', $id)->first();
+    $category = \App\Models\ProductCategory::where('id', $id)->first();
 @endphp
 <div>
 
