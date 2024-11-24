@@ -6,6 +6,7 @@ use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Forms\Components\ImagePicker;
 use App\Models\Product;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
@@ -50,6 +51,7 @@ class ProductResource extends Resource
                                     ->label('Цена'),
                                 Forms\Components\TextInput::make('new_price')
                                     ->numeric()
+                                    ->lt('price')
                                     ->prefix('р.')
                                     ->label('Цена со скидкой'),
                                 Forms\Components\TextInput::make('count')
@@ -78,7 +80,9 @@ class ProductResource extends Resource
                             ])
                         ])->columnSpan('full'),
                         Tab::make('Категории')->schema([
-
+                            SelectTree::make('categories')
+                            ->label('Категории')
+                            ->relationship('categories', 'title', 'product_category_id')
                         ])->columnSpan('full'),
                     ])->columnSpan('full'), 
                 

@@ -1,5 +1,6 @@
 <section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
     @if ($category)
+        {{-- {{ $category->products }} --}}
         <div class="mx-auto container">
             <!-- Heading & Filters -->
             <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">
@@ -562,7 +563,11 @@
                 </div>
                 <div class="flex flex-col gap-4 col-span-3">
                     <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 lg:grid-cols-2 xl:grid-cols-3">
-                        {{-- @livewire('general.product') --}}
+                        @foreach ($category->products as $product)
+                            @livewire('general.product', [
+                                'product' => $product
+                            ])
+                        @endforeach
                     </div>
                     <div class="flex justify-center">
                         <nav aria-label="Page navigation example">

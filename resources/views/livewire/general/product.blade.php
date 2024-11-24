@@ -1,15 +1,16 @@
 <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
     <div class="h-56 w-full">
-        <a href="#">
-            <img class="mx-auto h-full dark:hidden"
-                src="{{ asset($product->image) }}" alt="" />
+        <a href="{{ route('client.product_detail') }}" wire:navigate>
+            <img class="mx-auto h-full dark:hidden w-full"
+                src="{{ asset('storage/' . $image->uuid . '/filament-thumbnail.' .  $image->file_extension) }}" alt="" />
         </a>
     </div>
     <div class="pt-6">
         <div class="mb-4 flex items-center justify-between gap-4">
-            <span
-                class="me-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300 dark:text-white">
-                Скидка до 35% </span>
+            @if ($product->new_price)
+                <span class="me-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300 dark:text-white">
+                Скидка {{ round(100 - $product->new_price * 100 / $product->price) }}% </span>
+            @endif
 
             <div class="flex items-center justify-end gap-1">
                 <button type="button" data-tooltip-target="tooltip-quick-look"
@@ -85,10 +86,9 @@
             </div>
 
             <p class="text-sm font-medium text-gray-900 dark:text-white">5.0</p>
-            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">(455)</p>
         </div>
 
-        <ul class="mt-2 flex items-center gap-4">
+        {{-- <ul class="mt-2 flex items-center gap-4">
             <li class="flex items-center gap-2">
                 <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -107,20 +107,27 @@
                 </svg>
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Лучшая цена</p>
             </li>
-        </ul>
+        </ul> --}}
 
         <div class="mt-4 flex items-center justify-between gap-4">
-            <p class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">{{$product->price}} р.</p>
+            @if($product->new_price)
+                <div class="flex items-center gap-4">
+                    <p class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">{{$product->new_price}} р.</p>
+                    <p class="text-lg line-through font-extrabold leading-tight text-gray-600 dark:text-white">{{$product->price}} р.</p>
+                </div>
+            @else
+                <p class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">{{$product->price}} р.</p>
+            @endif
 
             <button type="button"
                 class="inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                <svg class="-ms-2 me-2 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                         stroke-width="2"
                         d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6" />
                 </svg>
-                В корзину
+                {{-- В корзину --}}
             </button>
         </div>
     </div>
