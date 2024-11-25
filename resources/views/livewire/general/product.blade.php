@@ -52,7 +52,7 @@
         <a href="{{ route('client.product_detail') }}"
             class="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate>{{ $product->name }}</a>
 
-        <div class="mt-2 flex items-center gap-2">
+        <!-- <div class="mt-2 flex items-center gap-2">
             <div class="flex items-center">
                 <svg class="h-4 w-4 text-yellow-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor" viewBox="0 0 24 24">
@@ -86,7 +86,7 @@
             </div>
 
             <p class="text-sm font-medium text-gray-900 dark:text-white">5.0</p>
-        </div>
+        </div> -->
         <ul>
             @foreach ($product->paramItems as $attribute)
                 <li class="mt-2 flex items-center gap-2">
