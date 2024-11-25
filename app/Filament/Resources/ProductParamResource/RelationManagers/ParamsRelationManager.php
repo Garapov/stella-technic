@@ -16,11 +16,26 @@ class ParamsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
+        $parentRecord = $this->getOwnerRecord();
+        
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255),
+                    
+                Forms\Components\TextInput::make('value')
+                    ->required()
+                    ->numeric()
+                    ->visible(fn () => $parentRecord->type === 'number'),
+                    
+                Forms\Components\ColorPicker::make('value')
+                    ->required()
+                    ->visible(fn () => $parentRecord->type === 'color'),
+                    
+                Forms\Components\TextInput::make('value')
+                    ->required()
+                    ->visible(fn () => $parentRecord->type === 'checkboxes'),
             ]);
     }
 
@@ -29,7 +44,18 @@ class ParamsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('title')
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('title')
+                    ->label('Название'),
+                Tables\Columns\TextColumn::make('value')
+                    ->formatStateUsing(function ($state, $record) {
+                        $parentRecord = $this->getOwnerRecord();
+                        return match ($parentRecord->type) {
+                            'color' => view('components.color-badge', ['color' => $state]),
+                            // 'checkboxes' => $state ? 'Yes' : 'No',
+                            default => $state,
+                        };
+                    })
+                    ->label('Значение'),
             ])
             ->filters([
                 //

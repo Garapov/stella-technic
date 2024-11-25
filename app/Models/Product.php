@@ -25,7 +25,11 @@ class Product extends Model
         'gallery' => 'array'
     ];
 
-
+    public function paramItems(): BelongsToMany
+    {
+        return $this->belongsToMany(ProductParamItem::class, 'product_product_param_item')
+            ->withTimestamps();
+    }
 
     public function categories(): BelongsToMany
     {

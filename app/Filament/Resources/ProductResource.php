@@ -18,11 +18,12 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Outerweb\FilamentImageLibrary\Filament\Forms\Components\ImageLibraryPicker;
+use App\Models\ProductParam;
+use App\Models\ProductParamItem;
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationLabel = 'Товары';
 
@@ -72,6 +73,7 @@ class ProductResource extends Resource
                             ->schema([
                                 ImagePicker::make('image')
                                     ->label('Картинка')
+                                    ->required()
                                     ->columnSpan('1'),
                                 ImagePicker::make('gallery')
                                     ->label('Галерея')
@@ -82,7 +84,33 @@ class ProductResource extends Resource
                         Tab::make('Категории')->schema([
                             SelectTree::make('categories')
                             ->label('Категории')
+                            ->required()
                             ->relationship('categories', 'title', 'product_category_id')
+                        ])->columnSpan('full'),
+                        Tab::make('Параметры')->schema([
+                            Forms\Components\Select::make('paramItems')
+                                ->multiple()
+                                ->relationship('paramItems', 'title')
+                                ->preload()
+                                ->createOptionForm([
+                                    Forms\Components\Select::make('product_param_id')
+                                        ->relationship('productParam', 'name')
+                                        ->required(),
+                                    Forms\Components\TextInput::make('title')
+                                        ->required()
+                                        ->maxLength(255),
+                                    Forms\Components\TextInput::make('value')
+                                        ->required()
+                                ])
+                                ->options(function () {
+                                    return ProductParamItem::query()
+                                        ->with('productParam')
+                                        ->get()
+                                        ->mapWithKeys(function ($item) {
+                                            return [$item->id => "{$item->productParam->name}: {$item->title}"];
+                                        });
+                                })
+                                ->columnSpanFull()
                         ])->columnSpan('full'),
                     ])->columnSpan('full'), 
                 

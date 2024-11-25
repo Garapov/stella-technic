@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ProductParam;
 
 class ProductParamItem extends Model
 {
@@ -15,4 +16,9 @@ class ProductParamItem extends Model
         'title',
         'value',
     ];
+
+    public function productParam()
+    {
+        return $this->belongsTo(ProductParam::class);
+    }
 }
