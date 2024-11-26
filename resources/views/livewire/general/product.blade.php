@@ -88,10 +88,10 @@
             <p class="text-sm font-medium text-gray-900 dark:text-white">5.0</p>
         </div> -->
         <ul>
-            @foreach ($product->paramItems as $attribute)
+            @foreach ($product->variants as $variant)
                 <li class="mt-2 flex items-center gap-2">
-                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ $attribute->productParam->name }}:</p>
-                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $attribute->value }}</p>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ $variant->param->productParam->name }}:</p>
+                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $variant->param->value }}</p>
                 </li>
             @endforeach
         </ul>
