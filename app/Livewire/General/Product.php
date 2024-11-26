@@ -18,4 +18,8 @@ class Product extends Component
     {
         return view('livewire.general.product');
     }
+    public function getImageUrl($imageId)
+    {
+        return Image::where('id', $imageId)->first();
+    }
 }
