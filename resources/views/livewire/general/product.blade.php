@@ -1,36 +1,58 @@
 <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900" x-data="{
-    selected: {
-        name: '{{ $product->name }}',
-        price: {{ $product->price }},
-        new_price: {{ $product->new_price }},
-        image: '{{ asset('storage/' . $image->uuid . '/filament-thumbnail.' .  $image->file_extension) }}',
-        quantity: 1
-    },
-    setSelected: function (product) {
-        $wire.getImageUrl(product.image).then(image => {
+    cart_quantity: 1,
+    product: {{ $product }},
+    selectedVariation: null,
+    init() {
+        $wire.getImageUrl(this.product.image).then(image => {
+            
 
-            this.selected = {
-                name: product.name,
-                price: product.price,
-                new_price: product.new_price,
-                quantity: 1,
-                image: '/storage/' + image.uuid + '/filament-thumbnail.' +  image.file_extension
+            this.product = {
+                ...product,
+                image: '/storage/' + image.uuid + '/filament-thumbnail.' +  image.file_extension,
             };
+
+            console.log(this.product);
+
         });
-        
-    }
+    },
+    setSelected: function (variation) {
+        $wire.getImageUrl(variation.image).then(image => {
+            
+
+            this.selectedVariation = {
+                ...variation,
+                image: '/storage/' + image.uuid + '/filament-thumbnail.' +  image.file_extension,
+            };
+
+            console.log(this.selectedVariation);
+
+        });
+    },
+    addToCart: function () {
+        $store.cart.addToCart({
+            product: this.product,
+            count: this.cart_quantity
+        });
+    },
+    addVariationToCart: function (variation) {
+        $store.cart.addVariationToCart({
+            product: this.product,
+            count: this.cart_quantity,
+            variation: variation
+        });
+    },
 }">
     <div class="h-56 w-full">
         <a href="{{ route('client.product_detail') }}" wire:navigate>
             <img class="mx-auto h-full dark:hidden w-full"
-                :src="selected.image" alt="" />
+                :src="selectedVariation ? selectedVariation.image : product.image" alt="" />
         </a>
     </div>
     <div class="pt-6">
         <div class="mb-4 flex items-center justify-between gap-4">
-            <template x-if="selected.new_price">
+            <template x-if="productData().new_price">
                 <span class="me-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300 dark:text-white">
-                Скидка <span x-text="Math.round(100 -selected.new_price * 100 / selected.price)"></span>% </span>
+                Скидка <span x-text="Math.round(100 -productData().new_price * 100 / productData().price)"></span>% </span>
             </template>
 
             <div class="flex items-center justify-end gap-1">
@@ -101,18 +123,18 @@
         </ul>
 
         <div class="mt-4 flex items-center justify-between gap-4">
-            <template x-if="selected.new_price">
+            <template x-if="productData().new_price">
                 <div class="flex items-center gap-4">
-                    <p class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white"><span x-text="selected.new_price"></span> р.</p>
-                    <p class="text-lg line-through font-extrabold leading-tight text-gray-600 dark:text-white"><span x-text="selected.price"></span> р.</p>
+                    <p class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white"><span x-text="productData().new_price"></span> р.</p>
+                    <p class="text-lg line-through font-extrabold leading-tight text-gray-600 dark:text-white"><span x-text="productData().price"></span> р.</p>
                 </div>
             </template>
-            <template x-if="!selected.new_price">
-                <p class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white"><span x-text="selected.price"></span> р.</p>
+            <template x-if="!productData().new_price">
+                <p class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white"><span x-text="productData().price"></span> р.</p>
             </template>
 
             <button type="button"
-                class="inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                class="inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" @click="addToCart()">
                 <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
