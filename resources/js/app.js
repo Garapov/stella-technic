@@ -7,7 +7,7 @@ import dropdown from './components/dropdown';
 import mainSlider from './components/main-slider';
 import clientsSlider from './components/clients';
 
-import cart from './components/cart';
+// import cart from './components/cart';
 
 window.glide = Glide;
 

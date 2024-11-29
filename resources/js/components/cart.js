@@ -11,25 +11,27 @@ export default (() => {
             addToCart({product, count = 0}) {
                 console.log(product, count)
                     
-                if  (this.list[product.id]) {
-                    this.list[product.id].count += +count;
-                } else {
-                    this.list[product.id] = {
-                        ...product,
-                        count: count,
-                    }
-                }
+                // if  (this.list[product.id]) {
+                //     this.list[product.id].count += +count;
+                // } else {
+                //     this.list[product.id] = {
+                //         ...product,
+                //         count: count,
+                //     }
+                // }
             },
             addVariationToCart({product, variation, count = 0}) {
-                if  (this.list[product.id]) {
-                    this.list[product.id].count += +count;
-                } else {
-                    this.list[product.id] = {
-                        ...product,
-                        count: count,
-                        variation: variation,
-                    }
-                }
+                // if  (this.list[product.id]) {
+                //     this.list[product.id].count += +count;
+                // } else {
+                //     this.list[product.id] = {
+                //         ...product,
+                //         count: count,
+                //         variation: variation,
+                //     }
+                // }
+                console.log(product, variation, count);
+                
             },
             increase(productId) {
                 this.list[productId].count++;

@@ -2,29 +2,16 @@
     cart_quantity: 1,
     product: {{ $product }},
     selectedVariation: null,
-    init() {
-        $wire.getImageUrl(this.product.image).then(image => {
-            
-
-            this.product = {
-                ...product,
-                image: '/storage/' + image.uuid + '/filament-thumbnail.' +  image.file_extension,
-            };
-
-            console.log(this.product);
-
-        });
-    },
+    image: `{{ asset('storage/' . $image->uuid . '/filament-thumbnail.' .  $image->file_extension)}}`,
     setSelected: function (variation) {
         $wire.getImageUrl(variation.image).then(image => {
-            
+
+            console.log(this.productData);
 
             this.selectedVariation = {
                 ...variation,
                 image: '/storage/' + image.uuid + '/filament-thumbnail.' +  image.file_extension,
             };
-
-            console.log(this.selectedVariation);
 
         });
     },
@@ -34,26 +21,34 @@
             count: this.cart_quantity
         });
     },
-    addVariationToCart: function (variation) {
+    addVariationToCart: function () {
         $store.cart.addVariationToCart({
             product: this.product,
             count: this.cart_quantity,
-            variation: variation
+            variation: this.selectedVariation
         });
     },
+    get productData() {
+        if (this.selectedVariation) return this.selectedVariation;
+            
+        return this.product;
+    }
 }">
     <div class="h-56 w-full">
         <a href="{{ route('client.product_detail') }}" wire:navigate>
             <img class="mx-auto h-full dark:hidden w-full"
-                :src="selectedVariation ? selectedVariation.image : product.image" alt="" />
+                :src="selectedVariation ? selectedVariation.image : image" alt="" />
         </a>
     </div>
     <div class="pt-6">
         <div class="mb-4 flex items-center justify-between gap-4">
-            <template x-if="productData().new_price">
-                <span class="me-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300 dark:text-white">
-                Скидка <span x-text="Math.round(100 -productData().new_price * 100 / productData().price)"></span>% </span>
-            </template>
+            
+                <span class="me-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300 dark:text-white" x-show="productData.new_price">
+                Скидка 
+                <template x-if="productData.new_price">
+                    <span x-text="Math.round(100 -productData.new_price * 100 / productData.price)"></span>
+                </template>
+                % </span>
 
             <div class="flex items-center justify-end gap-1">
                 <button type="button" data-tooltip-target="tooltip-quick-look"
@@ -123,18 +118,14 @@
         </ul>
 
         <div class="mt-4 flex items-center justify-between gap-4">
-            <template x-if="productData().new_price">
-                <div class="flex items-center gap-4">
-                    <p class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white"><span x-text="productData().new_price"></span> р.</p>
-                    <p class="text-lg line-through font-extrabold leading-tight text-gray-600 dark:text-white"><span x-text="productData().price"></span> р.</p>
-                </div>
-            </template>
-            <template x-if="!productData().new_price">
-                <p class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white"><span x-text="productData().price"></span> р.</p>
-            </template>
+            <div class="flex items-center gap-4 asdasdasdasdas">
+                
+                <p class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white"><span x-text="productData.new_price ?? productData.price"></span> р.</p>
+                <p class="text-lg line-through font-extrabold leading-tight text-gray-600 dark:text-white" x-show="productData.new_price !== null"><span x-text="productData.price"></span> р.</p>
+            </div>
 
             <button type="button"
-                class="inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" @click="addToCart()">
+                class="inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" @click="selectedVariation ? addVariationToCart() : addToCart()">
                 <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"

@@ -566,7 +566,7 @@
                         @foreach ($category->products as $product)
                             @livewire('general.product', [
                                 'product' => $product
-                            ])
+                            ], key($product->id))
                         @endforeach
                     </div>
                     <div class="flex justify-center">
