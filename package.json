@@ -20,6 +20,7 @@
     "dependencies": {
         "@alpinejs/mask": "^3.14.3",
         "@alpinejs/persist": "^3.14.5",
-        "@glidejs/glide": "^3.6.2"
+        "@glidejs/glide": "^3.6.2",
+        "toastify-js": "^1.12.0"
     }
 }
