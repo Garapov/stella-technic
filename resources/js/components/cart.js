@@ -96,6 +96,9 @@ export default (() => {
                     if (item != null) price += item.count * item.price;
                 })
                 return price.toFixed(2);
+            },
+            cartCount() {
+                return this.list.filter(item => item != null).length;
             }
         });
     });
