@@ -1,10 +1,11 @@
-
 import Toastify from 'toastify-js';
 
 export default (() => {
     document.addEventListener('alpine:init', () => {
         Alpine.store('cart', {
             list: Alpine.$persist([]).as('cart'),
+            price: 0,
+            discountedPrice: 0,
                 
             removeFromCart(productId) {
                 this.list[productId] = null
@@ -91,14 +92,42 @@ export default (() => {
             },
     
             getTotalPrice() {
-                let price = 0.00;
+                this.price = 0;
                 this.list.map(item => {
-                    if (item != null) price += item.count * item.price;
+                    if (item != null) this.price += item.count * item.price;
                 })
-                return price.toFixed(2);
+                return new Intl.NumberFormat('ru-RU',
+                    {
+                        style: 'currency',
+                        currency: 'RUB',
+                        minimumFractionDigits: 0
+                    }
+                ).format(
+                    this.price,
+                );
+            },
+            getDiscountedPrice() {
+                this.discountedPrice = 0;
+                this.list.map(item => {
+                    if (item != null) this.discountedPrice += item.count * (item.new_price ?? item.price);
+                })
+                return new Intl.NumberFormat('ru-RU',
+                    {
+                        style: 'currency', 
+                        currency: 'RUB',
+                        minimumFractionDigits: 0
+                    }
+                ).format(
+                    this.discountedPrice,
+                );
             },
             cartCount() {
                 return this.list.filter(item => item != null).length;
+            },
+            validateCount(productId) {
+                console.log(this.list[productId].count);
+                
+                if (!this.list[productId].count || this.list[productId].count < 1) this.list[productId].count = 1;
             }
         });
     });

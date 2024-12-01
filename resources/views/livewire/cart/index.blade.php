@@ -1,6 +1,6 @@
 <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
     <div class="mx-auto container px-4 2xl:px-0">
-      <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Shopping Cart</h2>
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Корзина</h2>
   
       <div class="mt-6 sm:mt-8 md:gap-6 lg:flex xl:gap-8">
         <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-5xl">
@@ -16,13 +16,13 @@
                   <label for="counter-input" class="sr-only">Choose quantity:</label>
                   <div class="flex items-center justify-between md:order-3 md:justify-end">
                     <div class="flex items-center">
-                      <button type="button" id="decrement-button" data-input-counter-decrement="counter-input" class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+                      <button type="button" id="decrement-button" data-input-counter-decrement="counter-input" class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700" @click="$store.cart.decrease(cart_item.id)">
                         <svg class="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
                           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
                         </svg>
                       </button>
-                      <input type="text" id="counter-input" data-input-counter class="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white" placeholder="" value="2" required />
-                      <button type="button" id="increment-button" data-input-counter-increment="counter-input" class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+                      <input type="number" id="counter-input" data-input-counter class="w-20 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" x-model="cart_item.count" min="1" @change="$store.cart.validateCount(cart_item.id)" />
+                      <button type="button" id="increment-button" data-input-counter-increment="counter-input" class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700" @click="$store.cart.increase(cart_item.id)">
                         <svg class="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
                         </svg>
@@ -69,57 +69,43 @@
         <div class="mx-auto mt-6 max-w-4xl lg:mt-0 flex-1">
           <div class="sticky top-10 space-y-6 lg:w-full">
             <div class="w-full space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
-                <p class="text-xl font-semibold text-gray-900 dark:text-white">Order summary</p>
+                <p class="text-xl font-semibold text-gray-900 dark:text-white">Стоимость</p>
       
                 <div class="space-y-4">
                   <div class="space-y-2">
                     <dl class="flex items-center justify-between gap-4">
-                      <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Original price</dt>
-                      <dd class="text-base font-medium text-gray-900 dark:text-white">$7,592.00</dd>
+                      <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Общая стоимость</dt>
+                      <dd class="text-base font-medium text-gray-900 dark:text-white" x-text="$store.cart.getTotalPrice()"></dd>
+                    </dl>
+                    <dl class="flex items-center justify-between gap-4">
+                      <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Cтоимость со скидкой</dt>
+                      <dd class="text-base font-medium text-gray-900 dark:text-white" x-text="$store.cart.getDiscountedPrice()"></dd>
                     </dl>
       
                     <dl class="flex items-center justify-between gap-4">
-                      <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Savings</dt>
-                      <dd class="text-base font-medium text-green-600">-$299.00</dd>
+                      <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Скидка</dt>
+                      <dd class="text-base font-medium text-green-600" x-text="`-${new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format($store.cart.price - $store.cart.discountedPrice)}`"></dd>
                     </dl>
       
-                    <dl class="flex items-center justify-between gap-4">
-                      <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Store Pickup</dt>
-                      <dd class="text-base font-medium text-gray-900 dark:text-white">$99</dd>
-                    </dl>
-      
-                    <dl class="flex items-center justify-between gap-4">
-                      <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Tax</dt>
-                      <dd class="text-base font-medium text-gray-900 dark:text-white">$799</dd>
-                    </dl>
+                  
                   </div>
       
                   <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
-                    <dt class="text-base font-bold text-gray-900 dark:text-white">Total</dt>
-                    <dd class="text-base font-bold text-gray-900 dark:text-white">$8,191.00</dd>
+                    <dt class="text-base font-bold text-gray-900 dark:text-white">Итого</dt>
+                    <dd class="text-base font-bold text-gray-900 dark:text-white" x-text="$store.cart.getDiscountedPrice()"></dd>
                   </dl>
                 </div>
       
                 <a href="{{ route('client.checkout') }}" class="flex w-full items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>Оформить заказ</a>
-      
-                <div class="flex items-center justify-center gap-2">
-                  <span class="text-sm font-normal text-gray-500 dark:text-gray-400"> or </span>
-                  <a href="#" title="" class="inline-flex items-center gap-2 text-sm font-medium text-blue-700 underline hover:no-underline dark:text-blue-500">
-                    Continue Shopping
-                    <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4" />
-                    </svg>
-                  </a>
-                </div>
               </div>
       
               <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
                 <form class="space-y-4">
                   <div>
-                    <label for="voucher" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Do you have a voucher or gift card? </label>
+                    <label for="voucher" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> У вас есть промокод? </label>
                     <input type="text" id="voucher" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="" required />
                   </div>
-                  <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Apply Code</button>
+                  <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Применить</button>
                 </form>
               </div>
           </div>
