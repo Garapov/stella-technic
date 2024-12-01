@@ -84,6 +84,13 @@ class ProductResource extends Resource
                         Tab::make('Категории')->schema([
                             SelectTree::make('categories')
                             ->label('Категории')
+                            ->placeholder('Выберите категории')
+                            ->emptyLabel('Ничего не нашлось')
+                            // ->parentNullValue(-1)
+                            ->withCount()
+                            // ->withKey('parent_id')
+                            ->independent(false)
+                            ->enableBranchNode()
                             ->required()
                             ->relationship('categories', 'title', 'product_category_id')
                         ])->columnSpan('full'),
