@@ -1,19 +1,16 @@
 <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900" x-data="{
     cart_quantity: 1,
-    product: {{ $product }},
+    product: @js($product),
     selectedVariation: null,
-    image: `{{ asset('storage/' . $image->uuid . '/filament-thumbnail.' .  $image->file_extension)}}`,
+    init() {
+        this.product.variants.map(variant => {
+            if (variant.is_default) {
+                this.selectedVariation = variant;
+            }
+        })
+    },
     setSelected: function (variation) {
-        $wire.getImageUrl(variation.image).then(image => {
-
-            console.log(this.productData);
-
-            this.selectedVariation = {
-                ...variation,
-                image: '/storage/' + image.uuid + '/filament-thumbnail.' +  image.file_extension,
-            };
-
-        });
+        this.selectedVariation = variation;
     },
     addToCart: function () {
         $store.cart.addToCart({
@@ -36,8 +33,8 @@
 }">
     <div class="h-56 w-full">
         <a href="{{ route('client.product_detail') }}" wire:navigate>
-            <img class="mx-auto h-full dark:hidden w-full"
-                :src="selectedVariation ? selectedVariation.image : image" alt="" />
+            <img class="mx-auto h-full w-full"
+                :src="`/storage/${productData.img.uuid}/filament-thumbnail.${productData.img.file_extension}`" alt="" />
         </a>
     </div>
     <div class="pt-6">
@@ -45,9 +42,7 @@
             
                 <span class="me-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300 dark:text-white" x-show="productData.new_price">
                 Скидка 
-                <template x-if="productData.new_price">
-                    <span x-text="Math.round(100 -productData.new_price * 100 / productData.price)"></span>
-                </template>
+                    <span x-show="productData.new_price" x-text="Math.round(100 - (productData.new_price ?? productData.price) * 100 / productData.price)"></span>
                 % </span>
 
             <div class="flex items-center justify-end gap-1">
@@ -88,7 +83,7 @@
         </div>
 
         <a href="{{ route('client.product_detail') }}"
-            class="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate>{{ $product->name }}</a>
+            class="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate x-text="productData.name"></a>
         <ul>
             @foreach ($product->variants->groupBy('param.productParam.name') as $paramName => $variants)
                 <li class="mt-4">
@@ -98,17 +93,12 @@
                             @switch ($variant->param->productParam->type)
                                 @case('color')
                                     <li class="flex items-center gap-2">
-                                        <div class="h-4 w-4 rounded-full" style="background-color: {{ $variant->param->value }}" x-on:click="setSelected({{ $variant }})"></div>
-                                    </li>
-                                    @break
-                                @case('size')
-                                    <li class="flex items-center gap-2">
-                                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400" x-on:click="setSelected({{ $variant }})">{{ $variant->param->title }}</p>
+                                        <div class="h-5 w-5 rounded-full" :class="{'ring-4 ring-gray-300 cursor-default': productData.id === {{ $variant->id }}, 'cursor-pointer': productData.id !== {{ $variant->id }}}" style="background-color: {{ $variant->param->value }}" x-on:click="setSelected({{ $variant }})"></div>
                                     </li>
                                     @break
                                 @default
-                                    <li class="flex items-center gap-2 p-2 border border- gray-200 rounded">
-                                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400" x-on:click="setSelected({{ $variant }})">{{ $variant->param->title }}</p>
+                                    <li class="flex items-center gap-2 p-2 border border- gray-200 rounded cursor-pointer" :class="{'ring-4 ring-gray-300 cursor-default': productData.id === {{ $variant->id }},  'cursor-pointer': productData.id !== {{ $variant->id }}}" x-on:click="setSelected({{ $variant }})">
+                                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ $variant->param->title }}</p>
                                     </li>
                             @endswitch
                         @endforeach

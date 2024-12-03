@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 // use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Outerweb\ImageLibrary\Models\Image;
 
 class Product extends Model
 {
@@ -28,13 +30,20 @@ class Product extends Model
 
     protected $with = [
         'paramItems',
-        'categories'
+        'categories',
+        'variants',
+        'img'
     ];
 
     public function paramItems(): BelongsToMany
     {
         return $this->belongsToMany(ProductParamItem::class, 'product_product_param_item')
             ->withTimestamps();
+    }
+
+    public function img(): BelongsTo
+    {
+        return $this->belongsTo(Image::class, 'image');
     }
 
     public function categories(): BelongsToMany
