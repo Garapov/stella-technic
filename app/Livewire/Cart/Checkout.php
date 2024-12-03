@@ -2,13 +2,30 @@
 
 namespace App\Livewire\Cart;
 
+use App\Models\Order;
 use App\Models\Product;
 use Livewire\Component;
 
 class Checkout extends Component
 {
+    public $name = '';
+    public $email = '';
+    public $phone = '';
     public $products = [];
     protected $listeners = ['cartUpdated' => 'handleCartUpdate'];
+
+    protected $rules = [
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'phone' => 'required|string|max:20'
+    ];
+
+    protected $messages = [
+        'name.required' => 'Пожалуйста, введите ваше имя',
+        'email.required' => 'Пожалуйста, введите email',
+        'email.email' => 'Пожалуйста, введите корректный email',
+        'phone.required' => 'Пожалуйста, введите номер телефона'
+    ];
 
     public function mount()
     {
@@ -55,5 +72,37 @@ class Checkout extends Component
         }
 
         return $this->products;
+    }
+
+    public function placeOrder()
+    {
+        // Validate input
+        $this->validate();
+
+        // Calculate total price
+        $totalPrice = 0;
+        foreach ($this->products as $product) {
+            $price = $product['new_price'] ?? $product['price'];
+            $totalPrice += $price * $product['quantity'];
+        }
+
+        // Create order
+        $order = Order::create([
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'cart_items' => $this->products,
+            'total_price' => $totalPrice,
+            'status' => 'pending'
+        ]);
+
+        // Clear cart
+        session()->forget('cart');
+
+        // Dispatch cart cleared event
+        $this->dispatch('cart-cleared');
+
+        // Redirect to order success page
+        return redirect()->route('client.thanks')->with('order_id', $order->id);
     }
 }

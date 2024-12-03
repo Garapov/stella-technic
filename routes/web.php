@@ -11,6 +11,10 @@ Route::prefix('/')->name('client.')->group(function () {
     Route::view('/checkout', 'client.checkout')->name('checkout');
     Route::view('/simple', 'client.simple')->name('simple');
     Route::view('/favorites', 'client.favorites')->name('favorites');
+    Route::get('/thanks', function () {
+        $orderId = session('order_id', null);
+        return view('client.thanks', ['orderId' => $orderId]);
+    })->name('thanks');
     Route::view('/checkout/thanks', 'client.thanks')->name('thanks');
     Route::view('/blog/{category_slug}/{slug}', 'client.posts.show')->name('posts.show');
 });

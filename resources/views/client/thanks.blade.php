@@ -1,5 +1,5 @@
 <x-guest-layout>
-    @livewire('cart.thanks')
+    @livewire('cart.thanks', ['orderId' => $orderId ?? null])
     @livewire('main.popular')
     @livewire('main.articles')
     @livewire('main.customers')
