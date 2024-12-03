@@ -163,7 +163,7 @@
       
                       <dl class="flex items-center justify-between gap-4">
                         <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Скидка</dt>
-                        <dd class="text-base font-medium text-green-600" x-text="`-${new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format($store.cart.price - $store.cart.discountedPrice)}`"></dd>
+                        <dd class="text-base font-medium text-green-600" x-text="`-${new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format($store.cart.getTotalPrice() - $store.cart.getDiscountedPrice())}`"></dd>
                       </dl>
       
                   
@@ -175,7 +175,7 @@
                   </dl>
                 </div>
       
-                <a href="{{ route('client.checkout') }}" class="flex w-full items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>Оформить заказ</a>
+                <a href="{{ route('client.checkout') }}" class="flex w-full items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>Перейти к оформлению</a>
               </div>
       
               <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
