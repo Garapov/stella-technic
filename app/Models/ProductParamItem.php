@@ -19,6 +19,10 @@ class ProductParamItem extends Model
         'value',
     ];
 
+    protected $with = [
+        'productParam'
+    ];
+
     public function productParam()
     {
         return $this->belongsTo(ProductParam::class);

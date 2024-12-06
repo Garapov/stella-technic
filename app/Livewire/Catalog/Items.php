@@ -13,39 +13,149 @@ class Items extends Component
     public $isFiltersOpened = false;
     public $isSortingOpened = false;
     public $selectedVariations = [];
+    public $priceFrom = null;
+    public $priceTo = null;
+    public $selectedVariationNames = [];
 
     public ?ProductCategory $category = null;
+
+    protected $queryString = [
+        'selectedVariationNames' => ['as' => 'variations', 'except' => []],
+        'priceFrom' => ['as' => 'price_from', 'except' => null],
+        'priceTo' => ['as' => 'price_to', 'except' => null]
+    ];
 
     public function mount($slug)
     {
         $this->category = ProductCategory::where('slug', $slug)->first();
+        
+        // Convert variation titles to IDs if they exist in URL
+        if (!empty($this->selectedVariationNames)) {
+            $this->selectedVariations = ProductParamItem::whereIn('title', $this->selectedVariationNames)
+                ->pluck('id')
+                ->toArray();
+        }
+    }
+
+    public function updatedSelectedVariations($value)
+    {
+        // Update variation titles when IDs change
+        $this->selectedVariationNames = ProductParamItem::whereIn('id', $this->selectedVariations)
+            ->pluck('title')
+            ->toArray();
     }
 
     public function getProductsProperty()
     {
         $query = $this->category->products();
 
+        // Apply parameter filters only if there are selected variations
         if (!empty($this->selectedVariations)) {
             $query->whereHas('paramItems', function ($query) {
                 $query->whereIn('product_param_items.id', $this->selectedVariations);
+            }, '=', count($this->selectedVariations));
+        }
+
+        // Apply price range filter if either min or max price is set and not empty
+        if (!empty($this->priceFrom) || !empty($this->priceTo)) {
+            $query->where(function ($query) {
+                // Handle products with new_price
+                $query->where(function ($q) {
+                    $q->where('new_price', '>', 0);
+                    
+                    if (!empty($this->priceFrom)) {
+                        $q->where('new_price', '>=', $this->priceFrom);
+                    }
+                    if (!empty($this->priceTo)) {
+                        $q->where('new_price', '<=', $this->priceTo);
+                    }
+                })
+                // Handle products with regular price
+                ->orWhere(function ($q) {
+                    $q->where(function ($sq) {
+                        $sq->where('new_price', 0)->orWhereNull('new_price');
+                    });
+                    
+                    if (!empty($this->priceFrom)) {
+                        $q->where('price', '>=', $this->priceFrom);
+                    }
+                    if (!empty($this->priceTo)) {
+                        $q->where('price', '<=', $this->priceTo);
+                    }
+                });
             });
         }
 
         return $query->get();
     }
 
+    public function getPriceRangeProperty()
+    {
+        return $this->category->products()
+            ->selectRaw('MIN(CASE WHEN new_price > 0 THEN new_price ELSE price END) as min_price, 
+                        MAX(CASE WHEN new_price > 0 THEN new_price ELSE price END) as max_price')
+            ->first();
+    }
+
+    public function getAvailableParamItemsProperty()
+    {
+        $query = $this->category->products();
+
+        // Apply existing filters except price
+        if (!empty($this->selectedVariations)) {
+            $query->whereHas('paramItems', function ($query) {
+                $query->whereIn('product_param_items.id', $this->selectedVariations);
+            }, '=', count($this->selectedVariations));
+        }
+
+        // Apply price filter if set
+        if ($this->priceFrom !== null || $this->priceTo !== null) {
+            $query->where(function ($query) {
+                $query->where(function ($q) {
+                    $q->where('new_price', '>', 0);
+                    if ($this->priceFrom !== null) {
+                        $q->where('new_price', '>=', $this->priceFrom);
+                    }
+                    if ($this->priceTo !== null) {
+                        $q->where('new_price', '<=', $this->priceTo);
+                    }
+                })->orWhere(function ($q) {
+                    $q->where(function ($sq) {
+                        $sq->where('new_price', 0)->orWhereNull('new_price');
+                    });
+                    if ($this->priceFrom !== null) {
+                        $q->where('price', '>=', $this->priceFrom);
+                    }
+                    if ($this->priceTo !== null) {
+                        $q->where('price', '<=', $this->priceTo);
+                    }
+                });
+            });
+        }
+
+        // Get all parameter items that are associated with the filtered products
+        return ProductParamItem::whereHas('products', function ($q) use ($query) {
+            $q->whereIn('products.id', $query->pluck('products.id'));
+        })->pluck('id')->toArray();
+    }
+
     public function getAvailableFiltersProperty()
     {
         $categoryProductIds = $this->category->products->pluck('id');
+        $availableParamItems = $this->availableParamItems;
 
         return ProductParam::where('allow_filtering', true)
             ->whereHas('params.products', function ($query) use ($categoryProductIds) {
                 $query->whereIn('products.id', $categoryProductIds);
             })
-            ->with(['params' => function ($query) use ($categoryProductIds) {
+            ->with(['params' => function ($query) use ($categoryProductIds, $availableParamItems) {
                 $query->whereHas('products', function ($q) use ($categoryProductIds) {
                     $q->whereIn('products.id', $categoryProductIds);
                 });
+                // Add a flag to indicate if the parameter item would lead to empty results
+                $query->withCount(['products as would_have_results' => function ($q) use ($availableParamItems) {
+                    $q->whereIn('product_param_items.id', $availableParamItems);
+                }]);
             }])
             ->get();
     }
@@ -73,5 +183,26 @@ class Items extends Component
     public function closeSorting()
     {
         $this->isSortingOpened = false;
+    }
+
+    public function applyPriceRangeFilter($minPrice, $maxPrice)
+    {
+        $this->priceFrom = $minPrice;
+        $this->priceTo = $maxPrice;
+    }
+
+    public function resetPriceRangeFilter()
+    {
+        $this->priceFrom = null;
+        $this->priceTo = null;
+    }
+
+    public function resetFilters()
+    {
+        $this->selectedVariations = [];
+        $this->selectedVariationNames = [];
+        $this->priceFrom = null;
+        $this->priceTo = null;
+        $this->dispatch('filter-reset');
     }
 }
