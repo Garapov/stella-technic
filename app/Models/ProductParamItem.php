@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ProductParam;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Models\Product;
 
 class ProductParamItem extends Model
 {
@@ -20,5 +22,10 @@ class ProductParamItem extends Model
     public function productParam()
     {
         return $this->belongsTo(ProductParam::class);
+    }
+
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_product_param_item');
     }
 }
