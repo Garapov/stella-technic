@@ -4,13 +4,17 @@ namespace App\Livewire\Cart;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Checkout extends Component
 {
-    public $name = '';
-    public $email = '';
-    public $phone = '';
+    public $name;
+    public $email;
+    public $phone;
     public $products = [];
     protected $listeners = ['cartUpdated' => 'handleCartUpdate'];
 
@@ -79,6 +83,19 @@ class Checkout extends Component
         // Validate input
         $this->validate();
 
+        // Find or create user
+        $user = User::firstOrCreate(
+            ['email' => $this->email],
+            [
+                'name' => $this->name,
+                'password' => Hash::make($password = Str::random(10)),
+                'email_verified_at' => now(),
+            ]
+        );
+
+        // Login the user
+        Auth::login($user);
+
         // Calculate total price
         $totalPrice = 0;
         foreach ($this->products as $product) {
@@ -88,6 +105,7 @@ class Checkout extends Component
 
         // Create order
         $order = Order::create([
+            'user_id' => $user->id,
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,

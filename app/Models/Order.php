@@ -28,7 +28,8 @@ class Order extends Model
         'phone',
         'cart_items',
         'total_price',
-        'status'
+        'status',
+        'user_id'
     ];
 
     protected $casts = [

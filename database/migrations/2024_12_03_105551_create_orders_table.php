@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('phone');
             $table->json('cart_items');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->decimal('total_price', 10, 2);
             $table->enum('status', ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'])->default('pending');
             $table->timestamps();
