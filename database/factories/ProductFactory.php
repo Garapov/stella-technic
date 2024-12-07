@@ -23,7 +23,7 @@ class ProductFactory extends Factory
 
         $price = $this->faker->numberBetween(100, 10000);
         $discount = $this->faker->numberBetween(5, 30);
-        $new_price = round($price * (1 - $discount / 100), 2);
+        $new_price = round($price * (1 - $discount / 100), 0);
 
         // Get random Category IDs
         $categoryIds = \App\Models\ProductCategory::inRandomOrder()->take(rand(1, 3))->pluck('id')->toArray();
@@ -61,7 +61,7 @@ class ProductFactory extends Factory
             
             foreach ($paramItems as $paramItem) {
                 $imageIds = \App\Models\Image::inRandomOrder()->take(6)->pluck('id')->toArray();
-                
+
                 ProductVariant::create([
                     'product_id' => $product->id,
                     'product_param_item_id' => $paramItem->id,

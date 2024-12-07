@@ -215,11 +215,13 @@
 <script>
     document.addEventListener('livewire:initialized', () => {
         Livewire.on('filter-reset', () => {
-            const url = new URL(window.location.href);
-            const path = url.pathname;
-            console.log(path);
+            setTimeout(() => {
+                const url = new URL(window.location.href);
+                const path = url.pathname;
+                console.log(path);
             
-            window.history.pushState({}, '', path);
+                window.history.pushState({}, '', path);
+            }, 0);
         });
     });
 </script>

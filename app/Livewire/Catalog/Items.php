@@ -224,17 +224,19 @@ class Items extends Component
 
     public function resetPriceRangeFilter()
     {
-        $this->priceFrom = null;
-        $this->priceTo = null;
+        $priceRange = $this->getPriceRangeProperty();
+        $this->priceFrom = $priceRange->min_price;
+        $this->priceTo = $priceRange->max_price;
     }
 
     public function resetFilters()
     {
         $this->selectedVariations = [];
         $this->selectedVariationNames = [];
-        $this->priceFrom = null;
-        $this->priceTo = null;
-        $this->resetPage();
+        $priceRange = $this->getPriceRangeProperty();
+        $this->priceFrom = $priceRange->min_price;
+        $this->priceTo = $priceRange->max_price;
         $this->dispatch('filter-reset');
+        $this->resetPage();
     }
 }
