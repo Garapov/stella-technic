@@ -35,6 +35,13 @@ class Items extends Component
                 ->pluck('id')
                 ->toArray();
         }
+
+        // Set default price range if not provided in URL
+        if ($this->priceFrom === null && $this->priceTo === null) {
+            $priceRange = $this->getPriceRangeProperty();
+            $this->priceFrom = $priceRange->min_price;
+            $this->priceTo = $priceRange->max_price;
+        }
     }
 
     public function updatedSelectedVariations($value)
@@ -204,5 +211,21 @@ class Items extends Component
         $this->priceFrom = null;
         $this->priceTo = null;
         $this->dispatch('filter-reset');
+    }
+
+    public function updatedPriceFrom($value)
+    {
+        // Ensure priceFrom doesn't exceed priceTo
+        if ($value > $this->priceTo) {
+            $this->priceFrom = $this->priceTo;
+        }
+    }
+
+    public function updatedPriceTo($value)
+    {
+        // Ensure priceTo isn't less than priceFrom
+        if ($value < $this->priceFrom) {
+            $this->priceTo = $this->priceFrom;
+        }
     }
 }

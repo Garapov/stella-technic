@@ -108,10 +108,20 @@
                                             id="price-from"
                                             wire:model.live="priceFrom"
                                             min="{{ $this->priceRange->min_price }}"
-                                            max="{{ $this->priceRange->max_price }}"
-                                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                            max="{{ $this->priceTo }}"
+                                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 mb-1"
                                             placeholder="От"
                                         >
+                                        <input
+                                            type="range"
+                                            id="price-from-range"
+                                            wire:model.live="priceFrom"
+                                            min="{{ $this->priceRange->min_price }}"
+                                            max="{{ $this->priceTo }}"
+                                            class="block w-full rounded-lg bg-gray-50 p-0.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                        >
+                                        
+
                                     </div>
                                     <div>
                                         <label for="price-to" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">До</label>
@@ -119,10 +129,18 @@
                                             type="number"
                                             id="price-to"
                                             wire:model.live="priceTo"
-                                            min="{{ $this->priceRange->min_price }}"
+                                            min="{{ $this->priceFrom }}"
                                             max="{{ $this->priceRange->max_price }}"
-                                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 mb-1"
                                             placeholder="До"
+                                        >
+                                        <input
+                                            type="range"
+                                            id="price-to-range"
+                                            wire:model.live="priceTo"
+                                            min="{{ $this->priceFrom }}"
+                                            max="{{ $this->priceRange->max_price }}"
+                                            class="block w-full rounded-lg bg-gray-50 p-0.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                                         >
                                     </div>
                                 </div>
