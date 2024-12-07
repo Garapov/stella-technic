@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ProductVariant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,10 +20,6 @@ class ProductFactory extends Factory
         // Get random Image IDs from the database
         $imageIds = \App\Models\Image::inRandomOrder()->take(6)->pluck('id')->toArray();
         
-        // If we don't have enough images, create some
-        if (count($imageIds) < 6) {
-            $imageIds = \App\Models\Image::inRandomOrder()->take(6)->pluck('id')->toArray();
-        }
 
         $price = $this->faker->numberBetween(100, 10000);
         $discount = $this->faker->numberBetween(5, 30);
@@ -55,6 +52,26 @@ class ProductFactory extends Factory
             // Sync product params
             $paramItemIds = \App\Models\ProductParamItem::inRandomOrder()->take(rand(1, 3))->pluck('id')->toArray();
             $product->paramItems()->sync($paramItemIds);
+            
+
+            $paramItems = $product->paramItems;
+        
+            // Do something with paramItems
+            // dd($paramItems);
+            $imageIds = \App\Models\Image::inRandomOrder()->take(6)->pluck('id')->toArray();
+
+            foreach ($paramItems as $paramItem) {
+                ProductVariant::create([
+                    'product_id' => $product->id,
+                    'product_param_item_id' => $paramItem->id,
+                    'name' => $product->name . ' ' . $paramItem->title,
+                    'price' => $product->price,
+                    'new_price' => $product->new_price,
+                    'image' => $imageIds[0]
+                ]);
+            }
+
+            $product->save();
         });
     }
 }
