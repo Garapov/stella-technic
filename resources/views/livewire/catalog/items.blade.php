@@ -21,11 +21,11 @@
                         <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
                             height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16h13M4 12h13M4 8h13m4-3-4 4-4-4m8 12-4-4-4 4" />
+                                d="{{ $this->getSortOptions()[$selectedSort]['icon'] }}" />
                         </svg>
-                        {{ $this->getSortOptions()[$selectedSort] }}
+                        {{ $this->getSortOptions()[$selectedSort]['label'] }}
                     </button>
-                    <div class="absolute right-0 top-[calc(100%+10px)] z-50 w-40 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
+                    <div class="absolute right-0 top-[calc(100%+10px)] z-50 w-48 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
                         wire:click.outside="closeSorting"
                         x-show="$wire.isSortingOpened"
                         x-transition:enter="transition ease-out duration-100"
@@ -37,15 +37,20 @@
                         style="display: none;">
                         <ul class="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400"
                             aria-labelledby="sortDropdownButton">
-                            @foreach ($this->getSortOptions() as $value => $label)
+                            @foreach ($this->getSortOptions() as $value => $option)
                                 <li>
                                     <button type="button" wire:click="updateSort('{{ $value }}')"
                                         @class([
-                                            'inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-lg',
+                                            'inline-flex w-full items-center px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-lg',
                                             'text-blue-600 dark:text-blue-500' => $selectedSort === $value,
                                             'text-gray-500 dark:text-gray-400' => $selectedSort !== $value,
                                         ])>
-                                        {{ $label }}
+                                        <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+                                            height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="{{ $option['icon'] }}" />
+                                        </svg>
+                                        {{ $option['label'] }}
                                     </button>
                                 </li>
                             @endforeach
