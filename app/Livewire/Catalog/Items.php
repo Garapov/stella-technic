@@ -21,13 +21,15 @@ class Items extends Component
     public $priceFrom = null;
     public $priceTo = null;
     public $selectedVariationNames = [];
+    public $selectedSort = 'default';
 
     public ?ProductCategory $category = null;
 
     protected $queryString = [
         'selectedVariationNames' => ['as' => 'variations', 'except' => []],
         'priceFrom' => ['as' => 'price_from', 'except' => null],
-        'priceTo' => ['as' => 'price_to', 'except' => null]
+        'priceTo' => ['as' => 'price_to', 'except' => null],
+        'selectedSort' => ['as' => 'sort', 'except' => 'default']
     ];
 
     public function mount($slug)
@@ -117,6 +119,25 @@ class Items extends Component
             });
         }
 
+        // Apply sorting
+        switch ($this->selectedSort) {
+            case 'price_asc':
+                $query->orderByRaw('CASE WHEN new_price > 0 THEN new_price ELSE price END ASC');
+                break;
+            case 'price_desc':
+                $query->orderByRaw('CASE WHEN new_price > 0 THEN new_price ELSE price END DESC');
+                break;
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            default:
+                // Default sorting logic here if needed
+                break;
+        }
+
         return $query->paginate(20);
     }
 
@@ -191,6 +212,24 @@ class Items extends Component
             ->get();
     }
 
+    public function getSortOptions()
+    {
+        return [
+            'default' => 'По умолчанию',
+            'price_asc' => 'Сначала дешевые',
+            'price_desc' => 'Сначала дорогие',
+            'name_asc' => 'По названию А-Я',
+            'name_desc' => 'По названию Я-А',
+        ];
+    }
+
+    public function updateSort($value)
+    {
+        $this->selectedSort = $value;
+        $this->isSortingOpened = false;
+        $this->resetPage();
+    }
+
     public function render()
     {
         return view('livewire.catalog.items');
@@ -236,6 +275,7 @@ class Items extends Component
         $priceRange = $this->getPriceRangeProperty();
         $this->priceFrom = $priceRange->min_price;
         $this->priceTo = $priceRange->max_price;
+        $this->selectedSort = 'default';
         $this->dispatch('filter-reset');
         $this->resetPage();
     }
