@@ -13,7 +13,7 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         \App\Models\Product::factory()
-            ->count(500) // Create 500 products
+            ->count(100) // Create 500 products
             ->create();
     }
 }
