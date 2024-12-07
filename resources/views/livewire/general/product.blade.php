@@ -32,7 +32,7 @@
     }
 }">
     <div class="h-56 w-full">
-        <a href="{{ route('client.product_detail') }}" wire:navigate>
+        <a href="{{ route('client.product_detail', $product->slug) }}" wire:navigate>
             <img class="mx-auto h-full w-full"
                 :src="`/storage/${productData.img.uuid}/filament-thumbnail.${productData.img.file_extension}`" alt="" />
         </a>
@@ -82,7 +82,7 @@
             </div>
         </div>
 
-        <a href="{{ route('client.product_detail') }}"
+        <a href="{{ route('client.product_detail', $product->slug) }}"
             class="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate x-text="productData.name"></a>
         <ul>
             @foreach ($product->variants->groupBy('param.productParam.name') as $paramName => $variants)

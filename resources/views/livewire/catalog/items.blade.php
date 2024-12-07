@@ -2,7 +2,7 @@
     @if ($category)
         <div class="mx-auto container relative">
             <!-- Loading Overlay -->
-            <div wire:loading.flex wire:target="selectedCategories, selectedVariations, priceFrom, priceTo" 
+            <div wire:loading.flex wire:target="selectedCategories, selectedVariations, priceFrom, priceTo, updateSort" 
             class="fixed inset-0 z-[9999] items-center justify-center bg-black/20 backdrop-blur-sm">
                 <div class="flex items-center gap-2 rounded-lg bg-white/80 px-6 py-4 shadow-lg dark:bg-gray-800/80">
                     <div class="animate-spin w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full"></div>
@@ -181,13 +181,31 @@
                     </div>
                 </div>
                 <div class="flex flex-col gap-4 col-span-3">
-                    <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 lg:grid-cols-2 xl:grid-cols-3">
-                        @foreach ($this->products as $product)
-                            @livewire('general.product', [
-                                'product' => $product,
-                            ], key($product->id))
-                        @endforeach
-                    </div>
+                    @if($this->products->isEmpty())
+                        <div class="flex flex-col items-center justify-center p-8 text-center">
+                            <div class="mb-4">
+                                <svg class="w-12 h-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <h3 class="mb-2 text-xl font-semibold text-gray-900 dark:text-white">Ничего не найдено</h3>
+                            <p class="text-gray-500 dark:text-gray-400">По выбранным фильтрам товары не найдены. Попробуйте изменить параметры поиска.</p>
+                            <button wire:click="resetFilters" class="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800">
+                                <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Сбросить фильтры
+                            </button>
+                        </div>
+                    @else
+                        <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 lg:grid-cols-2 xl:grid-cols-3">
+                            @foreach ($this->products as $product)
+                                @livewire('general.product', [
+                                    'product' => $product,
+                                ], key($product->id))
+                            @endforeach
+                        </div>
+                    @endif
                     {{ $this->products->links() }}
                 </div>
             </div>

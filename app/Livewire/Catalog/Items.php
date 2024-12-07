@@ -138,7 +138,7 @@ class Items extends Component
                 break;
         }
 
-        return $query->paginate(20);
+        return $query->paginate(18);
     }
 
     public function getPriceRangeProperty()
