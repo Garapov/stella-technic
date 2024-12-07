@@ -117,7 +117,7 @@ class Items extends Component
             });
         }
 
-        return $query->paginate(1);
+        return $query->paginate(20);
     }
 
     public function getPriceRangeProperty()

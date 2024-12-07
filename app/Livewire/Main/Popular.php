@@ -10,7 +10,7 @@ class Popular extends Component
     public function render()
     {
         return view('livewire.main.popular', [
-            'products' => Product::all()
+            'products' => Product::paginate(4)
         ]);
     }
 }

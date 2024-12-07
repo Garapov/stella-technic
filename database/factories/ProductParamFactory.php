@@ -16,8 +16,30 @@ class ProductParamFactory extends Factory
      */
     public function definition(): array
     {
-        return [
-            //
+        $paramTypes = [
+            'text',
+            'number',
+            'select',
+            'multiselect',
+            'boolean'
         ];
+
+        return [
+            'name' => fake()->words(rand(1, 2), true),
+            'type' => fake()->randomElement($paramTypes),
+            'allow_filtering' => fake()->boolean(70) // 70% chance of being filterable
+        ];
+    }
+
+    /**
+     * Configure the model factory.
+     */
+    public function configure(): static
+    {
+        return $this->afterMaking(function ($param) {
+            // Additional configuration if needed
+        })->afterCreating(function ($param) {
+            // Additional actions after creation if needed
+        });
     }
 }
