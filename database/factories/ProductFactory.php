@@ -58,9 +58,10 @@ class ProductFactory extends Factory
         
             // Do something with paramItems
             // dd($paramItems);
-            $imageIds = \App\Models\Image::inRandomOrder()->take(6)->pluck('id')->toArray();
-
+            
             foreach ($paramItems as $paramItem) {
+                $imageIds = \App\Models\Image::inRandomOrder()->take(6)->pluck('id')->toArray();
+                
                 ProductVariant::create([
                     'product_id' => $product->id,
                     'product_param_item_id' => $paramItem->id,
