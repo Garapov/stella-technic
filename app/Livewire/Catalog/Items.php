@@ -7,9 +7,14 @@ use App\Models\ProductCategory;
 use App\Models\ProductParam;
 use App\Models\ProductParamItem;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Items extends Component
 {
+    use WithPagination;
+
+    protected $paginationTheme = 'tailwind';
+
     public $isFiltersOpened = false;
     public $isSortingOpened = false;
     public $selectedVariations = [];
@@ -50,6 +55,25 @@ class Items extends Component
         $this->selectedVariationNames = ProductParamItem::whereIn('id', $this->selectedVariations)
             ->pluck('title')
             ->toArray();
+        $this->resetPage();
+    }
+
+    public function updatedPriceFrom($value)
+    {
+        // Ensure priceFrom doesn't exceed priceTo
+        if ($value > $this->priceTo) {
+            $this->priceFrom = $this->priceTo;
+        }
+        $this->resetPage();
+    }
+
+    public function updatedPriceTo($value)
+    {
+        // Ensure priceTo isn't less than priceFrom
+        if ($value < $this->priceFrom) {
+            $this->priceTo = $this->priceFrom;
+        }
+        $this->resetPage();
     }
 
     public function getProductsProperty()
@@ -93,7 +117,7 @@ class Items extends Component
             });
         }
 
-        return $query->get();
+        return $query->paginate(1);
     }
 
     public function getPriceRangeProperty()
@@ -210,22 +234,7 @@ class Items extends Component
         $this->selectedVariationNames = [];
         $this->priceFrom = null;
         $this->priceTo = null;
+        $this->resetPage();
         $this->dispatch('filter-reset');
-    }
-
-    public function updatedPriceFrom($value)
-    {
-        // Ensure priceFrom doesn't exceed priceTo
-        if ($value > $this->priceTo) {
-            $this->priceFrom = $this->priceTo;
-        }
-    }
-
-    public function updatedPriceTo($value)
-    {
-        // Ensure priceTo isn't less than priceFrom
-        if ($value < $this->priceFrom) {
-            $this->priceTo = $this->priceFrom;
-        }
     }
 }
