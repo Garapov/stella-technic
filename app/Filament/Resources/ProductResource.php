@@ -64,6 +64,38 @@ class ProductResource extends Resource
                                     ->inline(false),
                             ])
                         ])->columnSpan('full'),
+                        Tab::make('Описание')->schema([
+                            Section::make()->columns([
+                                'sm' => 1,
+                                'xl' => 1,
+                                '2xl' => 1,
+                            ])
+                            ->schema([
+                                Forms\Components\Textarea::make('short_description')
+                                    ->required()
+                                    ->label('Короткое описание')
+                                    ->columnSpanFull(),
+                                Forms\Components\RichEditor::make('description')
+                                    ->toolbarButtons([
+                                        'blockquote',
+                                        'bold',
+                                        'bulletList',
+                                        'codeBlock',
+                                        'h2',
+                                        'h3',
+                                        'italic',
+                                        'link',
+                                        'orderedList',
+                                        'redo',
+                                        'strike',
+                                        'underline',
+                                        'undo',
+                                    ])
+                                    ->required()
+                                    ->label('Описание')
+                                    ->columnSpanFull(),
+                            ])
+                        ])->columnSpan('full'),
                         Tab::make('Изображения')->schema([
                             Section::make()->columns([
                                 'sm' => 1,

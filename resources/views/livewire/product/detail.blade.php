@@ -56,9 +56,9 @@
         
         <div class="mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8 mb-4">
             <a href="#" title=""
-                class="flex items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                class="flex items-center justify-center py-2.5 px-2.5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                 role="button">
-                <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                         stroke-width="2"
@@ -94,35 +94,34 @@
             </div>
         </div>
 
-        @foreach ($product->variants->groupBy('param.productParam.name') as $paramName => $variants)
-            <div class="mb-4">
-                <span class="font-bold text-gray-700 dark:text-gray-300">{{ $paramName }}:</span>
-                <div class="flex items-center mt-2">
-                    @foreach ($variants as $variant)
-                        <button 
-                            @click="setSelected(variant)"
-                            :class="{'bg-blue-500 dark:bg-blue-700': selectedVariation?.id === {{ $variant->id }}}"
-                            class="bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-full font-bold mr-2 hover:bg-gray-400 dark:hover:bg-gray-600"
-                        >
-                            {{ $variant->param->value }}
-                        </button>
-                    @endforeach
-                </div>
-            </div>
-        @endforeach
+        <ul>
+            @foreach ($product->variants->groupBy('param.productParam.name') as $paramName => $variants)
+                <li class="mt-4">
+                    <p class="text-sm font-bold text-gray-900 dark:text-white">{{ $paramName }}</p>
+                    <ul class="mt-2 flex items-center gap-4">
+                        @foreach ($variants as $variant)
+                            @switch ($variant->param->productParam->type)
+                                @case('color')
+                                    <li class="flex items-center gap-2">
+                                        <div class="h-7 w-7 rounded-full" :class="{'ring-4 ring-gray-300 cursor-default': productData.id === {{ $variant->id }}, 'cursor-pointer': productData.id !== {{ $variant->id }}}" style="background-color: {{ $variant->param->value }}" x-on:click="setSelected({{ $variant }})"></div>
+                                    </li>
+                                    @break
+                                @default
+                                    <li class="flex items-center gap-2 p-3 border border- gray-200 rounded cursor-pointer" :class="{'ring-4 ring-gray-300 cursor-default': productData.id === {{ $variant->id }},  'cursor-pointer': productData.id !== {{ $variant->id }}}" x-on:click="setSelected({{ $variant }})">
+                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ $variant->param->title }}</p>
+                                    </li>
+                            @endswitch
+                        @endforeach
+                    </ul>
+                </li>
+            @endforeach
+        </ul>
 
         <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
+        
 
         <p class="mb-6 text-gray-500 dark:text-gray-400">
-            Studio quality three mic array for crystal clear calls and voice
-            recordings. Six-speaker sound system for a remarkably robust and
-            high-quality audio experience. Up to 256GB of ultrafast SSD storage.
-        </p>
-
-        <p class="text-gray-500 dark:text-gray-400">
-            Two Thunderbolt USB 4 ports and up to two USB 3 ports. Ultrafast
-            Wi-Fi 6 and Bluetooth 5.0 wireless. Color matched Magic Mouse with
-            Magic Keyboard or Magic Keyboard with Touch ID.
+            {!! str($product->description)->sanitizeHtml() !!}
         </p>
     </div>
 </div>

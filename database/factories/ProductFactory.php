@@ -30,12 +30,20 @@ class ProductFactory extends Factory
 
         // Get random Product Param Item IDs
         $paramItemIds = \App\Models\ProductParamItem::inRandomOrder()->take(rand(1, 3))->pluck('id')->toArray();
+        
+        $paragraphs = $this->faker->paragraphs(rand(2, 6));
+        $description = "";
+        foreach ($paragraphs as $paragraph) {
+            $description .= "<p>{$paragraph}</p>";
+        }
 
         return [
             'name' => $this->faker->word,
             'image' => $imageIds[0],
             'price' => $price,
             'new_price' => $new_price,
+            'short_description' => $this->faker->text,
+            'description' => $description,
             'count' => $this->faker->numberBetween(0, 100),
             'gallery' => array_slice($imageIds, 1, rand(1, 5)),
         ];

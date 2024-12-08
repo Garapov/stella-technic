@@ -108,7 +108,7 @@
         </ul>
 
         <div class="mt-4 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-4 asdasdasdasdas">
+            <div class="flex items-center gap-4">
                 
                 <p class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white"><span x-text="productData.new_price ?? productData.price"></span> р.</p>
                 <p class="text-lg line-through font-extrabold leading-tight text-gray-600 dark:text-white" x-show="productData.new_price !== null"><span x-text="productData.price"></span> р.</p>

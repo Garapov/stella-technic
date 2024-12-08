@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('image');
             $table->string('slug')->unique();
             $table->longText('gallery');
+            $table->longText('short_description');
+            $table->longText('description');
             $table->integer('price');
             $table->integer('new_price')->nullable();
             $table->boolean('is_popular')->default(false);
