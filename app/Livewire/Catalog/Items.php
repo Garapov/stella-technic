@@ -143,10 +143,20 @@ class Items extends Component
 
     public function getPriceRangeProperty()
     {
+        if (!$this->category) {
+            return (object)[
+                'min_price' => 0,
+                'max_price' => 0
+            ];
+        }
+
         return $this->category->products()
             ->selectRaw('MIN(CASE WHEN new_price > 0 THEN new_price ELSE price END) as min_price, 
                         MAX(CASE WHEN new_price > 0 THEN new_price ELSE price END) as max_price')
-            ->first();
+            ->first() ?? (object)[
+                'min_price' => 0,
+                'max_price' => 0
+            ];
     }
 
     public function getAvailableParamItemsProperty()
