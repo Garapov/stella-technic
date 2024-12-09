@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use App\Notifications\WelcomeNotification;
+use App\Notifications\OrderCreatedNotification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -35,6 +36,9 @@ class Checkout extends Component
     public function mount()
     {
         $this->products = [];
+        $this->name = Auth::user() ? Auth::user()->name : '';
+        $this->email = Auth::user() ? Auth::user()->email : '';
+        $this->phone = Auth::user() ? Auth::user()->phone : '';
     }
 
     public function render()
@@ -84,23 +88,28 @@ class Checkout extends Component
         // Validate input
         $this->validate();
 
-        // Find or create user
-        $user = User::where('email', $this->email)->firstOr(function () {
-            $password = Str::random(10);
-            $new_user = User::create([
-                'name' => $this->name,
-                'password' => Hash::make($password),
-                'email' => $this->email,
-                'phone' => $this->phone,
-            ]);
+        if (Auth::user()) {
+            $user = Auth::user();
+        } else {
 
-            $new_user->notify(new WelcomeNotification($password));
+            // Find or create user
+            $user = User::where('email', $this->email)->firstOr(function () {
+                $password = Str::random(10);
+                $new_user = User::create([
+                    'name' => $this->name,
+                    'password' => Hash::make($password),
+                    'email' => $this->email,
+                    'phone' => $this->phone,
+                ]);
 
-            return $new_user;
-        });
+                $new_user->notify(new WelcomeNotification($password));
 
-        // Login the user
-        Auth::login($user);
+                return $new_user;
+            });
+
+            // Login the user
+            Auth::login($user);
+        }
 
         // Calculate total price
         $totalPrice = 0;
@@ -119,6 +128,9 @@ class Checkout extends Component
             'total_price' => $totalPrice,
             'status' => 'pending'
         ]);
+
+        // После создания заказа отправляем уведомление
+        $order->user->notify(new OrderCreatedNotification($order));
 
         // Clear cart
         session()->forget('cart');
