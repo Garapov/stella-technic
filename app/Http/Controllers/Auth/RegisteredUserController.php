@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Notifications\WelcomeNotification;
+use Illuminate\Support\Facades\Log;
 
 class RegisteredUserController extends Controller
 {
@@ -36,25 +38,40 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->email,
-            'company_name' => $request->company_name,
-            'phone' => $request->phone,
-            'inn' => $request->inn,
-            'kpp' => $request->kpp,
-            'bik' => $request->bik,
-            'correspondent_account' => $request->correspondent_account,
-            'bank_account' => $request->bank_account,
-            'yur_address' => $request->yur_address,
-        ]);
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'phone' => $request->email,
+                'company_name' => $request->company_name,
+                'phone' => $request->phone,
+                'inn' => $request->inn,
+                'kpp' => $request->kpp,
+                'bik' => $request->bik,
+                'correspondent_account' => $request->correspondent_account,
+                'bank_account' => $request->bank_account,
+                'yur_address' => $request->yur_address,
+            ]);
 
-        event(new Registered($user));
+            try {
+                $user->notify(new WelcomeNotification($request->password));
+            } catch (\Exception $e) {
+                Log::error('Failed to send welcome notification', [
+                    'error' => $e->getMessage(),
+                    'user_id' => $user->id
+                ]);
+            }
 
-        Auth::login($user);
+            event(new Registered($user));
+            Auth::login($user);
 
-        return redirect(route('profile.edit', absolute: false));
+            return redirect(route('profile.edit', absolute: false));
+        } catch (\Exception $e) {
+            Log::error('Failed to register user', [
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
+        }
     }
 }

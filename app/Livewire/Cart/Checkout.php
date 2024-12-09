@@ -5,6 +5,7 @@ namespace App\Livewire\Cart;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Notifications\WelcomeNotification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -84,14 +85,19 @@ class Checkout extends Component
         $this->validate();
 
         // Find or create user
-        $user = User::firstOrCreate(
-            ['email' => $this->email],
-            [
+        $user = User::where('email', $this->email)->firstOr(function () {
+            $password = Str::random(10);
+            $new_user = User::create([
                 'name' => $this->name,
-                'password' => Hash::make($password = Str::random(10)),
-                'email_verified_at' => now(),
-            ]
-        );
+                'password' => Hash::make($password),
+                'email' => $this->email,
+                'phone' => $this->phone,
+            ]);
+
+            $new_user->notify(new WelcomeNotification($password));
+
+            return $new_user;
+        });
 
         // Login the user
         Auth::login($user);
