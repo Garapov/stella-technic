@@ -1,7 +1,7 @@
 @aware(['page'])
 <div>
     @if (count($clients))
-        <section class="bg-gray-900" x-data="clients" id="clients-slider">
+        <section class="bg-gray-400" x-data="clients" id="clients-slider">
             <div class="container py-10 mx-auto">
                 <div class="flex items-center justify-between mb-10">
                     <p class="text-4xl text-white">{{ $title }}</p>
@@ -16,7 +16,7 @@
                         </div>
                         @if ($mainlink)
                             <a href="#"
-                                class="inline-flex items-center font-medium text-blue-500 hover:underline">
+                                class="inline-flex items-center font-medium text-white hover:underline">
                                 Смотреть все
                                 <x-fas-arrow-right class="w-4 h-4 ms-2" />
                             </a>
@@ -31,7 +31,7 @@
                         @foreach ($clients as $client)
                         <li class="glide__slide">
                             <a href="#" class="flex justify-start items-center opacity-50 hover:opacity-100">
-                                <img src="{{ asset($client->image) }}" class="h-9" alt="">    
+                                <img src="{{ asset($client->image) }}" class="w-full" alt="">    
                             </a>
                         </li>
                         

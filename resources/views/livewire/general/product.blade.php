@@ -1,4 +1,4 @@
-<div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900" x-data="{
+<div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900 relative" x-data="{
     cart_quantity: 1,
     product: @js($product),
     selectedVariation: null,
@@ -31,12 +31,21 @@
         return this.product;
     }
 }">
-    <div class="h-56 w-full">
+    @if($product->trashed())
+        <div class="absolute inset-0 bg-black/50 rounded-lg z-10 flex items-center justify-center">
+            <div class="bg-red-600 text-white px-4 py-2 rounded-md font-medium">
+                Товар недоступен
+            </div>
+        </div>
+    @endif
+
+    <div class="h-56 w-full {{ $product->trashed() ? 'opacity-50' : '' }}">
         <a href="{{ route('client.product_detail', $product->slug) }}" wire:navigate>
             <img class="mx-auto h-full w-full"
                 :src="`/storage/${productData.img.uuid}/filament-thumbnail.${productData.img.file_extension}`" alt="" />
         </a>
     </div>
+
     <div class="pt-6">
         <div class="mb-4 flex items-center justify-between gap-4">
             

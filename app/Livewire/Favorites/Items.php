@@ -32,6 +32,7 @@ class Items extends Component
 
         $this->products = Product::with(['variants', 'variants.param', 'variants.param.productParam', 'img'])
             ->whereIn('id', $favoriteIds)
+            ->withTrashed()
             ->get();
     }
 

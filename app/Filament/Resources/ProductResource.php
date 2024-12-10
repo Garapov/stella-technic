@@ -29,7 +29,7 @@ class ProductResource extends Resource
     protected static ?string $navigationLabel = 'Товары';
     protected static ?string $modelLabel = 'Товар';
     protected static ?string $pluralModelLabel = 'Товары';
-    protected static ?string $navigationGroup = 'Каталог';
+    protected static ?string $navigationGroup = 'Магазин';
 
     public static function form(Form $form): Form
     {
@@ -186,16 +186,17 @@ class ProductResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\ForceDeleteBulkAction::make(),
+                Tables\Actions\RestoreBulkAction::make(),
             ]);
     }
 
@@ -205,7 +206,13 @@ class ProductResource extends Resource
             RelationManagers\VariantsRelationManager::class,
         ];
     }
-
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
     public static function getPages(): array
     {
         return [
