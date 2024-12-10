@@ -8,6 +8,7 @@ import mainSlider from './components/main-slider';
 import clientsSlider from './components/clients';
 
 import cart from './components/cart';
+import favorites from './components/favorites';
 
 window.glide = Glide;
 
@@ -18,6 +19,8 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('dropdown', dropdown);
     Alpine.data('main_slider', mainSlider);
     Alpine.data('clients', clientsSlider);
+    Alpine.store('favorites', favorites);
+    Alpine.store('favorites').init();
 });
 
 
@@ -25,10 +28,9 @@ document.addEventListener('alpine:init', () => {
 
 document.addEventListener('livewire:init', () => {
     window.Livewire.on('cart-cleared', (event) => {
-        // $storage.cart.list = [];
         Alpine.store('cart').list = [];
     });
- });
+});
 
 
 Alpine.plugin(mask);
