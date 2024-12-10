@@ -20,14 +20,16 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Outerweb\FilamentImageLibrary\Filament\Forms\Components\ImageLibraryPicker;
 use App\Models\ProductParam;
 use App\Models\ProductParamItem;
+use Illuminate\Support\Str;
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationLabel = 'Товары';
-
-    protected static ?string $navigationGroup = 'Магазин';
+    protected static ?string $modelLabel = 'Товар';
+    protected static ?string $pluralModelLabel = 'Товары';
+    protected static ?string $navigationGroup = 'Каталог';
 
     public static function form(Form $form): Form
     {
@@ -188,6 +190,7 @@ class ProductResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

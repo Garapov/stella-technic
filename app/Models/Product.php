@@ -19,6 +19,7 @@ class Product extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'image',
         'price',
         'new_price',
@@ -44,7 +45,8 @@ class Product extends Model
     {
         return SlugOptions::create()
             ->generateSlugsFrom('name')
-            ->saveSlugsTo('slug');
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate();
     }
 
     /**
