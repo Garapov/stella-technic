@@ -77,8 +77,9 @@
                 </svg>
                 <div data-favorites-count 
                     class="absolute -right-1 -top-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"
-                    x-text="$store.favorites.getCount() || ''"
-                    x-show="$store.favorites.getCount() > 0"
+                    x-cloak
+                    x-show="$store.favorites?.list?.length > 0"
+                    x-text="$store.favorites?.list?.length || ''"
                 ></div>
             </a>
         </div>
