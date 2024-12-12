@@ -9,7 +9,10 @@ Route::prefix('/')->name('client.')->group(function () {
     Route::view('/product/{product_slug}', 'client.product_detail')->name('product_detail');
     Route::view('/cart', 'client.cart')->name('cart');
     Route::view('/checkout', 'client.checkout')->name('checkout');
-    Route::view('/simple', 'client.simple')->name('simple');
+    // Route::get('/simple/{page:slug}', function ($page) {
+    //     logger()->info('Page route hit:', ['page' => $page]);
+    //     return view('client.simple', ['page' => $page]);
+    // })->name('simple');
     Route::view('/favorites', 'client.favorites')->name('favorites');
     Route::get('/thanks', function () {
         $orderId = session('order_id', null);

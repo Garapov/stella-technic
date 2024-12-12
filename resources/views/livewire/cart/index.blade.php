@@ -13,7 +13,12 @@
 }">
     
   <div class="mx-auto container px-4 2xl:px-0">
-    <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Корзина</h2>
+    <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">
+      <div>
+        @livewire('general.breadcrumbs')
+        <h2 class="mt-3 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Избранное</h2>
+      </div>
+    </div>
 
     <div x-show="isLoading" class="mt-6">
       <div class="animate-pulse">

@@ -4,6 +4,7 @@ namespace App\Livewire\General;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
+use Z3d0X\FilamentFabricator\Models\Page;
 use Livewire\Component;
 use Illuminate\Support\Facades\Route;
 
@@ -21,8 +22,40 @@ class Breadcrumbs extends Component
             'active' => false
         ];
 
+        // Проверяем параметры маршрута для страниц Fabricator
+        $parameters = $currentRoute->parameters();
+        if (isset($parameters['filamentFabricatorPage'])) {
+            $page = $parameters['filamentFabricatorPage'];
+            
+            if ($page instanceof \Z3d0X\FilamentFabricator\Models\Page) {
+                $breadcrumbs[] = [
+                    'title' => $page->title,
+                    'url' => null,
+                    'active' => true
+                ];
+            }
+        }
+        // Проверяем обычные страницы
+        elseif (in_array($currentRoute->getName(), ['filament-fabricator.page', 'client.simple'])) {
+            $slug = $currentRoute->parameter('slug');
+            
+            if (!$slug) {
+                $uri = request()->getRequestUri();
+                $slug = trim($uri, '/');
+            }
+            
+            $page = Page::where('slug', $slug)->first();
+            
+            if ($page) {
+                $breadcrumbs[] = [
+                    'title' => $page->title,
+                    'url' => null,
+                    'active' => true
+                ];
+            }
+        }
         // В зависимости от текущего маршрута добавляем нужные хлебные крошки
-        if ($currentRoute->getName() === 'client.catalog') {
+        elseif ($currentRoute->getName() === 'client.catalog') {
             $breadcrumbs[] = [
                 'title' => 'Каталог',
                 'url' => route('client.catalog', ['slug' => 'all']),
