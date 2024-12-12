@@ -13,16 +13,16 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Forms\Set;
-use Filament\Forms\Get;
 
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
-    protected static ?string $navigationGroup = 'Shop';
+    protected static ?string $navigationGroup = 'Магазин';
+    protected static ?string $navigationLabel = 'Заказы';
+    protected static ?string $modelLabel = 'Заказ';
+    protected static ?string $pluralModelLabel = 'Заказы';
     protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
@@ -42,7 +42,6 @@ class OrderResource extends Resource
                             ->maxLength(255),
                         Forms\Components\TextInput::make('phone')
                             ->label('Phone Number')
-                            ->tel()
                             ->required()
                             ->maxLength(20),
                     ])->columns(3),
@@ -185,6 +184,16 @@ class OrderResource extends Resource
     public static function getRelations(): array
     {
         return [];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('status', 'pending')->get()->count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return static::getModel()::where('status', 'pending')->get()->count() > 10 ? 'gray' : 'gray';
     }
 
     public static function getPages(): array
