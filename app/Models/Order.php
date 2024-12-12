@@ -12,14 +12,16 @@ class Order extends Model
 
     // Exact enum values from database schema
     public const STATUS_PENDING = 'pending';
-    public const STATUS_PROCESSING = 'processing';
-    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_CONFIRMED = 'confirmed';
+    public const STATUS_SHIPPED = 'shipped';
+    public const STATUS_DELIVERED = 'delivered';
     public const STATUS_CANCELLED = 'cancelled';
 
     public const STATUS = [
         self::STATUS_PENDING,
-        self::STATUS_PROCESSING,
-        self::STATUS_COMPLETED,
+        self::STATUS_CONFIRMED,
+        self::STATUS_SHIPPED,
+        self::STATUS_DELIVERED,
         self::STATUS_CANCELLED
     ];
 
@@ -35,6 +37,7 @@ class Order extends Model
 
     protected $casts = [
         'cart_items' => 'array',
+        'total_price' => 'decimal:2'
     ];
 
     protected $attributes = [

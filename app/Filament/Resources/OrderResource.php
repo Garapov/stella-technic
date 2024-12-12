@@ -107,10 +107,11 @@ class OrderResource extends Resource
                         Select::make('status')
                             ->label('Order Status')
                             ->options([
-                                'pending' => 'Pending',
-                                'processing' => 'Processing',
-                                'completed' => 'Completed',
-                                'cancelled' => 'Cancelled'
+                                'pending' => 'Ожидает обработки',
+                                'confirmed' => 'Подтвержден',
+                                'shipped' => 'Отправлен',
+                                'delivered' => 'Доставлен',
+                                'cancelled' => 'Отменен'
                             ])
                             ->required()
                             ->default('pending')
@@ -143,15 +144,17 @@ class OrderResource extends Resource
                     ->badge()
                     ->color(fn (string $state): string => match (strtolower($state)) {
                         'pending' => 'warning',
-                        'processing' => 'info',
-                        'completed' => 'success',
+                        'confirmed' => 'info',
+                        'shipped' => 'primary',
+                        'delivered' => 'success',
                         'cancelled' => 'danger',
                         default => 'gray',
                     })
                     ->icon(fn (string $state): string => match (strtolower($state)) {
                         'pending' => 'heroicon-o-clock',
-                        'processing' => 'heroicon-o-arrow-path',
-                        'completed' => 'heroicon-o-check-badge',
+                        'confirmed' => 'heroicon-o-check',
+                        'shipped' => 'heroicon-o-truck',
+                        'delivered' => 'heroicon-o-check-badge',
                         'cancelled' => 'heroicon-o-x-circle',
                         default => 'heroicon-o-question-mark-circle',
                     }),
@@ -163,10 +166,11 @@ class OrderResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
-                        'pending' => 'Pending',
-                        'processing' => 'Processing',
-                        'completed' => 'Completed',
-                        'cancelled' => 'Cancelled'
+                        'pending' => 'Ожидает обработки',
+                        'confirmed' => 'Подтвержден',
+                        'shipped' => 'Отправлен',
+                        'delivered' => 'Доставлен',
+                        'cancelled' => 'Отменен'
                     ])
             ])
             ->actions([
