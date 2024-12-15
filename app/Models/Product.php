@@ -12,8 +12,10 @@ use Outerweb\ImageLibrary\Models\Image;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
-class Product extends Model
+class Product extends Model implements Searchable
 {
     /** @use HasFactory<\Database\Factories\ProductFactory> */
     use HasFactory, HasSlug, SoftDeletes;
@@ -41,6 +43,17 @@ class Product extends Model
         'variants',
         'img'
     ];
+
+    public function getSearchResult(): SearchResult
+     {
+        $url = route('client.product_detail', $this->slug);
+     
+         return new \Spatie\Searchable\SearchResult(
+            $this,
+            $this->name,
+            $url
+         );
+     }
 
     /**
      * Get the options for generating the slug.
