@@ -25,7 +25,10 @@ class Product extends Model
         'price',
         'new_price',
         'count',
-        'gallery'
+        'gallery',
+        'short_description',
+        'description',
+        'is_popular'
     ];
 
     protected $casts = [

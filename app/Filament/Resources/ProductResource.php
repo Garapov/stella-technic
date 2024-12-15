@@ -17,10 +17,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Outerweb\FilamentImageLibrary\Filament\Forms\Components\ImageLibraryPicker;
-use App\Models\ProductParam;
 use App\Models\ProductParamItem;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
 
 class ProductResource extends Resource
 {
@@ -30,6 +28,9 @@ class ProductResource extends Resource
     protected static ?string $modelLabel = 'Товар';
     protected static ?string $pluralModelLabel = 'Товары';
     protected static ?string $navigationGroup = 'Магазин';
+
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
     {
@@ -198,6 +199,19 @@ class ProductResource extends Resource
                 Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
             ]);
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        // dd($record->categories->pluck('title')->implode(', '));
+        return [
+            'Категории' => $record->categories->pluck('title')->implode(', '),
+        ];
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'slug', 'short_description', 'description'];
     }
 
     public static function getRelations(): array
