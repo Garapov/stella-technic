@@ -50,9 +50,9 @@ class ProductCategory extends Model
         return 'slug';
     }
 
-    public function categories(): BelongsTo
+    public function categories(): HasMany
     {
-        return $this->belongsTo(ProductCategory::class, 'parent_id');
+        return $this->hasMany(ProductCategory::class, 'parent_id', 'id');
     }
 
     public function products(): BelongsToMany
