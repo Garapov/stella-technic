@@ -11,17 +11,20 @@
         </svg>
         <span class="sr-only">Поиск</span>
     </button>
-    <div class="absolute top-full left-0 right-0">
-        There are {{ $results->count() }} results.
+    @if($searchString != '' && $results->count() > 0)
+        <div class="absolute top-full left-0 right-0 bg-gray-50 dark:bg-gray-700 border-s-gray-50 dark:border-s-gray-700 p-4">
 
-        @foreach($results->groupByType() as $type => $modelSearchResults)
-        <h2>{{ $type }}</h2>
-        
-            @foreach($modelSearchResults as $searchResult)
-                <ul>
-                        <a href="{{ $searchResult->url }}">{{ $searchResult->title }}</a>
-                </ul>
-            @endforeach
-        @endforeach
-    </div>
+            @forelse($results->groupByType() as $type => $modelSearchResults)
+                <h2 class="text-lg font-bold mb-2">{{ $type }}</h2>
+            
+                @foreach($modelSearchResults as $searchResult)
+                    <ul>
+                            <a href="{{ $searchResult->url }}">{{ $searchResult->title }}</a>
+                    </ul>
+                @endforeach
+            @empty
+                <p>No results found</p>
+            @endforelse
+        </div>
+    @endif
 </div>

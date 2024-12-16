@@ -154,6 +154,18 @@ class ProductResource extends Resource
                                 })
                                 ->columnSpanFull()
                         ])->columnSpan('full'),
+                        Tab::make('Поиск')->schema([
+                            Section::make()->columns([
+                                'sm' => 1,
+                                'xl' => 1,
+                                '2xl' => 1,
+                            ])
+                            ->schema([
+                                Forms\Components\Textarea::make('synonims')
+                                    ->label('Синонимы для поиска')
+                                    ->columnSpanFull(),
+                            ])
+                        ])
                     ])->columnSpan('full'), 
                 
                 

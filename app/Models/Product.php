@@ -20,6 +20,8 @@ class Product extends Model implements Searchable
     /** @use HasFactory<\Database\Factories\ProductFactory> */
     use HasFactory, HasSlug, SoftDeletes;
 
+    public $searchableType = 'Товары';
+
     protected $fillable = [
         'name',
         'slug',
@@ -30,6 +32,7 @@ class Product extends Model implements Searchable
         'gallery',
         'short_description',
         'description',
+        'synonims',
         'is_popular'
     ];
 
@@ -47,12 +50,17 @@ class Product extends Model implements Searchable
     public function getSearchResult(): SearchResult
      {
         $url = route('client.product_detail', $this->slug);
-     
-         return new \Spatie\Searchable\SearchResult(
+
+        // dd($this);
+        $searchResult = new \Spatie\Searchable\SearchResult(
             $this,
             $this->name,
             $url
-         );
+        );
+
+        // dd($searchResult);
+     
+        return $searchResult;
      }
 
     /**

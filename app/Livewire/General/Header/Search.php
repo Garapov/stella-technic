@@ -9,14 +9,14 @@ use Spatie\Searchable\Search as SearchableSearch;
 
 class Search extends Component
 {
-    public $searchString = 'Введите что то для поиска';
+    public $searchString = '';
 
     public function render()
     {
         return view('livewire.general.header.search', [
             'results' => (new SearchableSearch())
                 // ->registerModel(User::class, 'name')
-                ->registerModel(Product::class, 'name')
+                ->registerModel(Product::class, ['name', 'synonims'])
                 ->search($this->searchString)
         ]);
     }

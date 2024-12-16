@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('new_price')->nullable();
             $table->boolean('is_popular')->default(false);
             $table->integer('count');
+            $table->longText('synonims')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
