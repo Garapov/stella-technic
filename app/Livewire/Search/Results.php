@@ -1,24 +1,27 @@
 <?php
 
-namespace App\Livewire\General\Header;
+namespace App\Livewire\Search;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Livewire\Component;
+use App\Models\Page;
 use Spatie\Searchable\Search as SearchableSearch;
-
-class Search extends Component
+use Livewire\Attributes\Url;
+class Results extends Component
 {
-    public $searchString = '';
+    #[Url]
+    public $q = '';
 
     public function render()
     {
-        return view('livewire.general.header.search', [
+        return view('livewire.search.results', [
             'results' => (new SearchableSearch())
                 // ->registerModel(User::class, 'name')
                 ->registerModel(Product::class, ['name', 'synonims'])
                 ->registerModel(ProductCategory::class, ['title', 'description'])
-                ->search($this->searchString)
+                ->registerModel(Page::class, ['title'])
+                ->search($this->q)
         ]);
     }
 }

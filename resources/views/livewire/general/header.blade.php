@@ -4,7 +4,7 @@
             <div class="hidden justify-between items-center w-full lg:flex lg:w-auto">
                 @if ($topmenu && $topmenu->menuItems)
                     @livewire('general.header.topmenu', [
-                        'menu' => $topmenu
+                        'menu' => $topmenu,
                     ])
                 @endif
             </div>
@@ -61,12 +61,12 @@
                 <img src="{{ asset('assets/logo-dark.svg') }}" class="mr-3 h-6 sm:h-9 hidden dark:block"
                     alt="Stella-tech Logo" />
             </a>
-            <form class="grow">
+            <div class="grow">
                 <div class="flex">
                     @livewire('general.header.popular')
                     @livewire('general.header.search')
                 </div>
-            </form>
+            </div>
             <div class="flex gap-4 items-stretch">
                 <div class="flex flex-col items-end">
                     <a href="tel:88005514694" class="text-lg font-bold text-right text-gray-900 dark:text-white">8 800
@@ -89,7 +89,7 @@
 
             @if (count($categories) > 0)
                 @livewire('general.header.catalog', [
-                    'categories' => $categories
+                    'categories' => $categories,
                 ])
             @endif
             <div class="hidden justify-between items-center w-full lg:flex lg:w-auto">
@@ -122,21 +122,23 @@
 
             <div class="flex items-center gap-2">
                 <a href="{{ route('client.favorites') }}"
-                    class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>
+                    class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    wire:navigate>
                     <x-fas-heart class="w-4 h-4" />
-                    <div
-                        class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-gray-200 rounded-full -top-2 -end-2 dark:border-gray-700" x-text="$store.favorites.getCount() || ''" x-show="$store.favorites.getCount() > 0"></div>
+                    <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-gray-200 rounded-full -top-2 -end-2 dark:border-gray-700"
+                        x-text="$store.favorites.getCount() || ''" x-show="$store.favorites.getCount() > 0"></div>
                 </a>
 
                 <a href="{{ route('client.cart') }}"
-                    class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>
+                    class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    wire:navigate>
                     <x-fas-cart-arrow-down class="w-4 h-4" />
-                    <div
-                        class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-gray-200 rounded-full -top-2 -end-2 dark:border-gray-700" x-text="$store.cart.cartCount()"></div>
+                    <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-gray-200 rounded-full -top-2 -end-2 dark:border-gray-700"
+                        x-text="$store.cart.cartCount()"></div>
                 </a>
             </div>
         </div>
     </div>
 
-    
+
 </header>

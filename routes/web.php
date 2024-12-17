@@ -20,6 +20,7 @@ Route::prefix('/')->name('client.')->group(function () {
     })->name('thanks');
     Route::view('/checkout/thanks', 'client.thanks')->name('thanks');
     Route::view('/blog/{category_slug}/{slug}', 'client.posts.show')->name('posts.show');
+    Route::view('/search', 'client.search')->name('search');
 });
 
 // Route::middleware(['auth', 'verified'])->prefix('/dashboard')->name('dashboard.')->group(function () {

@@ -10,11 +10,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use SolutionForest\FilamentTree\Concern\ModelTree;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
-class ProductCategory extends Model
+class ProductCategory extends Model implements Searchable
 {
     /** @use HasFactory<\Database\Factories\ProductCategoryFactory> */
     use HasFactory, ModelTree, HasSlug;
+
+    public $searchableType = 'Категории';
 
     protected $fillable = [
         'icon',
@@ -42,6 +46,21 @@ class ProductCategory extends Model
             ->saveSlugsTo('slug');
     }
 
+    public function getSearchResult(): SearchResult
+     {
+        $url = route('client.product_detail', $this->slug);
+
+        // dd($this);
+        $searchResult = new \Spatie\Searchable\SearchResult(
+            $this,
+            $this->title,
+            $url
+        );
+
+        // dd($searchResult);
+     
+        return $searchResult;
+     }
     /**
      * Get the route key for the model.
      */
