@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->string('slug')->unique();
-            $table->longText('gallery');
+            $table->longText('gallery')->nullable();
             $table->longText('short_description');
             $table->longText('description');
             $table->integer('price');
             $table->integer('new_price')->nullable();
             $table->boolean('is_popular')->default(false);
-            $table->integer('count');
+            $table->integer('count')->default(0);
             $table->longText('synonims')->nullable();
             $table->softDeletes();
             $table->timestamps();
