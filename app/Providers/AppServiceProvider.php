@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use Datlechin\FilamentMenuBuilder\Resources\MenuResource;
+use Filament\Actions\Imports\Models\Import;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
-use Z3d0X\FilamentFabricator\Resources\PageResource;
-
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -21,9 +21,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // PageResource::navigationGroup('Настройки сайта');
-        // MenuResource::navigationGroup('Настройки сайта');
-        // PageResource::navigationLabel('Страницы');
-        // MenuResource::navigationLabel('Меню');
+        Queue::failing(function (JobFailed $event) {
+            $import = $event->job->payload()['import'] ?? null;
+            if ($import) {
+                Import::find($import->id)?->update([
+                    'status' => 'failed',
+                    'error' => $event->exception->getMessage()
+                ]);
+            }
+        });
     }
 }

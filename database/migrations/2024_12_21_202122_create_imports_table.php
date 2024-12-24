@@ -10,15 +10,18 @@ return new class extends Migration
     {
         Schema::create('imports', function (Blueprint $table) {
             $table->id();
-            $table->string('file_name');
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('file_path');
+            $table->string('file_name');
+            $table->string('disk')->nullable();
             $table->string('importer');
-            $table->unsignedInteger('total_rows');
+            $table->json('options')->nullable();
+            $table->string('status')->default('pending');
             $table->unsignedInteger('processed_rows')->default(0);
-            $table->boolean('successful')->default(false);
-            $table->json('successful_rows')->nullable();
-            $table->json('failed_rows')->nullable();
+            $table->unsignedInteger('total_rows')->default(0);
+            $table->unsignedInteger('successful_rows')->default(0);
+            $table->unsignedInteger('failed_rows')->default(0);
+            $table->text('error')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -27,4 +30,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('imports');
     }
-}; 
+};

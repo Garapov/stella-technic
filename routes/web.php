@@ -1,12 +1,21 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Jobs\ProcessProductImport;
+use App\Models\Import;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/test-queue', function() {
+    // Import::first()->delete();
+    ProcessProductImport::dispatch(Import::first())->onQueue('imports');
+    return 'Job dispatched';
+});
+
 
 Route::prefix('/')->name('client.')->group(function () {
     Route::view('/', 'client.index')->name('index');
     Route::view('/catalog/{slug}', 'client.catalog')->name('catalog');
-    Route::view('/product/{product_slug}', 'client.product_detail')->name('product_detail');
+    Route::view('/product/test/{product_slug}', 'client.product_detail')->name('product_detail');
     Route::view('/cart', 'client.cart')->name('cart');
     Route::view('/checkout', 'client.checkout')->name('checkout');
     // Route::get('/simple/{page:slug}', function ($page) {
