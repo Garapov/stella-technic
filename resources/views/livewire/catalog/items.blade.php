@@ -1,5 +1,5 @@
 <section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
-    @if ($category)
+    @if ($category || $items)
         <div class="mx-auto container relative">
             <!-- Loading Overlay -->
             <div wire:loading.flex wire:target="selectedCategories, selectedVariations, priceFrom, priceTo, updateSort" 
@@ -10,55 +10,58 @@
                 </div>
             </div>
             <!-- Heading & Filters -->
-            <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">
-                <div>
-                    @livewire('general.breadcrumbs')
-                    <h2 class="mt-3 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">{{ $category->name }}</h2>
-                </div>
-                <div class="flex items-center space-x-4 relative">
-                    <button id="sortDropdownButton1" data-dropdown-toggle="dropdownSort1" type="button"
-                        class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
-                        wire:click="toggleSorting">
-                        <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
-                            height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="{{ $this->getSortOptions()[$selectedSort]['icon'] }}" />
-                        </svg>
-                        {{ $this->getSortOptions()[$selectedSort]['label'] }}
-                    </button>
-                    <div class="absolute right-0 top-[calc(100%+10px)] z-50 w-48 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
-                        wire:click.outside="closeSorting"
-                        x-show="$wire.isSortingOpened"
-                        x-transition:enter="transition ease-out duration-100"
-                        x-transition:enter-start="transform opacity-0 scale-95"
-                        x-transition:enter-end="transform opacity-100 scale-100"
-                        x-transition:leave="transition ease-in duration-75"
-                        x-transition:leave-start="transform opacity-100 scale-100"
-                        x-transition:leave-end="transform opacity-0 scale-95"
-                        style="display: none;">
-                        <ul class="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400"
-                            aria-labelledby="sortDropdownButton">
-                            @foreach ($this->getSortOptions() as $value => $option)
-                                <li>
-                                    <button type="button" wire:click="updateSort('{{ $value }}')"
-                                        @class([
-                                            'inline-flex w-full items-center px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-lg',
-                                            'text-blue-600 dark:text-blue-500' => $selectedSort === $value,
-                                            'text-gray-500 dark:text-gray-400' => $selectedSort !== $value,
-                                        ])>
-                                        <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
-                                            height="24" fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="{{ $option['icon'] }}" />
-                                        </svg>
-                                        {{ $option['label'] }}
-                                    </button>
-                                </li>
-                            @endforeach
-                        </ul>
+            @if ($category )
+                <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">
+                        <div>
+                            @livewire('general.breadcrumbs')
+                            <h2 class="mt-3 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">{{ $category->name }}</h2>
+                        </div>
+                    
+                    <div class="flex items-center space-x-4 relative">
+                        <button id="sortDropdownButton1" data-dropdown-toggle="dropdownSort1" type="button"
+                            class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
+                            wire:click="toggleSorting">
+                            <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+                                height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="{{ $this->getSortOptions()[$selectedSort]['icon'] }}" />
+                            </svg>
+                            {{ $this->getSortOptions()[$selectedSort]['label'] }}
+                        </button>
+                        <div class="absolute right-0 top-[calc(100%+10px)] z-50 w-48 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
+                            wire:click.outside="closeSorting"
+                            x-show="$wire.isSortingOpened"
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"
+                            style="display: none;">
+                            <ul class="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400"
+                                aria-labelledby="sortDropdownButton">
+                                @foreach ($this->getSortOptions() as $value => $option)
+                                    <li>
+                                        <button type="button" wire:click="updateSort('{{ $value }}')"
+                                            @class([
+                                                'inline-flex w-full items-center px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-lg',
+                                                'text-blue-600 dark:text-blue-500' => $selectedSort === $value,
+                                                'text-gray-500 dark:text-gray-400' => $selectedSort !== $value,
+                                            ])>
+                                            <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+                                                height="24" fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="{{ $option['icon'] }}" />
+                                            </svg>
+                                            {{ $option['label'] }}
+                                        </button>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
             <div class="grid grid-cols-4 gap-4">
                 <div>
                     <div
@@ -206,7 +209,9 @@
                             @endforeach
                         </div>
                     @endif
-                    {{ $this->products->links() }}
+                    @if ($category) 
+                        {{ $this->products->links() }}
+                    @endif
                 </div>
             </div>
         </div>

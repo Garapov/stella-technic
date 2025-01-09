@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Catalog;
 
+// use App\Livewire\Cart\Components\Product;
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductParam;
 use App\Models\ProductParamItem;
@@ -22,6 +24,9 @@ class Items extends Component
     public $priceTo = null;
     public $selectedVariationNames = [];
     public $selectedSort = 'default';
+    public $items = null;
+
+    public $product_ids = [];
 
     public ?ProductCategory $category = null;
 
@@ -32,10 +37,15 @@ class Items extends Component
         'selectedSort' => ['as' => 'sort', 'except' => 'default']
     ];
 
-    public function mount($slug)
+    public function mount($slug = null, $products = null)
     {
-        $this->category = ProductCategory::where('slug', $slug)->first();
         
+        if ($slug) {
+            $this->category = ProductCategory::where('slug', $slug)->first();
+        }
+        if ($products) {
+            $this->product_ids = $products;
+        }
         // Convert variation titles to IDs if they exist in URL
         if (!empty($this->selectedVariationNames)) {
             $this->selectedVariations = ProductParamItem::whereIn('title', $this->selectedVariationNames)
@@ -80,8 +90,14 @@ class Items extends Component
 
     public function getProductsProperty()
     {
-        $query = $this->category->products();
+        if ($this->category) {
+            $query = $this->category->products();
+        }
+        if ($this->product_ids) {
+            $query = Product::whereIn('id', $this->product_ids);
+        }
 
+        
         // Apply parameter filters only if there are selected variations
         if (!empty($this->selectedVariations)) {
             $query->whereHas('paramItems', function ($query) {
@@ -138,18 +154,27 @@ class Items extends Component
                 break;
         }
 
-        return $query->paginate(18);
+
+        if ($this->category) {
+            return $query->paginate(18);
+        }
+        if ($this->product_ids) {
+            return $query->paginate(18);
+        }
+
+        
     }
 
     public function getPriceRangeProperty()
     {
-        if (!$this->category) {
+        if (!$this->category && !$this->product_ids) {
             return (object)[
                 'min_price' => 0,
                 'max_price' => 0
             ];
         }
 
+        if ($this->category) {
         return $this->category->products()
             ->selectRaw('MIN(CASE WHEN new_price > 0 THEN new_price ELSE price END) as min_price, 
                         MAX(CASE WHEN new_price > 0 THEN new_price ELSE price END) as max_price')
@@ -157,11 +182,30 @@ class Items extends Component
                 'min_price' => 0,
                 'max_price' => 0
             ];
+        }
+
+        if ($this->product_ids) {
+
+            
+            return Product::whereIn('id', $this->product_ids)
+                ->selectRaw('MIN(CASE WHEN new_price > 0 THEN new_price ELSE price END) as min_price, 
+                            MAX(CASE WHEN new_price > 0 THEN new_price ELSE price END) as max_price')
+                ->first() ?? (object)[
+                    'min_price' => 0,
+                    'max_price' => 0
+                ];
+        }
     }
 
     public function getAvailableParamItemsProperty()
     {
-        $query = $this->category->products();
+        if ($this->category) {
+            $query = $this->category->products();
+        }
+        if ($this->product_ids) {
+            $query = Product::whereIn('id', $this->product_ids);
+            
+        }
 
         // Apply existing filters except price
         if (!empty($this->selectedVariations)) {
@@ -203,7 +247,12 @@ class Items extends Component
 
     public function getAvailableFiltersProperty()
     {
-        $categoryProductIds = $this->category->products->pluck('id');
+        if ($this->category) {
+            $categoryProductIds = $this->category->products->pluck('id');
+        }
+        if ($this->product_ids) {
+            $categoryProductIds = $this->product_ids;
+        }
         $availableParamItems = $this->availableParamItems;
 
         return ProductParam::where('allow_filtering', true)
