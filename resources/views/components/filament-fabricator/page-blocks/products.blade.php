@@ -1,2 +1,5 @@
 @aware(['page'])
-@livewire('catalog.items', ['products' => $items])
+
+<div>
+    @livewire('catalog.items', ['products' => $items, 'filter' => $filter])
+</div>

@@ -55,7 +55,6 @@
         <h4 class="sr-only">Товары</h4>
         <ul role="list" class="divide-y divide-gray-200">
             @foreach($order->cart_items as $item)
-            {{ print_r($item) }}
             <li class="p-4 sm:p-6">
                 <div class="flex items-center sm:items-start">
                     <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 sm:h-40 sm:w-40">

@@ -5,6 +5,7 @@ namespace App\Filament\Fabricator\PageBlocks;
 use App\Models\Product;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Z3d0X\FilamentFabricator\PageBlocks\PageBlock;
 
 class Products extends PageBlock
@@ -21,7 +22,9 @@ class Products extends PageBlock
                     // ->getSearchResultsUsing(fn (string $search): array => Product::where('text', 'like', "%{$search}%")->limit(50)->pluck('text', 'id')->toArray())
                     // ->getOptionLabelsUsing(fn (array $values): array => Product::whereIn('id', $values)->pluck('text', 'id')->toArray())
                     ->multiple()
-                    ->required()
+                    ->required(),
+                Toggle::make('filter')
+                    ->label('Показывать фильтр')
             ]);
     }
 

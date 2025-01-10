@@ -63,127 +63,129 @@
                 </div>
             @endif
             <div class="grid grid-cols-4 gap-4">
-                <div>
-                    <div
-                        class="sticky top-10 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                        <div>
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Фильтры</h3>
-                            </div>
+                @if ($display_filter)
+                    <div>
+                        <div
+                            class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                            <div>
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Фильтры</h3>
+                                </div>
 
-                            @if(!empty($selectedVariations) || $priceFrom !== null || $priceTo !== null)
-                                <button
-                                    wire:click="resetFilters"
-                                    class="w-full mb-6 inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                    Сбросить фильтры
-                                </button>
-                            @endif
-                            
-                            <!-- Price Range Filter -->
-                            <div class="mb-6">
-                                <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">Цена</h4>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label for="price-from" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">От</label>
-                                        <input
-                                            type="number"
-                                            id="price-from"
-                                            wire:model.live="priceFrom"
-                                            min="{{ $this->priceRange->min_price }}"
-                                            max="{{ $this->priceTo }}"
-                                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 mb-1"
-                                            placeholder="От"
-                                        >
-                                        <input
-                                            type="range"
-                                            id="price-from-range"
-                                            wire:model.live="priceFrom"
-                                            min="{{ $this->priceRange->min_price }}"
-                                            max="{{ $this->priceTo }}"
-                                            class="block w-full rounded-lg bg-gray-50 p-0.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                                        >
+                                @if(!empty($selectedVariations) || $priceFrom !== null || $priceTo !== null)
+                                    <button
+                                        wire:click="resetFilters"
+                                        class="w-full mb-6 inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Сбросить фильтры
+                                    </button>
+                                @endif
+                                
+                                <!-- Price Range Filter -->
+                                <div class="mb-6">
+                                    <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">Цена</h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="price-from" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">От</label>
+                                            <input
+                                                type="number"
+                                                id="price-from"
+                                                wire:model.live="priceFrom"
+                                                min="{{ $this->priceRange->min_price }}"
+                                                max="{{ $this->priceTo }}"
+                                                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 mb-1"
+                                                placeholder="От"
+                                            >
+                                            <input
+                                                type="range"
+                                                id="price-from-range"
+                                                wire:model.live="priceFrom"
+                                                min="{{ $this->priceRange->min_price }}"
+                                                max="{{ $this->priceTo }}"
+                                                class="block w-full rounded-lg bg-gray-50 p-0.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                            >
+                                            
+
+                                        </div>
+                                        <div>
+                                            <label for="price-to" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">До</label>
+                                            <input
+                                                type="number"
+                                                id="price-to"
+                                                wire:model.live="priceTo"
+                                                min="{{ $this->priceFrom }}"
+                                                max="{{ $this->priceRange->max_price }}"
+                                                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 mb-1"
+                                                placeholder="До"
+                                            >
+                                            <input
+                                                type="range"
+                                                id="price-to-range"
+                                                wire:model.live="priceTo"
+                                                min="{{ $this->priceFrom }}"
+                                                max="{{ $this->priceRange->max_price }}"
+                                                class="block w-full rounded-lg bg-gray-50 p-0.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                                @foreach ($this->availableFilters as $param)
+                                    <div class="mb-4">
+                                        <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            {{ $param->name }}
+                                        </h4>
                                         
-
-                                    </div>
-                                    <div>
-                                        <label for="price-to" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">До</label>
-                                        <input
-                                            type="number"
-                                            id="price-to"
-                                            wire:model.live="priceTo"
-                                            min="{{ $this->priceFrom }}"
-                                            max="{{ $this->priceRange->max_price }}"
-                                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 mb-1"
-                                            placeholder="До"
-                                        >
-                                        <input
-                                            type="range"
-                                            id="price-to-range"
-                                            wire:model.live="priceTo"
-                                            min="{{ $this->priceFrom }}"
-                                            max="{{ $this->priceRange->max_price }}"
-                                            class="block w-full rounded-lg bg-gray-50 p-0.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                                        >
-                                    </div>
-                                </div>
-                            </div>
-                            @foreach ($this->availableFilters as $param)
-                                <div class="mb-4">
-                                    <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        {{ $param->name }}
-                                    </h4>
-                                    
-                                    @if($param->type === 'color')
-                                        <div class="flex flex-wrap gap-2">
-                                            @foreach ($param->params as $item)
-                                                <label for="param-{{ $item->id }}" 
-                                                    @if(!$item->would_have_results && !in_array($item->id, $selectedVariations))
-                                                        class="relative cursor-not-allowed"
-                                                    @else
-                                                        class="relative cursor-pointer"
-                                                    @endif>
-                                                    <input type="checkbox"
-                                                        id="param-{{ $item->id }}"
-                                                        value="{{ $item->id }}"
-                                                        wire:model.live="selectedVariations"
-                                                        @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) disabled @endif
-                                                        class="sr-only peer">
-                                                    <div class="w-8 h-8 rounded-full border-2 peer-checked:border-blue-500"
-                                                        style="background-color: {{ $item->value }}; @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) opacity: 0.3; filter: grayscale(70%); @endif"
-                                                        title="{{ $item->title }}">
-                                                    </div>
-                                                    <div class="absolute inset-0 rounded-full peer-checked:ring-2 peer-checked:ring-blue-500 peer-checked:ring-offset-2"></div>
-                                                </label>
-                                            @endforeach
-                                        </div>
-                                    @else
-                                        <div class="space-y-2">
-                                            @foreach ($param->params as $item)
-                                                <div class="flex items-center">
-                                                    <input type="checkbox"
-                                                        id="param-{{ $item->id }}"
-                                                        value="{{ $item->id }}"
-                                                        wire:model.live="selectedVariations"
-                                                        @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) disabled @endif
-                                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) opacity-50 cursor-not-allowed @endif">
-                                                    <label for="param-{{ $item->id }}"
-                                                        class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) opacity-50 @endif">
-                                                        {{ $item->title }}
+                                        @if($param->type === 'color')
+                                            <div class="flex flex-wrap gap-2">
+                                                @foreach ($param->params as $item)
+                                                    <label for="param-{{ $item->id }}" 
+                                                        @if(!$item->would_have_results && !in_array($item->id, $selectedVariations))
+                                                            class="relative cursor-not-allowed"
+                                                        @else
+                                                            class="relative cursor-pointer"
+                                                        @endif>
+                                                        <input type="checkbox"
+                                                            id="param-{{ $item->id }}"
+                                                            value="{{ $item->id }}"
+                                                            wire:model.live="selectedVariations"
+                                                            @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) disabled @endif
+                                                            class="sr-only peer">
+                                                        <div class="w-8 h-8 rounded-full border-2 peer-checked:border-blue-500"
+                                                            style="background-color: {{ $item->value }}; @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) opacity: 0.3; filter: grayscale(70%); @endif"
+                                                            title="{{ $item->title }}">
+                                                        </div>
+                                                        <div class="absolute inset-0 rounded-full peer-checked:ring-2 peer-checked:ring-blue-500 peer-checked:ring-offset-2"></div>
                                                     </label>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @endif
-                                </div>
-                            @endforeach
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="space-y-2">
+                                                @foreach ($param->params as $item)
+                                                    <div class="flex items-center">
+                                                        <input type="checkbox"
+                                                            id="param-{{ $item->id }}"
+                                                            value="{{ $item->id }}"
+                                                            wire:model.live="selectedVariations"
+                                                            @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) disabled @endif
+                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) opacity-50 cursor-not-allowed @endif">
+                                                        <label for="param-{{ $item->id }}"
+                                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) opacity-50 @endif">
+                                                            {{ $item->title }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="flex flex-col gap-4 col-span-3">
+                @endif
+                <div class="flex flex-col gap-4 @if ($display_filter) col-span-3 @else col-span-full @endif">
                     @if($this->products->isEmpty())
                         <div class="flex flex-col items-center justify-center p-8 text-center">
                             <div class="mb-4">
@@ -201,7 +203,7 @@
                             </button>
                         </div>
                     @else
-                        <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 lg:grid-cols-2 xl:grid-cols-3">
+                        <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 @if ($display_filter) lg:grid-cols-2 xl:grid-cols-3 @else lg:grid-cols-3 xl:grid-cols-4 @endif">
                             @foreach ($this->products as $product)
                                 @livewire('general.product', [
                                     'product' => $product,

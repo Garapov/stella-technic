@@ -30,6 +30,8 @@ class Items extends Component
 
     public ?ProductCategory $category = null;
 
+    public $display_filter = true;
+
     protected $queryString = [
         'selectedVariationNames' => ['as' => 'variations', 'except' => []],
         'priceFrom' => ['as' => 'price_from', 'except' => null],
@@ -37,8 +39,10 @@ class Items extends Component
         'selectedSort' => ['as' => 'sort', 'except' => 'default']
     ];
 
-    public function mount($slug = null, $products = null)
+    public function mount($slug = null, $products = null, $filter = true)
     {
+
+        $this->display_filter = $filter;
         
         if ($slug) {
             $this->category = ProductCategory::where('slug', $slug)->first();
@@ -190,7 +194,6 @@ class Items extends Component
 
         if ($this->product_ids) {
 
-            dd($this->products);
             return Product::whereIn('id', $this->product_ids)
                 ->selectRaw('MIN(CASE WHEN new_price > 0 THEN new_price ELSE price END) as min_price, 
                             MAX(CASE WHEN new_price > 0 THEN new_price ELSE price END) as max_price')
