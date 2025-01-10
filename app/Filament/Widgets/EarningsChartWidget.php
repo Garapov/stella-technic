@@ -14,7 +14,7 @@ class EarningsChartWidget extends ChartWidget
         'md' => 1,
         'xl' => 1,
     ];
-    protected static ?string $maxHeight = '300px';
+
     
     public ?string $filter = 'day';
 
@@ -167,7 +167,7 @@ class EarningsChartWidget extends ChartWidget
 
     protected function getType(): string
     {
-        return 'line';
+        return 'bar';
     }
 
     protected function getOptions(): array
