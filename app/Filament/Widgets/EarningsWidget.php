@@ -3,52 +3,58 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Order;
-use Filament\Widgets\Widget;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Carbon;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Support\Concerns\EvaluatesClosures;
 
-class EarningsWidget extends Widget
+class EarningsWidget extends BaseWidget
 {
-    use InteractsWithActions;
-    use InteractsWithForms;
-    use EvaluatesClosures;
+    protected static ?string $pollingInterval = '30s';
+    protected int | string | array $columnSpan = [
+        'md' => 1,
+        'xl' => 1,
+    ];
 
-    protected static string $view = 'filament.widgets.earnings-widget';
     
-    protected int | string | array $columnSpan = 'full';
 
-    public string $period = 'all';
-
-    protected function getViewData(): array
-    {
-        return [
-            'earnings' => $this->getEarnings(),
-            'period' => $this->period,
-        ];
-    }
-
-    public function changePeriod(string $period): void
-    {
-        $this->period = $period;
-        $this->dispatch('earnings-updated');
-    }
-
-    protected function getEarnings(): float
+    protected function getStats(): array
     {
         $query = Order::where('status', 'delivered');
 
-        return match ($this->period) {
-            'day' => $query->whereDate('created_at', Carbon::today())->sum('total_price'),
-            'week' => $query->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->sum('total_price'),
-            'month' => $query->whereMonth('created_at', Carbon::now()->month)->sum('total_price'),
-            default => $query->sum('total_price'),
-        };
+        return [
+            Stat::make('Общий доход', number_format($query->sum('total_price'), 0, '.', ' ') . ' ₽')
+                ->description('За все время')
+                ->descriptionIcon('heroicon-m-banknotes')
+                ->chart($this->getChartData($query, 'all'))
+                ->color('success'),
+            
+            Stat::make('Доход за месяц', number_format($query->whereMonth('created_at', Carbon::now()->month)->sum('total_price'), 0, '.', ' ') . ' ₽')
+                ->description('За текущий месяц')
+                ->descriptionIcon('heroicon-m-calendar')
+                ->chart($this->getChartData($query, 'month'))
+                ->color('warning'),
+            
+            Stat::make('Доход за неделю', number_format($query->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->sum('total_price'), 0, '.', ' ') . ' ₽')
+                ->description('За текущую неделю')
+                ->descriptionIcon('heroicon-m-chart-bar')
+                ->chart($this->getChartData($query, 'week'))
+                ->color('danger'),
+        ];
     }
 
-    public function mount(): void
+    protected function getChartData($query, string $period): array
     {
-        $this->period = 'all';
+        $days = match ($period) {
+            'month' => 30,
+            'week' => 7,
+            default => 60,
+        };
+
+        return $query
+            ->where('created_at', '>=', now()->subDays($days))
+            ->selectRaw('DATE(created_at) as date, SUM(total_price) as total')
+            ->groupBy('date')
+            ->pluck('total')
+            ->toArray();
     }
 }
