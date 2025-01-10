@@ -10,8 +10,12 @@ use Illuminate\Support\Facades\DB;
 class UsersChartWidget extends ChartWidget
 {
     protected static ?string $heading = 'Статистика пользователей';
-    protected int | string | array $columnSpan = 'full';
-    protected static ?string $maxHeight = '300px';
+    protected int | string | array $columnSpan = [
+        'sm' => 1,
+        'md' => 1,
+        'lg' => 1,
+        'xl' => 1,
+    ];
     
     public ?string $filter = 'day';
 

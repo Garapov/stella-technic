@@ -11,10 +11,13 @@ class EarningsChartWidget extends ChartWidget
 {
     protected static ?string $heading = 'Статистика доходов';
     protected int | string | array $columnSpan = [
+        'sm' => 1,
         'md' => 1,
+        'lg' => 1,
         'xl' => 1,
     ];
-
+    protected static ?string $maxHeight = '400px';
+    protected static ?int $sort = 1;
     
     public ?string $filter = 'day';
 
@@ -173,29 +176,17 @@ class EarningsChartWidget extends ChartWidget
     protected function getOptions(): array
     {
         return [
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
             'scales' => [
                 'y' => [
                     'beginAtZero' => true,
                     'ticks' => [
                         'callback' => "function(value) {
-                            return new Intl.NumberFormat('ru-RU', {
-                                style: 'currency',
-                                currency: 'RUB',
-                                maximumFractionDigits: 0
-                            }).format(value);
-                        }",
-                    ],
-                ],
-            ],
-            'plugins' => [
-                'tooltip' => [
-                    'callbacks' => [
-                        'label' => "function(context) {
-                            return new Intl.NumberFormat('ru-RU', {
-                                style: 'currency',
-                                currency: 'RUB',
-                                maximumFractionDigits: 0
-                            }).format(context.raw);
+                            return value.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, ' ') + ' ₽';
                         }",
                     ],
                 ],

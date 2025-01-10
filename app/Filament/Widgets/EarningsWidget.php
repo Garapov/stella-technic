@@ -11,9 +11,12 @@ class EarningsWidget extends BaseWidget
 {
     protected static ?string $pollingInterval = '30s';
     protected int | string | array $columnSpan = [
+        'sm' => 1,
         'md' => 1,
-        'xl' => 1,
+        'lg' => 2,
+        'xl' => 2,
     ];
+    protected static ?int $sort = 2;
 
     protected function getStats(): array
     {
@@ -50,8 +53,8 @@ class EarningsWidget extends BaseWidget
             ->toArray();
     }
 
-    protected function getColumns(): int
-    {
-        return 1;
-    }
+    // protected function getColumns(): int
+    // {
+    //     return 1;
+    // }
 }

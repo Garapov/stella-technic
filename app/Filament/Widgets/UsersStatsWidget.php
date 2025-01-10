@@ -10,6 +10,13 @@ use Illuminate\Support\Carbon;
 class UsersStatsWidget extends BaseWidget
 {
     protected static ?string $pollingInterval = '30s';
+    protected int | string | array $columnSpan = [
+        'sm' => 1,
+        'md' => 1,
+        'lg' => 2,
+        'xl' => 2,
+    ];
+    protected static ?int $sort = 4;
 
     protected function getStats(): array
     {
@@ -30,4 +37,9 @@ class UsersStatsWidget extends BaseWidget
                 ->color('primary'),
         ];
     }
+
+    // protected function getColumns(): int
+    // {
+    //     return 1;
+    // }
 }
