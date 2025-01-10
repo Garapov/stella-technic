@@ -53,11 +53,15 @@ class Items extends Component
                 ->toArray();
         }
 
+        
+
         // Set default price range if not provided in URL
         if ($this->priceFrom === null && $this->priceTo === null) {
             $priceRange = $this->getPriceRangeProperty();
             $this->priceFrom = $priceRange->min_price;
             $this->priceTo = $priceRange->max_price;
+
+            // dd([$this->priceFrom, $this->priceTo]);
         }
     }
 
@@ -186,7 +190,7 @@ class Items extends Component
 
         if ($this->product_ids) {
 
-            
+            dd($this->products);
             return Product::whereIn('id', $this->product_ids)
                 ->selectRaw('MIN(CASE WHEN new_price > 0 THEN new_price ELSE price END) as min_price, 
                             MAX(CASE WHEN new_price > 0 THEN new_price ELSE price END) as max_price')
@@ -199,6 +203,7 @@ class Items extends Component
 
     public function getAvailableParamItemsProperty()
     {
+        // dd($this->product_ids);
         if ($this->category) {
             $query = $this->category->products();
         }
@@ -247,6 +252,7 @@ class Items extends Component
 
     public function getAvailableFiltersProperty()
     {
+        // dd($this->product_ids);
         if ($this->category) {
             $categoryProductIds = $this->category->products->pluck('id');
         }

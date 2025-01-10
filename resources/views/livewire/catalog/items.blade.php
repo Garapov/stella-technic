@@ -1,5 +1,5 @@
 <section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
-    @if ($category || $items)
+    @if ($category || $product_ids)
         <div class="mx-auto container relative">
             <!-- Loading Overlay -->
             <div wire:loading.flex wire:target="selectedCategories, selectedVariations, priceFrom, priceTo, updateSort" 
@@ -209,9 +209,7 @@
                             @endforeach
                         </div>
                     @endif
-                    @if ($category) 
-                        {{ $this->products->links() }}
-                    @endif
+                    {{ $this->products->links() }}
                 </div>
             </div>
         </div>
