@@ -38,6 +38,9 @@
             </main>
         </div>
         <div class="grid grid-cols-2 gap-3 mb-2 xl:grid-cols-3"></div>
+        @livewire('cart-modal')
+        @livewire('general.quick-look-modal')
+        @livewire('notifications')
         {{-- <x-image-library-scripts /> --}}
     </body>
 </html>
