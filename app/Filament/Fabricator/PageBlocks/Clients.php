@@ -14,6 +14,8 @@ class Clients extends PageBlock
     public static function getBlockSchema(): Block
     {
         return Block::make('clients')
+            ->icon('heroicon-o-rectangle-stack')
+            ->label('Клиенты')
             ->columns([
                 'default' => 2,
             ])

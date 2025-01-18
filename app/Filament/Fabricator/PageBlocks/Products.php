@@ -14,6 +14,8 @@ class Products extends PageBlock
     {
 
         return Block::make('products')
+            ->icon('heroicon-o-rectangle-stack')
+            ->label('Товары')
             ->schema([
                 Select::make('items')
                     ->label('Товары')

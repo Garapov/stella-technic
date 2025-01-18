@@ -15,6 +15,8 @@ class Posts extends PageBlock
     {
         // dd(Post::all());
         return Block::make('posts')
+            ->icon('heroicon-o-rectangle-stack')
+            ->label('Посты блога')
             ->schema([
                 TextInput::make('title')
                     ->label('Заголовок'),

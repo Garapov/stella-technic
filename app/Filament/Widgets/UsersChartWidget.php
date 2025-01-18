@@ -92,14 +92,10 @@ class UsersChartWidget extends ChartWidget
         $current = Carbon::now()->startOfWeek();
         $end = Carbon::now()->endOfWeek();
 
-        $dayNames = [
-            'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'
-        ];
-
         while ($current <= $end) {
             $date = $current->format('Y-m-d');
             $values[] = $data->firstWhere('date', $date)?->total ?? 0;
-            $labels[] = $dayNames[$current->dayOfWeek - 1];
+            $labels[] = $current->format('D');
             $current->addDay();
         }
 

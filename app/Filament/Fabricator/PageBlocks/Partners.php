@@ -12,6 +12,8 @@ class Partners extends PageBlock
     public static function getBlockSchema(): Block
     {
         return Block::make('partners')
+            ->icon('heroicon-o-rectangle-stack')
+            ->label('Партнеры')
             ->schema([
                 Select::make('partners')
                     ->label('Партнеры')

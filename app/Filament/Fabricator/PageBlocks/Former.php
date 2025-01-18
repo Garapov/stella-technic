@@ -12,6 +12,8 @@ class Former extends PageBlock
     public static function getBlockSchema(): Block
     {
         return Block::make('former')
+            ->icon('heroicon-o-rectangle-stack')
+            ->label('Форма')
             ->schema([
                 Select::make('form')
                     ->label('Форма')

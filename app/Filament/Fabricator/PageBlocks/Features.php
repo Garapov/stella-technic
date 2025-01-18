@@ -13,6 +13,8 @@ class Features extends PageBlock
     public static function getBlockSchema(): Block
     {
         return Block::make('features')
+            ->icon('heroicon-o-rectangle-stack')
+            ->label('Преимущества')
             ->schema([
                 TextInput::make('title')
                     ->label('Заголовок')

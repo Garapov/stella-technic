@@ -14,6 +14,7 @@ class HeroSlider extends PageBlock
     {
         return Block::make('hero-slider')
             ->icon('heroicon-o-rectangle-stack')
+            ->label('Главный слайдер')
             ->schema([
                 Select::make('slides')
                     ->label('Слайды')

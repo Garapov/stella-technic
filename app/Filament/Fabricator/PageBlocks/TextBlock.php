@@ -11,6 +11,8 @@ class TextBlock extends PageBlock
     public static function getBlockSchema(): Block
     {
         return Block::make('text')
+            ->icon('heroicon-o-rectangle-stack')
+            ->label('Текстовый блок')
             ->schema([
                 RichEditor::make('description')
                     ->label('Текст')

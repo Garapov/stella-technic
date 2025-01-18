@@ -12,6 +12,8 @@ class Articles extends PageBlock
     public static function getBlockSchema(): Block
     {
         return Block::make('articles')
+            ->icon('heroicon-o-rectangle-stack')
+            ->label('Статьи')
             ->schema([
                 TextInput::make('title')
                     ->label('Заголовок')
