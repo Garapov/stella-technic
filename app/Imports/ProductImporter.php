@@ -3,11 +3,10 @@
 namespace App\Imports;
 
 use App\Models\Product;
-use App\Models\Import;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
+use Filament\Actions\Imports\Models\Import;
 use Illuminate\Support\Facades\Log;
-use Filament\Actions\Imports\Models\Import as VendorImport;
 
 class ProductImporter extends Importer
 {
@@ -63,16 +62,8 @@ class ProductImporter extends Importer
             $product = Product::where('name', $data['name'])->first();
             $isNew = ! $product;
 
-            if ($product) {
-                // Log::info('Найден существующий товар, обновляем', [
-                //     'name' => $product->name,
-                //     'id' => $product->id
-                // ]);
-            } else {
+            if (!$product) {
                 $product = new Product;
-                // Log::info('Создаем новый товар', [
-                //     'name' => $data['name']
-                // ]);
             }
 
             if (isset($data['image'])) {
@@ -114,7 +105,6 @@ class ProductImporter extends Importer
 
                 // Записываем ID изображения
                 $data['image'] = $image->id;
-
                 $data['gallery'] = json_encode([]);
             }
 
@@ -142,7 +132,7 @@ class ProductImporter extends Importer
         }
     }
 
-    public static function getCompletedNotificationBody(VendorImport $import): string
+    public static function getCompletedNotificationBody(Import $import): string
     {
         return 'Импорт товаров успешно завершен! Импортировано записей: '.$import->successful_rows;
     }
