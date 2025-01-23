@@ -22,6 +22,8 @@ return new class extends Migration
             $table->unsignedInteger('failed_rows')->default(0);
             $table->text('error')->nullable();
             $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->timestamp('completed_at')->nullable();
+            $table->timestamp('started_at')->nullable();
             $table->timestamps();
         });
     }

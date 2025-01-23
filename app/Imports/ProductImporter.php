@@ -14,8 +14,19 @@ class ProductImporter extends Importer
 
     protected array $options = [];
 
+    public function __construct(Import $import, array $options = [], ?array $records = [])
+    {
+        parent::__construct($import, $options, $records);
+        Log::channel('daily')->info('ProductImporter: Создан новый экземпляр импортера', [
+            'import_id' => $import->id,
+            'options' => $options,
+            'records_count' => count($records)
+        ]);
+    }
+
     public function setUp(): void
     {
+        Log::info('ProductImporter: Настройка импорта');
         parent::setUp();
         $this->options = [
             'updateExisting' => true,
@@ -24,17 +35,16 @@ class ProductImporter extends Importer
 
     public static function getOptionsFormComponents(): array
     {
+        Log::info('ProductImporter: Получение компонентов формы опций');
         return [];
     }
 
     public function getOptions(): array
     {
+        Log::info('ProductImporter: Получение опций', [
+            'options' => $this->options
+        ]);
         return $this->options;
-    }
-
-    public function __construct(Import $import)
-    {
-        parent::__construct($import);
     }
 
     public static function getColumns(): array
@@ -65,65 +75,82 @@ class ProductImporter extends Importer
                 ->rules(['nullable', 'string']),
 
             ImportColumn::make('image')
-                ->label('Превью товара')
+                ->label('Изображение')
                 ->rules(['nullable', 'string']),
         ];
     }
 
+    public function getJobConnection(): ?string
+    {
+        return 'database';
+    }
+
+    public function getJobQueue(): ?string
+    {
+        return 'default';
+    }
+
     public function resolveRecord(): ?Product
     {
+        $logger = Log::channel('daily');
+        $logger->info('ProductImporter: Начало обработки записи');
+
         try {
-            Log::info('Starting to resolve record', ['data' => $this->data]);
+            $data = $this->record;
             
-            // Validate required fields
-            $requiredFields = ['name', 'price'];
-            foreach ($requiredFields as $field) {
-                if (empty($this->data[$field])) {
-                    throw new \Exception("Поле '{$field}' обязательно для заполнения");
+            if (empty($data)) {
+                $logger->error('ProductImporter: Пустая запись');
+                return null;
+            }
+
+            $logger->info('ProductImporter: Данные записи', ['data' => $data]);
+
+            // Поиск или создание продукта
+            $product = Product::firstOrNew(['name' => $data['name']]);
+            $logger->info('ProductImporter: Продукт найден/создан', [
+                'product_id' => $product->id,
+                'is_new' => !$product->exists,
+                'name' => $product->name
+            ]);
+
+            // Заполняем все поля из данных
+            foreach ($data as $field => $value) {
+                $logger->info('ProductImporter: Обработка поля', [
+                    'field' => $field,
+                    'value' => $value
+                ]);
+
+                if ($field === 'price' || $field === 'new_price') {
+                    $product->$field = (float) str_replace([' ', ','], ['', '.'], $value);
+                } elseif ($field === 'image' && !empty($value)) {
+                    try {
+                        $imageId = $this->processImage($value);
+                        $product->image = $imageId;
+                        $logger->info('ProductImporter: Изображение обработано', [
+                            'image_id' => $imageId
+                        ]);
+                    } catch (\Exception $e) {
+                        $logger->error('ProductImporter: Ошибка обработки изображения', [
+                            'error' => $e->getMessage(),
+                            'url' => $value
+                        ]);
+                    }
+                } else {
+                    $product->$field = $value;
                 }
             }
 
-            $product = Product::where('name', $this->data['name'])->first();
-            $isNew = !$product;
-
-            if (!$product) {
-                $product = new Product;
-            }
-
-            // Process image if present
-            if (!empty($this->data['image'])) {
-                try {
-                    $imageId = $this->processImage($this->data['image']);
-                    $this->data['image'] = $imageId;
-                    $this->data['gallery'] = json_encode([]);
-                } catch (\Exception $e) {
-                    Log::error('Error processing image', [
-                        'error' => $e->getMessage(),
-                        'image_url' => $this->data['image']
-                    ]);
-                    // Don't fail the whole import if image processing fails
-                    $this->data['image'] = null;
-                }
-            }
-
-            $product->fill($this->data);
-
-            if ($isNew) {
-                $this->import->increment('created_rows');
-            }
-
-            Log::info('Successfully processed product', [
-                'name' => $product->name,
-                'id' => $product->id ?? null,
-                'action' => $isNew ? 'create' : 'update'
+            $logger->info('ProductImporter: Запись подготовлена', [
+                'product' => $product->toArray()
             ]);
 
             return $product;
+
         } catch (\Exception $e) {
-            Log::error('Error processing product record', [
+            $logger->error('ProductImporter: Критическая ошибка', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'data' => $this->data
+                'data' => $data ?? null
             ]);
             throw $e;
         }
@@ -131,49 +158,52 @@ class ProductImporter extends Importer
 
     protected function processImage(string $imageUrl): ?int
     {
-        Log::info('Processing image', ['url' => $imageUrl]);
-        
-        $tempDir = storage_path('app/temp');
-        if (!file_exists($tempDir)) {
-            mkdir($tempDir, 0755, true);
-        }
-
-        $imageContent = file_get_contents($imageUrl);
-        if ($imageContent === false) {
-            throw new \Exception("Не удалось загрузить изображение по URL: {$imageUrl}");
-        }
-
-        $extension = pathinfo(parse_url($imageUrl, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'png';
-        $tempImagePath = $tempDir.'/'.uniqid().'.'.$extension;
-        
-        if (!file_put_contents($tempImagePath, $imageContent)) {
-            throw new \Exception("Не удалось сохранить временный файл: {$tempImagePath}");
-        }
-
         try {
+            $tempDir = storage_path('app/temp');
+            if (!file_exists($tempDir)) {
+                mkdir($tempDir, 0755, true);
+            }
+
+            $imageContent = file_get_contents($imageUrl);
+            if ($imageContent === false) {
+                throw new \Exception("Не удалось загрузить изображение: {$imageUrl}");
+            }
+
+            $extension = pathinfo(parse_url($imageUrl, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
+            $tempImagePath = $tempDir . '/' . uniqid() . '.' . $extension;
+            
+            if (!file_put_contents($tempImagePath, $imageContent)) {
+                throw new \Exception("Не удалось сохранить временный файл");
+            }
+
             $uploadedFile = new \Illuminate\Http\UploadedFile(
                 $tempImagePath,
-                basename($tempImagePath),
+                basename($imageUrl),
                 mime_content_type($tempImagePath),
                 null,
                 true
             );
 
-            $attributes = [
-                'title' => json_encode(['Product Image']),
-                'alt' => json_encode(['Product Image']),
-            ];
-
             $image = \App\Models\Image::upload(
                 $uploadedFile,
                 'public',
-                $attributes
+                [
+                    'title' => json_encode(['Product Image']),
+                    'alt' => json_encode(['Product Image']),
+                ]
             );
 
             return $image->id;
+        } catch (\Exception $e) {
+            Log::error('ProductImporter: Ошибка обработки изображения', [
+                'error' => $e->getMessage(),
+                'url' => $imageUrl
+            ]);
+            return null;
         } finally {
-            // Always clean up the temporary file
-            @unlink($tempImagePath);
+            if (isset($tempImagePath) && file_exists($tempImagePath)) {
+                @unlink($tempImagePath);
+            }
         }
     }
 
