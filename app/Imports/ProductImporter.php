@@ -16,21 +16,59 @@ class ProductImporter extends Importer
 
     public function __construct(Import $import, array $options = [], ?array $records = [])
     {
+        // Сначала вызываем родительский конструктор
         parent::__construct($import, $options, $records);
-        Log::channel('daily')->info('ProductImporter: Создан новый экземпляр импортера', [
+        
+        $logger = Log::channel('daily');
+        $logger->info('ProductImporter: Конструктор', [
             'import_id' => $import->id,
             'options' => $options,
-            'records_count' => count($records)
+            'file_path' => $import->file_path,
+            'file_exists' => file_exists($import->file_path ?? ''),
         ]);
     }
 
     public function setUp(): void
     {
-        Log::info('ProductImporter: Настройка импорта');
-        parent::setUp();
-        $this->options = [
-            'updateExisting' => true,
-        ];
+        $logger = Log::channel('daily');
+        
+        try {
+            $logger->info('ProductImporter: Начало настройки импорта', [
+                'import_id' => $this->import->id,
+                'file_path' => $this->import->file_path,
+                'file_exists' => file_exists($this->import->file_path),
+                'file_size' => file_exists($this->import->file_path) ? filesize($this->import->file_path) : 0,
+                'mime_type' => mime_content_type($this->import->file_path),
+                'file_contents' => file_exists($this->import->file_path) ? mb_substr(file_get_contents($this->import->file_path), 0, 1000) : null,
+            ]);
+
+            if (!file_exists($this->import->file_path)) {
+                $logger->error('ProductImporter: Файл импорта не найден', [
+                    'file_path' => $this->import->file_path
+                ]);
+                throw new \Exception('Файл импорта не найден');
+            }
+
+            parent::setUp();
+            
+            $this->options = [
+                'updateExisting' => true,
+            ];
+            
+            // Проверяем формат файла
+            $extension = pathinfo($this->import->file_path, PATHINFO_EXTENSION);
+            $logger->info('ProductImporter: Формат файла', [
+                'extension' => $extension,
+                'mime_type' => mime_content_type($this->import->file_path)
+            ]);
+            
+        } catch (\Exception $e) {
+            $logger->error('ProductImporter: Ошибка настройки импорта', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
     public static function getOptionsFormComponents(): array
@@ -90,45 +128,60 @@ class ProductImporter extends Importer
         return 'default';
     }
 
+    public function validateRecordData($data): bool
+    {
+        $logger = Log::channel('daily');
+        
+        if (!is_array($data)) {
+            $logger->error('ProductImporter: Неверный формат данных', [
+                'type' => gettype($data)
+            ]);
+            return false;
+        }
+        
+        $requiredFields = ['name', 'price'];
+        $missingFields = array_diff($requiredFields, array_keys($data));
+        
+        if (!empty($missingFields)) {
+            $logger->error('ProductImporter: Отсутствуют обязательные поля', [
+                'missing_fields' => $missingFields
+            ]);
+            return false;
+        }
+        
+        return true;
+    }
+
     public function resolveRecord(): ?Product
     {
         $logger = Log::channel('daily');
-        $logger->info('ProductImporter: Начало обработки записи');
-
+        
         try {
-            $data = $this->record;
-            
-            if (empty($data)) {
-                $logger->error('ProductImporter: Пустая запись');
+            if (empty($this->record)) {
+                $logger->warning('ProductImporter: Пустая запись', [
+                    'record' => $this->record
+                ]);
                 return null;
             }
 
-            $logger->info('ProductImporter: Данные записи', ['data' => $data]);
-
-            // Поиск или создание продукта
+            $data = $this->record;
+            
+            // Создаем или обновляем продукт
             $product = Product::firstOrNew(['name' => $data['name']]);
-            $logger->info('ProductImporter: Продукт найден/создан', [
-                'product_id' => $product->id,
-                'is_new' => !$product->exists,
-                'name' => $product->name
+            
+            $logger->info('ProductImporter: Обработка записи', [
+                'data' => $data,
+                'is_new' => !$product->exists
             ]);
 
-            // Заполняем все поля из данных
+            // Заполняем поля
             foreach ($data as $field => $value) {
-                $logger->info('ProductImporter: Обработка поля', [
-                    'field' => $field,
-                    'value' => $value
-                ]);
-
-                if ($field === 'price' || $field === 'new_price') {
+                if ($field === 'price') {
                     $product->$field = (float) str_replace([' ', ','], ['', '.'], $value);
                 } elseif ($field === 'image' && !empty($value)) {
                     try {
                         $imageId = $this->processImage($value);
                         $product->image = $imageId;
-                        $logger->info('ProductImporter: Изображение обработано', [
-                            'image_id' => $imageId
-                        ]);
                     } catch (\Exception $e) {
                         $logger->error('ProductImporter: Ошибка обработки изображения', [
                             'error' => $e->getMessage(),
@@ -141,16 +194,16 @@ class ProductImporter extends Importer
             }
 
             $logger->info('ProductImporter: Запись подготовлена', [
-                'product' => $product->toArray()
+                'product_data' => $product->toArray()
             ]);
 
             return $product;
 
         } catch (\Exception $e) {
-            $logger->error('ProductImporter: Критическая ошибка', [
+            $logger->error('ProductImporter: Ошибка обработки записи', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'data' => $data ?? null
+                'data' => $this->record ?? null
             ]);
             throw $e;
         }
@@ -210,5 +263,122 @@ class ProductImporter extends Importer
     public static function getCompletedNotificationBody(Import $import): string
     {
         return "Импорт товаров успешно завершен! Импортировано записей: {$import->successful_rows}";
+    }
+
+    public function beforeImport(): void
+    {
+        $logger = Log::channel('daily');
+        $logger->info('ProductImporter: Перед beforeImport()', [
+            'import_id' => $this->import->id,
+            'records' => $this->records,
+            'records_count' => count($this->records ?? []),
+            'file_path' => $this->import->file_path,
+            'file_exists' => file_exists($this->import->file_path),
+            'import_status' => $this->import->status,
+            'has_record_property' => property_exists($this, 'record'),
+            'record_value' => $this->record ?? null,
+        ]);
+        
+        parent::beforeImport();
+        
+        $logger->info('ProductImporter: После beforeImport()', [
+            'records' => $this->records,
+            'records_count' => count($this->records ?? []),
+            'has_record_property' => property_exists($this, 'record'),
+            'record_value' => $this->record ?? null,
+        ]);
+    }
+
+    public function afterImport(): void
+    {
+        parent::afterImport();
+        
+        $logger = Log::channel('daily');
+        $logger->info('ProductImporter: После импорта', [
+            'import_id' => $this->import->id,
+            'records' => $this->records,
+            'records_count' => count($this->records ?? []),
+            'successful_rows' => $this->import->successful_rows,
+            'import_status' => $this->import->status
+        ]);
+    }
+
+    // Переопределяем метод для чтения строк
+    public function readRows()
+    {
+        $logger = Log::channel('daily');
+        $logger->info('ProductImporter: Начало чтения строк', [
+            'file_path' => $this->import->file_path,
+            'file_exists' => file_exists($this->import->file_path),
+        ]);
+
+        try {
+            $records = $this->readCsv();
+            
+            $logger->info('ProductImporter: Результат чтения строк', [
+                'records_count' => count($records),
+                'first_record' => $records[0] ?? null
+            ]);
+
+            return $records;
+        } catch (\Exception $e) {
+            $logger->error('ProductImporter: Ошибка чтения строк', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
+    }
+
+    // Добавляем метод для чтения CSV
+    protected function readCsv(): array
+    {
+        $logger = Log::channel('daily');
+        
+        try {
+            $file = fopen($this->import->file_path, 'r');
+            if ($file === false) {
+                throw new \Exception("Не удалось открыть файл");
+            }
+
+            $headers = fgetcsv($file);
+            if ($headers === false) {
+                throw new \Exception("Не удалось прочитать заголовки CSV");
+            }
+
+            $logger->info('ProductImporter: Заголовки CSV', [
+                'headers' => $headers
+            ]);
+
+            $records = [];
+            while (($row = fgetcsv($file)) !== false) {
+                if (count($headers) !== count($row)) {
+                    $logger->warning('ProductImporter: Пропущена строка - несоответствие количества колонок', [
+                        'headers_count' => count($headers),
+                        'row_count' => count($row),
+                        'row' => $row
+                    ]);
+                    continue;
+                }
+
+                $record = array_combine($headers, $row);
+                $records[] = $record;
+            }
+
+            fclose($file);
+
+            $logger->info('ProductImporter: Прочитано записей из CSV', [
+                'count' => count($records),
+                'first_record' => $records[0] ?? null
+            ]);
+
+            return $records;
+        } catch (\Exception $e) {
+            $logger->error('ProductImporter: Ошибка чтения CSV', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 }
