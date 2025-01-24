@@ -106,38 +106,28 @@ class ProductImporter extends Importer
     {
         return [
             ImportColumn::make('name')
-                ->label('Название товара')
                 ->requiredMapping()
-                ->rules(['required', 'string'])
-                ->example('Товар 1'),
-
+                ->rules(['required']),
+            ImportColumn::make('image'),
+            ImportColumn::make('slug'),
+            ImportColumn::make('gallery'),
+            ImportColumn::make('short_description'),
+            ImportColumn::make('description'),
             ImportColumn::make('price')
-                ->label('Цена')
                 ->requiredMapping()
                 ->numeric()
-                ->rules(['required', 'numeric', 'min:0'])
-                ->example('100.00'),
-
+                ->rules(['required', 'integer']),
             ImportColumn::make('new_price')
-                ->label('Новая цена')
                 ->numeric()
-                ->rules(['nullable', 'numeric', 'min:0'])
-                ->example('90.00'),
-
-            ImportColumn::make('short_description')
-                ->label('Короткое описание')
-                ->rules(['nullable', 'string'])
-                ->example('Краткое описание товара'),
-
-            ImportColumn::make('description')
-                ->label('Описание')
-                ->rules(['nullable', 'string'])
-                ->example('Полное описание товара'),
-
-            ImportColumn::make('image')
-                ->label('Изображение')
-                ->rules(['nullable', 'string'])
-                ->example('https://example.com/image.jpg'),
+                ->rules(['integer']),
+            ImportColumn::make('is_popular')
+                ->boolean()
+                ->rules(['boolean']),
+            ImportColumn::make('count')
+                ->requiredMapping()
+                ->numeric()
+                ->rules(['required', 'integer']),
+            ImportColumn::make('synonims'),
         ];
     }
 
