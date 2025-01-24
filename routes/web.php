@@ -27,7 +27,7 @@ Route::prefix('/')->name('client.')->group(function () {
         $orderId = session('order_id', null);
         return view('client.thanks', ['orderId' => $orderId]);
     })->name('thanks');
-    Route::view('/checkout/thanks', 'client.thanks')->name('thanks');
+    // Route::view('/checkout/thanks', 'client.thanks')->name('thanks');
     Route::view('/blog/{category_slug}/{slug}', 'client.posts.show')->name('posts.show');
     Route::view('/articles/{slug}', 'client.articles.show')->name('articles.show');
     Route::view('/search', 'client.search')->name('search');

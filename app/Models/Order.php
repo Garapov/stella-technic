@@ -71,6 +71,7 @@ class Order extends Model
             Notification::make()
                 ->title("Новый заказ №$order->id")
                 ->body("Стоимость заказа $order->total_price")
+                ->success()
                 ->send()
                 ->sendToDatabase($recipient);
         });

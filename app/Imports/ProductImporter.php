@@ -7,24 +7,36 @@ use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Carbon\CarbonInterface;
+use Carbon\Carbon;
 
 class ProductImporter extends Importer
 {
+    use InteractsWithQueue, Queueable;
+
     protected static ?string $model = Product::class;
+    protected int $maxAttempts = 3;
+    protected int $retryDelay = 500;
 
-    protected array $options = [];
-
-    public function __construct(Import $import, array $options = [], ?array $records = [])
-    {
-        $logger = Log::channel('daily');
-        $logger->info('ProductImporter: Конструктор - начало', [
-            'import_id' => $import->id,
-            'file_path' => $import->file_path,
-            'file_exists' => file_exists($import->file_path ?? ''),
-            'records_count' => count($records),
-        ]);
+    public function __construct(
+        protected Import $import,
+        protected array $columnMap,
+        protected array $options,
+    ) {
+        // Увеличиваем время выполнения PHP скрипта
+        set_time_limit(600); // 10 минут
         
-        parent::__construct($import, $options, $records);
+        // Увеличиваем память
+        ini_set('memory_limit', '512M');
+        
+        // Настройка таймаута SQLite
+        DB::statement('PRAGMA busy_timeout = 5000');
+        
+        parent::__construct($import, $columnMap, $options);
     }
 
     public function setUp(): void
@@ -90,30 +102,36 @@ class ProductImporter extends Importer
             ImportColumn::make('name')
                 ->label('Название товара')
                 ->requiredMapping()
-                ->rules(['required', 'string']),
+                ->rules(['required', 'string'])
+                ->example('Товар 1'),
 
             ImportColumn::make('price')
                 ->label('Цена')
                 ->requiredMapping()
                 ->numeric()
-                ->rules(['required', 'numeric', 'min:0']),
+                ->rules(['required', 'numeric', 'min:0'])
+                ->example('100.00'),
 
             ImportColumn::make('new_price')
                 ->label('Новая цена')
                 ->numeric()
-                ->rules(['nullable', 'numeric', 'min:0']),
+                ->rules(['nullable', 'numeric', 'min:0'])
+                ->example('90.00'),
 
             ImportColumn::make('short_description')
                 ->label('Короткое описание')
-                ->rules(['nullable', 'string']),
+                ->rules(['nullable', 'string'])
+                ->example('Краткое описание товара'),
 
             ImportColumn::make('description')
                 ->label('Описание')
-                ->rules(['nullable', 'string']),
+                ->rules(['nullable', 'string'])
+                ->example('Полное описание товара'),
 
             ImportColumn::make('image')
                 ->label('Изображение')
-                ->rules(['nullable', 'string']),
+                ->rules(['nullable', 'string'])
+                ->example('https://example.com/image.jpg'),
         ];
     }
 
@@ -124,7 +142,27 @@ class ProductImporter extends Importer
 
     public function getJobQueue(): ?string
     {
-        return 'default';
+        return 'imports';
+    }
+
+    public function getJobTimeout(): ?int 
+    {
+        return 3600; // 1 час
+    }
+
+    public function getJobMaxTries(): ?int
+    {
+        return 3;
+    }
+
+    public function getJobRetryUntil(): ?CarbonInterface
+    {
+        return Carbon::now()->addHours(2);
+    }
+
+    public function getJobMemory(): ?int
+    {
+        return 512; // 512MB
     }
 
     public function validateRecordData($data): bool
@@ -155,40 +193,11 @@ class ProductImporter extends Importer
     {
         $logger = Log::channel('daily');
         $logger->info('ProductImporter: Начало импорта');
+
+        $logger->info($this->import);
         
         try {
-            // Читаем данные из файла
-            $records = $this->readCsv();
-            
-            $logger->info('ProductImporter: Прочитаны записи', [
-                'records_count' => count($records),
-                'first_record' => $records[0] ?? null
-            ]);
-            
-            // Устанавливаем записи для импорта
-            $this->records = $records;
-            
-            // Вызываем родительский метод импорта
-            parent::import();
-            
-        } catch (\Exception $e) {
-            $logger->error('ProductImporter: Ошибка импорта', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            throw $e;
-        }
-    }
-
-    protected function readCsv(): array
-    {
-        $logger = Log::channel('daily');
-        
-        try {
-            if (!file_exists($this->import->file_path)) {
-                throw new \Exception("Файл не найден: {$this->import->file_path}");
-            }
-
+            // Читаем данные из файла напрямую
             $content = file_get_contents($this->import->file_path);
             if ($content === false) {
                 throw new \Exception("Не удалось прочитать файл");
@@ -200,12 +209,10 @@ class ProductImporter extends Importer
                 $content = mb_convert_encoding($content, 'UTF-8', $encoding);
             }
 
-            // Создаем временный файл с правильной кодировкой
-            $tempFile = tmpfile();
-            fwrite($tempFile, $content);
-            fseek($tempFile, 0);
+            // Разбираем CSV
+            $rows = array_map('str_getcsv', explode("\n", $content));
+            $headers = array_shift($rows);
 
-            $headers = fgetcsv($tempFile);
             if (!$headers) {
                 throw new \Exception("Не удалось прочитать заголовки CSV");
             }
@@ -214,33 +221,39 @@ class ProductImporter extends Importer
                 'headers' => $headers
             ]);
 
+            // Формируем записи
             $records = [];
-            while (($row = fgetcsv($tempFile)) !== false) {
-                if (count($headers) !== count($row)) {
-                    $logger->warning('ProductImporter: Пропущена строка - несоответствие количества колонок', [
-                        'headers' => $headers,
-                        'row' => $row
-                    ]);
-                    continue;
-                }
-
-                $record = array_combine($headers, $row);
-                if ($record && !empty(array_filter($record))) {
-                    $records[] = $record;
+            foreach ($rows as $row) {
+                if (count($row) === count($headers)) {
+                    $record = array_combine($headers, $row);
+                    if ($record && !empty(array_filter($record))) {
+                        $records[] = $record;
+                    }
                 }
             }
 
-            fclose($tempFile);
-
-            $logger->info('ProductImporter: Прочитано записей', [
-                'count' => count($records),
-                'first_record' => $records[0] ?? null,
-                'headers' => $headers
+            $logger->info('ProductImporter: Прочитаны записи', [
+                'records_count' => count($records),
+                'first_record' => $records[0] ?? null
             ]);
 
-            return $records;
+            // Импортируем каждую запись
+            foreach ($records as $record) {
+                $this->record = $record;
+                
+                if ($this->validateRecordData($record)) {
+                    $product = $this->resolveRecord();
+                    if ($product && $product->save()) {
+                        $this->import->increment('successful_rows');
+                        $logger->info('ProductImporter: Сохранен продукт', [
+                            'product' => $product->toArray()
+                        ]);
+                    }
+                }
+            }
+
         } catch (\Exception $e) {
-            $logger->error('ProductImporter: Ошибка чтения CSV', [
+            $logger->error('ProductImporter: Ошибка импорта', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -253,83 +266,234 @@ class ProductImporter extends Importer
         $logger = Log::channel('daily');
         
         try {
-            if (empty($this->record)) {
-                $logger->warning('ProductImporter: Пустая запись', [
-                    'record' => $this->record
+            if (empty($this->data['name'])) {
+                $logger->error('ProductImporter: Отсутствует name', [
+                    'data' => $this->data
                 ]);
                 return null;
             }
 
-            $data = $this->record;
-            
-            $logger->info('ProductImporter: Обработка записи', [
-                'data' => $data
-            ]);
+            if (!isset($this->data['price'])) {
+                $logger->error('ProductImporter: Отсутствует price', [
+                    'data' => $this->data
+                ]);
+                return null;
+            }
 
-            // Создаем или обновляем продукт
-            $product = Product::firstOrNew(['name' => $data['name']]);
-            
-            foreach ($data as $field => $value) {
+            return Product::firstOrNew(['name' => $this->data['name']]);
+
+        } catch (\Exception $e) {
+            $logger->error('ProductImporter: Ошибка в resolveRecord', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'data' => $this->data
+            ]);
+            throw $e;
+        }
+    }
+
+    public function fillRecord(): void
+    {
+        $logger = Log::channel('daily');
+        
+        try {
+            if (!$this->record) {
+                throw new \Exception('Отсутствует запись для заполнения');
+            }
+
+            // Определяем разрешенные поля из базы данных
+            $allowedFields = [
+                'name', 'price', 'new_price', 'short_description', 
+                'description', 'image', 'slug'
+            ];
+
+            foreach ($this->data as $field => $value) {
+                // Пропускаем поля, которых нет в таблице
+                if (!in_array($field, $allowedFields)) {
+                    continue;
+                }
+
+                // Пропускаем пустые значения для необязательных полей
+                if (!in_array($field, ['name', 'price']) && empty($value)) {
+                    continue;
+                }
+
                 if ($field === 'price' || $field === 'new_price') {
-                    $product->$field = (float) str_replace([' ', ','], ['', '.'], $value);
+                    $cleanValue = str_replace([' ', ','], ['', '.'], $value);
+                    if (is_numeric($cleanValue)) {
+                        $this->record->$field = (float) $cleanValue;
+                    } else {
+                        $logger->warning("ProductImporter: Некорректное значение цены", [
+                            'field' => $field,
+                            'value' => $value
+                        ]);
+                    }
+                } else if ($field === 'image' && !empty($value)) {
+                    $imageId = $this->processImage($value);
+                    if ($imageId) {
+                        $this->record->image = $imageId;
+                    }
                 } else {
-                    $product->$field = $value;
+                    $this->record->$field = $value;
                 }
             }
 
-            $logger->info('ProductImporter: Подготовлен продукт', [
-                'product' => $product->toArray()
-            ]);
-
-            return $product;
         } catch (\Exception $e) {
-            $logger->error('ProductImporter: Ошибка обработки записи', [
+            $logger->error('ProductImporter: Ошибка в fillRecord', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'data' => $this->record ?? null
+                'data' => $this->data,
+                'record' => $this->record ? $this->record->toArray() : null
             ]);
             throw $e;
+        }
+    }
+
+    protected function beforeValidate(): void
+    {
+        $logger = Log::channel('daily');
+        $logger->info('ProductImporter: Перед валидацией', [
+            'data' => $this->data,
+            'rules' => $this->getValidationRules(),
+        ]);
+    }
+
+    protected function afterValidate(): void
+    {
+        $logger = Log::channel('daily');
+        $logger->info('ProductImporter: После валидации', [
+            'data' => $this->data
+        ]);
+    }
+
+    protected function beforeSave(): void
+    {
+        // Логируем только в случае ошибки
+        if (!$this->record || empty($this->record->name) || empty($this->record->price)) {
+            $logger = Log::channel('daily');
+            $logger->error('ProductImporter: Некорректные данные перед сохранением', [
+                'record' => $this->record ? $this->record->toArray() : null
+            ]);
+        }
+    }
+
+    protected function afterSave(): void
+    {
+        // Логируем только в случае ошибки
+        if (!$this->record || !$this->record->exists) {
+            $logger = Log::channel('daily');
+            $logger->error('ProductImporter: Ошибка после сохранения', [
+                'record' => $this->record ? $this->record->toArray() : null,
+                'successful_rows' => $this->import->successful_rows
+            ]);
+        }
+    }
+
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        return "Импорт товаров завершен. Успешно импортировано: {$import->successful_rows} записей.";
+    }
+
+    public function saveRecord(): void
+    {
+        $logger = Log::channel('daily');
+        $attempt = 1;
+
+        while (true) {
+            try {
+                DB::beginTransaction();
+                
+                try {
+                    parent::saveRecord();
+                    DB::commit();
+                    break;
+                } catch (\Exception $e) {
+                    DB::rollBack();
+                    throw $e;
+                }
+
+            } catch (QueryException $e) {
+                if (str_contains($e->getMessage(), 'database is locked')) {
+                    if ($attempt >= $this->maxAttempts) {
+                        throw $e;
+                    }
+                    usleep($this->retryDelay * 1000);
+                    $attempt++;
+                    continue;
+                }
+                throw $e;
+            }
         }
     }
 
     protected function processImage(string $imageUrl): ?int
     {
         try {
-            $tempDir = storage_path('app/temp');
-            if (!file_exists($tempDir)) {
-                mkdir($tempDir, 0755, true);
-            }
-
-            $imageContent = file_get_contents($imageUrl);
-            if ($imageContent === false) {
-                throw new \Exception("Не удалось загрузить изображение: {$imageUrl}");
-            }
-
-            $extension = pathinfo(parse_url($imageUrl, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
-            $tempImagePath = $tempDir . '/' . uniqid() . '.' . $extension;
+            $attempt = 1;
             
-            if (!file_put_contents($tempImagePath, $imageContent)) {
-                throw new \Exception("Не удалось сохранить временный файл");
+            while ($attempt <= $this->maxAttempts) {
+                try {
+                    DB::beginTransaction();
+                    
+                    $tempDir = storage_path('app/temp');
+                    if (!file_exists($tempDir)) {
+                        mkdir($tempDir, 0755, true);
+                    }
+
+                    $ctx = stream_context_create([
+                        'http' => [
+                            'timeout' => 10
+                        ]
+                    ]);
+
+                    $imageContent = @file_get_contents($imageUrl, false, $ctx);
+                    if ($imageContent === false) {
+                        throw new \Exception("Не удалось загрузить изображение");
+                    }
+
+                    $extension = pathinfo(parse_url($imageUrl, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
+                    $tempImagePath = $tempDir . '/' . uniqid() . '.' . $extension;
+                    
+                    if (!file_put_contents($tempImagePath, $imageContent)) {
+                        throw new \Exception("Не удалось сохранить временный файл");
+                    }
+
+                    $uploadedFile = new \Illuminate\Http\UploadedFile(
+                        $tempImagePath,
+                        basename($imageUrl),
+                        mime_content_type($tempImagePath),
+                        null,
+                        true
+                    );
+
+                    $image = \App\Models\Image::upload(
+                        $uploadedFile,
+                        'public',
+                        [
+                            'title' => json_encode(['Product Image']),
+                            'alt' => json_encode(['Product Image']),
+                        ]
+                    );
+
+                    DB::commit();
+                    return $image->id;
+
+                } catch (QueryException $e) {
+                    DB::rollBack();
+                    if (str_contains($e->getMessage(), 'database is locked')) {
+                        if ($attempt >= $this->maxAttempts) {
+                            throw $e;
+                        }
+                        usleep($this->retryDelay * 1000);
+                        $attempt++;
+                        continue;
+                    }
+                    throw $e;
+                } catch (\Exception $e) {
+                    DB::rollBack();
+                    throw $e;
+                }
             }
-
-            $uploadedFile = new \Illuminate\Http\UploadedFile(
-                $tempImagePath,
-                basename($imageUrl),
-                mime_content_type($tempImagePath),
-                null,
-                true
-            );
-
-            $image = \App\Models\Image::upload(
-                $uploadedFile,
-                'public',
-                [
-                    'title' => json_encode(['Product Image']),
-                    'alt' => json_encode(['Product Image']),
-                ]
-            );
-
-            return $image->id;
         } catch (\Exception $e) {
             Log::error('ProductImporter: Ошибка обработки изображения', [
                 'error' => $e->getMessage(),
@@ -341,11 +505,6 @@ class ProductImporter extends Importer
                 @unlink($tempImagePath);
             }
         }
-    }
-
-    public static function getCompletedNotificationBody(Import $import): string
-    {
-        return "Импорт товаров успешно завершен! Импортировано записей: {$import->successful_rows}";
     }
 
     public function beforeImport(): void
