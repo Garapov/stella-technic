@@ -37,6 +37,10 @@ class ImportProducts extends Page implements HasTable
         return $table
             ->query(Import::query()->where('importer', ProductImporter::class))
             ->columns([
+                TextColumn::make('id')
+                    ->label('#')
+                    ->sortable(),
+                    
                 TextColumn::make('created_at')
                     ->label('Дата импорта')
                     ->dateTime('d.m.Y H:i:s')

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedInteger('total_rows')->default(0);
             $table->unsignedInteger('successful_rows')->default(0);
             $table->unsignedInteger('failed_rows')->default(0);
+            $table->unsignedInteger('created_rows')->default(0);
             $table->text('error')->nullable();
             $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamp('completed_at')->nullable();

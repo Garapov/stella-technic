@@ -44,6 +44,9 @@ class ProductImporter extends Importer
         $logger = Log::channel('daily');
         
         try {
+            $this->import->update([
+                'status' => 'pending'
+            ]);
             $logger->info('ProductImporter: Начало настройки импорта', [
                 'import_id' => $this->import->id,
                 'file_path' => $this->import->file_path,
@@ -74,6 +77,9 @@ class ProductImporter extends Importer
             ]);
             
         } catch (\Exception $e) {
+            $this->import->update([
+                'status' => 'failed'
+            ]);
             $logger->error('ProductImporter: Ошибка настройки импорта', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -195,6 +201,9 @@ class ProductImporter extends Importer
         $logger->info('ProductImporter: Начало импорта');
 
         $logger->info($this->import);
+        $this->import->update([
+            'status' => 'processing'
+        ]);
         
         try {
             // Читаем данные из файла напрямую
@@ -256,6 +265,9 @@ class ProductImporter extends Importer
             $logger->error('ProductImporter: Ошибка импорта', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
+            ]);
+            $this->import->update([
+                'status' => 'failed'
             ]);
             throw $e;
         }
