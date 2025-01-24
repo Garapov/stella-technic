@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 
 class Order extends Model
 {
@@ -61,6 +63,16 @@ class Order extends Model
 
             // Validate and set status
             $order->status = $order->validateStatus($order->status);
+        });
+
+        static::created(function ($order) {
+            $recipient = User::where('id', 1)->first();
+
+            Notification::make()
+                ->title("Новый заказ №$order->id")
+                ->body("Стоимость заказа $order->total_price")
+                ->send()
+                ->sendToDatabase($recipient);
         });
     }
 
