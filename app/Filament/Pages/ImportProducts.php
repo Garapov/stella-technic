@@ -22,16 +22,6 @@ class ImportProducts extends Page implements HasTable
 
     protected static string $view = 'filament.pages.import-products';
 
-    protected function getPollingInterval(): ?string
-    {
-        return '4s';
-    }
-
-    protected function shouldPoll(): bool
-    {
-        return true;
-    }
-
     public function table(Table $table): Table
     {
         return $table
@@ -94,6 +84,7 @@ class ImportProducts extends Page implements HasTable
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
+            ->poll('1s')
             ->paginated([10, 25, 50]);
     }
 
@@ -102,8 +93,7 @@ class ImportProducts extends Page implements HasTable
         return [
             ImportAction::make()
                 ->importer(ProductImporter::class)
-                ->chunkSize(100)
-                ->slideOver(),
+                ->chunkSize(1),
         ];
     }
 }

@@ -44,9 +44,6 @@ class ProductImporter extends Importer
         $logger = Log::channel('daily');
         
         try {
-            $this->import->update([
-                'status' => 'pending'
-            ]);
             $logger->info('ProductImporter: Начало настройки импорта', [
                 'import_id' => $this->import->id,
                 'file_path' => $this->import->file_path,
@@ -185,83 +182,6 @@ class ProductImporter extends Importer
         return true;
     }
 
-    public function import(): void
-    {
-        $logger = Log::channel('daily');
-        $logger->info('ProductImporter: Начало импорта');
-
-        $logger->info($this->import);
-        $this->import->update([
-            'status' => 'processing'
-        ]);
-        
-        try {
-            // Читаем данные из файла напрямую
-            $content = file_get_contents($this->import->file_path);
-            if ($content === false) {
-                throw new \Exception("Не удалось прочитать файл");
-            }
-
-            // Определяем кодировку и конвертируем в UTF-8 если нужно
-            $encoding = mb_detect_encoding($content, ['UTF-8', 'Windows-1251'], true);
-            if ($encoding && $encoding !== 'UTF-8') {
-                $content = mb_convert_encoding($content, 'UTF-8', $encoding);
-            }
-
-            // Разбираем CSV
-            $rows = array_map('str_getcsv', explode("\n", $content));
-            $headers = array_shift($rows);
-
-            if (!$headers) {
-                throw new \Exception("Не удалось прочитать заголовки CSV");
-            }
-
-            $logger->info('ProductImporter: Заголовки CSV', [
-                'headers' => $headers
-            ]);
-
-            // Формируем записи
-            $records = [];
-            foreach ($rows as $row) {
-                if (count($row) === count($headers)) {
-                    $record = array_combine($headers, $row);
-                    if ($record && !empty(array_filter($record))) {
-                        $records[] = $record;
-                    }
-                }
-            }
-
-            $logger->info('ProductImporter: Прочитаны записи', [
-                'records_count' => count($records),
-                'first_record' => $records[0] ?? null
-            ]);
-
-            // Импортируем каждую запись
-            foreach ($records as $record) {
-                $this->record = $record;
-                
-                if ($this->validateRecordData($record)) {
-                    $product = $this->resolveRecord();
-                    if ($product && $product->save()) {
-                        $this->import->increment('successful_rows');
-                        $logger->info('ProductImporter: Сохранен продукт', [
-                            'product' => $product->toArray()
-                        ]);
-                    }
-                }
-            }
-
-        } catch (\Exception $e) {
-            $logger->error('ProductImporter: Ошибка импорта', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            $this->import->update([
-                'status' => 'failed'
-            ]);
-            throw $e;
-        }
-    }
 
     public function resolveRecord(): ?Product
     {
@@ -358,6 +278,9 @@ class ProductImporter extends Importer
             'data' => $this->data,
             'rules' => $this->getValidationRules(),
         ]);
+        $this->import->update([
+            'status' => 'processing'
+        ]);
     }
 
     protected function afterValidate(): void
@@ -393,6 +316,9 @@ class ProductImporter extends Importer
 
     public static function getCompletedNotificationBody(Import $import): string
     {
+        $import->update([
+            'status' => 'completed'
+        ]);
         return "Импорт товаров завершен. Успешно импортировано: {$import->successful_rows} записей.";
     }
 
