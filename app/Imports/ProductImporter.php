@@ -39,64 +39,9 @@ class ProductImporter extends Importer
         parent::__construct($import, $columnMap, $options);
     }
 
-    public function setUp(): void
-    {
-        $logger = Log::channel('daily');
-        
-        try {
-            $logger->info('ProductImporter: Начало настройки импорта', [
-                'import_id' => $this->import->id,
-                'file_path' => $this->import->file_path,
-                'file_exists' => file_exists($this->import->file_path),
-                'file_size' => file_exists($this->import->file_path) ? filesize($this->import->file_path) : 0,
-                'mime_type' => mime_content_type($this->import->file_path),
-                'file_contents' => file_exists($this->import->file_path) ? mb_substr(file_get_contents($this->import->file_path), 0, 1000) : null,
-            ]);
-
-            if (!file_exists($this->import->file_path)) {
-                $logger->error('ProductImporter: Файл импорта не найден', [
-                    'file_path' => $this->import->file_path
-                ]);
-                throw new \Exception('Файл импорта не найден');
-            }
-
-            parent::setUp();
-            
-            $this->options = [
-                'updateExisting' => true,
-            ];
-            
-            // Проверяем формат файла
-            $extension = pathinfo($this->import->file_path, PATHINFO_EXTENSION);
-            $logger->info('ProductImporter: Формат файла', [
-                'extension' => $extension,
-                'mime_type' => mime_content_type($this->import->file_path)
-            ]);
-            
-        } catch (\Exception $e) {
-            $this->import->update([
-                'status' => 'failed'
-            ]);
-            $logger->error('ProductImporter: Ошибка настройки импорта', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            throw $e;
-        }
-    }
-
     public static function getOptionsFormComponents(): array
     {
-        Log::info('ProductImporter: Получение компонентов формы опций');
         return [];
-    }
-
-    public function getOptions(): array
-    {
-        Log::info('ProductImporter: Получение опций', [
-            'options' => $this->options
-        ]);
-        return $this->options;
     }
 
     public static function getColumns(): array
@@ -138,86 +83,32 @@ class ProductImporter extends Importer
         return 'imports';
     }
 
-    public function getJobTimeout(): ?int 
-    {
-        return 3600; // 1 час
-    }
-
-    public function getJobMaxTries(): ?int
-    {
-        return 3;
-    }
-
     public function getJobRetryUntil(): ?CarbonInterface
     {
         return Carbon::now()->addHours(2);
     }
 
-    public function getJobMemory(): ?int
-    {
-        return 512; // 512MB
-    }
-
-    public function validateRecordData($data): bool
-    {
-        $logger = Log::channel('daily');
-        
-        if (!is_array($data)) {
-            $logger->error('ProductImporter: Неверный формат данных', [
-                'type' => gettype($data)
-            ]);
-            return false;
-        }
-        
-        $requiredFields = ['name', 'price'];
-        $missingFields = array_diff($requiredFields, array_keys($data));
-        
-        if (!empty($missingFields)) {
-            $logger->error('ProductImporter: Отсутствуют обязательные поля', [
-                'missing_fields' => $missingFields
-            ]);
-            return false;
-        }
-        
-        return true;
-    }
-
 
     public function resolveRecord(): ?Product
     {
-        $logger = Log::channel('daily');
-        
         try {
             if (empty($this->data['name'])) {
-                $logger->error('ProductImporter: Отсутствует name', [
-                    'data' => $this->data
-                ]);
                 return null;
             }
 
             if (!isset($this->data['price'])) {
-                $logger->error('ProductImporter: Отсутствует price', [
-                    'data' => $this->data
-                ]);
                 return null;
             }
 
             return Product::firstOrNew(['name' => $this->data['name']]);
 
         } catch (\Exception $e) {
-            $logger->error('ProductImporter: Ошибка в resolveRecord', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'data' => $this->data
-            ]);
             throw $e;
         }
     }
 
     public function fillRecord(): void
     {
-        $logger = Log::channel('daily');
-        
         try {
             if (!$this->record) {
                 throw new \Exception('Отсутствует запись для заполнения');
@@ -245,10 +136,7 @@ class ProductImporter extends Importer
                     if (is_numeric($cleanValue)) {
                         $this->record->$field = (float) $cleanValue;
                     } else {
-                        $logger->warning("ProductImporter: Некорректное значение цены", [
-                            'field' => $field,
-                            'value' => $value
-                        ]);
+
                     }
                 } else if ($field === 'image' && !empty($value)) {
                     $imageId = $this->processImage($value);
@@ -261,23 +149,12 @@ class ProductImporter extends Importer
             }
 
         } catch (\Exception $e) {
-            $logger->error('ProductImporter: Ошибка в fillRecord', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'data' => $this->data,
-                'record' => $this->record ? $this->record->toArray() : null
-            ]);
             throw $e;
         }
     }
 
     protected function beforeValidate(): void
     {
-        $logger = Log::channel('daily');
-        $logger->info('ProductImporter: Перед валидацией', [
-            'data' => $this->data,
-            'rules' => $this->getValidationRules(),
-        ]);
         $this->import->update([
             'status' => 'processing'
         ]);
@@ -285,33 +162,17 @@ class ProductImporter extends Importer
 
     protected function afterValidate(): void
     {
-        $logger = Log::channel('daily');
-        $logger->info('ProductImporter: После валидации', [
-            'data' => $this->data
-        ]);
+
     }
 
     protected function beforeSave(): void
     {
-        // Логируем только в случае ошибки
-        if (!$this->record || empty($this->record->name) || empty($this->record->price)) {
-            $logger = Log::channel('daily');
-            $logger->error('ProductImporter: Некорректные данные перед сохранением', [
-                'record' => $this->record ? $this->record->toArray() : null
-            ]);
-        }
+
     }
 
     protected function afterSave(): void
     {
-        // Логируем только в случае ошибки
-        if (!$this->record || !$this->record->exists) {
-            $logger = Log::channel('daily');
-            $logger->error('ProductImporter: Ошибка после сохранения', [
-                'record' => $this->record ? $this->record->toArray() : null,
-                'successful_rows' => $this->import->successful_rows
-            ]);
-        }
+
     }
 
     public static function getCompletedNotificationBody(Import $import): string
@@ -324,7 +185,6 @@ class ProductImporter extends Importer
 
     public function saveRecord(): void
     {
-        $logger = Log::channel('daily');
         $attempt = 1;
 
         while (true) {
@@ -423,53 +283,11 @@ class ProductImporter extends Importer
                 }
             }
         } catch (\Exception $e) {
-            Log::error('ProductImporter: Ошибка обработки изображения', [
-                'error' => $e->getMessage(),
-                'url' => $imageUrl
-            ]);
             return null;
         } finally {
             if (isset($tempImagePath) && file_exists($tempImagePath)) {
                 @unlink($tempImagePath);
             }
         }
-    }
-
-    public function beforeImport(): void
-    {
-        $logger = Log::channel('daily');
-        $logger->info('ProductImporter: Перед beforeImport()', [
-            'import_id' => $this->import->id,
-            'records' => $this->records,
-            'records_count' => count($this->records ?? []),
-            'file_path' => $this->import->file_path,
-            'file_exists' => file_exists($this->import->file_path),
-            'import_status' => $this->import->status,
-            'has_record_property' => property_exists($this, 'record'),
-            'record_value' => $this->record ?? null,
-        ]);
-        
-        parent::beforeImport();
-        
-        $logger->info('ProductImporter: После beforeImport()', [
-            'records' => $this->records,
-            'records_count' => count($this->records ?? []),
-            'has_record_property' => property_exists($this, 'record'),
-            'record_value' => $this->record ?? null,
-        ]);
-    }
-
-    public function afterImport(): void
-    {
-        parent::afterImport();
-        
-        $logger = Log::channel('daily');
-        $logger->info('ProductImporter: После импорта', [
-            'import_id' => $this->import->id,
-            'records' => $this->records,
-            'records_count' => count($this->records ?? []),
-            'successful_rows' => $this->import->successful_rows,
-            'import_status' => $this->import->status
-        ]);
     }
 }

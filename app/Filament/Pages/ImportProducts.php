@@ -84,7 +84,7 @@ class ImportProducts extends Page implements HasTable
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
-            ->poll('1s')
+            ->poll('500ms')
             ->paginated([10, 25, 50]);
     }
 
