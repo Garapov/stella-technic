@@ -39,11 +39,6 @@ class ProductImporter extends Importer
         parent::__construct($import, $columnMap, $options);
     }
 
-    public static function getOptionsFormComponents(): array
-    {
-        return [];
-    }
-
     public static function getColumns(): array
     {
         return [
@@ -55,6 +50,7 @@ class ProductImporter extends Importer
             ImportColumn::make('gallery'),
             ImportColumn::make('short_description'),
             ImportColumn::make('description'),
+            ImportColumn::make('category'),
             ImportColumn::make('price')
                 ->requiredMapping()
                 ->numeric()
@@ -71,11 +67,6 @@ class ProductImporter extends Importer
                 ->rules(['required', 'integer']),
             ImportColumn::make('synonims'),
         ];
-    }
-
-    public function getJobConnection(): ?string
-    {
-        return 'database';
     }
 
     public function getJobQueue(): ?string
@@ -120,7 +111,10 @@ class ProductImporter extends Importer
                 'description', 'image', 'slug'
             ];
 
+            
+
             foreach ($this->data as $field => $value) {
+                Log::info(json_encode($this->record, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
                 // Пропускаем поля, которых нет в таблице
                 if (!in_array($field, $allowedFields)) {
                     continue;
@@ -143,6 +137,8 @@ class ProductImporter extends Importer
                     if ($imageId) {
                         $this->record->image = $imageId;
                     }
+                } else if ($field === 'category' && !empty($value)) {
+                    Log::info($value);
                 } else {
                     $this->record->$field = $value;
                 }
