@@ -33,9 +33,6 @@ class ProductImporter extends Importer
         // Увеличиваем память
         ini_set('memory_limit', '512M');
         
-        // Настройка таймаута SQLite
-        DB::statement('PRAGMA busy_timeout = 5000');
-        
         parent::__construct($import, $columnMap, $options);
     }
 
@@ -114,7 +111,6 @@ class ProductImporter extends Importer
             
 
             foreach ($this->data as $field => $value) {
-                Log::info(json_encode($this->record, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
                 // Пропускаем поля, которых нет в таблице
                 if (!in_array($field, $allowedFields)) {
                     continue;

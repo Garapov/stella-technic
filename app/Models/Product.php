@@ -114,3 +114,4 @@ class Product extends Model implements Searchable
     //     });
     // }
 }
+// TODO Добавить UUID

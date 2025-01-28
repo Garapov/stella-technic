@@ -1,15 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Jobs\ProcessProductImport;
-use App\Models\Import;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/test-queue', function() {
-    // Import::first()->delete();
-    ProcessProductImport::dispatch(Import::first())->onQueue('imports');
-    return 'Job dispatched';
-});
 
 
 Route::prefix('/')->name('client.')->group(function () {
