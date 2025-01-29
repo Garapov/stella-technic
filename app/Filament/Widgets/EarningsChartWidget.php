@@ -5,7 +5,6 @@ namespace App\Filament\Widgets;
 use App\Models\Order;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class EarningsChartWidget extends ChartWidget
 {
@@ -33,13 +32,11 @@ class EarningsChartWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $query = Order::where('status', 'delivered');
-        
         $data = match ($this->filter) {
-            'day' => $this->getDailyData($query),
-            'week' => $this->getWeeklyData($query),
-            'month' => $this->getMonthlyData($query),
-            default => $this->getAllTimeData($query),
+            'day' => $this->getDailyData(),
+            'week' => $this->getWeeklyData(),
+            'month' => $this->getMonthlyData(),
+            default => $this->getAllTimeData(),
         };
 
         return [
@@ -56,22 +53,29 @@ class EarningsChartWidget extends ChartWidget
         ];
     }
 
-    protected function getDailyData($query): array
+    protected function getDailyData(): array
     {
-        $data = $query
-            ->whereDate('created_at', Carbon::today())
-            ->select(DB::raw("strftime('%H', created_at) as hour"), DB::raw('SUM(total_price) as total'))
-            ->groupBy('hour')
-            ->orderBy('hour')
-            ->get();
+        $today = now()->startOfDay();
+        
+        $orders = Order::query()
+            ->where('status', Order::STATUS_DELIVERED)
+            ->whereDate('created_at', $today)
+            ->get()
+            ->groupBy(function ($order) {
+                return $order->created_at->format('H');
+            })
+            ->map(function ($orders) {
+                return $orders->sum('total_price');
+            });
 
         $hours = range(0, 23);
         $values = [];
         $labels = [];
 
         foreach ($hours as $hour) {
-            $values[] = $data->firstWhere('hour', sprintf('%02d', $hour))?->total ?? 0;
-            $labels[] = sprintf('%02d:00', $hour);
+            $hourStr = str_pad($hour, 2, '0', STR_PAD_LEFT);
+            $values[] = $orders->get($hourStr, 0);
+            $labels[] = "{$hourStr}:00";
         }
 
         return [
@@ -80,25 +84,30 @@ class EarningsChartWidget extends ChartWidget
         ];
     }
 
-    protected function getWeeklyData($query): array
+    protected function getWeeklyData(): array
     {
-        $data = $query
-            ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
-            ->select(DB::raw("date(created_at) as date"), DB::raw('SUM(total_price) as total'))
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
+        $startOfWeek = now()->startOfWeek();
+        $endOfWeek = now()->endOfWeek();
+        
+        $orders = Order::query()
+            ->where('status', Order::STATUS_DELIVERED)
+            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->get()
+            ->groupBy(function ($order) {
+                return $order->created_at->format('Y-m-d');
+            })
+            ->map(function ($orders) {
+                return $orders->sum('total_price');
+            });
 
-        $days = [];
         $values = [];
         $labels = [];
-        $current = Carbon::now()->startOfWeek();
-        $end = Carbon::now()->endOfWeek();
+        $current = $startOfWeek->copy();
 
-        while ($current <= $end) {
-            $date = $current->format('Y-m-d');
-            $values[] = $data->firstWhere('date', $date)?->total ?? 0;
-            $labels[] = $current->format('D');
+        while ($current <= $endOfWeek) {
+            $dateKey = $current->format('Y-m-d');
+            $values[] = $orders->get($dateKey, 0);
+            $labels[] = $current->isoFormat('dd');
             $current->addDay();
         }
 
@@ -108,26 +117,31 @@ class EarningsChartWidget extends ChartWidget
         ];
     }
 
-    protected function getMonthlyData($query): array
+    protected function getMonthlyData(): array
     {
-        $data = $query
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->whereYear('created_at', Carbon::now()->year)
-            ->select(DB::raw("strftime('%W', created_at) as week"), DB::raw('SUM(total_price) as total'))
-            ->groupBy('week')
-            ->orderBy('week')
-            ->get();
+        $startOfMonth = now()->startOfMonth();
+        $endOfMonth = now()->endOfMonth();
+        
+        $orders = Order::query()
+            ->where('status', Order::STATUS_DELIVERED)
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->get()
+            ->groupBy(function ($order) {
+                return $order->created_at->weekOfMonth;
+            })
+            ->map(function ($orders) {
+                return $orders->sum('total_price');
+            });
 
         $values = [];
         $labels = [];
-        $currentWeek = Carbon::now()->startOfMonth()->copy();
-        $endOfMonth = Carbon::now()->endOfMonth();
+        $currentWeek = 1;
+        $lastWeek = $endOfMonth->weekOfMonth;
 
-        while ($currentWeek <= $endOfMonth) {
-            $weekNumber = $currentWeek->format('W');
-            $values[] = $data->firstWhere('week', $weekNumber)?->total ?? 0;
-            $labels[] = 'Неделя ' . $currentWeek->weekOfMonth;
-            $currentWeek->addWeek();
+        while ($currentWeek <= $lastWeek) {
+            $values[] = $orders->get($currentWeek, 0);
+            $labels[] = "Неделя {$currentWeek}";
+            $currentWeek++;
         }
 
         return [
@@ -136,30 +150,30 @@ class EarningsChartWidget extends ChartWidget
         ];
     }
 
-    protected function getAllTimeData($query): array
+    protected function getAllTimeData(): array
     {
-        $data = $query
-            ->select(
-                DB::raw("strftime('%Y', created_at) as year"),
-                DB::raw("strftime('%m', created_at) as month"),
-                DB::raw('SUM(total_price) as total')
-            )
-            ->groupBy('year', 'month')
-            ->orderBy('year')
-            ->orderBy('month')
-            ->get();
-
-        $monthNames = [
-            'Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
-            'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'
-        ];
+        $sixMonthsAgo = now()->subMonths(6)->startOfMonth();
+        
+        $orders = Order::query()
+            ->where('status', Order::STATUS_DELIVERED)
+            ->where('created_at', '>=', $sixMonthsAgo)
+            ->get()
+            ->groupBy(function ($order) {
+                return $order->created_at->format('Y-m');
+            })
+            ->map(function ($orders) {
+                return $orders->sum('total_price');
+            });
 
         $values = [];
         $labels = [];
+        $current = $sixMonthsAgo->copy();
 
-        foreach ($data as $record) {
-            $values[] = $record->total;
-            $labels[] = $monthNames[(int)$record->month - 1] . ' ' . $record->year;
+        while ($current <= now()) {
+            $monthKey = $current->format('Y-m');
+            $values[] = $orders->get($monthKey, 0);
+            $labels[] = $current->isoFormat('MMM YYYY');
+            $current->addMonth();
         }
 
         return [

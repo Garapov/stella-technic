@@ -5,7 +5,6 @@ namespace App\Filament\Widgets;
 use App\Models\User;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class UsersChartWidget extends ChartWidget
 {
@@ -16,6 +15,8 @@ class UsersChartWidget extends ChartWidget
         'lg' => 1,
         'xl' => 1,
     ];
+    protected static ?string $maxHeight = '400px';
+    protected static ?int $sort = 2;
     
     public ?string $filter = 'day';
 
@@ -55,20 +56,26 @@ class UsersChartWidget extends ChartWidget
 
     protected function getDailyData(): array
     {
-        $data = User::query()
-            ->whereDate('created_at', Carbon::today())
-            ->select(DB::raw("strftime('%H', created_at) as hour"), DB::raw('COUNT(*) as total'))
-            ->groupBy('hour')
-            ->orderBy('hour')
-            ->get();
+        $today = now()->startOfDay();
+        
+        $users = User::query()
+            ->whereDate('created_at', $today)
+            ->get()
+            ->groupBy(function ($user) {
+                return $user->created_at->format('H');
+            })
+            ->map(function ($users) {
+                return $users->count();
+            });
 
         $hours = range(0, 23);
         $values = [];
         $labels = [];
 
         foreach ($hours as $hour) {
-            $values[] = $data->firstWhere('hour', sprintf('%02d', $hour))?->total ?? 0;
-            $labels[] = sprintf('%02d:00', $hour);
+            $hourStr = str_pad($hour, 2, '0', STR_PAD_LEFT);
+            $values[] = $users->get($hourStr, 0);
+            $labels[] = "{$hourStr}:00";
         }
 
         return [
@@ -79,23 +86,27 @@ class UsersChartWidget extends ChartWidget
 
     protected function getWeeklyData(): array
     {
-        $data = User::query()
-            ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
-            ->select(DB::raw("date(created_at) as date"), DB::raw('COUNT(*) as total'))
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
+        $startOfWeek = now()->startOfWeek();
+        $endOfWeek = now()->endOfWeek();
+        
+        $users = User::query()
+            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->get()
+            ->groupBy(function ($user) {
+                return $user->created_at->format('Y-m-d');
+            })
+            ->map(function ($users) {
+                return $users->count();
+            });
 
-        $days = [];
         $values = [];
         $labels = [];
-        $current = Carbon::now()->startOfWeek();
-        $end = Carbon::now()->endOfWeek();
+        $current = $startOfWeek->copy();
 
-        while ($current <= $end) {
-            $date = $current->format('Y-m-d');
-            $values[] = $data->firstWhere('date', $date)?->total ?? 0;
-            $labels[] = $current->format('D');
+        while ($current <= $endOfWeek) {
+            $dateKey = $current->format('Y-m-d');
+            $values[] = $users->get($dateKey, 0);
+            $labels[] = $current->isoFormat('dd');
             $current->addDay();
         }
 
@@ -107,24 +118,28 @@ class UsersChartWidget extends ChartWidget
 
     protected function getMonthlyData(): array
     {
-        $data = User::query()
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->whereYear('created_at', Carbon::now()->year)
-            ->select(DB::raw("strftime('%W', created_at) as week"), DB::raw('COUNT(*) as total'))
-            ->groupBy('week')
-            ->orderBy('week')
-            ->get();
+        $startOfMonth = now()->startOfMonth();
+        $endOfMonth = now()->endOfMonth();
+        
+        $users = User::query()
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->get()
+            ->groupBy(function ($user) {
+                return $user->created_at->weekOfMonth;
+            })
+            ->map(function ($users) {
+                return $users->count();
+            });
 
         $values = [];
         $labels = [];
-        $currentWeek = Carbon::now()->startOfMonth()->copy();
-        $endOfMonth = Carbon::now()->endOfMonth();
+        $currentWeek = 1;
+        $lastWeek = $endOfMonth->weekOfMonth;
 
-        while ($currentWeek <= $endOfMonth) {
-            $weekNumber = $currentWeek->format('W');
-            $values[] = $data->firstWhere('week', $weekNumber)?->total ?? 0;
-            $labels[] = 'Неделя ' . $currentWeek->weekOfMonth;
-            $currentWeek->addWeek();
+        while ($currentWeek <= $lastWeek) {
+            $values[] = $users->get($currentWeek, 0);
+            $labels[] = "Неделя {$currentWeek}";
+            $currentWeek++;
         }
 
         return [
@@ -135,28 +150,27 @@ class UsersChartWidget extends ChartWidget
 
     protected function getAllTimeData(): array
     {
-        $data = User::query()
-            ->select(
-                DB::raw("strftime('%Y', created_at) as year"),
-                DB::raw("strftime('%m', created_at) as month"),
-                DB::raw('COUNT(*) as total')
-            )
-            ->groupBy('year', 'month')
-            ->orderBy('year')
-            ->orderBy('month')
-            ->get();
-
-        $monthNames = [
-            'Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
-            'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'
-        ];
+        $sixMonthsAgo = now()->subMonths(6)->startOfMonth();
+        
+        $users = User::query()
+            ->where('created_at', '>=', $sixMonthsAgo)
+            ->get()
+            ->groupBy(function ($user) {
+                return $user->created_at->format('Y-m');
+            })
+            ->map(function ($users) {
+                return $users->count();
+            });
 
         $values = [];
         $labels = [];
+        $current = $sixMonthsAgo->copy();
 
-        foreach ($data as $record) {
-            $values[] = $record->total;
-            $labels[] = $monthNames[(int)$record->month - 1] . ' ' . $record->year;
+        while ($current <= now()) {
+            $monthKey = $current->format('Y-m');
+            $values[] = $users->get($monthKey, 0);
+            $labels[] = $current->isoFormat('MMM YYYY');
+            $current->addMonth();
         }
 
         return [
@@ -173,17 +187,17 @@ class UsersChartWidget extends ChartWidget
     protected function getOptions(): array
     {
         return [
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
             'scales' => [
                 'y' => [
                     'beginAtZero' => true,
                     'ticks' => [
                         'stepSize' => 1,
                     ],
-                ],
-            ],
-            'plugins' => [
-                'legend' => [
-                    'display' => false,
                 ],
             ],
         ];
