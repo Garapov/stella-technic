@@ -37,6 +37,7 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('company_name'),
                 Forms\Components\TextInput::make('phone')
                     ->tel(),
+                Forms\Components\Select::make('roles')->multiple()->relationship('roles', 'name'),
                 Forms\Components\TextInput::make('inn'),
                 Forms\Components\TextInput::make('kpp'),
                 Forms\Components\TextInput::make('bik'),

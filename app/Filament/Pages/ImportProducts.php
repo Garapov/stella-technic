@@ -9,10 +9,13 @@ use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use JibayMcs\FilamentTour\Tour\HasTour;
+use JibayMcs\FilamentTour\Tour\Step;
+use JibayMcs\FilamentTour\Tour\Tour;
 
 class ImportProducts extends Page implements HasTable
 {
-    use \Filament\Tables\Concerns\InteractsWithTable;
+    use \Filament\Tables\Concerns\InteractsWithTable, HasTour;
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-up-tray';
 
@@ -23,6 +26,24 @@ class ImportProducts extends Page implements HasTable
     protected static ?string $title = 'Импорт товаров';
 
     protected static string $view = 'filament.pages.import-products';
+
+    public function tours(): array {
+        return [
+        //    Tour::make('dashboard')
+        //        ->steps(
+     
+        //            Step::make()
+        //                ->title("Welcome to your Dashboard !")
+        //                ->description('You look nice !'),
+     
+        //            Step::make('.fi-avatar')
+        //                ->title('Woaw ! Here is your avatar !')
+        //                ->description('You look nice !')
+        //                ->icon('heroicon-o-user-circle')
+        //                ->iconColor('primary')
+        //        ),
+        ];
+    }
 
     public function table(Table $table): Table
     {

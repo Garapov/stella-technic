@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Support\Facades\Gate;
+
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 class AppServiceProvider extends ServiceProvider
@@ -21,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::before(function ($user, $ability) {
+            return $user->hasTokenPermission($ability, $user) ?: null;
+        });
+
         Queue::failing(function (JobFailed $event) {
             $import = $event->job->payload()['import'] ?? null;
             if ($import) {

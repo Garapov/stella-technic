@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use CmsMulti\FilamentClearCache\FilamentClearCachePlugin;
 use Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin;
 use Datlechin\FilamentMenuBuilder\MenuPanel\ModelMenuPanel;
@@ -27,6 +28,8 @@ use Outerweb\FilamentImageLibrary\Filament\Plugins\FilamentImageLibraryPlugin;
 // use Stephenjude\FilamentBlog\BlogPlugin;
 use Z3d0X\FilamentFabricator\FilamentFabricatorPlugin;
 use App\Filament\Pages\ImportProducts;
+use JibayMcs\FilamentTour\FilamentTourPlugin;
+use Rupadana\ApiService\ApiServicePlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -79,6 +82,9 @@ class AdminPanelProvider extends PanelProvider
                 FilamentClearCachePlugin::make(),
                 FilamentFabricatorPlugin::make(),
                 FilamentImageLibraryPlugin::make(),
+                FilamentTourPlugin::make(),
+                ApiServicePlugin::make(),
+                FilamentSpatieRolesPermissionsPlugin::make(),
                 MenuBuilderPlugin::make()
                     ->addLocations([
                         'top_menu' => 'Верхнее меню',
