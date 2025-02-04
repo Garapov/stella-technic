@@ -126,21 +126,21 @@ class OrderResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')
-                    ->label('Order #')
+                    ->label('ID#')
                     ->sortable(),
                 TextColumn::make('name')
-                    ->label('Customer')
+                    ->label('Заказчик')
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Contact')
+                    ->label('Email')
                     ->searchable(),
                 TextColumn::make('total_price')
-                    ->label('Total Value')
+                    ->label('Цена')
                     ->numeric(decimalPlaces: 2)
                     ->money('RUB')
                     ->sortable(),
                 TextColumn::make('status')
-                    ->label('Status')
+                    ->label('Статус')
                     ->badge()
                     ->color(fn (string $state): string => match (strtolower($state)) {
                         'pending' => 'warning',
@@ -159,7 +159,7 @@ class OrderResource extends Resource
                         default => 'heroicon-o-question-mark-circle',
                     }),
                 TextColumn::make('created_at')
-                    ->label('Order Date')
+                    ->label('Дата')
                     ->dateTime()
                     ->sortable()
             ])

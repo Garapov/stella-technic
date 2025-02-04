@@ -12,6 +12,7 @@ class Detail extends Component
     public $gallery;
 
     public function mount($slug) {
+        // dd($this->product);
         $this->product = Product::where('slug', $slug)->first();
         $this->gallery = Image::whereIn('id', $this->product->gallery)->get();
         // dd($this->gallery);

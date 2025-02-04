@@ -16,6 +16,8 @@ class ImportProducts extends Page implements HasTable
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-up-tray';
 
+    protected static ?string $navigationGroup = 'Магазин';
+    
     protected static ?string $navigationLabel = 'Импорт товаров';
 
     protected static ?string $title = 'Импорт товаров';
