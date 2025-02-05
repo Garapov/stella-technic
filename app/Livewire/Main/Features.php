@@ -12,7 +12,7 @@ class Features extends Component
     {
         return view('livewire.main.features', [
             'features' => Feature::all(),
-            'categories' => ProductCategory::where('category_id', null)->get(),
+            'categories' => ProductCategory::where('parent_id', null)->get(),
         ]);
     }
 }

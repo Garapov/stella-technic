@@ -60,6 +60,10 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('Телескоп')
                     ->url('/telescope', shouldOpenInNewTab: true)
                     ->icon('fas-file-lines')
+                    ->group('Аналитика'),
+                NavigationItem::make('Документация')
+                    ->url('/docs/api', shouldOpenInNewTab: true)
+                    ->icon('fas-file-lines')
                     ->group('Аналитика')
             ])
             ->middleware([

@@ -58,12 +58,9 @@
             <li class="p-4 sm:p-6">
                 <div class="flex items-center sm:items-start">
                     <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 sm:h-40 sm:w-40">
-                        <img src="{{ $item['image'] ?? 'https://placehold.co/160x160' }}" 
-                             alt="{{ $item['name'] }}"
-                             class="h-full w-full object-cover object-center">
 
                         <img class="mx-auto h-full w-full"
-                            src="/storage/${item.img.uuid}/filament-thumbnail.${item.img.file_extension}" alt="" />
+                            src="{{ asset('/storage/' . $item['img']['uuid'] .  '/filament-thumbnail.' . $item['img']['file_extension']) }}" alt="" />
                     </div>
                     <div class="ml-6 flex-1 text-sm">
                         <div class="font-medium text-gray-900 sm:flex sm:justify-between">
@@ -76,7 +73,11 @@
                     </div>
                 </div>
 
-                <div class="mt-6 sm:flex sm:justify-between">
+                
+            </li>
+            @endforeach
+            <li class="p-4 sm:p-6">
+                <div class="sm:flex sm:justify-between">
                     <div class="flex items-center">
                         <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"></path>
@@ -85,18 +86,8 @@
                             Статус: {{ $this->translateStatus($order->status) }}
                         </p>
                     </div>
-
-                    <div class="mt-6 flex items-center space-x-4 divide-x divide-gray-200 border-t border-gray-200 pt-4 text-sm font-medium sm:mt-0 sm:ml-4 sm:border-none sm:pt-0">
-                        <div class="flex flex-1 justify-center">
-                            <a href="#" class="whitespace-nowrap text-indigo-600 hover:text-indigo-500">Просмотр товара</a>
-                        </div>
-                        <div class="flex flex-1 justify-center pl-4">
-                            <a href="#" class="whitespace-nowrap text-indigo-600 hover:text-indigo-500">Купить снова</a>
-                        </div>
-                    </div>
                 </div>
             </li>
-            @endforeach
         </ul>
     </div>
     @empty

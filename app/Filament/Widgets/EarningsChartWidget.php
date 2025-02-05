@@ -58,7 +58,7 @@ class EarningsChartWidget extends ChartWidget
         $today = now()->startOfDay();
         
         $orders = Order::query()
-            ->where('status', Order::STATUS_DELIVERED)
+            // ->where('status', Order::STATUS_DELIVERED)
             ->whereDate('created_at', $today)
             ->get()
             ->groupBy(function ($order) {
@@ -90,7 +90,7 @@ class EarningsChartWidget extends ChartWidget
         $endOfWeek = now()->endOfWeek();
         
         $orders = Order::query()
-            ->where('status', Order::STATUS_DELIVERED)
+            // ->where('status', Order::STATUS_DELIVERED)
             ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
             ->get()
             ->groupBy(function ($order) {
@@ -123,7 +123,7 @@ class EarningsChartWidget extends ChartWidget
         $endOfMonth = now()->endOfMonth();
         
         $orders = Order::query()
-            ->where('status', Order::STATUS_DELIVERED)
+            // ->where('status', Order::STATUS_DELIVERED)
             ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
             ->get()
             ->groupBy(function ($order) {
@@ -155,7 +155,7 @@ class EarningsChartWidget extends ChartWidget
         $sixMonthsAgo = now()->subMonths(6)->startOfMonth();
         
         $orders = Order::query()
-            ->where('status', Order::STATUS_DELIVERED)
+            // ->where('status', Order::STATUS_DELIVERED)
             ->where('created_at', '>=', $sixMonthsAgo)
             ->get()
             ->groupBy(function ($order) {

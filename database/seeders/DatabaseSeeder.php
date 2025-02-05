@@ -35,10 +35,10 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call([
-            ProductCategorySeeder::class,
-            ImageSeeder::class,
-            ProductParamSeeder::class,
-            ProductSeeder::class,
+            // ProductCategorySeeder::class,
+            // ImageSeeder::class,
+            // ProductParamSeeder::class,
+            // ProductSeeder::class,
         ]);
     }
 }
