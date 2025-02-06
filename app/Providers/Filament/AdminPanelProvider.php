@@ -99,6 +99,7 @@ class AdminPanelProvider extends PanelProvider
                         ModelMenuPanel::make()
                             ->model(\App\Models\Page::class),
                     ])
-            ]);
+            ])
+            ->spa();
     }
 }
