@@ -33,12 +33,16 @@ class ImportProducts extends Page implements HasTable
         //        ->steps(
      
         //            Step::make()
-        //                ->title("Welcome to your Dashboard !")
-        //                ->description('You look nice !'),
+        //                ->title("Добро поожалоовать на страницу импорта товаров !")
+        //                ->description('Давайте научимся !'),
      
-        //            Step::make('.fi-avatar')
-        //                ->title('Woaw ! Here is your avatar !')
-        //                ->description('You look nice !')
+        //            Step::make('.fi-ac-btn-action')
+        //                ->title('Нажмите кнопку')
+        //                ->icon('heroicon-o-user-circle')
+        //                ->iconColor('primary'),
+
+        //             Step::make('.filepond--drop-label')
+        //                ->title('Загрузите файл csv')
         //                ->icon('heroicon-o-user-circle')
         //                ->iconColor('primary')
         //        ),
@@ -99,7 +103,7 @@ class ImportProducts extends Page implements HasTable
                 TextColumn::make('processed_rows')
                     ->label('Обновлено')
                     ->state(function (Import $record): string {
-                        return $record->processed_rows - ($record->created_rows ?? 0);
+                        return $record->successful_rows - ($record->created_rows ?? 0);
                     }),
 
                 TextColumn::make('created_rows')
@@ -116,7 +120,7 @@ class ImportProducts extends Page implements HasTable
         return [
             ImportAction::make()
                 ->importer(ProductImporter::class)
-                ->chunkSize(1),
+                ->chunkSize(10),
         ];
     }
 }

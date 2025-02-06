@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Product;
+use App\Models\ProductCategory;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
@@ -62,7 +63,7 @@ class ProductImporter extends Importer
                 ->requiredMapping()
                 ->numeric()
                 ->rules(['required', 'integer']),
-            ImportColumn::make('synonims'),
+            ImportColumn::make('synonims')
         ];
     }
 
@@ -70,12 +71,6 @@ class ProductImporter extends Importer
     {
         return 'imports';
     }
-
-    public function getJobRetryUntil(): ?CarbonInterface
-    {
-        return Carbon::now()->addHours(2);
-    }
-
 
     public function resolveRecord(): ?Product
     {
@@ -88,7 +83,22 @@ class ProductImporter extends Importer
                 return null;
             }
 
-            return Product::firstOrNew(['name' => $this->data['name']]);
+            
+
+            // dd($this->import);
+
+            $product = Product::where('name', $this->data['name'])->first();
+
+            if (!$product) {
+                $product = Product::create(['name' => $this->data['name']]);
+                $this->import->created_rows++;
+            } else {
+                $this->import->processed_rows++;
+            }
+
+            $this->import->successful_rows++;
+
+            return $product;
 
         } catch (\Exception $e) {
             throw $e;
@@ -104,13 +114,13 @@ class ProductImporter extends Importer
 
             // Определяем разрешенные поля из базы данных
             $allowedFields = [
-                'name', 'price', 'new_price', 'short_description', 
-                'description', 'image', 'slug'
+                'name', 'image', 'slug', 'gallery', 'short_description', 'description', 'category', 'price', 'new_price', 'is_popular', 'count', 'synonims'
             ];
 
             
 
             foreach ($this->data as $field => $value) {
+                // dump(['field' => $field, 'value' => $value]);
                 // Пропускаем поля, которых нет в таблице
                 if (!in_array($field, $allowedFields)) {
                     continue;
@@ -134,7 +144,10 @@ class ProductImporter extends Importer
                         $this->record->image = $imageId;
                     }
                 } else if ($field === 'category' && !empty($value)) {
-                    Log::info($value);
+                    $category = ProductCategory::firstOrCreate(['title' => $this->data['category'],  'icon' => 'fas-table-list', 'is_visible' => true]);
+                    
+                    $this->record->categories()->attach($category->id);
+                    // dump($category);
                 } else {
                     $this->record->$field = $value;
                 }

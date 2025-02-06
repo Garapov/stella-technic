@@ -117,17 +117,12 @@ class ProductResource extends Resource
                             ])
                         ])->columnSpan('full'),
                         Tab::make('Категории')->schema([
-                            SelectTree::make('categories')
+                            Forms\Components\Select::make('categories')
                             ->label('Категории')
                             ->placeholder('Выберите категории')
-                            ->emptyLabel('Ничего не нашлось')
-                            // ->parentNullValue(-1)
-                            ->withCount()
-                            // ->withKey('parent_id')
-                            ->independent(false)
-                            ->enableBranchNode()
-                            ->required()
-                            ->relationship('categories', 'title', 'product_category_id')
+                            ->multiple()
+                            ->relationship('categories', 'title')
+                            ->preload()
                         ])->columnSpan('full'),
                         Tab::make('Параметры')->schema([
                             Forms\Components\Select::make('paramItems')

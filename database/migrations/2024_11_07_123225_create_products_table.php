@@ -19,7 +19,7 @@ return new class extends Migration
             $table->longText('gallery')->nullable();
             $table->longText('short_description')->nullable();
             $table->longText('description')->nullable();
-            $table->integer('price');
+            $table->integer('price')->default(0);
             $table->integer('new_price')->nullable();
             $table->boolean('is_popular')->default(false);
             $table->integer('count')->default(0);

@@ -3,6 +3,7 @@
     product: @js($product),
     selectedVariation: null,
     init() {
+        console.log(this.product.variants);
         this.product.variants.map(variant => {
             if (variant.is_default) {
                 this.selectedVariation = variant;
@@ -55,7 +56,7 @@
                 % </span>
 
             <div class="flex items-center justify-end gap-1">
-                <div class="relative" x-data="{ showTooltip: false }">
+                {{-- <div class="relative" x-data="{ showTooltip: false }">
                     <button type="button"
                         @mouseenter="showTooltip = true"
                         @mouseleave="showTooltip = false"
@@ -81,7 +82,7 @@
                         Quick look
                         <div class="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 transform rotate-45 bg-gray-900"></div>
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="relative" x-data="{ showTooltip: false }">
                     <button type="button" 

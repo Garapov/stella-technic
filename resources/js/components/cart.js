@@ -26,6 +26,9 @@ export default (() => {
                 
                 // Find default variant
                 const defaultVariant = product.variants.find(v => v.is_default);
+
+                console.log('defaultVariant', defaultVariant);
+                
                 
                 if (defaultVariant) {
                     this.addVariationToCart({
@@ -33,6 +36,13 @@ export default (() => {
                         variation: defaultVariant,
                         count: count
                     });
+                } else {
+                    this.list[product.id] = {
+                        id: product.id,
+                        name: product.name,
+                        count: count,
+                        variations: {}
+                    };
                 }
             },
 
