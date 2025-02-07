@@ -36,9 +36,9 @@ return [
      * - factor: The factor to make each responsive iteration smaller.
      */
     'responsive_variants' => [
-        'min_width' => 50,
-        'min_height' => 50,
-        'factor' => 0.7,
+        'min_width' => 200,
+        'min_height' => 200,
+        'factor' => 0.5,
     ],
 
     /**
@@ -59,16 +59,12 @@ return [
      * - mime_types: The supported mime types.
      */
     'support' => [
-        'webp' => true,
+        'webp' => false,  // Temporarily disable WebP until we have Imagick
         'responsive_variants' => true,
         'mime_types' => [
-            'image/apng',
-            'image/avif',
-            'image/gif',
             'image/jpeg',
             'image/png',
-            'image/svg+xml',
-            'image/webp',
+            'image/gif',
         ],
     ],
 ];

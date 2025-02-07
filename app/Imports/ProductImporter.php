@@ -14,6 +14,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Carbon\CarbonInterface;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class ProductImporter extends Importer
 {
@@ -28,11 +29,16 @@ class ProductImporter extends Importer
         protected array $columnMap,
         protected array $options,
     ) {
-        // Увеличиваем время выполнения PHP скрипта
-        set_time_limit(600); // 10 минут
+        // Increase PHP execution time limit
+        set_time_limit(600); // 10 minutes
         
-        // Увеличиваем память
+        // Increase memory limit
         ini_set('memory_limit', '512M');
+        
+        Log::info('Starting product import', [
+            'import_id' => $this->import->id,
+            'user_id' => $this->import->user_id,
+        ]);
         
         parent::__construct($import, $columnMap, $options);
     }
@@ -42,28 +48,35 @@ class ProductImporter extends Importer
         return [
             ImportColumn::make('name')
                 ->requiredMapping()
-                ->rules(['required']),
-            ImportColumn::make('image'),
-            ImportColumn::make('slug'),
-            ImportColumn::make('gallery'),
-            ImportColumn::make('short_description'),
-            ImportColumn::make('description'),
-            ImportColumn::make('category'),
+                ->rules(['required', 'string', 'max:255']),
+            ImportColumn::make('image')
+                ->rules(['nullable', 'string']),
+            ImportColumn::make('slug')
+                ->rules(['nullable', 'string']),
+            ImportColumn::make('gallery')
+                ->rules(['nullable', 'string']),
+            ImportColumn::make('short_description')
+                ->rules(['nullable', 'string']),
+            ImportColumn::make('description')
+                ->rules(['nullable', 'string']),
+            ImportColumn::make('category')
+                ->rules(['nullable', 'string']),
             ImportColumn::make('price')
                 ->requiredMapping()
                 ->numeric()
-                ->rules(['required', 'integer']),
+                ->rules(['required', 'integer', 'min:0']),
             ImportColumn::make('new_price')
                 ->numeric()
-                ->rules(['integer']),
+                ->rules(['nullable', 'integer', 'min:0']),
             ImportColumn::make('is_popular')
                 ->boolean()
                 ->rules(['boolean']),
             ImportColumn::make('count')
                 ->requiredMapping()
                 ->numeric()
-                ->rules(['required', 'integer']),
+                ->rules(['required', 'integer', 'min:0']),
             ImportColumn::make('synonims')
+                ->rules(['nullable', 'string'])
         ];
     }
 
@@ -74,33 +87,60 @@ class ProductImporter extends Importer
 
     public function resolveRecord(): ?Product
     {
+        
         try {
             if (empty($this->data['name'])) {
+                Log::warning('Пустое название продукта', ['row' => $this->data]);
                 return null;
             }
 
             if (!isset($this->data['price'])) {
+                Log::warning('Отсутствует цена', ['product' => $this->data['name']]);
                 return null;
             }
-
-            
-
-            // dd($this->import);
 
             $product = Product::where('name', $this->data['name'])->first();
 
             if (!$product) {
-                $product = Product::create(['name' => $this->data['name']]);
-                $this->import->created_rows++;
+                $product = new Product();
+                var_dump('new product');
             } else {
-                $this->import->processed_rows++;
+                var_dump('old product');
             }
 
-            $this->import->successful_rows++;
+            
+            $product->forceFill([
+                'name' => $this->data['name'],
+                'slug' => Str::slug($this->data['slug'] ?? $this->data['name']),
+                'image' => $this->data['image'] ?? null,
+                'gallery' => $this->data['gallery'] ?? null,
+                'short_description' => $this->data['short_description'] ?? null,
+                'description' => $this->data['description'] ?? null,
+                'price' => $this->data['price'],
+                'new_price' => $this->data['new_price'] ?? null,
+                'is_popular' => $this->data['is_popular'] ?? false,
+                'count' => $this->data['count'],
+                'synonims' => $this->data['synonims'] ?? null,
+            ]);
 
+            $product->save();
+
+            if (!empty($this->data['category'])) {
+                $category = ProductCategory::firstOrCreate([
+                    'title' => $this->data['category'],
+                    'icon' => 'fas-table-list',
+                    'is_visible' => true
+                ]);
+                $product->categories()->sync([$category->id]);
+            }
+            
             return $product;
-
         } catch (\Exception $e) {
+            Log::error('Ошибка импорта', [
+                'product' => $this->data['name'] ?? 'unknown',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             throw $e;
         }
     }
@@ -186,37 +226,6 @@ class ProductImporter extends Importer
             'status' => 'completed'
         ]);
         return "Импорт товаров завершен. Успешно импортировано: {$import->successful_rows} записей.";
-    }
-
-    public function saveRecord(): void
-    {
-        $attempt = 1;
-
-        while (true) {
-            try {
-                DB::beginTransaction();
-                
-                try {
-                    parent::saveRecord();
-                    DB::commit();
-                    break;
-                } catch (\Exception $e) {
-                    DB::rollBack();
-                    throw $e;
-                }
-
-            } catch (QueryException $e) {
-                if (str_contains($e->getMessage(), 'database is locked')) {
-                    if ($attempt >= $this->maxAttempts) {
-                        throw $e;
-                    }
-                    usleep($this->retryDelay * 1000);
-                    $attempt++;
-                    continue;
-                }
-                throw $e;
-            }
-        }
     }
 
     protected function processImage(string $imageUrl): ?int

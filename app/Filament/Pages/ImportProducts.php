@@ -27,6 +27,8 @@ class ImportProducts extends Page implements HasTable
 
     protected static string $view = 'filament.pages.import-products';
 
+    protected static ?int $navigationSort = 3;
+
     public function tours(): array {
         return [
         //    Tour::make('dashboard')
@@ -49,10 +51,24 @@ class ImportProducts extends Page implements HasTable
         ];
     }
 
+    public function getActions(): array
+    {
+        return [
+            ImportAction::make()
+                ->importer(ProductImporter::class)
+                ->chunkSize(100)
+                ->color('primary')
+                ->maxRows(1000)
+                ->label('Импортировать товары')
+                ->icon('heroicon-o-arrow-up-tray'),
+        ];
+    }
+
     public function table(Table $table): Table
     {
         return $table
             ->query(Import::query()->where('importer', ProductImporter::class))
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('id')
                     ->label('#')
@@ -66,6 +82,10 @@ class ImportProducts extends Page implements HasTable
                 TextColumn::make('user.name')
                     ->label('Пользователь')
                     ->sortable(),
+
+                // TextColumn::make('file_name')
+                //     ->label('Файл')
+                //     ->searchable(),
 
                 TextColumn::make('status')
                     ->label('Статус')
@@ -86,40 +106,32 @@ class ImportProducts extends Page implements HasTable
 
                 TextColumn::make('error')
                     ->label('Ошибка')
-                    ->visible(fn ($record) => $record && $record->status === 'failed'),
-
-                TextColumn::make('total_rows')
-                    ->label('Всего записей')
-                    ->sortable(),
-
-                TextColumn::make('successful_rows')
-                    ->label('Успешно')
-                    ->sortable(),
-
-                TextColumn::make('failed_rows')
-                    ->label('Ошибки')
-                    ->sortable(),
-
-                TextColumn::make('processed_rows')
-                    ->label('Обновлено')
-                    ->state(function (Import $record): string {
-                        return $record->successful_rows - ($record->created_rows ?? 0);
-                    }),
+                    ->visible(fn ($record) => $record && $record->status === 'failed')
+                    ->wrap(),
 
                 TextColumn::make('created_rows')
                     ->label('Создано')
                     ->sortable(),
-            ])
-            ->defaultSort('created_at', 'desc')
-            ->poll('1s')
-            ->paginated([10, 25, 50]);
-    }
 
-    public function getHeaderActions(): array
-    {
-        return [
-            ImportAction::make()
-                ->importer(ProductImporter::class)
-        ];
+                TextColumn::make('updated_rows')
+                    ->label('Обновлено')
+                    ->sortable(),
+
+                TextColumn::make('failed_rows')
+                    ->label('Ошибки')
+                    ->sortable()
+                    ->color('danger'),
+
+                TextColumn::make('processed_at')
+                    ->label('Обработано')
+                    ->dateTime('d.m.Y H:i:s')
+                    ->sortable(),
+            ])->filters([
+                // Add filters if needed
+            ])->actions([
+                // Add actions if needed
+            ])->bulkActions([
+                // Add bulk actions if needed
+            ])->poll('10s')->striped();
     }
 }

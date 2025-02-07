@@ -34,6 +34,15 @@ return [
             'driver' => 'sync',
         ],
 
+        'imports' => [
+            'driver' => 'database',
+            'connection' => env('DB_QUEUE_CONNECTION'),
+            'table' => 'jobs',
+            'queue' => 'imports',
+            'retry_after' => 3600,
+            'after_commit' => false,
+        ],
+
         'database' => [
             'driver' => 'database',
             'connection' => env('DB_QUEUE_CONNECTION'),

@@ -95,7 +95,7 @@ class Product extends Model implements Searchable
 
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(ProductCategory::class);
+        return $this->belongsToMany(ProductCategory::class, 'product_product_category');
     }
 
     public function variants(): HasMany
