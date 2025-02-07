@@ -120,7 +120,6 @@ class ImportProducts extends Page implements HasTable
         return [
             ImportAction::make()
                 ->importer(ProductImporter::class)
-                ->chunkSize(10),
         ];
     }
 }
