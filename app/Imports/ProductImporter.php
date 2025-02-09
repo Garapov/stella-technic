@@ -57,10 +57,49 @@ class ProductImporter extends Importer
                 ->example('Короткое описание в несколько строк для товара'),
             ImportColumn::make('description')
                 ->example('Описание товара <div>в котором много текста</div><strong> и где можно использовать HTML</strong>'),
-            // ImportColumn::make('category')
-            //     ->castStateUsing(function (?string $state, ProductImporter $importer) {
-            //         return null;
-            //     }),
+            ImportColumn::make('categories')
+                ->fillRecordUsing(function (Product $record, string $state) {
+                    // $record->sku = strtoupper($state);
+                    if (blank($state) || !$record->id) return;
+                    dump($state);
+                    try {
+                        $category_names = explode('|', $state);
+                        $categories = [];
+                        $category_ids = [];
+
+
+                        foreach ($category_names as &$title) {
+                            $category = ProductCategory::firstOrCreate([
+                                'title' => $title,
+                            ], [
+                                'icon' => 'fas-box-archive',
+                                'is_visible' => true
+                            ]);
+                            $categories[] = $category;
+                            $category_ids[] = $category->id;
+                        }
+                        // [3, 2, 1]
+                        array_unshift($category_ids, -1);
+                        unset($category_ids[count($category_ids) - 1]);
+
+                        // Log::info('category_ids', ['category_ids' => $category_ids]);
+
+                        foreach ($categories as $index => $category) {
+
+                            $category->update([
+                                'parent_id' => $category_ids[$index]
+                            ]);
+                        }
+                        // Log::info('fillRecordUsing', ['state' => $state]);
+                        $record->categories()->sync($category_ids);
+                    } catch (Exception $e) {
+
+                        Log::error('fillRecordUsing error', ['message' => $e->getMessage(), 'state' => $state, 'product' => $record]);
+                        // return null;
+                    }
+                    
+                })
+                ->example('Складское оборудование|Штабелеры|Электрические самоходные штабелеры'),
             ImportColumn::make('price')
                 ->requiredMapping()
                 ->numeric()
@@ -85,18 +124,18 @@ class ProductImporter extends Importer
 
     public function afterSave(): void
     {
-        Log::info('afterSave complete', [
-            'record_id' => $this->record->id,
-            'import_id' => $this->import->id,
-            'processed_rows' => $this->import->processed_rows,
-            'successful_rows' => $this->import->successful_rows
-        ]);
-        dump('afterSave');
+        // Log::info('afterSave complete', [
+        //     'record_id' => $this->record->id,
+        //     'import_id' => $this->import->id,
+        //     'processed_rows' => $this->import->processed_rows,
+        //     'successful_rows' => $this->import->successful_rows
+        // ]);
     }
 
     public function resolveRecord(): ?Product
     {
         // Log::info('resolveRecord start', ['name' => $this->data['name']]);
+        if (empty($this->data['name'])) return null;
         
         $product = Product::where('name', $this->data['name'])->first();
 
@@ -117,26 +156,34 @@ class ProductImporter extends Importer
 
     public function fillRecord(): void
     {
-        Log::info('fillRecord start', ['data' => $this->getCachedColumns()]);
+        // Log::info('fillRecord start', ['data' => $this->getCachedColumns()]);
 
         foreach ($this->getCachedColumns() as $column) {
-            $columnName = $column->getName();
+            // Log::info('fillRecord column', ['column' => $column]);
+            try {
+                $columnName = $column->getName();
 
-            if (blank($this->columnMap[$columnName] ?? null)) {
-                continue;
+                if (blank($this->columnMap[$columnName] ?? null)) {
+                    continue;
+                }
+
+                if (! array_key_exists($columnName, $this->data)) {
+                    continue;
+                }
+
+                $state = $this->data[$columnName];
+
+                if (blank($state) && $column->isBlankStateIgnored()) {
+                    continue;
+                }
+
+                $column->fillRecord($state);
+            } catch (Exception $e) {
+                Log::error('fillRecord error', [
+                    'message' => $e->getMessage(),
+                    'column_name' => $columnName
+                ]);
             }
-
-            if (! array_key_exists($columnName, $this->data)) {
-                continue;
-            }
-
-            $state = $this->data[$columnName];
-
-            if (blank($state) && $column->isBlankStateIgnored()) {
-                continue;
-            }
-
-            $column->fillRecord($state);
         }
     }
 
