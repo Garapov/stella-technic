@@ -30,25 +30,7 @@ class ImportProducts extends Page implements HasTable
     protected static ?int $navigationSort = 3;
 
     public function tours(): array {
-        return [
-        //    Tour::make('dashboard')
-        //        ->steps(
-     
-        //            Step::make()
-        //                ->title("Добро поожалоовать на страницу импорта товаров !")
-        //                ->description('Давайте научимся !'),
-     
-        //            Step::make('.fi-ac-btn-action')
-        //                ->title('Нажмите кнопку')
-        //                ->icon('heroicon-o-user-circle')
-        //                ->iconColor('primary'),
-
-        //             Step::make('.filepond--drop-label')
-        //                ->title('Загрузите файл csv')
-        //                ->icon('heroicon-o-user-circle')
-        //                ->iconColor('primary')
-        //        ),
-        ];
+        return [];
     }
 
     public function getActions(): array
@@ -115,6 +97,9 @@ class ImportProducts extends Page implements HasTable
 
                 TextColumn::make('updated_rows')
                     ->label('Обновлено')
+                    ->state(function (Import $record): string {
+                        return $record->processed_rows - ($record->created_rows ?? 0);
+                    })
                     ->sortable(),
 
                 TextColumn::make('failed_rows')
@@ -122,16 +107,17 @@ class ImportProducts extends Page implements HasTable
                     ->sortable()
                     ->color('danger'),
 
-                TextColumn::make('processed_at')
-                    ->label('Обработано')
-                    ->dateTime('d.m.Y H:i:s')
-                    ->sortable(),
+                TextColumn::make('progress')
+                    ->label('Прогресс')
+                    ->state(function (Import $record): string {
+                        return "$record->processed_rows из $record->total_rows";
+                    }),
             ])->filters([
                 // Add filters if needed
             ])->actions([
                 // Add actions if needed
             ])->bulkActions([
                 // Add bulk actions if needed
-            ])->poll('10s')->striped();
+            ])->poll('3s');
     }
 }

@@ -14,69 +14,56 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Carbon\CarbonInterface;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Str;
 
 class ProductImporter extends Importer
 {
-    use InteractsWithQueue, Queueable;
+    // use InteractsWithQueue, Queueable;
 
     protected static ?string $model = Product::class;
     protected int $maxAttempts = 3;
     protected int $retryDelay = 500;
 
-    public function __construct(
-        protected Import $import,
-        protected array $columnMap,
-        protected array $options,
-    ) {
-        // Increase PHP execution time limit
-        set_time_limit(600); // 10 minutes
-        
-        // Increase memory limit
-        ini_set('memory_limit', '512M');
-        
-        Log::info('Starting product import', [
-            'import_id' => $this->import->id,
-            'user_id' => $this->import->user_id,
-        ]);
-        
-        parent::__construct($import, $columnMap, $options);
-    }
-
     public static function getColumns(): array
     {
         return [
             ImportColumn::make('name')
-                ->requiredMapping()
-                ->rules(['required', 'string', 'max:255']),
+                ->requiredMapping(),
             ImportColumn::make('image')
-                ->rules(['nullable', 'string']),
-            ImportColumn::make('slug')
-                ->rules(['nullable', 'string']),
+                ->castStateUsing(function (?string $state, ProductImporter $importer) {
+                    return blank($state) ? null : static::processImageStatic($state, $importer);
+                }),
+            ImportColumn::make('slug'),
             ImportColumn::make('gallery')
-                ->rules(['nullable', 'string']),
-            ImportColumn::make('short_description')
-                ->rules(['nullable', 'string']),
-            ImportColumn::make('description')
-                ->rules(['nullable', 'string']),
-            ImportColumn::make('category')
-                ->rules(['nullable', 'string']),
+                ->castStateUsing(function (?string $state, ProductImporter $importer) {
+                    if (blank($state)) return null;
+
+                    $gallery_ids = [];
+        
+                    foreach (explode('|', $state) as $image) {
+                        $imageId = static::processImageStatic($image, $importer);
+                        if ($imageId) {
+                            $gallery_ids[] = $imageId;
+                        }
+                    }
+                    return $gallery_ids ?? null;
+                }),
+            ImportColumn::make('short_description'),
+            ImportColumn::make('description'),
+            // ImportColumn::make('category')
+            //     ->castStateUsing(function (?string $state, ProductImporter $importer) {
+            //         return null;
+            //     }),
             ImportColumn::make('price')
                 ->requiredMapping()
-                ->numeric()
-                ->rules(['required', 'integer', 'min:0']),
+                ->numeric(),
             ImportColumn::make('new_price')
-                ->numeric()
-                ->rules(['nullable', 'integer', 'min:0']),
-            ImportColumn::make('is_popular')
-                ->boolean()
-                ->rules(['boolean']),
+                ->numeric(),
             ImportColumn::make('count')
                 ->requiredMapping()
-                ->numeric()
-                ->rules(['required', 'integer', 'min:0']),
+                ->numeric(),
             ImportColumn::make('synonims')
-                ->rules(['nullable', 'string'])
         ];
     }
 
@@ -87,148 +74,81 @@ class ProductImporter extends Importer
 
     public function resolveRecord(): ?Product
     {
-        
-        try {
-            if (empty($this->data['name'])) {
-                Log::warning('Пустое название продукта', ['row' => $this->data]);
-                return null;
-            }
 
-            if (!isset($this->data['price'])) {
-                Log::warning('Отсутствует цена', ['product' => $this->data['name']]);
-                return null;
-            }
+        $product = Product::where('name', $this->data['name'])->first();
 
-            $product = Product::where('name', $this->data['name'])->first();
-
-            if (!$product) {
-                $product = new Product();
-                var_dump('new product');
-            } else {
-                var_dump('old product');
-            }
-
-            
-            $product->forceFill([
-                'name' => $this->data['name'],
-                'slug' => Str::slug($this->data['slug'] ?? $this->data['name']),
-                'image' => $this->data['image'] ?? null,
-                'gallery' => $this->data['gallery'] ?? null,
-                'short_description' => $this->data['short_description'] ?? null,
-                'description' => $this->data['description'] ?? null,
-                'price' => $this->data['price'],
-                'new_price' => $this->data['new_price'] ?? null,
-                'is_popular' => $this->data['is_popular'] ?? false,
-                'count' => $this->data['count'],
-                'synonims' => $this->data['synonims'] ?? null,
-            ]);
-
-            $product->save();
-
-            if (!empty($this->data['category'])) {
-                $category = ProductCategory::firstOrCreate([
-                    'title' => $this->data['category'],
-                    'icon' => 'fas-table-list',
-                    'is_visible' => true
-                ]);
-                $product->categories()->sync([$category->id]);
-            }
-            
+        if ($product) {
             return $product;
-        } catch (\Exception $e) {
-            Log::error('Ошибка импорта', [
-                'product' => $this->data['name'] ?? 'unknown',
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            throw $e;
         }
+
+        $this->import->update([
+            'created_rows' => $this->import->created_rows + 1
+        ]);
+
+        return Product::create([
+             // Update existing records, matching them by `$this->data['column_name']`
+            'name' => $this->data['name'],
+        ]);
     }
 
-    public function fillRecord(): void
+    public function saveRecord(): void
     {
-        try {
-            if (!$this->record) {
-                throw new \Exception('Отсутствует запись для заполнения');
-            }
-
-            // Определяем разрешенные поля из базы данных
-            $allowedFields = [
-                'name', 'image', 'slug', 'gallery', 'short_description', 'description', 'category', 'price', 'new_price', 'is_popular', 'count', 'synonims'
-            ];
-
-            
-
-            foreach ($this->data as $field => $value) {
-                // dump(['field' => $field, 'value' => $value]);
-                // Пропускаем поля, которых нет в таблице
-                if (!in_array($field, $allowedFields)) {
-                    continue;
-                }
-
-                // Пропускаем пустые значения для необязательных полей
-                if (!in_array($field, ['name', 'price']) && empty($value)) {
-                    continue;
-                }
-
-                if ($field === 'price' || $field === 'new_price') {
-                    $cleanValue = str_replace([' ', ','], ['', '.'], $value);
-                    if (is_numeric($cleanValue)) {
-                        $this->record->$field = (float) $cleanValue;
-                    } else {
-
-                    }
-                } else if ($field === 'image' && !empty($value)) {
-                    $imageId = $this->processImage($value);
-                    if ($imageId) {
-                        $this->record->image = $imageId;
-                    }
-                } else if ($field === 'category' && !empty($value)) {
-                    $category = ProductCategory::firstOrCreate(['title' => $this->data['category'],  'icon' => 'fas-table-list', 'is_visible' => true]);
-                    
-                    $this->record->categories()->attach($category->id);
-                    // dump($category);
-                } else {
-                    $this->record->$field = $value;
-                }
-            }
-
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        
+        dump('saveRecord');
+        $this->record->save();
     }
 
-    protected function beforeValidate(): void
+
+    public function beforeValidate(): void
     {
         $this->import->update([
             'status' => 'processing'
         ]);
+        dump('beforeValidate');
     }
 
-    protected function afterValidate(): void
+    public function afterValidate(): void
     {
-
+        dump('afterValidate');
     }
 
-    protected function beforeSave(): void
+    public function beforeFill(): void
     {
-
+        dump('beforeFill');
     }
 
-    protected function afterSave(): void
+    public function afterFill(): void
     {
-
+        dump('afterFill');
     }
+
+    public function beforeSave(): void
+    {
+        dump('beforeSave');
+        
+    }
+
+    public function afterSave(): void
+    {
+        dump('afterSave');
+        $this->import->update([
+            'processed_rows' => $this->import->processed_rows + 1
+        ]);
+    }
+
+
 
     public static function getCompletedNotificationBody(Import $import): string
     {
         $import->update([
-            'status' => 'completed'
+            'status' => 'completed',
+            'failed_rows' => $import->getFailedRowsCount()
         ]);
+
         return "Импорт товаров завершен. Успешно импортировано: {$import->successful_rows} записей.";
     }
 
-    protected function processImage(string $imageUrl): ?int
+    protected function processImage(string $imageUrl): ?int 
     {
         try {
             $attempt = 1;
@@ -304,4 +224,27 @@ class ProductImporter extends Importer
             }
         }
     }
+
+    protected static function processImageStatic(string $imageUrl, ProductImporter $importer): ?int 
+    {
+        return $importer->processImage($imageUrl);
+    }
+
+    public function processGallery(string $state): array
+    {
+        if (blank($state)) return [];
+        
+        $gallery_ids = [];
+
+        foreach (explode('|', $state) as $image) {
+            $imageId = $this->processImage($image);
+            if ($imageId) {
+                $gallery_ids[] = $imageId;
+            }
+        }
+    
+        return $gallery_ids;
+    }
+
+    
 }
