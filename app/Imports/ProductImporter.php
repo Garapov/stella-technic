@@ -19,7 +19,7 @@ use Illuminate\Support\Str;
 
 class ProductImporter extends Importer
 {
-    // use InteractsWithQueue, Queueable;
+    use InteractsWithQueue, Queueable;
 
     protected static ?string $model = Product::class;
     protected int $maxAttempts = 3;
@@ -29,12 +29,15 @@ class ProductImporter extends Importer
     {
         return [
             ImportColumn::make('name')
-                ->requiredMapping(),
+                ->requiredMapping()
+                ->example('Название товара'),
             ImportColumn::make('image')
                 ->castStateUsing(function (?string $state, ProductImporter $importer) {
                     return blank($state) ? null : static::processImageStatic($state, $importer);
-                }),
-            ImportColumn::make('slug'),
+                })
+                ->example('https://stella-tech.ru/assets/images/products/83/km-rps-veni-24.png'),
+            ImportColumn::make('slug')
+                ->example('nazvaniye-tovara'),
             ImportColumn::make('gallery')
                 ->castStateUsing(function (?string $state, ProductImporter $importer) {
                     if (blank($state)) return null;
@@ -48,36 +51,57 @@ class ProductImporter extends Importer
                         }
                     }
                     return $gallery_ids ?? null;
-                }),
-            ImportColumn::make('short_description'),
-            ImportColumn::make('description'),
+                })
+                ->example('https://stella-tech.ru/assets/images/products/83/km-rps-veni-24.png|https://stella-tech.ru/assets/images/products/83/km-rps-veni-24.png|https://stella-tech.ru/assets/images/products/83/km-rps-veni-24.png'),
+            ImportColumn::make('short_description')
+                ->example('Короткое описание в несколько строк для товара'),
+            ImportColumn::make('description')
+                ->example('Описание товара <div>в котором много текста</div><strong> и где можно использовать HTML</strong>'),
             // ImportColumn::make('category')
             //     ->castStateUsing(function (?string $state, ProductImporter $importer) {
             //         return null;
             //     }),
             ImportColumn::make('price')
                 ->requiredMapping()
-                ->numeric(),
+                ->numeric()
+                ->example('1000'),
             ImportColumn::make('new_price')
-                ->numeric(),
+                ->numeric()
+                ->example('800'),
             ImportColumn::make('count')
                 ->requiredMapping()
-                ->numeric(),
+                ->numeric()
+                ->example('100'),
             ImportColumn::make('synonims')
+                ->example('тут может быть какой то текст|который может быть разделен любым символом|и будет учавствовать в поиске')
         ];
     }
+    
 
     public function getJobQueue(): ?string
     {
         return 'imports';
     }
 
+    public function afterSave(): void
+    {
+        Log::info('afterSave complete', [
+            'record_id' => $this->record->id,
+            'import_id' => $this->import->id,
+            'processed_rows' => $this->import->processed_rows,
+            'successful_rows' => $this->import->successful_rows
+        ]);
+        dump('afterSave');
+    }
+
     public function resolveRecord(): ?Product
     {
-
+        // Log::info('resolveRecord start', ['name' => $this->data['name']]);
+        
         $product = Product::where('name', $this->data['name'])->first();
 
         if ($product) {
+            // Log::info('resolveRecord: found existing product', ['id' => $product->id]);
             return $product;
         }
 
@@ -85,64 +109,97 @@ class ProductImporter extends Importer
             'created_rows' => $this->import->created_rows + 1
         ]);
 
-        return Product::create([
-             // Update existing records, matching them by `$this->data['column_name']`
+        // Log::info('resolveRecord: creating new product');
+        return new Product([
             'name' => $this->data['name'],
         ]);
     }
 
-    public function saveRecord(): void
+    public function fillRecord(): void
     {
-        
-        dump('saveRecord');
-        $this->record->save();
+        Log::info('fillRecord start', ['data' => $this->getCachedColumns()]);
+
+        foreach ($this->getCachedColumns() as $column) {
+            $columnName = $column->getName();
+
+            if (blank($this->columnMap[$columnName] ?? null)) {
+                continue;
+            }
+
+            if (! array_key_exists($columnName, $this->data)) {
+                continue;
+            }
+
+            $state = $this->data[$columnName];
+
+            if (blank($state) && $column->isBlankStateIgnored()) {
+                continue;
+            }
+
+            $column->fillRecord($state);
+        }
     }
 
+    public function saveRecord(): void
+    {
+        // Log::info('saveRecord start', [
+        //     'product_name' => $this->record->name,
+        //     'data' => $this->data
+        // ]);
+        
+        try {
+            $this->record->save();
+            // Log::info('saveRecord: product saved successfully', ['id' => $this->record->id]);
+            
+            $this->import->update([
+                'processed_rows' => $this->import->processed_rows + 1,
+                'successful_rows' => $this->import->successful_rows + 1
+            ]);
+        } catch (\Exception $e) {
+            Log::error('saveRecord error', [
+                'message' => $e->getMessage(),
+                'product_name' => $this->record->name
+            ]);
+            
+            $this->import->update([
+                'processed_rows' => $this->import->processed_rows + 1,
+                'failed_rows' => $this->import->failed_rows + 1
+            ]);
+        }
+    }
 
     public function beforeValidate(): void
     {
+        // Log::info('beforeValidate start', ['row_data' => $this->data]);
         $this->import->update([
             'status' => 'processing'
         ]);
-        dump('beforeValidate');
     }
 
     public function afterValidate(): void
     {
-        dump('afterValidate');
+        // Log::info('afterValidate', ['validation_passed' => true]);
     }
 
     public function beforeFill(): void
     {
-        dump('beforeFill');
+        // Log::info('beforeFill start');
     }
 
     public function afterFill(): void
     {
-        dump('afterFill');
+        // Log::info('afterFill complete', ['filled_data' => $this->data]);
     }
 
     public function beforeSave(): void
     {
-        dump('beforeSave');
-        
+        // Log::info('beforeSave start', ['record' => $this->record]);
     }
-
-    public function afterSave(): void
-    {
-        dump('afterSave');
-        $this->import->update([
-            'processed_rows' => $this->import->processed_rows + 1
-        ]);
-    }
-
-
 
     public static function getCompletedNotificationBody(Import $import): string
     {
         $import->update([
-            'status' => 'completed',
-            'failed_rows' => $import->getFailedRowsCount()
+            'status' => 'completed'
         ]);
 
         return "Импорт товаров завершен. Успешно импортировано: {$import->successful_rows} записей.";
@@ -245,6 +302,4 @@ class ProductImporter extends Importer
     
         return $gallery_ids;
     }
-
-    
 }

@@ -98,7 +98,7 @@ class ImportProducts extends Page implements HasTable
                 TextColumn::make('updated_rows')
                     ->label('Обновлено')
                     ->state(function (Import $record): string {
-                        return $record->processed_rows - ($record->created_rows ?? 0);
+                        return $record->processed_rows - ($record->created_rows ?? 0)- ($record->failed_rows ?? 0);
                     })
                     ->sortable(),
 
