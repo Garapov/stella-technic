@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use Filament\Actions\Imports\Http\Controllers\DownloadImportFailureCsv;
 use Illuminate\Support\Facades\Route;
 
 
@@ -51,6 +52,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+    Route::get('/admin/import-products/{import}/failed-rows/download', DownloadImportFailureCsv::class)
+    ->name('filament.imports.failed-rows.download');
 });
 
 Route::middleware('auth')->group(function () {

@@ -38,9 +38,9 @@ class ImportProducts extends Page implements HasTable
         return [
             ImportAction::make()
                 ->importer(ProductImporter::class)
-                ->chunkSize(100)
+                ->chunkSize(10)
                 ->color('primary')
-                ->maxRows(1000)
+                ->maxRows(2000)
                 ->label('Импортировать товары')
                 ->icon('heroicon-o-arrow-up-tray'),
         ];
@@ -93,12 +93,15 @@ class ImportProducts extends Page implements HasTable
 
                 TextColumn::make('created_rows')
                     ->label('Создано')
+                    ->state(function (Import $record): string {
+                        return $record->created_rows - $record->failed_rows;
+                    })
                     ->sortable(),
 
                 TextColumn::make('updated_rows')
                     ->label('Обновлено')
                     ->state(function (Import $record): string {
-                        return $record->processed_rows - ($record->created_rows ?? 0)- ($record->failed_rows ?? 0);
+                        return $record->processed_rows - ($record->created_rows - $record->failed_rows)- ($record->failed_rows ?? 0);
                     })
                     ->sortable(),
 
@@ -118,6 +121,6 @@ class ImportProducts extends Page implements HasTable
                 // Add actions if needed
             ])->bulkActions([
                 // Add bulk actions if needed
-            ])->poll('3s');
+            ])->poll('2s');
     }
 }

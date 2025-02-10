@@ -60,7 +60,7 @@ return [
      */
     'support' => [
         'webp' => false,  // Temporarily disable WebP until we have Imagick
-        'responsive_variants' => true,
+        'responsive_variants' => false,
         'mime_types' => [
             'image/jpeg',
             'image/png',
