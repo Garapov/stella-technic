@@ -12,8 +12,11 @@ use Laravel\Sanctum\HasApiTokens;
 use Rupadana\ApiService\Models\Token;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Traits\HasRoles;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
-class User extends Authenticatable
+
+class User extends Authenticatable implements FilamentUser 
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens, HasRoles, HasSuperAdmin;
@@ -80,5 +83,10 @@ class User extends Authenticatable
             $can_handle = in_array($ability, $token->abilities);
         }
         return $can_handle;
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return str_ends_with($this->email, '@admin.ru');
     }
 }
