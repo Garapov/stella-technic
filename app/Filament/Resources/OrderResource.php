@@ -33,16 +33,12 @@ class OrderResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Full Name')
-                            ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('email')
                             ->label('Email Address')
-                            ->email()
-                            ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('phone')
                             ->label('Phone Number')
-                            ->required()
                             ->maxLength(20),
                     ])->columns(3),
 
@@ -100,7 +96,6 @@ class OrderResource extends Resource
                             ->label('Total Order Value')
                             ->numeric()
                             ->prefix('₽')
-                            ->required()
                             ->default(0)
                             ->disabled(),
 
@@ -113,7 +108,6 @@ class OrderResource extends Resource
                                 'delivered' => 'Доставлен',
                                 'cancelled' => 'Отменен'
                             ])
-                            ->required()
                             ->default('pending')
                             ->native(false),
 
@@ -142,6 +136,7 @@ class OrderResource extends Resource
                 TextColumn::make('status')
                     ->label('Статус')
                     ->badge()
+                    ->sortable()
                     ->color(fn (string $state): string => match (strtolower($state)) {
                         'pending' => 'warning',
                         'confirmed' => 'info',

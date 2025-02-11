@@ -32,17 +32,23 @@ class ProductImporter extends Importer
     {
         return [
             ImportColumn::make('name')
+            
                 ->requiredMapping()
-                ->example('Название товара'),
+                ->example('Название товара')
+                ->rules(['required', 'string']),
             ImportColumn::make('image')
-                ->castStateUsing(function (?string $state, ProductImporter $importer) {
-                    return blank($state) ? null : static::processImageStatic($state, $importer);
+                ->fillRecordUsing(function (?Product $record, ?string $state, ProductImporter $importer) {
+                    $record->update([
+                        'image' => static::processImageStatic($state, $importer)
+                    ]);
                 })
-                ->example('https://stella-tech.ru/assets/images/products/83/km-rps-veni-24.png'),
+                ->example('https://stella-tech.ru/assets/images/products/83/km-rps-veni-24.png')
+                ->rules(['required', 'url']),
             ImportColumn::make('slug')
-                ->example('nazvaniye-tovara'),
+                ->example('nazvaniye-tovara')
+                ->rules(['string', 'nullable']),
             ImportColumn::make('gallery')
-                ->castStateUsing(function (?string $state, ProductImporter $importer) {
+                ->fillRecordUsing(function (?Product $record, ?string $state, ProductImporter $importer) {
                     if (blank($state)) return null;
 
                     $gallery_ids = [];
@@ -53,17 +59,19 @@ class ProductImporter extends Importer
                             $gallery_ids[] = $imageId;
                         }
                     }
-                    return $gallery_ids ?? null;
+                    $record->update([
+                        'gallery' => $gallery_ids ?? null
+                    ]);
                 })
                 ->example('https://stella-tech.ru/assets/images/products/83/km-rps-veni-24.png|https://stella-tech.ru/assets/images/products/83/km-rps-veni-24.png|https://stella-tech.ru/assets/images/products/83/km-rps-veni-24.png'),
             ImportColumn::make('short_description')
-                ->example('Короткое описание в несколько строк для товара'),
+                ->example('Короткое описание в несколько строк для товара')
+                ->rules(['string', 'nullable']),
             ImportColumn::make('description')
                 ->example('Описание товара <div>в котором много текста</div><strong> и где можно использовать HTML</strong>'),
             ImportColumn::make('categories')
                 ->fillRecordUsing(function (?Product $record, ?string $state) {
                     // $record->sku = strtoupper($state);
-                    dump("record id is $record->id");
                     if (blank($state) || !$record->id) return;
                     try {
                         $category_names = explode('|', $state);
@@ -104,11 +112,13 @@ class ProductImporter extends Importer
                     
                 })
                 ->guess(['categories', 'parents', 'kategorii'])
-                ->example('Складское оборудование|Штабелеры|Электрические самоходные штабелеры'),
+                ->example('Складское оборудование|Штабелеры|Электрические самоходные штабелеры')
+                ->rules(['string', 'required']),
             ImportColumn::make('price')
                 ->requiredMapping()
                 ->numeric()
-                ->example('1000'),
+                ->example('1000')
+                ->rules(['required']),
             ImportColumn::make('new_price')
                 ->castStateUsing(function (?string $state) {
                     if (blank($state) || $state < 1 ) return null;
@@ -120,12 +130,12 @@ class ProductImporter extends Importer
             ImportColumn::make('count')
                 ->requiredMapping()
                 ->numeric()
-                ->example('100'),
+                ->example('100')
+                ->rules(['required']),
             ImportColumn::make('parameters')
                 ->fillRecordUsing(function (?Product $record, ?string $state) {
                     if (blank($state) || !$record->id) return;
 
-                    dump($state);
                     
                     try {
                         $param_items = [];
@@ -182,48 +192,6 @@ class ProductImporter extends Importer
 
 
 
-
-                        // Get active variants
-                        $activeVariants = ProductVariant::where('product_id', $record->id)
-                        ->pluck('product_param_item_id')
-                        ->toArray();
-
-                        // Get deleted variants
-                        $deletedVariants = ProductVariant::onlyTrashed()
-                        ->where('product_id', $record->id)
-                        ->pluck('product_param_item_id')
-                        ->toArray();
-
-                        // Delete variants that are not in paramItems anymore
-                        ProductVariant::where('product_id', $record->id)
-                        ->whereIn('product_param_item_id', array_diff($activeVariants, $param_items))
-                        ->delete();
-
-                        foreach ($record->paramItems as $paramItem) {
-                            // If variant exists but was deleted - restore it
-                            if (in_array($paramItem->id, $deletedVariants)) {
-                                ProductVariant::onlyTrashed()
-                                    ->where('product_id', $record->id)
-                                    ->where('product_param_item_id', $paramItem->id)
-                                    ->restore();
-                            } 
-                            // If variant never existed - create it
-                            elseif (!in_array($paramItem->id, $activeVariants)) {
-                                ProductVariant::create([
-                                    'product_id' => $record->id,
-                                    'product_param_item_id' => $paramItem->id,
-                                    'name' => $record->name . ' ' . $paramItem->title,
-                                    'price' => $record->price,
-                                    'new_price' => $record->new_price,
-                                    'image' => $record->image
-                                ]);
-                            }
-                        }
-
-
-
-
-
                     } catch (\Exception $e) {
                         Log::error('Error processing parameters', [
                             'error' => $e->getMessage(),
@@ -247,19 +215,57 @@ class ProductImporter extends Importer
     public function afterSave(): void
     {
         dump('afterSave complete');
-        // Log::info('afterSave complete', [
-        //     'record_id' => $this->record->id,
-        //     'import_id' => $this->import->id,
-        //     'processed_rows' => $this->import->processed_rows,
-        //     'successful_rows' => $this->import->successful_rows
-        // ]);
+
+        $param_items = $this->record->paramItems->pluck('id')->toArray();
+
+        // dump($param_items);
+        // Get active variants
+        $activeVariants = ProductVariant::where('product_id', $this->record->id)
+        ->pluck('product_param_item_id')
+        ->toArray();
+
+        // Get deleted variants
+        $deletedVariants = ProductVariant::onlyTrashed()
+        ->where('product_id', $this->record->id)
+        ->pluck('product_param_item_id')
+        ->toArray();
+
+        // Delete variants that are not in paramItems anymore
+        ProductVariant::where('product_id', $this->record->id)
+        ->whereIn('product_param_item_id', array_diff($activeVariants, $param_items))
+        ->delete();
+
+        foreach ($this->record->paramItems as $paramItem) {
+            // If variant exists but was deleted - restore it
+            if (in_array($paramItem->id, $deletedVariants)) {
+                ProductVariant::onlyTrashed()
+                    ->where('product_id', $this->record->id)
+                    ->where('product_param_item_id', $paramItem->id)
+                    ->restore();
+            } 
+            // If variant never existed - create it
+            elseif (!in_array($paramItem->id, $activeVariants)) {
+                ProductVariant::create([
+                    'product_id' => $this->record->id,
+                    'product_param_item_id' => $paramItem->id,
+                    'name' => $this->record->name . ' ' . $paramItem->title,
+                    'price' => $this->record->price,
+                    'new_price' => $this->record->new_price,
+                    'image' => $this->record->image
+                ]);
+            }
+        }
+
+
+        dump($this->record->id);
+        dump('===================================================');
     }
 
     public function resolveRecord(): ?Product
     {
-        dump('resolveRecord start');
         // Log::info('resolveRecord start', ['name' => $this->data['name']]);
         if (empty($this->data['name'])) return null;
+        // dump($this->data['name']);
         
         $product = Product::where('name', $this->data['name'])->first();
 
@@ -273,7 +279,7 @@ class ProductImporter extends Importer
         ]);
 
         // Log::info('resolveRecord: creating new product');
-        return new Product([
+        return Product::create([
             'name' => $this->data['name'],
         ]);
     }
@@ -391,8 +397,7 @@ class ProductImporter extends Importer
             
             while ($attempt <= $this->maxAttempts) {
                 try {
-                    DB::beginTransaction();
-                    
+
                     $tempDir = storage_path('app/temp');
                     if (!file_exists($tempDir)) {
                         mkdir($tempDir, 0755, true);
@@ -433,23 +438,12 @@ class ProductImporter extends Importer
                         ]
                     );
 
-                    DB::commit();
                     return $image->id;
 
                 } catch (QueryException $e) {
-                    DB::rollBack();
-                    if (str_contains($e->getMessage(), 'database is locked')) {
-                        if ($attempt >= $this->maxAttempts) {
-                            throw $e;
-                        }
-                        usleep($this->retryDelay * 1000);
-                        $attempt++;
-                        continue;
-                    }
-                    throw $e;
+                    return null;
                 } catch (\Exception $e) {
-                    DB::rollBack();
-                    throw $e;
+                    return null;
                 }
             }
         } catch (\Exception $e) {
@@ -464,22 +458,5 @@ class ProductImporter extends Importer
     protected static function processImageStatic(string $imageUrl, ProductImporter $importer): ?int 
     {
         return $importer->processImage($imageUrl);
-    }
-
-    public function processGallery(string $state): array
-    {
-        dump('processGallery start');
-        if (blank($state)) return [];
-        
-        $gallery_ids = [];
-
-        foreach (explode('|', $state) as $image) {
-            $imageId = $this->processImage($image);
-            if ($imageId) {
-                $gallery_ids[] = $imageId;
-            }
-        }
-    
-        return $gallery_ids;
     }
 }
