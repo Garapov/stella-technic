@@ -94,6 +94,7 @@ class AdminPanelProvider extends PanelProvider
                 MenuBuilderPlugin::make()
                     ->addLocations([
                         'top_menu' => 'Верхнее меню',
+                        'search_menu' => 'Поисковое меню',
                         'header' => 'Главное меню',
                         'footer' => 'Меню в подвале',
                     ])

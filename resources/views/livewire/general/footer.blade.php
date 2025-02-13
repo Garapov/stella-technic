@@ -41,16 +41,23 @@
             @if ($menu && count($menu->menuItems) > 0)
                 <div class="flex items-start gap-20">
                     @foreach ($menu->menuItems as $manuItem)
-                    
+                        @php
+                            $hasLinkable = $manuItem->linkable ?? null;
+                            $url = $hasLinkable && $manuItem->linkable_type == 'App\Models\Page' ? Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId($manuItem->linkable->id) : $manuItem->url;
+                        @endphp
                         <ul class="space-y-4" aria-labelledby="mega-menu-dropdown-button">
                             <li>
-                                <a href="{{ $manuItem->url }}" class="text-xl font-bold text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-500" wire:navigate>
+                                <a href="{{ $url }}" class="text-lg font-bold text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-500" wire:navigate>
                                     {{ $manuItem->title }}
                                 </a>
                             </li>
                             @foreach ($manuItem->children as $childMenuItem)
+                                @php
+                                    $hasLinkable = $childMenuItem->linkable ?? null;
+                                    $url = $hasLinkable && $childMenuItem->linkable_type == 'App\Models\Page' ? Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId($childMenuItem->linkable->id) : $childMenuItem->url;
+                                @endphp
                                 <li>
-                                    <a href="{{ $childMenuItem->url }}" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500" wire:navigate>
+                                    <a href="{{ $url }}" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500" wire:navigate>
                                         {{ $childMenuItem->title }}
                                     </a>
                                 </li>

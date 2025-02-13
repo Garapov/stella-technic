@@ -24,7 +24,11 @@
                     </ul>
                 </span>
             @else
-                <a href="{{ url($menuItem->url) }}" wire:navigate
+                @php
+                    $hasLinkable = $menuItem->linkable ?? null;
+                    $url = $hasLinkable && $menuItem->linkable_type == 'App\Models\Page' ? Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId($menuItem->linkable->id) : $menuItem->url;
+                @endphp
+                <a href="{{ $url }}" wire:navigate
                     class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
                     aria-current="page">{{ $menuItem->title }}</a>
             @endif

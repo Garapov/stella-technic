@@ -19,11 +19,17 @@ class MainSlider extends Model
         'button_text',
         'link',
         'background',
+        'background_image'
     ];
 
 
     public function img(): BelongsTo
     {
         return $this->belongsTo(Image::class, 'image');
+    }
+
+    public function backgroundImg(): BelongsTo
+    {
+        return $this->belongsTo(Image::class, 'background_image');
     }
 }

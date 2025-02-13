@@ -47,6 +47,10 @@ class MainSliderResource extends Resource
                 Forms\Components\ColorPicker::make('background')
                     ->label('Цвет фона')
                     ->required(),
+                ImagePicker::make('background_image')
+                    ->label('Картинка фона')
+                    // ->description('При наличии картинки фона, будет отображаться только картинка на всей области слайда')
+                    ->required(),
             ]);
     }
 
