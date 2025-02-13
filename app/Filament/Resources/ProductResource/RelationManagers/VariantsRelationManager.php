@@ -58,13 +58,16 @@ class VariantsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Название'),
                 Tables\Columns\TextColumn::make('price')
-                    ->money()
-                    ->sortable(),
+                    ->money('RUB', locale: 'ru')
+                    ->sortable()
+                    ->label('Цена'),
                 Tables\Columns\TextColumn::make('new_price')
-                    ->money()
-                    ->sortable(),
+                    ->money('RUB', locale: 'ru')
+                    ->sortable()
+                    ->label('Цена со скидкой'),
                 Tables\Columns\ToggleColumn::make('is_default')
                     ->label('По умолчанию')
                     ->beforeStateUpdated(function ($record, $state) {

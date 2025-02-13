@@ -49,8 +49,7 @@ class MainSliderResource extends Resource
                     ->required(),
                 ImagePicker::make('background_image')
                     ->label('Картинка фона')
-                    // ->description('При наличии картинки фона, будет отображаться только картинка на всей области слайда')
-                    ->required(),
+                    // ->description('При наличии картинки фона, будет отображаться только картинка на всей области слайда'),
             ]);
     }
 

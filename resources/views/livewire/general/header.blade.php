@@ -62,7 +62,7 @@
                     alt="Stella-tech Logo" />
             </a>
             <div class="grow">
-                <div class="flex">
+                <div class="flex rounded-lg border border-gray-300">
                     @livewire('general.header.popular')
                     @livewire('general.header.search')
                 </div>

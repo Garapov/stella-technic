@@ -21,8 +21,8 @@ class Products extends PageBlock
                     ->label('Товары')
                     // ->options(Product::all()->pluck('name', 'id'))
                     ->searchable()
-                    ->getSearchResultsUsing(fn (string $search): array => Product::where('text', 'like', "%{$search}%")->limit(50)->pluck('text', 'id')->toArray())
-                    ->getOptionLabelsUsing(fn (array $values): array => Product::whereIn('id', $values)->pluck('text', 'id')->toArray())
+                    ->getSearchResultsUsing(fn (string $search): array => Product::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
+                    ->getOptionLabelsUsing(fn (array $values): array => Product::whereIn('id', $values)->pluck('name', 'id')->toArray())
                     ->multiple()
                     ->required(),
                 Toggle::make('filter')
