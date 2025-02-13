@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Outerweb\ImageLibrary\Models\Image;
 
 class MainSlider extends Model
 {
@@ -16,5 +18,12 @@ class MainSlider extends Model
         'image',
         'button_text',
         'link',
+        'background',
     ];
+
+
+    public function img(): BelongsTo
+    {
+        return $this->belongsTo(Image::class, 'image');
+    }
 }

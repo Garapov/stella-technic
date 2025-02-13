@@ -5,14 +5,12 @@
             <div class="container mx-auto">
                 <div class="-mx-4 flex flex-wrap">
                     <div class="w-full px-4">
-                        <div class="flex flex-wrap items-center justify-center">
+                        <div class="flex flex-wrap items-stretch justify-center gap-2">
                             @foreach ($partners as $partner)
                                 <a href="{{ $partner->link }}"
-                                class="mx-4 flex w-[150px] items-center justify-center py-5 2xl:w-[180px]" wire:navigate>
-                                    <img src="{{ asset($partner->image) }}" alt="image"
-                                        class="h-10 w-full" />
-                                    <img src="https://cdn.tailgrids.com/2.2/assets/images/brands/graygrids-white.svg" alt="image"
-                                        class="hidden h-10 w-full dark:hidden" />
+                                class="flex w-[150px] items-center justify-center p-4 2xl:w-[180px] rounded bg-white" wire:navigate>
+                                    <img src="{{ asset('storage/' . $partner->image) }}" alt="image"
+                                        class="w-full" />
                                 </a>
                             @endforeach
                         </div>

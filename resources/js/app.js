@@ -34,14 +34,15 @@ document.addEventListener('livewire:init', () => {
 
 document.addEventListener('articles_slider', (data) => {
     
-
-    document.querySelectorAll('.article_slider.glide').forEach(articles => {
-        new Glide(articles, {
-            autoplay: 5000,
-            perView: 2,
-            bound: true
-        }).mount()
-    })
+    if (document.querySelector('.article_slider.glide .glide__slide')) {
+        document.querySelectorAll('.article_slider.glide').forEach(articles => {
+            new Glide(articles, {
+                autoplay: 5000,
+                perView: 2,
+                bound: true
+            }).mount()
+        })
+    }
 })
 
 

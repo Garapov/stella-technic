@@ -16,9 +16,12 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class PartnerResource extends Resource
 {
     protected static ?string $model = Partner::class;
+    protected static ?string $navigationIcon = 'carbon-partnership';
+
     protected static ?string $navigationLabel = 'Партнеры';
-    protected static ?string $navigationGroup = 'Настройки сайта';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = 'Партнера';
+    protected static ?string $pluralModelLabel = 'Партнеры';
+    protected static ?string $navigationGroup = 'Страницы';
 
     public static function form(Form $form): Form
     {

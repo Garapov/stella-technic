@@ -1,11 +1,12 @@
 import Glide from '@glidejs/glide'
 
 export default () => ({
-    slider: new Glide('#main-slider', {
+    slider: document.getElementById('main-slider') ? new Glide('#main-slider', {
         autoplay: 5000,
-    }).mount(),
+    }).mount() : null,
     index: 0,
-    init() {
+    init() {    
+        if (!this.slider) return;
         this.slider.on('move.after', () => {
             this.index = this.slider.index;
         })

@@ -30,6 +30,8 @@ use Z3d0X\FilamentFabricator\FilamentFabricatorPlugin;
 use App\Filament\Pages\ImportProducts;
 use JibayMcs\FilamentTour\FilamentTourPlugin;
 use Rupadana\ApiService\ApiServicePlugin;
+use App\Models\ProductCategory;
+
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -97,7 +99,14 @@ class AdminPanelProvider extends PanelProvider
                     ])
                     ->addMenuPanels([
                         ModelMenuPanel::make()
-                            ->model(\App\Models\Page::class),
+                            ->model(\App\Models\Page::class)
+                            ->paginate(perPage: 5, condition: true),
+                        ModelMenuPanel::make()
+                            ->model(\App\Models\Post::class)
+                            ->paginate(perPage: 5, condition: true),
+                        ModelMenuPanel::make()
+                            ->model(\App\Models\ProductCategory::class)
+                            ->paginate(perPage: 5, condition: true)
                     ])
             ])
             ->spa();

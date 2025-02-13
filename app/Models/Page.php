@@ -38,4 +38,9 @@ class Page extends ModelsPage implements Searchable,MenuPanelable
     {
         return fn (self $model) => '/' . $model->slug;
     }
+
+    public function getMenuPanelName(): string
+    {
+        return "Страницы";
+    }
 }

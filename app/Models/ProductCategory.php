@@ -12,11 +12,13 @@ use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
+use Datlechin\FilamentMenuBuilder\Concerns\HasMenuPanel;
+use Datlechin\FilamentMenuBuilder\Contracts\MenuPanelable;
 
-class ProductCategory extends Model implements Searchable
+class ProductCategory extends Model implements Searchable,MenuPanelable
 {
     /** @use HasFactory<\Database\Factories\ProductCategoryFactory> */
-    use HasFactory, ModelTree, HasSlug;
+    use HasFactory, ModelTree, HasSlug, HasMenuPanel;
 
     public $searchableType = 'Категории';
 
@@ -69,6 +71,21 @@ class ProductCategory extends Model implements Searchable
         return 'slug';
     }
 
+    public function getMenuPanelTitleColumn(): string
+    {
+        return 'title';
+    }
+
+    public function getMenuPanelUrlUsing(): callable
+    {
+        return fn (self $model) => route('client.catalog', $model->slug);
+    }
+
+    public function getMenuPanelName(): string
+    {
+        return "Категории товаров";
+    }
+
     public function categories(): HasMany
     {
         return $this->hasMany(ProductCategory::class, 'parent_id', 'id');
@@ -78,4 +95,6 @@ class ProductCategory extends Model implements Searchable
     {
         return $this->belongsToMany(Product::class, 'product_product_category');
     }
+
+    
 }

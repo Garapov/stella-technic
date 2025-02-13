@@ -12,30 +12,40 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Forms\Components\ImagePicker;
 
 class MainSliderResource extends Resource
 {
     protected static ?string $model = MainSlider::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
     protected static ?string $navigationLabel = 'Слайды на главной';
-    protected static ?string $navigationGroup = 'Настройки сайта';
+    protected static ?string $modelLabel = 'Слайд на главной';
+    protected static ?string $pluralModelLabel = 'Слайды на главной';
+    protected static ?string $navigationGroup = 'Страницы';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
-                    ->required(),
-                Forms\Components\Textarea::make('description')
+                    ->label('Заголовок')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\FileUpload::make('image')
-                    ->image()
+                ImagePicker::make('image')
+                    ->label('Картинка')
+                    ->required(),
+                Forms\Components\RichEditor::make('description')
+                    ->label('Описание')
                     ->required(),
                 Forms\Components\TextInput::make('button_text')
+                    ->label('Текст кнопки')
                     ->required(),
                 Forms\Components\TextInput::make('link')
+                    ->label('Ссылка')
+                    ->required(),
+                Forms\Components\ColorPicker::make('background')
+                    ->label('Цвет фона')
                     ->required(),
             ]);
     }

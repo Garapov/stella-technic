@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Gate;
 
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
+use Z3d0X\FilamentFabricator\Resources\PageResource;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -37,5 +38,6 @@ class AppServiceProvider extends ServiceProvider
                 ]);
             }
         });
+        PageResource::navigationGroup('Страницы');
     }
 }

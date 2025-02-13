@@ -16,18 +16,23 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
+    protected static ?string $navigationIcon = 'carbon-user-certification';
+
     protected static ?string $navigationLabel = 'Клиенты';
-    protected static ?string $navigationGroup = 'Настройки сайта';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = 'Клиента';
+    protected static ?string $pluralModelLabel = 'Клиенты';
+    protected static ?string $navigationGroup = 'Страницы';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\FileUpload::make('image')
+                    ->label('Логотип')
                     ->image()
                     ->required(),
                 Forms\Components\TextInput::make('name')
+                    ->label('Название')
                     ->required(),
             ]);
     }

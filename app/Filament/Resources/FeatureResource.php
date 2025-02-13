@@ -17,9 +17,12 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class FeatureResource extends Resource
 {
     protected static ?string $model = Feature::class;
+    protected static ?string $navigationIcon = 'carbon-heat-map';
+
     protected static ?string $navigationLabel = 'Преимущества';
-    protected static ?string $navigationGroup = 'Настройки сайта';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = 'Преимущество';
+    protected static ?string $pluralModelLabel = 'Преимущества';
+    protected static ?string $navigationGroup = 'Страницы';
 
     public static function form(Form $form): Form
     {
