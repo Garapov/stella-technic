@@ -1,4 +1,5 @@
 <div>
+    
     <div class="md:mb-8">
         <div class="glide__track" data-glide-el="track">
             <div class="glide__slides">
@@ -22,5 +23,4 @@
             </div>
         </div>
     </div> 
-     
 </div>
