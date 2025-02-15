@@ -29,8 +29,10 @@ class FeatureResource extends Resource
         return $form
             ->schema([
                 IconPicker::make('icon')
+                    ->label('Иконка')
                     ->required(),
                 Forms\Components\TextInput::make('text')
+                    ->label('Текст')
                     ->required(),
             ]);
     }
@@ -40,14 +42,17 @@ class FeatureResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('icon')
-                    ->searchable(),
+                    ->label('Иконка'),
                 Tables\Columns\TextColumn::make('text')
+                    ->label('Текст')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Дата создания')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Дата обновления')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

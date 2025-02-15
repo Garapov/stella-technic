@@ -17,7 +17,7 @@ class ArticleResource extends Resource
 {
     protected static ?string $model = Article::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'ri-article-line';
 
     protected static ?string $navigationGroup = 'Блог';
     protected static ?string $navigationLabel = 'Статьи';
@@ -29,14 +29,19 @@ class ArticleResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
+                    ->label('Название')
+                    ->required(),
+                Forms\Components\Toggle::make('is_popular')
+                    ->label('Популярная')
                     ->required(),
                 Forms\Components\RichEditor::make('content')
+                    ->label('Содержание')
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('image')
-                    ->image(),
-                Forms\Components\Toggle::make('is_popular')
-                    ->required(),
+                    ->label('Изображение')
+                    ->image()
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -45,15 +50,21 @@ class ArticleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label('Название')
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('image'),
+                Tables\Columns\ImageColumn::make('image')
+                    ->disk('public')
+                    ->label('Изображение'),
                 Tables\Columns\IconColumn::make('is_popular')
+                    ->label('Популярная')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Дата создания')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Дата обновления')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

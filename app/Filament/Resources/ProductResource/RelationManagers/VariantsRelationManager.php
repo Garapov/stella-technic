@@ -12,10 +12,13 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Tables\Columns\ImageByIdColumn;
 
 class VariantsRelationManager extends RelationManager
 {
     protected static string $relationship = 'variants';
+
+    protected static ?string $title = 'Варианты товара';
 
     public function form(Form $form): Form
     {
@@ -58,6 +61,8 @@ class VariantsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
+                ImageByIdColumn::make('image')
+                    ->label('Картинка'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Название'),
                 Tables\Columns\TextColumn::make('price')

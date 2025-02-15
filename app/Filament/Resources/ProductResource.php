@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\ProductParamItem;
 use Illuminate\Database\Eloquent\Model;
+use App\Tables\Columns\ImageByIdColumn;
 
 class ProductResource extends Resource
 {
@@ -172,23 +173,30 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
+                ImageByIdColumn::make('image')
+                    ->label('Картинка'),
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Название')
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('image'),
                 Tables\Columns\TextColumn::make('price')
+                    ->label('Цена')
                     ->money()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('new_price')
+                    ->label('Цена со скидкой')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('count')
+                    ->label('Количество')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Дата создания')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Дата обновления')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

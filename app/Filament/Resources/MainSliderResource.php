@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Forms\Components\ImagePicker;
+use App\Tables\Columns\ImageByIdColumn;
 
 class MainSliderResource extends Resource
 {
@@ -57,18 +58,24 @@ class MainSliderResource extends Resource
     {
         return $table
             ->columns([
+                ImageByIdColumn::make('image')
+                    ->label('Картинка'),
                 Tables\Columns\TextColumn::make('title')
+                    ->label('Заголовок')
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('image'),
                 Tables\Columns\TextColumn::make('button_text')
+                    ->label('Текст кнопки')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('link')
+                    ->label('Ссылка')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Дата создания')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Дата обновления')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ParamsRelationManager extends RelationManager
 {
     protected static string $relationship = 'params';
+    protected static ?string $title = 'Cвойства';
 
     public function form(Form $form): Form
     {
@@ -21,19 +22,23 @@ class ParamsRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
+                    ->label('Название')
                     ->required()
                     ->maxLength(255),
                     
                 Forms\Components\TextInput::make('value')
+                    ->label('Значение')
                     ->required()
                     ->numeric()
                     ->visible(fn () => $parentRecord->type === 'number'),
                     
                 Forms\Components\ColorPicker::make('value')
+                    ->label('Цвет')
                     ->required()
                     ->visible(fn () => $parentRecord->type === 'color'),
                     
                 Forms\Components\TextInput::make('value')
+                    ->label('Значение')
                     ->required()
                     ->visible(fn () => $parentRecord->type === 'checkboxes'),
             ]);

@@ -50,7 +50,7 @@ class FormerResource extends Resource
                 Repeater::make('fields')
                     ->schema([
                         TextInput::make('name')
-                            ->label('Имя поля')
+                            ->label('Атрибут "name"')
                             ->required(),
                         TextInput::make('label')
                             ->label('Заголовок поля')
@@ -102,12 +102,15 @@ class FormerResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Название')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Дата создания')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Дата обновления')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

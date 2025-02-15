@@ -16,9 +16,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ProductParamResource extends Resource
 {
     protected static ?string $model = ProductParam::class;
+
     protected static ?string $navigationGroup = 'Магазин';
-    protected static ?string $navigationLabel = 'Параметры товаров';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationLabel = 'Параметры товаров';
+    protected static ?string $modelLabel = 'Параметр товара';
+    protected static ?string $pluralModelLabel = 'Параметры товаров';
 
     public static function form(Form $form): Form
     {
@@ -46,14 +50,26 @@ class ProductParamResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Название')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Тип')
+                    ->searchable()
+                    ->formatStateUsing(fn ($record) => $record ? match ($record->type) {
+                        'number' => 'Числовой',
+                        'checkboxes' => 'Список чекбоксов',
+                        'color' => 'Цвет',
+                    } : ''),
                 Tables\Columns\IconColumn::make('allow_filtering')
+                    ->label('Разрешить фильтрацию')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Дата создания')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Дата обновления')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

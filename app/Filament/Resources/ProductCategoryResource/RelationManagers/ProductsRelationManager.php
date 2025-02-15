@@ -15,10 +15,12 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Tables\Columns\ImageByIdColumn;
 
 class ProductsRelationManager extends RelationManager
 {
     protected static string $relationship = 'products';
+    protected static ?string $title = 'Товары';
 
     public function form(Form $form): Form
     {
@@ -27,12 +29,6 @@ class ProductsRelationManager extends RelationManager
                 Tabs::make('Tabs')
                     ->tabs([
                         Tab::make('Основная информация')->schema([
-                            Section::make()->columns([
-                                'sm' => 1,
-                                'xl' => 2,
-                                '2xl' => 3,
-                            ])
-                            ->schema([
                                 Forms\Components\TextInput::make('name')
                                     ->required()
                                     ->label('Название'),
@@ -53,15 +49,13 @@ class ProductsRelationManager extends RelationManager
                                 Forms\Components\Toggle::make('is_popular')
                                     ->label('Популярный')
                                     ->inline(false),
-                            ])
-                        ])->columnSpan('full'),
+                        ])
+                        ->columns([
+                            'sm' => 1,
+                            'xl' => 2,
+                            '2xl' => 3,
+                        ]),
                         Tab::make('Описание')->schema([
-                            Section::make()->columns([
-                                'sm' => 1,
-                                'xl' => 1,
-                                '2xl' => 1,
-                            ])
-                            ->schema([
                                 Forms\Components\Textarea::make('short_description')
                                     ->required()
                                     ->label('Короткое описание')
@@ -85,15 +79,13 @@ class ProductsRelationManager extends RelationManager
                                     ->required()
                                     ->label('Описание')
                                     ->columnSpanFull(),
-                            ])
-                        ])->columnSpan('full'),
+                        ])
+                        ->columns([
+                            'sm' => 1,
+                            'xl' => 1,
+                            '2xl' => 1,
+                        ]),
                         Tab::make('Изображения')->schema([
-                            Section::make()->columns([
-                                'sm' => 1,
-                                'xl' => 2,
-                                '2xl' => 3,
-                            ])
-                            ->schema([
                                 ImagePicker::make('image')
                                     ->label('Картинка')
                                     ->required()
@@ -102,18 +94,23 @@ class ProductsRelationManager extends RelationManager
                                     ->label('Галерея')
                                     ->multiple()
                                     ->columnSpan('2')
-                            ])
-                        ])->columnSpan('full'),
+                        ])
+                        ->columns([
+                            'sm' => 1,
+                            'xl' => 2,
+                            '2xl' => 3,
+                        ]),
                         Tab::make('Категории')->schema([
                             Forms\Components\Select::make('categories')
-                            ->label('Категории')
-                            ->placeholder('Выберите категории')
-                            ->multiple()
-                            ->relationship('categories', 'title')
-                            ->preload()
+                                ->label('Категории')
+                                ->placeholder('Выберите категории')
+                                ->multiple()
+                                ->relationship('categories', 'title')
+                                ->preload()
                         ])->columnSpan('full'),
                         Tab::make('Параметры')->schema([
                             Forms\Components\Select::make('paramItems')
+                                ->label('Параметры')
                                 ->multiple()
                                 ->relationship('paramItems', 'title')
                                 ->preload()
@@ -138,18 +135,15 @@ class ProductsRelationManager extends RelationManager
                                 ->columnSpanFull()
                         ])->columnSpan('full'),
                         Tab::make('Поиск')->schema([
-                            Section::make()->columns([
-                                'sm' => 1,
-                                'xl' => 1,
-                                '2xl' => 1,
-                            ])
-                            ->schema([
                                 Forms\Components\Textarea::make('synonims')
                                     ->label('Синонимы для поиска')
                                     ->columnSpanFull(),
-                            ])
                         ])
-                    ])->columnSpan('full'), 
+                    ])->columnSpan('full')->columns([
+                        'sm' => 1,
+                        'xl' => 1,
+                        '2xl' => 1,
+                    ]), 
                 
                 
                 
@@ -161,13 +155,16 @@ class ProductsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                ImageByIdColumn::make('image')
+                    ->label('Картинка'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Название'),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->modalWidth(MaxWidth::SevenExtraLarge),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->modalWidth(MaxWidth::SevenExtraLarge),
