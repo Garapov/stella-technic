@@ -29,8 +29,7 @@ class FormResult extends Model
         parent::boot();
 
         static::created(function (Model $model) {
-            $recipients = explode(',', $model->recipients);
-
+            $recipients = $model->recipients == "" ? [] : explode(',', $model->recipients);
             Mail::to(env('MAIL_ADMIN_ADDRESS', 'ruslangarapov@yandex.ru'))
             ->cc($recipients)->queue((new FormSened($model))->onQueue('mails'));
 

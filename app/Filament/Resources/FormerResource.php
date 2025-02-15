@@ -53,8 +53,7 @@ class FormerResource extends Resource
                     ->placeholder('recipient@domain.com')
                     ->nestedRecursiveRules([
                         'email',
-                    ])
-                    ->required(),
+                    ]),
                 Repeater::make('fields')
                     ->schema([
                         TextInput::make('name')
