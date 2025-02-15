@@ -15,11 +15,13 @@ class FormResult extends Model
     protected $fillable = [
         'name',
         'results',
-        'former_id'
+        'former_id',
+        'recipients'
     ];
 
     protected $casts = [
-        'results' => 'array'
+        'results' => 'array',
+        'recipients' => 'array'
     ];
 
     public static function boot(): void
@@ -27,7 +29,11 @@ class FormResult extends Model
         parent::boot();
 
         static::created(function (Model $model) {
-            Mail::to(env('MAIL_ADMIN_ADDRESS', 'ruslangarapov@yandex.ru'))->send(new FormSened($model));
+            $recipients = explode(',', $model->recipients);
+
+            Mail::to(env('MAIL_ADMIN_ADDRESS', 'ruslangarapov@yandex.ru'))
+            ->cc($recipients)->queue((new FormSened($model))->onQueue('mails'));
+
         });
     }
 }

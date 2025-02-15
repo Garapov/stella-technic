@@ -52,7 +52,8 @@ class Formblock extends Component
         FormResult::create([
             'name' => $this->form->name,
             'results' => json_encode($this->fields),
-            'former_id' => $this->form->id
+            'former_id' => $this->form->id,
+            'recipients' => $this->form->recipients
         ]);
 
         session()->flash('success', $this->form->thanks_text);

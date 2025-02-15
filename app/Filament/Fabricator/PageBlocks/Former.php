@@ -11,16 +11,18 @@ class Former extends PageBlock
 {
     public static function getBlockSchema(): Block
     {
+        $forms = ModelsFormer::all();
         return Block::make('former')
             ->icon('heroicon-o-rectangle-stack')
             ->label('Форма')
             ->schema([
                 Select::make('form')
                     ->label('Форма')
-                    // ->options(ModelsFormer::all()->pluck('name', 'id'))
+                    ->options($forms ? $forms->pluck('name', 'id') : [])
                     ->searchable()
-                    ->getSearchResultsUsing(fn (string $search): array => ModelsFormer::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
-                    ->getOptionLabelsUsing(fn (array $values): array => ModelsFormer::whereIn('id', $values)->pluck('name', 'id')->toArray())
+                    // ->preload()
+                    // ->getSearchResultsUsing(fn (string $search): array => ModelsFormer::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
+                    // ->getOptionLabelsUsing(fn (array $values): array => ModelsFormer::whereIn('id', $values)->pluck('name', 'id')->toArray())
                     ->required()
             ]);
     }

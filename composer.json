@@ -72,7 +72,7 @@
         ],
         "queue": [
             "Composer\\Config::disableProcessTimeout",
-            "@php artisan queue:work --queue=default,imports --tries=3 --backoff=3 --timeout=30000 --sleep=3 --max-time=36000"
+            "@php artisan queue:work --queue=default,imports,mails --tries=3 --backoff=3 --timeout=30000 --sleep=3 --max-time=36000"
         ]
     },
     "extra": {

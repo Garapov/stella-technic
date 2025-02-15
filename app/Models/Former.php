@@ -16,10 +16,12 @@ class Former extends Model
         'thanks_text',
         'fields',
         'button_text',
+        'recipients',
     ];
 
     protected $casts = [
         'fields' => 'array',
+        'recipients' => 'array',
     ];
 
 

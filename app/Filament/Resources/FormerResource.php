@@ -11,6 +11,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -45,8 +46,15 @@ class FormerResource extends Resource
                     ->columnSpanFull(),
                 TextInput::make('button_text')
                     ->required()
-                    ->label('Текст кнопки')
-                    ->columnSpanFull(),
+                    ->label('Текст кнопки'),
+                TagsInput::make('recipients')
+                    ->separator(',')
+                    ->label('Получатели')
+                    ->placeholder('recipient@domain.com')
+                    ->nestedRecursiveRules([
+                        'email',
+                    ])
+                    ->required(),
                 Repeater::make('fields')
                     ->schema([
                         TextInput::make('name')
@@ -71,8 +79,10 @@ class FormerResource extends Resource
                                     // dd($get('mask_enabled'));
                                 }
                             }),
-                        Textarea::make('options')
-                            ->label('Опции (разделять запятой)')
+
+                        TagsInput::make('options')
+                            ->separator(',')
+                            ->label('Опции')
                             ->hidden(fn (Get $get): bool => $get('type') != 'select')
                             ->required(fn (Get $get): bool => $get('type') != 'select'),
                         TextInput::make('rules')
