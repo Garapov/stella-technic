@@ -49,7 +49,10 @@ class MainSliderResource extends Resource
                     ->label('Цвет фона')
                     ->required(),
                 ImagePicker::make('background_image')
-                    ->label('Картинка фона')
+                    ->label('Картинка фона'),
+                Forms\Components\Toggle::make('show_on_main')
+                    ->label('Отображать на главной')
+                    ->inline(false)
                     // ->description('При наличии картинки фона, будет отображаться только картинка на всей области слайда'),
             ]);
     }
@@ -60,15 +63,17 @@ class MainSliderResource extends Resource
             ->columns([
                 ImageByIdColumn::make('image')
                     ->label('Картинка'),
-                Tables\Columns\TextColumn::make('title')
+                Tables\Columns\TextColumn::make('title') 
                     ->label('Заголовок')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('button_text')
                     ->label('Текст кнопки')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('link')
                     ->label('Ссылка')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Дата создания')
                     ->dateTime()
@@ -79,6 +84,8 @@ class MainSliderResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\ToggleColumn::make('show_on_main')
+                    ->label('Отображать на главной'),
             ])
             ->filters([
                 //

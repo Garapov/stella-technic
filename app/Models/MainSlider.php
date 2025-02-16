@@ -19,7 +19,8 @@ class MainSlider extends Model
         'button_text',
         'link',
         'background',
-        'background_image'
+        'background_image',
+        'show_on_main'
     ];
 
 

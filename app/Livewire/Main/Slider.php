@@ -10,7 +10,7 @@ class Slider extends Component
     public function render()
     {
         return view('livewire.main.slider', [
-            'slides' => MainSlider::all()
+            'slides' => MainSlider::where('show_on_main', true)->get()
         ]);
     }
 }
