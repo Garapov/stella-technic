@@ -8,8 +8,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/')->name('client.')->group(function () {
     Route::view('/', 'client.index')->name('index');
+    Route::view('/catalog/brands', 'client.brands.index')->name('brands.index');
+    Route::view('/catalog/brands/{slug}', 'client.brands.show')->name('brands.show');
     Route::view('/catalog/{slug}', 'client.catalog')->name('catalog');
-    Route::view('/product/test/{product_slug}', 'client.product_detail')->name('product_detail');
+    Route::view('/catalog/products/{product_slug}', 'client.product_detail')->name('product_detail');
+    
     Route::view('/cart', 'client.cart')->name('cart');
     Route::view('/checkout', 'client.checkout')->name('checkout');
     // Route::get('/simple/{page:slug}', function ($page) {

@@ -148,6 +148,13 @@ class Breadcrumbs extends Component
                 'active' => true
             ];
         }
+        elseif ($currentRoute->getName() === 'client.brands') {
+            $breadcrumbs[] = [
+                'title' => 'Бренды',
+                'url' => null,
+                'active' => true
+            ];
+        }
         elseif ($currentRoute->getName() === 'client.search') {
             $breadcrumbs[] = [
                 'title' => 'Поиск',

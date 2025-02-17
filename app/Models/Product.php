@@ -103,6 +103,12 @@ class Product extends Model implements Searchable
         return $this->hasMany(ProductVariant::class);
     }
 
+    
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
     // public static function boot(): void
     // {
     //     parent::boot();

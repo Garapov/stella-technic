@@ -3,6 +3,8 @@
 namespace App\Livewire\Catalog;
 
 // use App\Livewire\Cart\Components\Product;
+
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductCategory;
@@ -39,13 +41,17 @@ class Items extends Component
         'selectedSort' => ['as' => 'sort', 'except' => 'default']
     ];
 
-    public function mount($slug = null, $products = null, $filter = true)
+    public function mount($slug = null, $brand_slug = null, $products = null, $filter = true)
     {
 
         $this->display_filter = $filter;
         
         if ($slug) {
             $this->category = ProductCategory::where('slug', $slug)->first();
+        }
+        if ($brand_slug) {
+            $brand = Brand::where('slug', $brand_slug)->first();
+            $this->product_ids = $brand->products()->pluck('id');
         }
         if ($products) {
             $this->product_ids = $products;

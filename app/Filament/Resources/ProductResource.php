@@ -24,7 +24,7 @@ use App\Tables\Columns\ImageByIdColumn;
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'carbon-pull-request';
     protected static ?string $navigationLabel = 'Товары';
     protected static ?string $modelLabel = 'Товар';
     protected static ?string $pluralModelLabel = 'Товары';
@@ -40,12 +40,6 @@ class ProductResource extends Resource
                 Tabs::make('Tabs')
                     ->tabs([
                         Tab::make('Основная информация')->schema([
-                            Section::make()->columns([
-                                'sm' => 1,
-                                'xl' => 2,
-                                '2xl' => 3,
-                            ])
-                            ->schema([
                                 Forms\Components\TextInput::make('name')
                                     ->required()
                                     ->label('Название'),
@@ -66,15 +60,12 @@ class ProductResource extends Resource
                                 Forms\Components\Toggle::make('is_popular')
                                     ->label('Популярный')
                                     ->inline(false),
-                            ])
+                        ])->columns([
+                            'sm' => 1,
+                            'xl' => 2,
+                            '2xl' => 3,
                         ])->columnSpan('full'),
                         Tab::make('Описание')->schema([
-                            Section::make()->columns([
-                                'sm' => 1,
-                                'xl' => 1,
-                                '2xl' => 1,
-                            ])
-                            ->schema([
                                 Forms\Components\Textarea::make('short_description')
                                     ->required()
                                     ->label('Короткое описание')
@@ -98,15 +89,12 @@ class ProductResource extends Resource
                                     ->required()
                                     ->label('Описание')
                                     ->columnSpanFull(),
-                            ])
+                        ])->columns([
+                            'sm' => 1,
+                            'xl' => 1,
+                            '2xl' => 1,
                         ])->columnSpan('full'),
                         Tab::make('Изображения')->schema([
-                            Section::make()->columns([
-                                'sm' => 1,
-                                'xl' => 2,
-                                '2xl' => 3,
-                            ])
-                            ->schema([
                                 ImagePicker::make('image')
                                     ->label('Картинка')
                                     ->required()
@@ -115,7 +103,10 @@ class ProductResource extends Resource
                                     ->label('Галерея')
                                     ->multiple()
                                     ->columnSpan('2')
-                            ])
+                        ])->columns([
+                            'sm' => 1,
+                            'xl' => 2,
+                            '2xl' => 3,
                         ])->columnSpan('full'),
                         Tab::make('Категории')->schema([
                             Forms\Components\Select::make('categories')
@@ -150,17 +141,11 @@ class ProductResource extends Resource
                                 })
                                 ->columnSpanFull()
                         ])->columnSpan('full'),
-                        Tab::make('Поиск')->schema([
-                            Section::make()->columns([
-                                'sm' => 1,
-                                'xl' => 1,
-                                '2xl' => 1,
-                            ])
-                            ->schema([
-                                Forms\Components\Textarea::make('synonims')
-                                    ->label('Синонимы для поиска')
-                                    ->columnSpanFull(),
-                            ])
+                        Tab::make('Бренд')->schema([
+                            Forms\Components\Select::make('brand')
+                                ->label('Бренд')
+                                ->relationship('brand', 'name')
+                                ->preload()
                         ])
                     ])->columnSpan('full'), 
                 

@@ -31,7 +31,7 @@ use App\Filament\Pages\ImportProducts;
 use JibayMcs\FilamentTour\FilamentTourPlugin;
 use Rupadana\ApiService\ApiServicePlugin;
 use App\Models\ProductCategory;
-
+use Datlechin\FilamentMenuBuilder\MenuPanel\StaticMenuPanel;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -107,7 +107,10 @@ class AdminPanelProvider extends PanelProvider
                             ->paginate(perPage: 5, condition: true),
                         ModelMenuPanel::make()
                             ->model(\App\Models\ProductCategory::class)
+                            ->paginate(perPage: 5, condition: true),
+                        StaticMenuPanel::make('Статичные страницы')
                             ->paginate(perPage: 5, condition: true)
+                            ->add('Бренды', function() {return route('client.brands.index');})
                     ])
             ])
             ->spa();
