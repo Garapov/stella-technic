@@ -176,6 +176,20 @@ class Breadcrumbs extends Component
                 'active' => true
             ];
         }
+        elseif ($currentRoute->getName() === 'client.catalog.popular') {
+            $breadcrumbs[] = [
+                'title' => 'Каталог',
+                'url' => route('client.catalog', ['slug' => 'all']),
+                'active' => false
+            ];
+            $breadcrumbs[] = [
+                'title' => 'Популярные',
+                'url' => null,
+                'active' => true
+            ];
+        }
+
+        
 
         return $breadcrumbs;
     }

@@ -33,12 +33,14 @@ class Items extends Component
     public ?ProductCategory $category = null;
 
     public $display_filter = true;
+    public $selectedBrands = [];
 
     protected $queryString = [
         'selectedVariationNames' => ['as' => 'variations', 'except' => []],
         'priceFrom' => ['as' => 'price_from', 'except' => null],
         'priceTo' => ['as' => 'price_to', 'except' => null],
-        'selectedSort' => ['as' => 'sort', 'except' => 'default']
+        'selectedSort' => ['as' => 'sort', 'except' => 'default'],
+        'selectedBrands' => ['as' => 'brand', 'except' => []]
     ];
 
     public function mount($slug = null, $brand_slug = null, $products = null, $filter = true)
@@ -110,6 +112,9 @@ class Items extends Component
         if ($this->product_ids) {
             $query = Product::whereIn('id', $this->product_ids);
         }
+        if (!empty($this->selectedBrands)) {
+            $query->whereIn('brand_id', $this->selectedBrands);
+        }
 
         
         // Apply parameter filters only if there are selected variations
@@ -164,19 +169,47 @@ class Items extends Component
                 $query->orderBy('name', 'desc');
                 break;
             default:
-                // Default sorting logic here if needed
                 break;
         }
 
 
-        if ($this->category) {
-            return $query->paginate(18);
-        }
-        if ($this->product_ids) {
-            return $query->paginate(18);
-        }
+        return $query->paginate(18);
 
         
+    }
+
+    public function getAvailableBrandsProperty()
+    {
+        $brands = Brand::query()
+            ->withCount(['products' => function($query) {
+                if ($this->category) {
+                    $query->whereHas('categories', function ($q) {
+                        $q->where('product_categories.id', $this->category->id);
+                    });
+                }
+                if ($this->product_ids) {
+                    $query->whereIn('id', $this->product_ids);
+                }
+                // Apply other filters except brand filter
+                if (!empty($this->selectedVariations)) {
+                    $query->whereHas('paramItems', function ($q) {
+                        $q->whereIn('product_param_items.id', $this->selectedVariations);
+                    });
+                }
+                if ($this->priceFrom !== null) {
+                    $query->where('price', '>=', $this->priceFrom);
+                }
+                if ($this->priceTo !== null) {
+                    $query->where('price', '<=', $this->priceTo);
+                }
+            }])
+            ->get()
+            ->map(function ($brand) {
+                $brand->would_have_results = $brand->products_count > 0;
+                return $brand;
+            });
+
+        return $brands;
     }
 
     public function getPriceRangeProperty()
@@ -365,6 +398,7 @@ class Items extends Component
         $this->priceFrom = $priceRange->min_price;
         $this->priceTo = $priceRange->max_price;
         $this->selectedSort = 'default';
+        $this->selectedBrands = [];
         $this->dispatch('filter-reset');
         $this->resetPage();
     }

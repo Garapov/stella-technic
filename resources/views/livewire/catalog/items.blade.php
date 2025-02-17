@@ -2,7 +2,7 @@
     @if ($category || $product_ids)
         <div class="mx-auto container relative">
             <!-- Loading Overlay -->
-            <div wire:loading.flex wire:target="selectedCategories, selectedVariations, priceFrom, priceTo, updateSort" 
+            <div wire:loading.flex wire:target="selectedCategories, selectedVariations, priceFrom, priceTo, updateSort, selectedBrands" 
             class="fixed inset-0 z-[9999] items-center justify-center bg-black/20 backdrop-blur-sm">
                 <div class="flex items-center gap-2 rounded-lg bg-white/80 px-6 py-4 shadow-lg dark:bg-gray-800/80">
                     <div class="animate-spin w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full"></div>
@@ -132,6 +132,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                
                                 @foreach ($this->availableFilters as $param)
                                     <div class="mb-4">
                                         <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -181,6 +182,54 @@
                                         @endif
                                     </div>
                                 @endforeach
+
+                                <!-- Brand Filter -->
+                                <div class="mb-4">
+                                    <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        Производитель
+                                    </h4>
+                                    <ul class="space-y-3">
+                                        @foreach ($this->availableBrands as $brand)
+                                            <li>
+                                                <label for="brand-{{ $brand->id }}" 
+                                                    @class([
+                                                        'flex items-center p-2 rounded-lg transition-colors',
+                                                        'hover:bg-gray-50 cursor-pointer' => $brand->would_have_results,
+                                                        'opacity-50 cursor-not-allowed' => !$brand->would_have_results
+                                                    ])>
+                                                    <input type="checkbox" 
+                                                        id="brand-{{ $brand->id }}"
+                                                        wire:model.live="selectedBrands"
+                                                        value="{{ $brand->id }}"
+                                                        @disabled(!$brand->would_have_results)
+                                                        @class([
+                                                            'h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500',
+                                                            'dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600',
+                                                            'cursor-not-allowed' => !$brand->would_have_results
+                                                        ])>
+                                                    <div class="flex items-center gap-3 ms-2">
+                                                        @if($brand->image)
+                                                            <img src="{{ asset('storage/' . $brand->image) }}" 
+                                                                alt="{{ $brand->name }}" 
+                                                                class="w-8 h-8 object-contain">
+                                                        @endif
+                                                        <span @class([
+                                                            'text-sm font-medium',
+                                                            'text-gray-900 dark:text-gray-300' => $brand->would_have_results,
+                                                            'text-gray-400 dark:text-gray-500' => !$brand->would_have_results
+                                                        ])>
+                                                            {{ $brand->name }}
+                                                            @if($brand->products_count > 0)
+                                                                <span class="text-xs text-gray-500">({{ $brand->products_count }})</span>
+                                                            @endif
+                                                        </span>
+                                                    </div>
+                                                </label>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                <!-- End Brand Filter -->
                             </div>
                         </div>
                     </div>

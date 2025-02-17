@@ -111,6 +111,9 @@ class AdminPanelProvider extends PanelProvider
                         StaticMenuPanel::make('Статичные страницы')
                             ->paginate(perPage: 5, condition: true)
                             ->add('Бренды', function() {return route('client.brands.index');})
+                            ->add('Популярные товары', function() {return route('client.catalog.popular');})
+                            ->add('Статьи', function() {return route('client.articles.index');})
+                            ->add('Блог', function() {return route('client.posts.index');})
                     ])
             ])
             ->spa();

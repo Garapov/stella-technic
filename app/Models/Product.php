@@ -44,7 +44,7 @@ class Product extends Model implements Searchable
         'paramItems',
         'categories',
         'variants',
-        'img'
+        'img',
     ];
 
     public function getSearchResult(): SearchResult

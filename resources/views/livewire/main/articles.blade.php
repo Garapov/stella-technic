@@ -22,8 +22,8 @@
                                 </div>
                             @endif  
                         </div>
-                        <a href="#"
-                            class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                        <a href="{{ route('client.articles.index') }}"
+                            class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:navigate>
                             Смотреть все
                             <x-fas-arrow-right class="w-4 h-4 ms-2 rtl:rotate-180" />
                         </a>
