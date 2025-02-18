@@ -32,8 +32,9 @@ class SertificateResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->label('Название')
                     ->required(),
-                ImagePicker::make('image_id')
-                    ->label('Картинка')
+                Forms\Components\FileUpload::make('image')
+                    ->label('Картиннка')
+                    ->image()
                     ->required(),
             ]);
     }
@@ -42,7 +43,7 @@ class SertificateResource extends Resource
     {
         return $table
             ->columns([
-                ImageByIdColumn::make('image_id')
+                Tables\Columns\ImageColumn::make('image')
                     ->label('Картинка'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Название')

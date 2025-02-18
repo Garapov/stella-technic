@@ -13,7 +13,7 @@ class Sertificate extends Model
 
     protected $fillable = [
         'name',
-        'image_id',
+        'image',
     ];
 
     public function image(): BelongsTo

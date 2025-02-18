@@ -1,5 +1,10 @@
+@aware(['page'])
 <div>
     @if (count($certificates))
+        @php
+            /** @var \App\Models\Sertificate[] $certificates */
+            $certificates = \App\Models\Sertificate::whereIn('id', $certificates)->get();
+        @endphp
         <section class="py-10 bg-gray-200 dark:bg-gray-800 glide" x-data="{
             slider: new window.glide($refs.slider, {
                 autoplay: 5000,
@@ -16,7 +21,7 @@
         }" x-ref="slider">
             <div class="container mx-auto">
                 <div class="flex items-center justify-between mb-10">
-                    <p class="text-4xl text-gray-900 dark:text-white">Сертификаты</p>
+                    <p class="text-4xl text-gray-900 dark:text-white">{{ $title ?? 'Наши сертификаты' }}</p>
                     <div class="flex items-center gap-8">
                         <div class="flex items-center gap-2" data-glide-el="controls[nav]">
                             @foreach ($certificates as $key=>$item)
@@ -49,3 +54,4 @@
         </section>
     @endif
 </div>
+
