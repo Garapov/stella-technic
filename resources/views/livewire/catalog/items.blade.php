@@ -186,7 +186,7 @@
                                 <!-- Brand Filter -->
                                 <div class="mb-4">
                                     <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        Производитель
+                                        Бренд
                                     </h4>
                                     <ul class="space-y-3">
                                         @foreach ($this->availableBrands as $brand)
