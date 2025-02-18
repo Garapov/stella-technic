@@ -18,6 +18,7 @@
     @livewire('main.brands')
     @livewire('main.features')
     @livewire('main.popular')
+    @livewire('main.certificates')
     @livewire('main.articles')
     @livewire('main.customers')
     @livewire('main.news')

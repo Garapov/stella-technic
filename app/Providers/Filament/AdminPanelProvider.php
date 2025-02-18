@@ -114,6 +114,7 @@ class AdminPanelProvider extends PanelProvider
                             ->add('Популярные товары', function() {return route('client.catalog.popular');})
                             ->add('Статьи', function() {return route('client.articles.index');})
                             ->add('Блог', function() {return route('client.posts.index');})
+                            ->add('Сертификаты', function() {return route('client.certificates');})
                     ])
             ])
             ->spa();
