@@ -1,3 +1,3 @@
-<a href="#" class="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+<div class="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" data-fancybox="{{ $selector }}" data-caption="{{ $certificate->name }}" data-src="{{ asset('storage/' . $certificate->image) }}">
     <img class="w-full h-full object-cover object-center rounded-lg" src="{{ asset('storage/' . $certificate->image) }}" alt="certificate">
-</a>
+</div>

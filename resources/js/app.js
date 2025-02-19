@@ -1,5 +1,6 @@
 // import Alpine from 'alpinejs';
 import Glide from '@glidejs/glide'
+import { Fancybox } from "@fancyapps/ui"
 import mask from '@alpinejs/mask';
 // import persist from '@alpinejs/persist';
 
@@ -11,6 +12,8 @@ import cart from './components/cart';
 import favorites from './components/favorites';
 
 window.glide = Glide;
+window.fancybox = Fancybox;
+
 
 // window.Alpine = Alpine;
 
@@ -31,6 +34,7 @@ document.addEventListener('livewire:init', () => {
         Alpine.store('cart').list = [];
     });
 });
+
 
 document.addEventListener('articles_slider', (data) => {
     

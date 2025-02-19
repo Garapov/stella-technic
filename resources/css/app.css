@@ -1,5 +1,6 @@
 @import '@glidejs/glide/dist/css/glide.core.min.css';
 @import "toastify-js/src/toastify.css";
+@import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 @tailwind base;
 @tailwind components;
