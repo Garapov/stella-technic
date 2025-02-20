@@ -14,6 +14,7 @@ use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 use Datlechin\FilamentMenuBuilder\Concerns\HasMenuPanel;
 use Datlechin\FilamentMenuBuilder\Contracts\MenuPanelable;
+use Illuminate\Support\Number;
 
 class ProductCategory extends Model implements Searchable,MenuPanelable
 {
@@ -94,6 +95,11 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'product_product_category');
+    }
+
+    public function minProductPrice()
+    {
+        return Number::format($this->products()->where('price', '>', 0)->min('price') ?? 0, 0);
     }
 
     

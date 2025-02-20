@@ -6,7 +6,7 @@ use Filament\Forms\Components\Builder\Block;
 use Z3d0X\FilamentFabricator\PageBlocks\PageBlock;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 
 class ImageTextBlock extends PageBlock
 {
@@ -22,8 +22,22 @@ class ImageTextBlock extends PageBlock
                 RichEditor::make('text')
                     ->label('Текст')
                     ->required(),
-                Toggle::make('center')
-                    ->label('Выравниваать по центру')
+                ToggleButtons::make('alignment')
+                    ->label('Выравнивание')
+                    ->default('start')
+                    ->required()
+                    ->grouped()
+                    ->options([
+                        'start' => 'По верху',
+                        'center' => ' По центру',
+                        'end' => 'По низу',
+                    ])
+                    ->icons([
+                        'start' => 'carbon-align-vertical-top',
+                        'center' => 'carbon-align-vertical-center',
+                        'end' => 'carbon-align-vertical-bottom',
+                    ])
+                    ->required()
             ]);
     }
 

@@ -16,6 +16,7 @@
 
     @livewire('main.slider')
     @livewire('main.brands')
+    @livewire('main.categories-in-block')
     @livewire('main.features')
     @livewire('main.popular')
     @livewire('main.certificates')
