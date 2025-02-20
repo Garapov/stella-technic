@@ -23,7 +23,7 @@ class VacancyResource extends Resource
     protected static ?string $navigationLabel = 'Вакансии';
     protected static ?string $modelLabel = 'Вакансия';
     protected static ?string $pluralModelLabel = 'Вакансии';
-    protected static ?string $navigationGroup = 'Магазин';
+    protected static ?string $navigationGroup = 'Страницы';
 
     public static function form(Form $form): Form
     {

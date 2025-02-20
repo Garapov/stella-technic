@@ -116,6 +116,7 @@ class AdminPanelProvider extends PanelProvider
                             ->add('Блог', function() {return route('client.posts.index');})
                             ->add('Сертификаты', function() {return route('client.certificates');})
                             ->add('Вакансии', function() {return route('client.vacancies');})
+                            ->add('Сотрудники', function() {return route('client.workers');})
                     ])
             ])
             ->spa();

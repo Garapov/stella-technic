@@ -33,6 +33,7 @@ Route::prefix('/')->name('client.')->group(function () {
     Route::view('/search', 'client.search')->name('search');
     Route::view('/certificates', 'client.certificates')->name('certificates');
     Route::view('/vacancies', 'client.vacancies')->name('vacancies');
+    Route::view('/workers', 'client.workers')->name('workers');
 });
 
 // Route::middleware(['auth', 'verified'])->prefix('/dashboard')->name('dashboard.')->group(function () {
