@@ -17,7 +17,7 @@
                 <h3 class="mt-2 text-sm font-semibold text-gray-900">Нет избранных товаров</h3>
                 <p class="mt-1 text-sm text-gray-500">Начните добавлять товары в избранное.</p>
                 <div class="mt-6">
-                    <a href="{{ route('client.catalog', ['slug' => 'all']) }}" 
+                    <a href="{{ route('client.catalog.all') }}" 
                         class="inline-flex items-center rounded-md bg-blue-700 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800">
                         Перейти в каталог
                     </a>

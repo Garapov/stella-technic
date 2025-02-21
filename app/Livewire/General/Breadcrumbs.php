@@ -58,7 +58,7 @@ class Breadcrumbs extends Component
         elseif ($currentRoute->getName() === 'client.catalog') {
             $breadcrumbs[] = [
                 'title' => 'Каталог',
-                'url' => route('client.catalog', ['slug' => 'all']),
+                'url' => route('client.catalog.all'),
                 'active' => false
             ];
 
@@ -96,7 +96,7 @@ class Breadcrumbs extends Component
         elseif ($currentRoute->getName() === 'client.product_detail') {
             $breadcrumbs[] = [
                 'title' => 'Каталог',
-                'url' => route('client.catalog', ['slug' => 'all']),
+                'url' => route('client.catalog.all'),
                 'active' => false
             ];
 
@@ -179,7 +179,7 @@ class Breadcrumbs extends Component
         elseif ($currentRoute->getName() === 'client.catalog.popular') {
             $breadcrumbs[] = [
                 'title' => 'Каталог',
-                'url' => route('client.catalog', ['slug' => 'all']),
+                'url' => route('client.catalog.all'),
                 'active' => false
             ];
             $breadcrumbs[] = [

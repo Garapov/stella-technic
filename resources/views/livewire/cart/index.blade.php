@@ -200,7 +200,7 @@
     <template x-if="!isLoading && products.length === 0">
       <div class="mt-6 text-center">
         <p class="text-lg text-gray-600">Ваша корзина пуста</p>
-        <a href="{{ route('client.catalog', ['slug' => 'all']) }}" class="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        <a href="{{ route('client.catalog.all') }}" class="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
           Перейти в каталог
         </a>
       </div>
