@@ -8,19 +8,22 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class FormSened extends Mailable implements ShouldQueue
+class MailingSend extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $model;
+    public $data;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($model)
+    public function __construct($data)
     {
-        $this->model = $model;
+        $this->data = $data;
+
+        
     }
 
     /**
@@ -29,7 +32,7 @@ class FormSened extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Новая заявка с формы "' . $this->model->name . '"',
+            subject: 'Mailing Send',
         );
     }
 
@@ -38,11 +41,11 @@ class FormSened extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
+        Log::info($this->data);
         return new Content(
-            markdown: 'mail.forms.sended',
+            markdown: 'mail.forms.mailing',
             with: [
-                'name' => $this->model->name,
-                'results' => $this->model->results,
+                'data' => $this->data,
             ]
         );
     }

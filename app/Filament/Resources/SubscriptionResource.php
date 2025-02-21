@@ -12,6 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\MarkdownEditor;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MailingSend;
 
 class SubscriptionResource extends Resource
 {
@@ -65,6 +68,23 @@ class SubscriptionResource extends Resource
                 // Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
+            ->headerActions([
+                Tables\Actions\Action::make('updateAuthor')
+                    ->label('Отправить письмо')
+                    ->form([
+                        MarkdownEditor::make('content')
+                            ->label('Контент письма')
+                            ->required(),
+                    ])
+                    ->action(function (array $data): void {
+                        $subscribers = Subscription::all();
+                        $recipients = $subscribers ? $subscribers->pluck('email')->toArray() : [];
+
+                        Mail::to(env('MAIL_ADMIN_ADDRESS', 'ruslangarapov@yandex.ru'))
+                        ->cc($recipients)->queue((new MailingSend($data))->onQueue('mails'));
+                    })
+                    ->slideOver(),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -76,6 +96,19 @@ class SubscriptionResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public function getActions(): array
+    {
+        return [
+            ImportAction::make()
+                ->importer(ProductImporter::class)
+                ->chunkSize(10)
+                ->color('primary')
+                ->maxRows(2000)
+                ->label('Импортировать товары')
+                ->icon('heroicon-o-arrow-up-tray'),
         ];
     }
 
