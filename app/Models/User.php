@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Traits\HasRoles;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
-
+use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 
 class User extends Authenticatable implements FilamentUser 
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens, HasRoles, HasSuperAdmin;
+    use HasFactory, Notifiable, HasApiTokens, HasRoles, HasSuperAdmin, TwoFactorAuthenticatable;
 
     protected array $guard_name = ['api', 'web'];
 
