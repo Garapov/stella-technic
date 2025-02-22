@@ -17,6 +17,7 @@ class Checkout extends Component
     public $name;
     public $email;
     public $phone;
+    public $user_type = 'natural';
     public $products = [];
     protected $listeners = ['cartUpdated' => 'handleCartUpdate'];
 
