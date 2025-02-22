@@ -1,5 +1,5 @@
 <div>
-    @if ($q != '' && $results['products']->count() > 0)
+    @if ($q != '' && ($results['products']->count() > 0 || $results['categories']->count() > 0))
         @if ($results['products']->count() > 0)
             <h2 class="text-lg font-bold mb-2">Товары</h2>
             <div class="grid gap-4 sm:grid-cols-1 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">

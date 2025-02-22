@@ -22,13 +22,13 @@ class Search extends Component
         $results = [
             'products' => new Collection(),
             'categories' => new Collection(),
-            'pages' => new Collection(),
+            // 'pages' => new Collection(),
         ];
 
         if (Str::length($this->q) > 3) {
             $results['products'] = Product::where('name', 'like', "%{$this->q}%")->orWhere('synonims', 'like', "%{$this->q}%")->get();
             $results['categories'] = ProductCategory::where('title', 'like', "%{$this->q}%")->get();
-            $results['pages'] = Page::where('title', 'like', "%{$this->q}%")->get();
+            // $results['pages'] = Page::where('title', 'like', "%{$this->q}%")->get();
         }
 
         return view('livewire.general.header.search', [
