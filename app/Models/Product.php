@@ -58,7 +58,6 @@ class Product extends Model implements Searchable
             $url
         );
 
-        // dd($searchResult);
      
         return $searchResult;
      }
@@ -73,6 +72,8 @@ class Product extends Model implements Searchable
             ->saveSlugsTo('slug')
             ->doNotGenerateSlugsOnUpdate();
     }
+
+
 
     /**
      * Get the route key for the model.
@@ -102,22 +103,10 @@ class Product extends Model implements Searchable
     {
         return $this->hasMany(ProductVariant::class);
     }
-
     
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
     }
-
-    // public static function boot(): void
-    // {
-    //     parent::boot();
-
-    //     static::saved(function (Product $model) {
-    //         // This event fires after all relationships are synced
-    //         $paramItems = $model->paramItems;
-    //         dd($paramItems); // Now you'll see the paramItems
-    //     });
-    // }
 }
 // TODO Добавить UUID
