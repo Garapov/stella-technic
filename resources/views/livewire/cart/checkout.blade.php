@@ -36,7 +36,7 @@
                 }
               }" 
               x-init="calculateTotal(); $watch('cartItems', () => calculateTotal())">
-              <form wire:submit.prevent="placeOrder" class="space-y-6">
+              <form wire:submit.prevent="placeOrder" class="space-y-6 w-full">
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label for="name" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Имя*</label>
