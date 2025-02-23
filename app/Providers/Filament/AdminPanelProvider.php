@@ -32,6 +32,7 @@ use JibayMcs\FilamentTour\FilamentTourPlugin;
 use Rupadana\ApiService\ApiServicePlugin;
 use App\Models\ProductCategory;
 use Datlechin\FilamentMenuBuilder\MenuPanel\StaticMenuPanel;
+use TomatoPHP\FilamentSettingsHub\FilamentSettingsHubPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -127,7 +128,10 @@ class AdminPanelProvider extends PanelProvider
                             ->add('Сертификаты', function() {return route('client.certificates');})
                             ->add('Вакансии', function() {return route('client.vacancies');})
                             ->add('Сотрудники', function() {return route('client.workers');})
-                    ])
+                    ]),
+                FilamentSettingsHubPlugin::make()
+                    ->allowSiteSettings()
+                    ->allowSocialMenuSettings()
             ])
             ->spa();
     }

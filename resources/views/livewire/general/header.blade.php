@@ -10,9 +10,9 @@
             </div>
 
             <div class="flex mt-4 sm:justify-center sm:mt-0">
-                <a href="mailto:info18@stella-technic.ru" class="flex items-center gap-2 me-10">
+                <a href="mailto:{{ setting("site_email") }}" class="flex items-center gap-2 me-10">
                     <x-fas-mail-bulk class="w-4 h-4 text-xs text-gray-800 dark:text-white" />
-                    <span class="text-xs text-gray-800 dark:text-white">info18@stella-technic.ru</span>
+                    <span class="text-xs text-gray-800 dark:text-white">{{ setting("site_email") }}</span>
                 </a>
                 <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
                     <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
