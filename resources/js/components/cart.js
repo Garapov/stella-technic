@@ -19,6 +19,8 @@ export default (() => {
                         });
                     }
                 }
+
+                console.log('cart', this.list);
             },
 
             addToCart({product, count = 0}) {
@@ -43,6 +45,12 @@ export default (() => {
                         count: count,
                         variations: {}
                     };
+                }
+
+                if (window.Livewire) {
+                    window.Livewire.dispatch('cartUpdated', { 
+                        products: this.list.filter(product => product !== null)
+                    });
                 }
             },
 
@@ -178,7 +186,8 @@ export default (() => {
 
                 // Notify Livewire about the update
                 if (window.Livewire) {
-                    window.Livewire.dispatch('cartUpdated', { 
+                    console.log('cart updated');
+window.Livewire.dispatch('cartUpdated', { 
                         products: this.list.filter(product => product !== null)
                     });
                 }
@@ -198,7 +207,8 @@ export default (() => {
                 
                 // Notify Livewire about the update
                 if (window.Livewire) {
-                    window.Livewire.dispatch('cartUpdated', { 
+                    console.log('cart updated');
+window.Livewire.dispatch('cartUpdated', { 
                         products: this.list.filter(product => product !== null)
                     });
                 }
@@ -212,7 +222,8 @@ export default (() => {
                 
                 // Notify Livewire about the update
                 if (window.Livewire) {
-                    window.Livewire.dispatch('cartUpdated', { 
+                    console.log('cart updated');
+window.Livewire.dispatch('cartUpdated', { 
                         products: this.list.filter(product => product !== null)
                     });
                 }
@@ -230,6 +241,7 @@ export default (() => {
                 
                 // Notify Livewire about the update
                 if (window.Livewire) {
+                    console.log('cart updated');
                     window.Livewire.dispatch('cartUpdated', { 
                         products: this.list.filter(product => product !== null)
                     });
@@ -248,7 +260,8 @@ export default (() => {
                 
                 // Notify Livewire about the update
                 if (window.Livewire) {
-                    window.Livewire.dispatch('cartUpdated', { 
+                    console.log('cart updated');
+window.Livewire.dispatch('cartUpdated', { 
                         products: this.list.filter(product => product !== null)
                     });
                 }

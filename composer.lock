@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5accd475dbc7a88635b972de2a0f1d5c",
+    "content-hash": "14d6a59da4e08236ee6f54f71c4f84db",
     "packages": [
         {
             "name": "althinect/filament-spatie-roles-permissions",
@@ -3059,6 +3059,56 @@
                 }
             ],
             "time": "2023-12-03T19:50:20+00:00"
+        },
+        {
+            "name": "hflabs/dadata",
+            "version": "24.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hflabs/dadata-php.git",
+                "reference": "b73e6dc334dbf2f4170d5b6d760d722eda5b57f2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hflabs/dadata-php/zipball/b73e6dc334dbf2f4170d5b6d760d722eda5b57f2",
+                "reference": "b73e6dc334dbf2f4170d5b6d760d722eda5b57f2",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~6.0|^7.0",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dadata\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "HFLabs and contributors",
+                    "homepage": "https://github.com/hflabs/dadata-php/contributors"
+                }
+            ],
+            "description": "Data cleansing, enrichment and suggestions via Dadata API",
+            "homepage": "https://github.com/nalgeon/dadata-php",
+            "keywords": [
+                "DaData",
+                "api",
+                "php",
+                "suggestions"
+            ],
+            "support": {
+                "source": "https://github.com/hflabs/dadata-php/tree/24.4.0"
+            },
+            "time": "2024-04-11T06:57:31+00:00"
         },
         {
             "name": "jeffgreco13/filament-breezy",

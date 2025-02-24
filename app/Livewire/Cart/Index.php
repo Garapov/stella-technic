@@ -3,6 +3,7 @@
 namespace App\Livewire\Cart;
 
 use App\Models\Product;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class Index extends Component
@@ -20,13 +21,9 @@ class Index extends Component
         return view('livewire.cart.index');
     }
 
-    public function handleCartUpdate($data = null)
+    public function handleCartUpdate($products)
     {
-        if (!$data || !isset($data['products'])) {
-            $this->loadProducts([]);
-            return;
-        }
-        $this->loadProducts($data['products']);
+        $this->loadProducts($products);
     }
 
     public function loadProducts($cartItems = [])

@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class Checkout extends Component
 {
@@ -31,26 +32,55 @@ class Checkout extends Component
     public $message;
     protected $listeners = ['cartUpdated' => 'handleCartUpdate'];
 
-    protected $rules = [
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|max:255',
-        'phone' => 'required|string|max:20',
-        'comment' => 'nullable|string',
-    ];
+    public function rules() {
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'comment' => 'nullable|string',
+        ];
+
+        if ($this->type == 'legal') {
+            $rules['company_name'] = 'required|string|max:255';
+            $rules['inn'] = 'required|string|max:255';
+            $rules['kpp'] = 'required|string|max:255';
+            $rules['bik'] = 'required|string|max:255';
+            $rules['correspondent_account'] = 'required|string|max:255';
+            $rules['bank_account'] = 'required|string|max:255';
+            $rules['yur_address'] = 'required|string|max:255';
+        }
+
+        return $rules;
+    }
 
     protected $messages = [
         'name.required' => 'Пожалуйста, введите ваше имя',
         'email.required' => 'Пожалуйста, введите email',
         'email.email' => 'Пожалуйста, введите корректный email',
-        'phone.required' => 'Пожалуйста, введите номер телефона'
+        'phone.required' => 'Пожалуйста, введите номер телефона',
+        'company_name.required' => 'Пожалуйста, введите название компании',
+        'inn.required' => 'Пожалуйста, введите ИНН',
+        'kpp.required' => 'Пожалуйста, введите КПП',
+        'bik.required' => 'Пожалуйста, введите БИК',
+        'correspondent_account.required' => 'Пожалуйста, введите корреспондентский счет',
+        'bank_account.required' => 'Пожалуйста, введите банковский счет',
+        'yur_address.required' => 'Пожалуйста, введите юридический адрес',
     ];
 
     public function mount()
     {
         $this->products = [];
         $this->name = Auth::user() ? Auth::user()->name : '';
+        $this->type = Auth::user() ? Auth::user()->type : 'natural';
         $this->email = Auth::user() ? Auth::user()->email : '';
         $this->phone = Auth::user() ? Auth::user()->phone : '';
+        $this->company_name = Auth::user() ? Auth::user()->company_name : '';
+        $this->inn = Auth::user() ? Auth::user()->inn : '';
+        $this->kpp = Auth::user() ? Auth::user()->kpp : '';
+        $this->bik = Auth::user() ? Auth::user()->bik : '';
+        $this->correspondent_account = Auth::user() ? Auth::user()->correspondent_account : '';
+        $this->bank_account = Auth::user() ? Auth::user()->bank_account : '';
+        $this->yur_address = Auth::user() ? Auth::user()->yur_address : '';
     }
 
     public function render()
@@ -58,13 +88,14 @@ class Checkout extends Component
         return view('livewire.cart.checkout');
     }
 
-    public function handleCartUpdate($data = null)
+    public function updatedType()
     {
-        if (!$data || !isset($data['products'])) {
-            $this->loadProducts([]);
-            return;
-        }
-        $this->loadProducts($data['products']);
+        $this->message = null;
+    }
+
+    public function handleCartUpdate($products)
+    {
+        $this->loadProducts($products);
     }
 
     public function loadProducts($cartItems = [])
@@ -100,10 +131,10 @@ class Checkout extends Component
         // Validate input
         $this->validate();
 
-        if (Auth::user()) {
-            $user = Auth::user();
+        if (Auth::id()) {
+            $user = User::where('id', Auth::id())->first();
+            
         } else {
-
             // Find or create user
             $user = User::where('email', $this->email)->firstOr(function () {
                 $password = Str::random(10);
@@ -121,6 +152,19 @@ class Checkout extends Component
 
             // Login the user
             Auth::login($user);
+        }
+
+        if ($this->type === 'legal') {
+            $user->update([
+                'type' => $this->type,
+                'company_name' => $this->company_name,
+                'inn' => $this->inn,
+                'kpp' => $this->kpp,
+                'bik' => $this->bik,
+                'correspondent_account' => $this->correspondent_account,
+                'bank_account' => $this->bank_account,
+                'yur_address' => $this->yur_address,
+            ]);
         }
 
         // Calculate total price
@@ -156,22 +200,17 @@ class Checkout extends Component
 
     public function checkCompany()
     {
-        // https://ahunter.ru/site/fetch/company?output=json;query=c1027700132195
-        
-        $response = Http::get('https://ahunter.ru/site/fetch/company?output=json;query=' . $this->inn);
+        $token = env('DADATA_TOKEN');
+        $dadata = new \Dadata\DadataClient($token, null);
+        $result = $dadata->findById("party", $this->inn, 1);
 
-        if ($response->ok()) {
-            $data = $response->json();
-            if (isset($data['company'])) {
-                $this->message = null;
-                $this->company_name = $data['company']['main']['short_name'];
-                $this->kpp = $data['company']['main']['kpp'];
-                $this->yur_address = $data['company']['address']['canonic'];
-            } else {
-                $this->message = 'Мы не смогли найти компанию по ИНН. Введите другой ИНН или заполните данные вручную';
-            }
+        if ($result) {
+            $this->message = null;
+            $this->company_name = $result[0]['value'];
+            $this->kpp = $result[0]['data']['kpp'];
+            $this->yur_address = $result[0]['data']['address']['value'];
         } else {
-            $this->message = 'Кажется что-то пошло не так. Попробуйте еще раз';
+            $this->message = 'Мы не смогли найти компанию по ИНН. Введите другой ИНН или заполните данные вручную';
         }
     }
 }
