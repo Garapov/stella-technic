@@ -30,12 +30,23 @@
     <template x-if="!isLoading">
       <form wire:submit.prevent="placeOrder" class="mt-6 sm:mt-8 md:gap-6 lg:flex xl:gap-8">
         <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-5xl">
+          @if ($message)
+            <div class="flex items-center p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 dark:border-yellow-800" role="alert">
+              <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"></path>
+              </svg>
+              <span class="sr-only">Info</span>
+              <div>
+                  {{ $message }}
+              </div>
+            </div>
+          @endif
           <div class="mb-5">
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
               <label class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
                 <div class="flex items-start">
                   <div class="flex h-5 items-center">
-                      <input aria-describedby="pay-on-delivery-text" type="radio" value="natural" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" wire:model.live="user_type" />
+                      <input aria-describedby="pay-on-delivery-text" type="radio" value="natural" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" wire:model.live="type" />
                   </div>
   
                   <div class="ms-4 text-sm">
@@ -48,7 +59,7 @@
               <label class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
                 <div class="flex items-start">
                   <div class="flex h-5 items-center">
-                      <input aria-describedby="pay-on-delivery-text" type="radio" value="legal" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" wire:model.live="user_type" />
+                      <input aria-describedby="pay-on-delivery-text" type="radio" value="legal" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" wire:model.live="type" />
                   </div>
   
                   <div class="ms-4 text-sm">
@@ -58,7 +69,6 @@
                 </div>
               </label>
             </div>
-            {{ $user_type }}
           </div>
           <div class="mb-10">
               <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -75,6 +85,56 @@
                 <label>
                     <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Телефон*: </span>
                     <input type="tel" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="8 (999) 999-99-99" wire:model="phone" x-mask="9 (999) 999-99-99" />
+                </label>
+
+                <label>
+                    <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> ИНН*: </span>
+                    <div class="flex flex-center gap-2">
+                      <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="7710362760" wire:model="inn" x-mask="9999999999" />
+                      <div wire:click="checkCompany" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        <x-heroicon-o-arrow-small-right class="w-5 h-5" />
+                      </div>
+                    </div>
+                </label>
+
+                <label>
+                    <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Название компании*: </span>
+                    <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="Stella Technic" wire:model="company_name" />
+                </label>
+
+                <label>
+                    <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> КПП*: </span>
+                    <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="" wire:model="kpp" />
+                </label>
+
+                <label>
+                    <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> БИК*: </span>
+                    <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="" wire:model="bik" />
+                </label>
+
+                <label>
+                    <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Корреспондентский счет*: </span>
+                    <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="" wire:model="correspondent_account" />
+                </label>
+                <label>
+                    <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Банковский счет*: </span>
+                    <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="" wire:model="bank_account" />
+                </label>
+
+                <label class="col-span-1 md:col-span-2 lg:col-span-3">
+                    <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Юр. адрес*: </span>
+                    <textarea class="block w-full h-20 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="" wire:model="yur_address"></textarea>
+                </label>
+                
+              </div>
+          </div>
+
+          <div class="mb-10">
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Примечания к заказу</h3>
+  
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-1">
+                <label>
+                  <textarea class="block w-full h-40 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="Укажите желаемое время и дату доставки, информацию о проезде к вашему дому" wire:model.live="comment" > </textarea>  
                 </label>
               </div>
           </div>
@@ -186,7 +246,7 @@
                       <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Cтоимость со скидкой</dt>
                       <dd class="text-base font-medium text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format($store.cart.getDiscountedPrice())"></dd>
                     </dl>
-    
+     
                     <dl class="flex items-center justify-between gap-4">
                       <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Скидка</dt>
                       <dd class="text-base font-medium text-green-600" x-text="`-${new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format($store.cart.getTotalPrice() - $store.cart.getDiscountedPrice())}`"></dd>
@@ -201,7 +261,10 @@
                 </dl>
               </div>
     
-              <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>Оформить заказ</button>
+              <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex items-center gap-2" wire:loading.class="opacity-50" wire:target="placeOrder" wire:click="placeOrder">
+                Оформить заказ
+                <x-fas-spinner class="animate-spin w-3 h-3" wire:loading wire:target="placeOrder" />
+              </button>
             </div>
   
         </div>

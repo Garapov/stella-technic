@@ -11,20 +11,31 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Illuminate\Support\Facades\Http;
 
 class Checkout extends Component
 {
     public $name;
     public $email;
     public $phone;
-    public $user_type = 'natural';
+    public $comment;
+    public $type = 'natural';
     public $products = [];
+    public $company_name;
+    public $inn;
+    public $kpp;
+    public $bik;
+    public $correspondent_account;
+    public $bank_account;
+    public $yur_address;
+    public $message;
     protected $listeners = ['cartUpdated' => 'handleCartUpdate'];
 
     protected $rules = [
         'name' => 'required|string|max:255',
         'email' => 'required|email|max:255',
-        'phone' => 'required|string|max:20'
+        'phone' => 'required|string|max:20',
+        'comment' => 'nullable|string',
     ];
 
     protected $messages = [
@@ -141,5 +152,26 @@ class Checkout extends Component
 
         // Redirect to order success page
         return redirect()->route('client.thanks')->with('order_id', $order->id);
+    }
+
+    public function checkCompany()
+    {
+        // https://ahunter.ru/site/fetch/company?output=json;query=c1027700132195
+        
+        $response = Http::get('https://ahunter.ru/site/fetch/company?output=json;query=' . $this->inn);
+
+        if ($response->ok()) {
+            $data = $response->json();
+            if (isset($data['company'])) {
+                $this->message = null;
+                $this->company_name = $data['company']['main']['short_name'];
+                $this->kpp = $data['company']['main']['kpp'];
+                $this->yur_address = $data['company']['address']['canonic'];
+            } else {
+                $this->message = 'Мы не смогли найти компанию по ИНН. Введите другой ИНН или заполните данные вручную';
+            }
+        } else {
+            $this->message = 'Кажется что-то пошло не так. Попробуйте еще раз';
+        }
     }
 }
