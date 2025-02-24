@@ -4,7 +4,6 @@ namespace App\Providers\Filament;
 
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use CmsMulti\FilamentClearCache\FilamentClearCachePlugin;
-use Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin;
 use Datlechin\FilamentMenuBuilder\MenuPanel\ModelMenuPanel;
 use App\Filament\Plugins\BlogPlugin;
 use App\Filament\Plugins\MenuBuilderPlugin;
@@ -16,7 +15,6 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -30,12 +28,34 @@ use Z3d0X\FilamentFabricator\FilamentFabricatorPlugin;
 use App\Filament\Pages\ImportProducts;
 use JibayMcs\FilamentTour\FilamentTourPlugin;
 use Rupadana\ApiService\ApiServicePlugin;
-use App\Models\ProductCategory;
 use Datlechin\FilamentMenuBuilder\MenuPanel\StaticMenuPanel;
 use TomatoPHP\FilamentSettingsHub\FilamentSettingsHubPlugin;
+use TomatoPHP\FilamentSettingsHub\Facades\FilamentSettingsHub;
+use TomatoPHP\FilamentSettingsHub\Services\Contracts\SettingHold;
+use App\Filament\Pages\GeneralSettings;
+use App\Filament\Pages\SocialSettings;
 
 class AdminPanelProvider extends PanelProvider
 {
+    public function boot(Panel $panel) {
+        FilamentSettingsHub::register([
+            SettingHold::make()
+                ->page(GeneralSettings::class)
+                ->order(0)
+                ->label('filament-settings-hub::messages.settings.site.title')
+                ->icon('heroicon-o-globe-alt')
+                ->description('filament-settings-hub::messages.settings.site.description')
+                ->group('filament-settings-hub::messages.group'),
+            SettingHold::make()
+                ->page(SocialSettings::class)
+                ->order(0)
+                ->label('filament-settings-hub::messages.settings.social.title')
+                ->icon('heroicon-s-bars-3')
+                ->description('filament-settings-hub::messages.settings.social.description')
+                ->group('filament-settings-hub::messages.group')
+        ]);
+    }
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -130,8 +150,8 @@ class AdminPanelProvider extends PanelProvider
                             ->add('Сотрудники', function() {return route('client.workers');})
                     ]),
                 FilamentSettingsHubPlugin::make()
-                    ->allowSiteSettings()
-                    ->allowSocialMenuSettings()
+                    ->allowSiteSettings(false)
+                    ->allowSocialMenuSettings(false)
             ])
             ->spa();
     }

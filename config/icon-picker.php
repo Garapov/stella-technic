@@ -15,7 +15,11 @@ return [
     | When set to null (default), every installed icon set will be used.
     |
     */
-    'sets' => 'fontawesome-solid',
+    'sets' => [
+       'heroicons',
+       'fontawesome-solid',
+       'remix'
+    ],
 //     example:
 //     'sets' => 'heroicons',
 //     'sets' => [
