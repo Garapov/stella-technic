@@ -61,7 +61,7 @@
                     <div class="flex justify-center space-x-4">
                         <a 
                             href="{{ route('client.index') }}" 
-                            class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                            class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-500 transition-colors"
                         >
                             На главную
                         </a>

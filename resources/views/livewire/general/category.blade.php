@@ -1,4 +1,4 @@
-<div class="glide__slide p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-900 dark:border-gray-700 relative overflow-hidden h-auto flex flex-col justify-between gap-8 h-full">
+<div class="glide__slide p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-900 dark:border-gray-700 relative overflow-hidden h-auto flex flex-col justify-between gap-8">
     <div class="w-[45%] absolute top-[-10px] right-[-10px] opacity-10 text-yellow-900 dark:opacity-20">
         {{ svg($category->icon) }}
     </div>

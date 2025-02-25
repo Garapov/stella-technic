@@ -33,7 +33,7 @@ class SertificateResource extends Resource
                     ->label('Название')
                     ->required(),
                 Forms\Components\FileUpload::make('image')
-                    ->label('Картиннка')
+                    ->label('Картинка')
                     ->image()
                     ->required(),
             ]);

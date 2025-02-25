@@ -30,9 +30,9 @@
 
     <template x-if="!isLoading">
       <div x-show="products.length > 0">
-        <div class="mt-6 sm:mt-8 md:gap-6 lg:flex xl:gap-8">
+        <div class="mt-6 sm:mt-8 md:gap-6 lg:flex xl:gap-6">
           <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-5xl">
-            <div class="space-y-6">
+            <div class="flex flex-col gap-6">
               <template x-for="cart_item in products" :key="cart_item.id">
                 <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
                   <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
@@ -180,7 +180,7 @@
                   </dl>
                 </div>
       
-                <a href="{{ route('client.checkout') }}" class="flex w-full items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>Перейти к оформлению</a>
+                <a href="{{ route('client.checkout') }}" class="flex w-full items-center justify-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800" wire:navigate>Перейти к оформлению</a>
               </div>
       
               <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
@@ -189,7 +189,7 @@
                     <label for="voucher" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> У вас есть промокод? </label>
                     <input type="text" id="voucher" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="" required />
                   </div>
-                  <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Применить</button>
+                  <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800">Применить</button>
                 </form>
               </div>
           </div>
@@ -200,7 +200,7 @@
     <template x-if="!isLoading && products.length === 0">
       <div class="mt-6 text-center">
         <p class="text-lg text-gray-600">Ваша корзина пуста</p>
-        <a href="{{ route('client.catalog.all') }}" class="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        <a href="{{ route('client.catalog.all') }}" class="mt-4 inline-block px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-500">
           Перейти в каталог
         </a>
       </div>

@@ -17,6 +17,7 @@ class Former extends Model
         'fields',
         'button_text',
         'recipients',
+        'captcha'
     ];
 
     protected $casts = [

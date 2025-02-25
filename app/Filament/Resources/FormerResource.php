@@ -54,6 +54,9 @@ class FormerResource extends Resource
                     ->nestedRecursiveRules([
                         'email',
                     ]),
+                Toggle::make('captcha')
+                    ->label('Включить капчу')
+                    ->live(),
                 Repeater::make('fields')
                     ->schema([
                         TextInput::make('name')

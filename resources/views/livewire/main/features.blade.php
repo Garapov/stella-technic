@@ -48,14 +48,14 @@
                 </div>
                 {{-- <div class="grid grid-cols-2 gap-4 mt-2">
                     <a href="#" class="inline-flex items-center justify-between px-1 py-1 pr-4 text-sm text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600" aria-label="Component requires Flowbite JavaScript">
-                        <span aria-hidden="true" class="text-xs bg-blue-600 rounded-md text-white px-3 py-1.5 mr-3">
+                        <span aria-hidden="true" class="text-xs bg-blue-500 rounded-md text-white px-3 py-1.5 mr-3">
                             <x-fas-percent class="w-4 h-4"/>
                         </span>
                         <span class="text-sm font-medium">Распродажа / уценка / бу</span>
                         <x-fas-arrow-right class="w-3 h-3 ml-3" />
                     </a>
                     <a href="#" class="inline-flex items-center justify-between px-1 py-1 pr-4 text-sm text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600" aria-label="Component requires Flowbite JavaScript">
-                        <span aria-hidden="true" class="text-xs bg-blue-600 rounded-md text-white px-3 py-1.5 mr-3">
+                        <span aria-hidden="true" class="text-xs bg-blue-500 rounded-md text-white px-3 py-1.5 mr-3">
                             <x-fas-gear class="w-4 h-4"/>
                         </span>
                         <span class="text-sm font-medium">Сервис и услуги</span>

@@ -19,7 +19,7 @@
                         </div>
                         <input wire:model="email" class="formkit-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500  @error('email') border-red-600 @enderror" name="email_address" aria-label="Email Address" placeholder="Введите ваш e-mail" type="email">
                     </div>
-                    <button type="submit" class="px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg cursor-pointer hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex items-center gap-2">
+                    <button type="submit" class="px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-500 rounded-lg cursor-pointer hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800 flex items-center gap-2">
                         Подписаться
                         <x-fas-spinner class="animate-spin w-3 h-3" wire:loading wire:target="subscribe" />
                     </button>

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
 {
@@ -43,11 +44,12 @@ class UserResource extends Resource
                                 ->required(),
                             Forms\Components\TextInput::make('phone')
                                 ->label('Телефон')
-                                ->tel(),
+                                ->mask('9 (999) 999-99-99'),
                             Forms\Components\TextInput::make('password')
                                 ->label('Пароль')
                                 ->password()
-                                ->required(),
+                                ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                                ->dehydrated(fn (?string $state): bool => filled($state)),
                             Forms\Components\Select::make('roles')
                                 ->multiple()
                                 ->relationship('roles', 'name')

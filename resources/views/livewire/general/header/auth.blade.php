@@ -1,6 +1,6 @@
 @auth
     <div class="relative" x-data="dropdown" @click.outside="close">
-        <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center" @click="toggle">
+        <button type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800 inline-flex items-center" @click="toggle">
             <x-fas-user class="w-4 h-4 me-3" />                        
             {{ auth()->user()->name }}
             <x-fas-arrow-down class="w-3 h-3 ms-2.5" x-show="!isOpened"/>
@@ -32,7 +32,7 @@
 
 @guest
     <a href="{{ route('login') }}"
-        class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" wire:navigate>
+        class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800" wire:navigate>
         <x-fas-user class="w-4 h-4" />
     </a>
 @endguest

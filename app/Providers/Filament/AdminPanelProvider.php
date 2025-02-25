@@ -138,7 +138,7 @@ class AdminPanelProvider extends PanelProvider
                             ->paginate(perPage: 5, condition: true),
                         ModelMenuPanel::make()
                             ->model(\App\Models\ProductCategory::class)
-                            ->paginate(perPage: 5, condition: true),
+                            ->paginate(perPage: 15, condition: true),
                         StaticMenuPanel::make('Статичные страницы')
                             ->paginate(perPage: 5, condition: true)
                             ->add('Бренды', function() {return route('client.brands.index');})

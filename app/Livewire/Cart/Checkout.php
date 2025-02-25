@@ -43,7 +43,7 @@ class Checkout extends Component
         if ($this->type == 'legal') {
             $rules['company_name'] = 'required|string|max:255';
             $rules['inn'] = 'required|string|max:255';
-            $rules['kpp'] = 'required|string|max:255';
+            // $rules['kpp'] = 'required|string|max:255';
             $rules['bik'] = 'required|string|max:255';
             $rules['correspondent_account'] = 'required|string|max:255';
             $rules['bank_account'] = 'required|string|max:255';
@@ -60,7 +60,7 @@ class Checkout extends Component
         'phone.required' => 'Пожалуйста, введите номер телефона',
         'company_name.required' => 'Пожалуйста, введите название компании',
         'inn.required' => 'Пожалуйста, введите ИНН',
-        'kpp.required' => 'Пожалуйста, введите КПП',
+        // 'kpp.required' => 'Пожалуйста, введите КПП',
         'bik.required' => 'Пожалуйста, введите БИК',
         'correspondent_account.required' => 'Пожалуйста, введите корреспондентский счет',
         'bank_account.required' => 'Пожалуйста, введите банковский счет',
@@ -207,7 +207,7 @@ class Checkout extends Component
         if ($result) {
             $this->message = null;
             $this->company_name = $result[0]['value'];
-            $this->kpp = $result[0]['data']['kpp'];
+            $this->kpp = isset($result[0]['data']['kpp']) ? $result[0]['data']['kpp'] : null;
             $this->yur_address = $result[0]['data']['address']['value'];
         } else {
             $this->message = 'Мы не смогли найти компанию по ИНН. Введите другой ИНН или заполните данные вручную';

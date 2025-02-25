@@ -18,7 +18,7 @@
                 <p class="mt-1 text-sm text-gray-500">Начните добавлять товары в избранное.</p>
                 <div class="mt-6">
                     <a href="{{ route('client.catalog.all') }}" 
-                        class="inline-flex items-center rounded-md bg-blue-700 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800">
+                        class="inline-flex items-center rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800">
                         Перейти в каталог
                     </a>
                 </div>

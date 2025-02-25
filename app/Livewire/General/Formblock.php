@@ -11,11 +11,12 @@ class Formblock extends Component
     public $form_id;
     public $form;
     public $fields;
+    public $captcha;
     public function mount($form_id = 0)
     {
         $this->form_id = $form_id;
         $this->form = Former::find($this->form_id);
-
+        $this->captcha = $this->form->captcha;
         foreach($this->form->fields as $field) {
             $this->fields[$field['name']] = array(
                 'name' => $field['name'],

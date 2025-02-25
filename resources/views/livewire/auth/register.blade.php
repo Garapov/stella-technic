@@ -3,10 +3,10 @@
 
     <ul class="flex flex-wrap gap-4 text-sm font-medium text-center text-gray-500 dark:text-gray-400">
         <li class="grow">
-            <div class="block px-4 py-3 rounded-lg @if ($user_type == 'natural') text-white bg-blue-600 active @else hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white cursor-pointer @endif" wire:click="chageUserType('natural')">Физ. Лицо</div>
+            <div class="block px-4 py-3 rounded-lg @if ($user_type == 'natural') text-white bg-blue-500 active @else hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white cursor-pointer @endif" wire:click="chageUserType('natural')">Физ. Лицо</div>
         </li>
         <li class="grow">
-            <div class="block px-4 py-3 rounded-lg @if ($user_type == 'legal') text-white bg-blue-600 active @else hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white cursor-pointer @endif" wire:click="chageUserType('legal')">Юр. Лицо</div>
+            <div class="block px-4 py-3 rounded-lg @if ($user_type == 'legal') text-white bg-blue-500 active @else hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white cursor-pointer @endif" wire:click="chageUserType('legal')">Юр. Лицо</div>
         </li>
     </ul>
 

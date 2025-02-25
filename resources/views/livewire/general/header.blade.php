@@ -1,5 +1,5 @@
 <header>
-    <div class="bg-gray-100 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+    <div class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
         <div class="flex flex-wrap justify-between items-center mx-auto container">
             <div class="hidden justify-between items-center w-full lg:flex lg:w-auto">
                 @if ($topmenu && $topmenu->menuItems)
@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <div class="bg-gray-100 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+    <div class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
         <div class="flex flex-wrap gap-8 justify-between items-center mx-auto container">
             @if (setting('site_logo'))
                 <a href="/" class="flex items-center" wire:navigate>
@@ -60,7 +60,7 @@
         </div>
     </div>
 
-    <div class="bg-gray-200 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-700 relative">
+    <div class="bg-gray-100 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-700 relative">
         <div class="flex flex-wrap justify-between items-center mx-auto container">
 
             @if (count($categories) > 0)
@@ -74,7 +74,7 @@
 
             <div class="flex items-center gap-2">
                 <a href="{{ route('client.favorites') }}"
-                    class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800"
                     wire:navigate>
                     <x-fas-heart class="w-4 h-4" />
                     <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-gray-200 rounded-full -top-2 -end-2 dark:border-gray-700"
@@ -82,7 +82,7 @@
                 </a>
 
                 <a href="{{ route('client.cart') }}"
-                    class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800"
                     wire:navigate>
                     <x-fas-cart-arrow-down class="w-4 h-4" />
                     <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-gray-200 rounded-full -top-2 -end-2 dark:border-gray-700"
