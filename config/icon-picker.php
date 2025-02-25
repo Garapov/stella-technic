@@ -18,7 +18,9 @@ return [
     'sets' => [
        'heroicons',
        'fontawesome-solid',
-       'remix'
+       'remix',
+       'uiw',
+       'carbon'
     ],
 //     example:
 //     'sets' => 'heroicons',

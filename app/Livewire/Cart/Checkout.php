@@ -3,6 +3,7 @@
 namespace App\Livewire\Cart;
 
 use App\Models\Order;
+use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\User;
 use App\Notifications\WelcomeNotification;
@@ -30,6 +31,8 @@ class Checkout extends Component
     public $bank_account;
     public $yur_address;
     public $message;
+    public $payment_methods;
+    public $selected_payment_method;
     protected $listeners = ['cartUpdated' => 'handleCartUpdate'];
 
     public function rules() {
@@ -81,11 +84,17 @@ class Checkout extends Component
         $this->correspondent_account = Auth::user() ? Auth::user()->correspondent_account : '';
         $this->bank_account = Auth::user() ? Auth::user()->bank_account : '';
         $this->yur_address = Auth::user() ? Auth::user()->yur_address : '';
+
+        $this->payment_methods = PaymentMethod::where('is_active', true)->get();
+        if ($this->payment_methods->isNotEmpty()) $this->selected_payment_method = $this->payment_methods->first()->id;
+        
     }
 
     public function render()
     {
-        return view('livewire.cart.checkout');
+        return view('livewire.cart.checkout', [ 
+            'payment_methods' => $this->payment_methods
+        ]);
     }
 
     public function updatedType()

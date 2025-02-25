@@ -175,52 +175,28 @@
                 </label>
               </div>
           </div>
-      
-          <div class="mb-10">
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Способ оплаты</h3>
-  
-              <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <label class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
-                  <div class="flex items-start">
-                    <div class="flex h-5 items-center">
-                        <input aria-describedby="pay-on-delivery-text" type="radio" name="payment-method" value="" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" />
-                    </div>
+          @if ($payment_methods->isNotEmpty())
+            <div class="mb-10">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Способ оплаты</h3>
     
-                    <div class="ms-4 text-sm">
-                        <div class="font-medium leading-none text-gray-900 dark:text-white"> Payment on delivery </div>
-                        <p id="pay-on-delivery-text" class="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400">+$15 payment processing fee</p>
-                    </div>
-                  </div>
-                </label>
-    
-                <label class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
-                  <div class="flex items-start">
-                    <div class="flex h-5 items-center">
-                        <input aria-describedby="pay-on-delivery-text" type="radio" name="payment-method" value="" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" />
-                    </div>
-    
-                    <div class="ms-4 text-sm">
-                        <div class="font-medium leading-none text-gray-900 dark:text-white">Payment on delivery</div>
-                        <p id="pay-on-delivery-text" class="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400">+$15 payment processing fee</p>
-                    </div>
-                  </div>
-                </label>
-    
-                <label class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
-                  <div class="flex items-start">
-                    <div class="flex h-5 items-center">
-                        <input aria-describedby="pay-on-delivery-text" type="radio" name="payment-method" value="" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" />
-                    </div>
-    
-                    <div class="ms-4 text-sm">
-                        <div class="font-medium leading-none text-gray-900 dark:text-white"> Payment on delivery </div>
-                        <p id="pay-on-delivery-text" class="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400">+$15 payment processing fee</p>
-                    </div>
-                  </div>
-                </label>
-              </div>
-          </div>
-      
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  @foreach ($payment_methods as $payment_method)
+                    <label class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
+                      <div class="flex items-start">
+                        <div class="flex h-5 items-center">
+                            <input aria-describedby="payment_method{{ $payment_method->id }}" type="radio" name="payment-method" value="{{ $payment_method->id }}" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" wire:model.live="selected_payment_method" />
+                        </div>
+        
+                        <div class="ms-4 text-sm">
+                            <div class="font-medium leading-none text-gray-900 dark:text-white"> {{ $payment_method->name }} </div>
+                            <p id="payment_method{{ $payment_method->id }}" class="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400">{{ $payment_method->description }}</p>
+                        </div>
+                      </div>
+                    </label>
+                  @endforeach
+                </div>
+            </div>
+          @endif
           <div>
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Способ доставки</h3>
   
