@@ -20,7 +20,9 @@
                     <a href="tel:{{ $worker->phone }}" class="inline-flex items-center gap-1 font-medium text-blue-600 dark:text-blue-500 text-lg">
                         <x-carbon-phone class="w-6 h-6" />
                         {{ $worker->phone }}
-                        <span class="text-xs">Доп.{{ $worker->phone_ext }}</span>
+                        @if ($worker->phone_ext)
+                            <span class="text-xs">Доп.{{ $worker->phone_ext }}</span>
+                        @endif
                     </a>
                 @endif
                 @if ($worker->email)
