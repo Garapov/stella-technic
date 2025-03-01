@@ -9,4 +9,19 @@ class Delivery extends Model
 {
     /** @use HasFactory<\Database\Factories\DeliveryFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'type',
+        'is_active',
+        'points',
+        'settings',
+        'description',
+        'text',
+        'images',
+    ];
+
+    protected $casts = [
+        'images' => 'array',
+    ];
 }

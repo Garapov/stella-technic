@@ -40,4 +40,9 @@ return [
         'server_key' => env('YANDEX_CAPTCHA_SERVER_KEY'),
     ],
 
+    'maps' => [
+        'key' => env('YANDEX_MAPS_API_KEY'),
+        'suggestion_key' => env('YANDEX_SUGGEST_API_KEY'),
+    ],
+
 ];

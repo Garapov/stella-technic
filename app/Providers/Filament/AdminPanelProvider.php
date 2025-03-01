@@ -34,6 +34,8 @@ use TomatoPHP\FilamentSettingsHub\Facades\FilamentSettingsHub;
 use TomatoPHP\FilamentSettingsHub\Services\Contracts\SettingHold;
 use App\Filament\Pages\GeneralSettings;
 use App\Filament\Pages\SocialSettings;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -152,6 +154,10 @@ class AdminPanelProvider extends PanelProvider
                 FilamentSettingsHubPlugin::make()
                     ->allowSiteSettings(false)
                     ->allowSocialMenuSettings(false)
+            ])
+            ->assets([
+                // Css::make('custom-stylesheet', resource_path('css/custom.css')),
+                Js::make('yandex-maps-api-v3', 'https://api-maps.yandex.ru/2.1/?apikey='. config('services.maps.key') . '&lang=ru_RU&suggest_apikey=' . config('services.maps.suggestion_key')),
             ])
             ->spa();
     }

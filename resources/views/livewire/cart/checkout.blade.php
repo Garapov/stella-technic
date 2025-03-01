@@ -197,51 +197,88 @@
                 </div>
             </div>
           @endif
-          <div>
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Способ доставки</h3>
-  
-              <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
-                  <div class="flex items-start">
-                  <div class="flex h-5 items-center">
-                      <input id="dhl" aria-describedby="dhl-text" type="radio" name="delivery-method" value="" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" checked />
+
+          @if ($deliveries->isNotEmpty())
+            <div class="mb-4">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Способ доставки</h3>
+    
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  @foreach ($deliveries as $delivery)
+                    <label class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800 cursor-pointer">
+                      <div class="flex items-start">
+                        <div class="flex h-5 items-center">
+                            <input aria-describedby="delivery{{ $delivery->id }}" type="radio" name="delivery-method" value="{{ $delivery->id }}" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" wire:model.live="selected_delivery" />
+                        </div>
+        
+                        <div class="ms-4 text-sm">
+                            <div class="font-medium leading-none text-gray-900 dark:text-white"> {{ $delivery->name }} </div>
+                            <p id="delivery{{ $delivery->id }}" class="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400">{{ $delivery->description }}</p>
+                        </div>
+                      </div>
+                    </label>
+                    
+                  @endforeach
+                </div>
+            </div>
+
+            <div x-data="{
+              selected_delivery: $wire.$entangle('selected_delivery'),
+            }">
+              @foreach ($deliveries as $delivery)
+                  <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800" :class="{ 'hidden': selected_delivery != {{ $delivery->id }} }">
+                    @switch($delivery->type)
+                      @case('map')
+                          @if ($delivery->points)
+                            <div class="rounded-lg overflow-hidden" x-data="{
+                              map: null,
+                              coordinates: [],
+                              address: '',
+                              data: '{{ $delivery->points }}',
+                              init() {
+                                [this.address, this.coordinates] = this.data.split('|');
+                                this.coordinates = this.coordinates.split(',');
+
+                                ymaps.ready(() => {
+                                  this.map = new ymaps.Map('delivery-map-{{ $delivery->id }}', {
+                                    center: this.coordinates,
+                                    zoom: 13,
+                                    controls: []
+                                  });
+
+                                  this.map.geoObjects.add(new ymaps.Placemark(this.coordinates));
+                                });
+                              },
+                            }">
+                              <div class="w-full h-64" id="delivery-map-{{ $delivery->id }}"></div>
+                            </div>
+                          @endif
+                        @break
+
+                      @case('text')
+                          @if ($delivery->text)
+                            
+                            <div class="text-sm text-gray-500 dark:text-gray-400 flex flex-col gap-2">{!! $delivery->text !!}</div>
+                            
+                          @endif
+                        @break
+                      
+                      @case('delivery_systems')
+                          @if($delivery->images)
+                            <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                              @foreach ($delivery->images as $image)
+                                <div class="rounded-lg overflow-hidden">
+                                  <img src="{{ asset('storage/' . $image) }}" class="w-full h-full object-cover">
+                                </div>
+                              @endforeach
+                            </div>
+                          @endif
+                        @break
+                        
+                    @endswitch
                   </div>
-  
-                  <div class="ms-4 text-sm">
-                      <label for="dhl" class="font-medium leading-none text-gray-900 dark:text-white"> $15 - DHL Fast Delivery </label>
-                      <p id="dhl-text" class="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400">Get it by Tommorow</p>
-                  </div>
-                  </div>
-              </div>
-  
-              <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
-                  <div class="flex items-start">
-                  <div class="flex h-5 items-center">
-                      <input id="fedex" aria-describedby="fedex-text" type="radio" name="delivery-method" value="" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" />
-                  </div>
-  
-                  <div class="ms-4 text-sm">
-                      <label for="fedex" class="font-medium leading-none text-gray-900 dark:text-white"> Free Delivery - FedEx </label>
-                      <p id="fedex-text" class="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400">Get it by Friday, 13 Dec 2023</p>
-                  </div>
-                  </div>
-              </div>
-  
-              <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
-                  <div class="flex items-start">
-                  <div class="flex h-5 items-center">
-                      <input id="express" aria-describedby="express-text" type="radio" name="delivery-method" value="" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" />
-                  </div>
-  
-                  <div class="ms-4 text-sm">
-                      <label for="express" class="font-medium leading-none text-gray-900 dark:text-white"> $49 - Express Delivery </label>
-                      <p id="express-text" class="mt-1 text-xs font-normal text-gray-500 dark:text-gray-400">Get it today</p>
-                  </div>
-                  </div>
-              </div>
-              </div>
-          </div>
-      
+              @endforeach
+            </div>
+          @endif
         </div>
 
         <div class="mx-auto mt-6 max-w-4xl lg:mt-0 flex-1">

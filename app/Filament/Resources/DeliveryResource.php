@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\DeliveryResource\Pages;
 use App\Filament\Resources\DeliveryResource\RelationManagers;
+use App\Forms\Components\MapDotsSelect;
 use App\Models\Delivery;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
@@ -16,6 +17,7 @@ use Filament\Tables\Table;
 use Filament\Forms\Get;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Log;
 
 class DeliveryResource extends Resource
 {
@@ -41,10 +43,38 @@ class DeliveryResource extends Resource
                             ->label('Описание')
                             ->required()
                             ->columnSpanFull(),
-                        Forms\Components\Textarea::make('points')
-                            ->label('Точки')
-                            ->hidden(fn (Get $get): bool => $get('type') != 'map')
+                        Forms\Components\FileUpload::make('images')
+                            ->label('Логотипы')
+                            ->hidden(fn (Get $get): bool => $get('type') != 'delivery_systems')
+                            ->image()
+                            ->multiple()
+                            ->panelLayout('grid'),
+                        Forms\Components\RichEditor::make('text')
+                            ->label('Текст')
+                            ->hidden(fn (Get $get): bool => $get('type') != 'text')
                             ->columnSpanFull(),
+                        Select::make('points')
+                            ->label('Адрес')
+                            ->searchable()
+                            ->hidden(fn (Get $get): bool => $get('type') != 'map')
+                            ->hint('Адрес|координаты')
+                            ->helperText('Строка поиска обязательно должна содержать запись вида "Адрес|координаты", если строка отличается от этого шаблона то карта работать не будет.')
+                            ->getSearchResultsUsing(function (string $search): array {
+                                $token = env('DADATA_TOKEN');
+                                $dadata = new \Dadata\DadataClient($token, null);
+
+                                $result = array_map(function ($item) {
+                                    $key = $item['value'] .'|' . $item['data']['geo_lat'] . ',' . $item['data']['geo_lon'];
+                                    return [
+                                        "$key" => $key,
+                                    ];
+                                }, $dadata->suggest("address", $search));
+
+                                Log::info($result);
+
+                                return $result;
+                            })
+                            ->required(),
                         // Forms\Components\Textarea::make('settings')
                         //     ->label('Настройки')
                         //     ->columnSpanFull(),
@@ -58,7 +88,7 @@ class DeliveryResource extends Resource
                                 'delivery_systems' => 'Системы доставки',
                             ])
                             ->selectablePlaceholder(false)
-                            ->default('text')
+                            ->default('map')
                             ->required()
                             ->live(),
                         Forms\Components\Toggle::make('is_active')

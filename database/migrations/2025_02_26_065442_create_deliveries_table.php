@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('type');
             $table->boolean('is_active')->default(true);
             $table->json('points')->nullable();
+            $table->text('text')->nullable();
+            $table->text('images')->nullable();
             $table->json('settings')->nullable();
             $table->timestamps();
         });

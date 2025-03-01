@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Cart;
 
+use App\Models\Delivery;
 use App\Models\Order;
 use App\Models\PaymentMethod;
 use App\Models\Product;
@@ -33,6 +34,9 @@ class Checkout extends Component
     public $message;
     public $payment_methods;
     public $selected_payment_method;
+
+    public $deliveries;
+    public $selected_delivery;
     protected $listeners = ['cartUpdated' => 'handleCartUpdate'];
 
     public function rules() {
@@ -87,13 +91,16 @@ class Checkout extends Component
 
         $this->payment_methods = PaymentMethod::where('is_active', true)->get();
         if ($this->payment_methods->isNotEmpty()) $this->selected_payment_method = $this->payment_methods->first()->id;
-        
+
+        $this->deliveries = Delivery::where('is_active', true)->get();
+        if ($this->deliveries->isNotEmpty()) $this->selected_delivery = $this->deliveries->first()->id;
     }
 
     public function render()
     {
         return view('livewire.cart.checkout', [ 
-            'payment_methods' => $this->payment_methods
+            'payment_methods' => $this->payment_methods,
+            'deliveries' => $this->deliveries,
         ]);
     }
 
