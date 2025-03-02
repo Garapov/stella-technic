@@ -15,9 +15,12 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Validate;
+use Livewire\WithFileUploads;
 
 class Checkout extends Component
 {
+    use WithFileUploads;
     public $name;
     public $email;
     public $phone;
@@ -31,9 +34,13 @@ class Checkout extends Component
     public $correspondent_account;
     public $bank_account;
     public $yur_address;
+    public $legal_address;
     public $message;
+    #[Validate('nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:2048')]
+    public $file;
     public $payment_methods;
     public $selected_payment_method;
+    public $delivery_address;
 
     public $deliveries;
     public $selected_delivery;

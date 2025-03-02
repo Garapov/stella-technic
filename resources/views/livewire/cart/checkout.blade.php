@@ -96,10 +96,27 @@
                     @enderror
                 </label>
                 @if ($type === 'legal')
-                  <label class="col-span-full">
-                    <span class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload file</s-an>
-                    <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" aria-describedby="file_input_help" id="file_input" type="file">
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
+                  <label class="col-span-full block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 flex items-center justify-between @error('file') border-red-500 dark:border-red-500 text-red-700 dark:text-red-500 @enderror">
+                    <input class="hidden" id="file_input" type="file" wire:model.live="file">
+                    <div class="flex items-center gap-4">
+                      <div class="w-6 h-6" wire:loading.class="hidden" wire:target="file">
+                        @if ($file)
+                          @error('file')
+                            <x-carbon-error />
+                          @else
+                            <x-carbon-checkmark-outline />
+                          @enderror
+                        @else
+                          <x-carbon-upload />
+                        @endif
+                      </div>
+                      <x-fas-spinner class="animate-spin w-6 h-6 hidden" wire:loading.class.remove="hidden" wire:target="file" />
+                      @if ($file)
+                        {{ $file->getClientOriginalName()}}
+                      @else
+                      <div class="text-md text-bold">Прикрепить файл с реквизитами.</div>
+                      @endif
+                    </div>
                   </label>
                   <label>
                       <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('inn') text-red-700 dark:text-red-500 @enderror"> ИНН*: </span>
@@ -159,6 +176,14 @@
                       <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('yur_address') text-red-700 dark:text-red-500 @enderror"> Юр. адрес*: </span>
                       <textarea class="block w-full h-20 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('yur_address') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model="yur_address"></textarea>
                       @error('yur_address')
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                      @enderror
+                  </label>
+
+                  <label class="col-span-1 md:col-span-2 lg:col-span-3">
+                      <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('legal_address') text-red-700 dark:text-red-500 @enderror"> Фактический адрес: </span>
+                      <textarea class="block w-full h-20 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('legal_address') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model="legal_address"></textarea>
+                      @error('legal_address')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                       @enderror
                   </label>
@@ -257,7 +282,11 @@
                       @case('text')
                           @if ($delivery->text)
                             
-                            <div class="text-sm text-gray-500 dark:text-gray-400 flex flex-col gap-2">{!! $delivery->text !!}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 flex flex-col gap-2">
+                              <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Адрес доставки</label>
+                              <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Введите адрес доставки" wire:model.live="delivery_address"></textarea>
+                              {!! $delivery->text !!}
+                            </div>
                             
                           @endif
                         @break
