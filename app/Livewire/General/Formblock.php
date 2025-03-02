@@ -18,7 +18,7 @@ class Formblock extends Component
         $this->form = Former::find($this->form_id);
         $this->captcha = $this->form->captcha;
         foreach($this->form->fields as $field) {
-            $this->fields[$field['name']] = array(
+            $this->fields[$field['name']] = [
                 'name' => $field['name'],
                 'label' => $field['label'],
                 'type' => $field['type'],
@@ -26,7 +26,7 @@ class Formblock extends Component
                 'mask_enabled' => $field['mask_enabled'],
                 'mask' => $field['mask'],
                 'value' => $field['value'] ?? ''
-            );
+            ];
         };
         
     }
@@ -37,7 +37,7 @@ class Formblock extends Component
 
     public function rules()
     {
-        $rules = array();
+        $rules = [];
         foreach($this->form->fields as $field) {
             if (!$field['rules']) continue; 
             $rules['fields.'.$field['name'] . '.value'] = $field['rules'];
