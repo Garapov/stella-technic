@@ -50,6 +50,34 @@ document.addEventListener('articles_slider', (data) => {
 })
 
 
+document.addEventListener('init-map', (data) => {
+    
+    console.log('data', data)
+
+    if (data.detail.delivery && data.detail.delivery.points) {
+        console.log(`delivery-map-${ data.detail.delivery.id }`);
+        ymaps.ready(() => {
+            setTimeout(() => {
+                let map, point, coordinates, address;
+
+                [address, coordinates] = data.detail.delivery.points.split('|');
+                coordinates = coordinates.split(',');
+
+                map = new ymaps.Map(document.getElementById(`delivery-map-${ data.detail.delivery.id }`), {
+                    center: coordinates,
+                    zoom: 13,
+                    controls: []
+                });
+                if (!point) {
+                    point = new ymaps.Placemark(coordinates);
+                    map.geoObjects.add(point);
+                }
+            }, 1000);
+            
+        });
+    }
+})
+
 Alpine.plugin(mask);
 // Alpine.plugin(persist)
 

@@ -21,23 +21,33 @@ use Livewire\WithFileUploads;
 class Checkout extends Component
 {
     use WithFileUploads;
+    #[Validate('required|string|max:255')]
     public $name;
+    #[Validate('required|email|max:255')]
     public $email;
+    #[Validate('required|string|max:20')]
     public $phone;
+    #[Validate('nullable|string')]
     public $comment;
+    #[Validate('required|string|max:255')]
+    public $company_name;
+    #[Validate('required|string|max:255')]
+    public $inn;
+    #[Validate('required|string|max:255')]
+    public $bik;
+    #[Validate('required|string|max:255')]
+    public $correspondent_account;
+    #[Validate('required|string|max:255')]
+    public $bank_account;
+    #[Validate('required|string|max:255')]
+    public $yur_address;
+    #[Validate('nullable|file|mimes:pdf,doc,docx,xls,xlsx,csv|max:2048')]
     public $type = 'natural';
     public $products = [];
-    public $company_name;
-    public $inn;
+    public $file;
     public $kpp;
-    public $bik;
-    public $correspondent_account;
-    public $bank_account;
-    public $yur_address;
     public $legal_address;
     public $message;
-    #[Validate('nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:2048')]
-    public $file;
     public $payment_methods;
     public $selected_payment_method;
     public $delivery_address;
@@ -45,27 +55,6 @@ class Checkout extends Component
     public $deliveries;
     public $selected_delivery;
     protected $listeners = ['cartUpdated' => 'handleCartUpdate'];
-
-    public function rules() {
-        $rules = [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:20',
-            'comment' => 'nullable|string',
-        ];
-
-        if ($this->type == 'legal') {
-            $rules['company_name'] = 'required|string|max:255';
-            $rules['inn'] = 'required|string|max:255';
-            // $rules['kpp'] = 'required|string|max:255';
-            $rules['bik'] = 'required|string|max:255';
-            $rules['correspondent_account'] = 'required|string|max:255';
-            $rules['bank_account'] = 'required|string|max:255';
-            $rules['yur_address'] = 'required|string|max:255';
-        }
-
-        return $rules;
-    }
 
     protected $messages = [
         'name.required' => 'Пожалуйста, введите ваше имя',
@@ -79,7 +68,15 @@ class Checkout extends Component
         'correspondent_account.required' => 'Пожалуйста, введите корреспондентский счет',
         'bank_account.required' => 'Пожалуйста, введите банковский счет',
         'yur_address.required' => 'Пожалуйста, введите юридический адрес',
+        'file.required' => 'Пожалуйста, прикрепите файл с реквизитами',
+        'file.mimes' => 'Разрешенные типы файлов (pdf,doc,docx,xls,xlsx,csv)',
+        'file.max' => 'Максимальный размер файла 2 МБ',
     ];
+
+    public function updatedSelectedDelivery() {
+        // dd($this->deliveries[$this->selected_delivery - 1]);
+        $this->initMap($this->deliveries[$this->selected_delivery - 1]);
+    }
 
     public function mount()
     {
@@ -100,7 +97,10 @@ class Checkout extends Component
         if ($this->payment_methods->isNotEmpty()) $this->selected_payment_method = $this->payment_methods->first()->id;
 
         $this->deliveries = Delivery::where('is_active', true)->get();
-        if ($this->deliveries->isNotEmpty()) $this->selected_delivery = $this->deliveries->first()->id;
+        if ($this->deliveries->isNotEmpty()) {
+            $this->selected_delivery = $this->deliveries->first()->id;
+           
+        };
     }
 
     public function render()
@@ -109,6 +109,14 @@ class Checkout extends Component
             'payment_methods' => $this->payment_methods,
             'deliveries' => $this->deliveries,
         ]);
+    }
+
+    public function initMap($delivery) {
+        if ($delivery->type == 'map') {
+            if ($delivery->points) {
+                $this->dispatch('init-map', delivery: $delivery);
+            }
+        }
     }
 
     public function updatedType()
@@ -145,6 +153,8 @@ class Checkout extends Component
                 $this->products[] = $productArray;
             }
         }
+
+        $this->initMap($this->deliveries->first());
 
         return $this->products;
     }
@@ -205,6 +215,12 @@ class Checkout extends Component
             'phone' => $this->phone,
             'cart_items' => $this->products,
             'total_price' => $totalPrice,
+            'user' => $user,
+            'shipping_address' => $this->shipping_address,
+            'delivery' => Delivery::find($this->selected_delivery),
+            'payment' => PaymentMethod::find($this->selected_payment_method),
+            'file' => $this->file->store(path: 'orders'),
+            'message' => $this->message,
             'status' => 'pending'
         ]);
 

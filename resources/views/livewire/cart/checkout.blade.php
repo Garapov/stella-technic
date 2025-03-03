@@ -74,7 +74,7 @@
               <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <label>
                     <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('name') text-red-700 dark:text-red-500 @enderror"> ФИО получателя*: </span>
-                    <input type="text" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('name') border-red-500 dark:border-red-500 @enderror"" placeholder="Иванов Иван Иванович" wire:model="name" />
+                    <input type="text" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('name') border-red-500 dark:border-red-500 @enderror"" placeholder="Иванов Иван Иванович" wire:model.live="name" />
                     @error('name')
                       <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                     @enderror
@@ -82,7 +82,7 @@
 
                 <label>
                     <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('email') text-red-700 dark:text-red-500 @enderror"> Email*: </span>
-                    <input type="email" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('email') border-red-500 dark:border-red-500 @enderror" placeholder="ivanov112@gmail.com" wire:model="email" />
+                    <input type="email" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('email') border-red-500 dark:border-red-500 @enderror" placeholder="ivanov112@gmail.com" wire:model.live="email" />
                     @error('email')
                     <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                     @enderror
@@ -90,38 +90,44 @@
 
                 <label>
                     <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('phone') text-red-700 dark:text-red-500 @enderror"> Телефон*: </span>
-                    <input type="tel" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('phone') border-red-500 dark:border-red-500 @enderror" placeholder="8 (999) 999-99-99" wire:model="phone" x-mask="9 (999) 999-99-99" />
+                    <input type="tel" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('phone') border-red-500 dark:border-red-500 @enderror" placeholder="8 (999) 999-99-99" wire:model.live="phone" x-mask="9 (999) 999-99-99" />
                     @error('phone')
                       <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                     @enderror
                 </label>
                 @if ($type === 'legal')
-                  <label class="col-span-full block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 flex items-center justify-between @error('file') border-red-500 dark:border-red-500 text-red-700 dark:text-red-500 @enderror">
+                  <label class="col-span-full">
                     <input class="hidden" id="file_input" type="file" wire:model.live="file">
-                    <div class="flex items-center gap-4">
-                      <div class="w-6 h-6" wire:loading.class="hidden" wire:target="file">
-                        @if ($file)
-                          @error('file')
-                            <x-carbon-error />
+                    <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('file') text-red-700 dark:text-red-500 @enderror"> Файл с реквизитами: </span>
+                    <div class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 flex items-center justify-between @error('file') border-red-500 dark:border-red-500 text-red-700 dark:text-red-500 @enderror">
+                      <div class="flex items-center gap-4">
+                        <div class="w-6 h-6" wire:loading.class="hidden" wire:target="file">
+                          @if ($file)
+                            @error('file')
+                              <x-carbon-error />
+                            @else
+                              <x-carbon-checkmark-outline />
+                            @enderror
                           @else
-                            <x-carbon-checkmark-outline />
-                          @enderror
+                            <x-carbon-upload />
+                          @endif
+                        </div>
+                        <x-fas-spinner class="animate-spin w-6 h-6 hidden" wire:loading.class.remove="hidden" wire:target="file" />
+                        @if ($file)
+                          {{ $file->getClientOriginalName()}}
                         @else
-                          <x-carbon-upload />
+                        <div class="text-md text-bold">Прикрепить файл с реквизитами.</div>
                         @endif
                       </div>
-                      <x-fas-spinner class="animate-spin w-6 h-6 hidden" wire:loading.class.remove="hidden" wire:target="file" />
-                      @if ($file)
-                        {{ $file->getClientOriginalName()}}
-                      @else
-                      <div class="text-md text-bold">Прикрепить файл с реквизитами.</div>
-                      @endif
                     </div>
+                    @error('file')
+                      <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                    @enderror
                   </label>
                   <label>
                       <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('inn') text-red-700 dark:text-red-500 @enderror"> ИНН*: </span>
                       <div class="flex flex-center gap-2">
-                        <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('inn') border-red-500 dark:border-red-500 @enderror" placeholder="7710362760" wire:model="inn" />
+                        <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('inn') border-red-500 dark:border-red-500 @enderror" placeholder="7710362760" wire:model.live="inn" />
                         <div wire:click="checkCompany" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800 cursor-pointer">
                           <x-heroicon-o-arrow-small-right wire:loading.class="hidden" wire:target="checkCompany" class="w-5 h-5" />
                           <x-fas-spinner class="animate-spin w-5 h-5" wire:loading wire:target="checkCompany" />
@@ -134,7 +140,7 @@
 
                   <label>
                       <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('company_name') text-red-700 dark:text-red-500 @enderror"> Название компании*: </span>
-                      <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('company_name') border-red-500 dark:border-red-500 @enderror" placeholder="Stella Technic" wire:model="company_name" />
+                      <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('company_name') border-red-500 dark:border-red-500 @enderror" placeholder="Stella Technic" wire:model.live="company_name" />
                       @error('company_name')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                       @enderror
@@ -142,7 +148,7 @@
 
                   <label>
                       <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('kpp') text-red-700 dark:text-red-500 @enderror"> КПП: </span>
-                      <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('kpp') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model="kpp" />
+                      <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('kpp') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="kpp" />
                       @error('kpp')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                       @enderror
@@ -150,7 +156,7 @@
 
                   <label>
                       <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('bik') text-red-700 dark:text-red-500 @enderror"> БИК*: </span>
-                      <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('bik') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model="bik" />
+                      <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('bik') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="bik" />
                       @error('bik')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                       @enderror
@@ -158,7 +164,7 @@
 
                   <label>
                       <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('correspondent_account') text-red-700 dark:text-red-500 @enderror"> Корреспондентский счет*: </span>
-                      <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('correspondent_account') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model="correspondent_account" />
+                      <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('correspondent_account') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="correspondent_account" />
                       @error('correspondent_account')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                       @enderror
@@ -166,7 +172,7 @@
 
                   <label>
                       <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('bank_account') text-red-700 dark:text-red-500 @enderror"> Банковский счет*: </span>
-                      <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('bank_account') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model="bank_account" />
+                      <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('bank_account') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="bank_account" />
                       @error('bank_account')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                       @enderror
@@ -174,7 +180,7 @@
 
                   <label class="col-span-1 md:col-span-2 lg:col-span-3">
                       <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('yur_address') text-red-700 dark:text-red-500 @enderror"> Юр. адрес*: </span>
-                      <textarea class="block w-full h-20 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('yur_address') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model="yur_address"></textarea>
+                      <textarea class="block w-full h-20 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('yur_address') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="yur_address"></textarea>
                       @error('yur_address')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                       @enderror
@@ -182,7 +188,7 @@
 
                   <label class="col-span-1 md:col-span-2 lg:col-span-3">
                       <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('legal_address') text-red-700 dark:text-red-500 @enderror"> Фактический адрес: </span>
-                      <textarea class="block w-full h-20 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('legal_address') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model="legal_address"></textarea>
+                      <textarea class="block w-full h-20 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('legal_address') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="legal_address"></textarea>
                       @error('legal_address')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                       @enderror
@@ -206,7 +212,7 @@
     
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                   @foreach ($payment_methods as $payment_method)
-                    <label class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
+                    <label class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800" wire:key="payment_methods.{{ $payment_method->id }}">
                       <div class="flex items-start">
                         <div class="flex h-5 items-center">
                             <input aria-describedby="payment_method{{ $payment_method->id }}" type="radio" name="payment-method" value="{{ $payment_method->id }}" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" wire:model.live="selected_payment_method" />
@@ -229,7 +235,7 @@
     
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                   @foreach ($deliveries as $delivery)
-                    <label class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800 cursor-pointer">
+                    <label class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800 cursor-pointer" wire:key="deliveries.{{ $delivery->id }}">
                       <div class="flex items-start">
                         <div class="flex h-5 items-center">
                             <input aria-describedby="delivery{{ $delivery->id }}" type="radio" name="delivery-method" value="{{ $delivery->id }}" class="h-4 w-4 border-gray-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600" wire:model.live="selected_delivery" />
@@ -250,32 +256,11 @@
               selected_delivery: $wire.$entangle('selected_delivery'),
             }">
               @foreach ($deliveries as $delivery)
-                  <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800" :class="{ 'hidden': selected_delivery != {{ $delivery->id }} }">
+                  <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800" :class="{ 'hidden': selected_delivery != {{ $delivery->id }} }" wire:key="deliveries.info.{{ $delivery->id }}">
                     @switch($delivery->type)
                       @case('map')
                           @if ($delivery->points)
-                            <div class="rounded-lg overflow-hidden" x-data="{
-                              map: null,
-                              coordinates: [],
-                              address: '',
-                              data: '{{ $delivery->points }}',
-                              init() {
-                                [this.address, this.coordinates] = this.data.split('|');
-                                this.coordinates = this.coordinates.split(',');
-
-                                ymaps.ready(() => {
-                                  this.map = new ymaps.Map('delivery-map-{{ $delivery->id }}', {
-                                    center: this.coordinates,
-                                    zoom: 13,
-                                    controls: []
-                                  });
-
-                                  this.map.geoObjects.add(new ymaps.Placemark(this.coordinates));
-                                });
-                              },
-                            }">
-                              <div class="w-full h-64" id="delivery-map-{{ $delivery->id }}"></div>
-                            </div>
+                           <div class="w-full h-64" id="delivery-map-{{ $delivery->id }}"></div>
                           @endif
                         @break
 
@@ -283,8 +268,8 @@
                           @if ($delivery->text)
                             
                             <div class="text-sm text-gray-500 dark:text-gray-400 flex flex-col gap-2">
-                              <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Адрес доставки</label>
-                              <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Введите адрес доставки" wire:model.live="delivery_address"></textarea>
+                              <label for="delivery_address{{ $delivery->id}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Адрес доставки</label>
+                              <textarea id="delivery_address{{ $delivery->id}}" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Введите адрес доставки" wire:model.live="delivery_address"></textarea>
                               {!! $delivery->text !!}
                             </div>
                             
@@ -293,6 +278,8 @@
                       
                       @case('delivery_systems')
                           @if($delivery->images)
+                            <label for="delivery_address{{ $delivery->id}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Адрес доставки</label>
+                            <textarea id="delivery_address{{ $delivery->id}}" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4" placeholder="Введите адрес доставки" wire:model.live="delivery_address"></textarea>
                             <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
                               @foreach ($delivery->images as $image)
                                 <div class="rounded-lg overflow-hidden">
