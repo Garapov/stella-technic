@@ -14,6 +14,8 @@ use Spatie\Sluggable\SlugOptions;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
+use Illuminate\Support\Str;
+
 
 class Product extends Model implements Searchable
 {
@@ -33,7 +35,8 @@ class Product extends Model implements Searchable
         'short_description',
         'description',
         'synonims',
-        'is_popular'
+        'is_popular',
+        'uuid'
     ];
 
     protected $casts = [
@@ -112,6 +115,12 @@ class Product extends Model implements Searchable
     public static function boot()
     {
         parent::boot();
+
+        static::creating(function ($model) {
+            if (! $model->uuid) {
+                $model->uuid = (string) Str::uuid();
+            }
+        });
 
         static::deleting(function ($model) {
             if ($model->variants->isNotEmpty()) {

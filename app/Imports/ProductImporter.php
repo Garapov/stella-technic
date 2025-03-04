@@ -31,6 +31,10 @@ class ProductImporter extends Importer
     public static function getColumns(): array
     {
         return [
+            ImportColumn::make('uuid')
+                ->requiredMapping()
+                ->numeric()
+                ->example('asd667a6d-asdd77887-77as87d7-787a8sd78'),
             ImportColumn::make('name')
             
                 ->requiredMapping()
