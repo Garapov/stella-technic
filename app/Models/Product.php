@@ -108,5 +108,19 @@ class Product extends Model implements Searchable
     {
         return $this->belongsTo(Brand::class);
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($model) {
+            if ($model->variants->isNotEmpty()) {
+                // dd($model->variants);
+                $model->variants->each(function ($variant) {
+                    $variant->forceDelete();
+                });
+            }
+        });
+    }
 }
 // TODO Добавить UUID

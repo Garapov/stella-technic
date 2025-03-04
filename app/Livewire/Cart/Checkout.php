@@ -42,9 +42,9 @@ class Checkout extends Component
     #[Validate('required|string|max:255')]
     public $yur_address;
     #[Validate('nullable|file|mimes:pdf,doc,docx,xls,xlsx,csv|max:2048')]
+    public $file;
     public $type = 'natural';
     public $products = [];
-    public $file;
     public $kpp;
     public $legal_address;
     public $message;
@@ -216,11 +216,11 @@ class Checkout extends Component
             'cart_items' => $this->products,
             'total_price' => $totalPrice,
             'user' => $user,
-            'shipping_address' => $this->shipping_address,
+            'shipping_address' => $this->delivery_address,
             'delivery' => Delivery::find($this->selected_delivery),
             'payment' => PaymentMethod::find($this->selected_payment_method),
             'file' => $this->file->store(path: 'orders'),
-            'message' => $this->message,
+            'message' => $this->comment,
             'status' => 'pending'
         ]);
 

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Order;
 use Filament\Forms;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -13,6 +14,10 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Split;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Get;
 
 class OrderResource extends Resource
 {
@@ -27,80 +32,172 @@ class OrderResource extends Resource
 
     public static function form(Form $form): Form
     {
+        // dd($form);
         return $form
             ->schema([
-                Section::make('Customer Details')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->label('Full Name')
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('email')
-                            ->label('Email Address')
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('phone')
-                            ->label('Phone Number')
-                            ->maxLength(20),
-                    ])->columns(3),
+                Split::make([
 
-                Section::make('Order Details')
-                    ->schema([
-                        Repeater::make('cart_items')
-                            ->label('Order Items')
-                            ->schema([
-                                Forms\Components\TextInput::make('name')
-                                    ->label('Product Name')
-                                    ->required(),
-                                Forms\Components\TextInput::make('quantity')
-                                    ->label('Quantity')
-                                    ->numeric()
-                                    ->required()
-                                    ->minValue(1)
-                                    ->default(1),
-                                Forms\Components\TextInput::make('price')
-                                    ->label('Price')
-                                    ->numeric()
-                                    ->required()
-                                    ->prefix('₽')
-                                    ->default(0)
-                                    ->afterStateUpdated(function (Forms\Set $set, $state, Forms\Get $get) {
-                                        // Recalculate total when price changes
-                                        $items = $get('cart_items');
-                                        $total = collect($items)
-                                            ->map(function ($item) use ($state, $get) {
-                                                $price = $item['name'] === $get('name') ? $state : ($item['price'] ?? 0);
-                                                $quantity = $item['quantity'] ?? 1;
-                                                return $price * $quantity;
-                                            })
-                                            ->sum();
+                    Tabs::make('Tabs')
+                        ->tabs([
+                            Tabs\Tab::make('Информация о заказе')
+                                ->schema([
+                                    Repeater::make('cart_items')
+                                        ->label(false)
+                                        ->schema([
+                                            Forms\Components\TextInput::make('quantity')
+                                                ->label('Количество')
+                                                ->numeric()
+                                                ->required()
+                                                ->minValue(1)
+                                                ->default(1),
+                                            Forms\Components\TextInput::make('price')
+                                                ->label('Цена')
+                                                ->numeric()
+                                                ->required()
+                                                ->prefix('₽')
+                                                ->default(0)
+                                                ->afterStateUpdated(function (Forms\Set $set, $state, Forms\Get $get) {
+                                                    // Recalculate total when price changes
+                                                    $items = $get('cart_items');
+                                                    $total = collect($items)
+                                                        ->map(function ($item) use ($state, $get) {
+                                                            $price = $item['name'] === $get('name') ? $state : ($item['price'] ?? 0);
+                                                            $quantity = $item['quantity'] ?? 1;
+                                                            return $price * $quantity;
+                                                        })
+                                                        ->sum();
+                                                    
+                                                    $set('total_price', $total);
+                                                })
+                                        ])
+                                        ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
+                                        ->columns(2)
+                                        ->collapsible()
+                                        ->afterStateUpdated(function (Forms\Set $set, $state) {
+                                            // Calculate total price
+                                            $total = collect($state)
+                                                ->reduce(function ($total, $item) {
+                                                    return $total + 
+                                                        (floatval($item['price'] ?? 0) * 
+                                                        intval($item['quantity'] ?? 1));
+                                                }, 0);
+                                            
+                                            $set('total_price', $total);
+                                        }),
+                                        Textarea::make('message')
+                                            ->label('Примечания к заказу')
+                                            ->maxLength(255),
+                                ]),
+                            Tabs\Tab::make('Информация о заказчике')
+                                ->schema([
+                                    Forms\Components\TextInput::make('user.name')
+                                        ->label('Полное имя')
+                                        ->maxLength(255),
+                                    Forms\Components\TextInput::make('user.email')
+                                        ->label('Email')
+                                        ->maxLength(255),
+                                    Forms\Components\TextInput::make('user.phone')
+                                        ->label('Телефон')
+                                        ->maxLength(20),
+                                    Forms\Components\TextInput::make('user.company_name')
+                                        ->label('Название компании')
+                                        ->hidden(fn (Get $get) => $get('user.type') !== 'legal')
+                                        ->maxLength(255),
+                                    Forms\Components\TextInput::make('user.inn')
+                                        ->label('ИНН')
+                                        ->hidden(fn (Get $get) => $get('user.type') !== 'legal')
+                                        ->maxLength(20),
+                                    Forms\Components\TextInput::make('user.bik')
+                                        ->label('БИК')
+                                        ->hidden(fn (Get $get) => $get('user.type') !== 'legal')
+                                        ->maxLength(20),
+                                    Forms\Components\TextInput::make('user.correspondent_account')
+                                        ->label('Корреспондентский счет')
+                                        ->hidden(fn (Get $get) => $get('user.type') !== 'legal')
+                                        ->maxLength(20),
+                                    Forms\Components\TextInput::make('user.bank_account')
+                                        ->label('Банковский счет')
+                                        ->hidden(fn (Get $get) => $get('user.type') !== 'legal')
+                                        ->maxLength(20),
+                                    Forms\Components\Textarea::make('user.yur_address')
+                                        ->label('Юридический адрес')
+                                        ->hidden(fn (Get $get) => $get('user.type') !== 'legal')
+                                        ->maxLength(20)
+                                        ->columnSpanFull(),
+                                ])->columns(2),
+                            Tabs\Tab::make('Информация о доставке')
+                                ->schema([
+                                    Forms\Components\TextInput::make('delivery.name')
+                                        ->label('Название')
+                                        ->maxLength(255),
+                                    Forms\Components\TextInput::make('shipping_address')
+                                        ->label('Адрес доставки')
+                                    ->maxLength(255)
+                                    ->columnSpan(2),
+                                ])->columns(3),
+                        ]),
+                    
+                    //     Section::make('Информация о заказе')
+                    //         ->schema([
+                    //             Repeater::make('cart_items')
+                    //                 ->schema([
+                    //                     Hidden::make('name'),
+                    //                     Forms\Components\TextInput::make('quantity')
+                    //                         ->label('Количество')
+                    //                         ->numeric()
+                    //                         ->required()
+                    //                         ->minValue(1)
+                    //                         ->default(1),
+                    //                     Forms\Components\TextInput::make('price')
+                    //                         ->label('Цена')
+                    //                         ->numeric()
+                    //                         ->required()
+                    //                         ->prefix('₽')
+                    //                         ->default(0)
+                    //                         ->afterStateUpdated(function (Forms\Set $set, $state, Forms\Get $get) {
+                    //                             // Recalculate total when price changes
+                    //                             $items = $get('cart_items');
+                    //                             $total = collect($items)
+                    //                                 ->map(function ($item) use ($state, $get) {
+                    //                                     $price = $item['name'] === $get('name') ? $state : ($item['price'] ?? 0);
+                    //                                     $quantity = $item['quantity'] ?? 1;
+                    //                                     return $price * $quantity;
+                    //                                 })
+                    //                                 ->sum();
+                                                
+                    //                             $set('total_price', $total);
+                    //                         }),
+                    //                     Forms\Components\Hidden::make('new_price')
+                    //                         ->default(null),
+                    //                 ])
+                    //                 ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
+                    //                 ->columns(3)
+                    //                 ->collapsible()
+                    //                 ->afterStateUpdated(function (Forms\Set $set, $state) {
+                    //                     // Calculate total price
+                    //                     $total = collect($state)
+                    //                         ->reduce(function ($total, $item) {
+                    //                             return $total + 
+                    //                                 (floatval($item['price'] ?? 0) * 
+                    //                                 intval($item['quantity'] ?? 1));
+                    //                         }, 0);
                                         
-                                        $set('total_price', $total);
-                                    }),
-                                Forms\Components\Hidden::make('new_price')
-                                    ->default(null),
-                            ])
-                            ->columns(3)
-                            ->collapsible()
-                            ->afterStateUpdated(function (Forms\Set $set, $state) {
-                                // Calculate total price
-                                $total = collect($state)
-                                    ->reduce(function ($total, $item) {
-                                        return $total + 
-                                            (floatval($item['price'] ?? 0) * 
-                                             intval($item['quantity'] ?? 1));
-                                    }, 0);
-                                
-                                $set('total_price', $total);
-                            }),
+                    //                     $set('total_price', $total);
+                    //                 }),
 
+                    
+
+                    //         ])
+                    Section::make([
                         Forms\Components\TextInput::make('total_price')
-                            ->label('Total Order Value')
+                            ->label('Общая стоимость заказа')
                             ->numeric()
                             ->prefix('₽')
                             ->default(0)
                             ->disabled(),
 
                         Select::make('status')
-                            ->label('Order Status')
+                            ->label('Статус заказа')
                             ->options([
                                 'pending' => 'Ожидает обработки',
                                 'confirmed' => 'Подтвержден',
@@ -110,8 +207,9 @@ class OrderResource extends Resource
                             ])
                             ->default('pending')
                             ->native(false),
-
-                    ])
+                    ])->grow(false),
+                ])->from('md')
+                
             ])->columns(1);
     }
 

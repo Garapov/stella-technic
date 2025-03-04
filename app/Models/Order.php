@@ -34,11 +34,20 @@ class Order extends Model
         'cart_items',
         'total_price',
         'status',
-        'user_id'
+        'user_id',
+        'user',
+        'delivery',
+        'payment',
+        'file',
+        'shipping_address',
+        'message'
     ];
 
     protected $casts = [
         'cart_items' => 'array',
+        'delivery' => 'collection',
+        'payment' => 'collection',
+        'user' => 'collection',
         'total_price' => 'decimal:2'
     ];
 

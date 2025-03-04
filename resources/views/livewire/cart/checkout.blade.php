@@ -41,6 +41,16 @@
               </div>
             </div>
           @endif
+
+          @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
           <div class="mb-5">
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
               <label class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800">
