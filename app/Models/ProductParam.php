@@ -14,7 +14,8 @@ class ProductParam extends Model
     protected $fillable = [
         'name',
         'type',
-        'allow_filtering'
+        'allow_filtering',
+        'show_on_preview'
     ];
 
     public function params(): HasMany

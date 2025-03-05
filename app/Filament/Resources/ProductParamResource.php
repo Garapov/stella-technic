@@ -42,6 +42,10 @@ class ProductParamResource extends Resource
                     ->label('Разрешить фильтрацию')
                     ->inline(false)
                     ->required(),
+                Forms\Components\Toggle::make('show_on_preview')
+                    ->label('Показывать в листинге')
+                    ->inline(false)
+                    ->required(),
             ]);
     }
 
@@ -56,6 +60,7 @@ class ProductParamResource extends Resource
                     ->label('Тип')
                     ->searchable()
                     ->formatStateUsing(fn ($record) => $record ? match ($record->type) {
+                        'text' => 'Текст',
                         'number' => 'Числовой',
                         'checkboxes' => 'Список чекбоксов',
                         'color' => 'Цвет',

@@ -317,11 +317,12 @@ class ProductImporter extends Importer
 
         foreach ($data as $key => $param) {
             // Создаем или находим параметр
-            $product_param = ProductParam::firstOrCreate(
+            $product_param = ProductParam::updateOrCreate(
                 ['name' => $param->name],
                 [
                     'type' => $param->type ?? 'text',
-                    'allow_filtering' => $param->allow_filtering ?? true
+                    'allow_filtering' => $param->allow_filtering ?? true,
+                    'show_on_preview' => $param->show_on_preview ?? false
                 ]
             );
             Log::info('createProductParams values', ['data' => $param->values]);

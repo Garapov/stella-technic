@@ -117,11 +117,24 @@
                 class="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate x-text="productData.name"></a>
             </div>
         <ul>
+            @php
+                $parametrs = [];
+
+                foreach ($product->paramItems as $paramItem) {
+                    if (!$paramItem->productParam->show_on_preview) continue;
+                    $parametrs[$paramItem->productParam->name] = $paramItem->productParam->show_on_preview;
+                }
+            @endphp
             @foreach ($product->variants->groupBy('param.productParam.name') as $paramName => $variants)
+                @if (!isset($parametrs[$paramName]))
+                    @continue
+                @endif
                 <li class="mt-4">
                     <p class="text-sm font-bold text-gray-900 dark:text-white">{{ $paramName }}</p>
                     <ul class="mt-2 flex items-center gap-2">
+                        
                         @foreach ($variants as $variant)
+                            
                             @switch ($variant->param->productParam->type)
                                 @case('color')
                                     <li class="flex items-center gap-2">
