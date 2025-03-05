@@ -120,67 +120,6 @@ class ProductImporter extends Importer
                     } catch (Exception $e) {
                         throw new RowImportFailedException($e->getMessage());
                     } 
-
-                    
-                    // try {
-                    //     $param_items = [];
-                        
-                    //     // Разбиваем строку на отдельные параметры
-                    //     $params = explode('||', $state);
-                        
-                    //     foreach ($params as $param) {
-                    //         if (empty($param)) continue;
-                            
-                    //         // Разбиваем параметр на пары ключ-значение
-                    //         $pairs = explode(';;', $param);
-                    //         $data = [];
-                            
-                    //         foreach ($pairs as $pair) {
-                    //             if (empty($pair)) continue;
-                    //             list($key, $value) = explode('::', $pair);
-                    //             $data[trim($key)] = trim($value);
-                    //         }
-                            
-                    //         // Проверяем обязательные поля
-                    //         if (!isset($data['name']) || !isset($data['value'])) {
-                    //             continue;
-                    //         }
-                            
-                    //         // Создаем или находим параметр
-                    //         $product_param = ProductParam::firstOrCreate(
-                    //             ['name' => $data['name']],
-                    //             [
-                    //                 'type' => $data['type'] ?? 'text',
-                    //                 'allow_filtering' => $data['allow_filtering'] ?? true
-                    //             ]
-                    //         );
-                            
-                    //         // Создаем или находим значение параметра
-                    //         $param_item = ProductParamItem::firstOrCreate(
-                    //             [
-                    //                 'product_param_id' => $product_param->id,
-                    //                 'value' => $data['value']
-                    //             ],
-                    //             [
-                    //                 'title' => $data['title'] ?? $data['value']
-                    //             ]
-                    //         );
-                            
-                    //         $param_items[] = $param_item->id;
-                    //     }
-                        
-                    //     // Привязываем параметры к продукту
-                    //     if (!empty($param_items)) {
-                    //         $record->paramItems()->sync($param_items);
-                    //     }
-
-                    // } catch (\Exception $e) {
-                    //     Log::error('Error processing parameters', [
-                    //         'error' => $e->getMessage(),
-                    //         'state' => $state,
-                    //         'product_id' => $record->id
-                    //     ]);
-                    // }
                 })
                 ->rules(['required', 'json'])
                 ->example('[{"name": "Грузоподъемность","type": "number","values": [{"value": 1500,"title": "1500 кг"},{"value": 300,"title": "300 кг"},{"value": 800,"title": "800 кг"}]},{"name": "Высота подъема","type": "number","values": [{"value": 3000,"title": "3000 мм"},{"value": 1500,"title": "1500 мм"}]}]'),
@@ -217,7 +156,6 @@ class ProductImporter extends Importer
         ProductVariant::where('product_id', $this->record->id)
         ->whereIn('product_param_item_id', array_diff($activeVariants, $param_items))
         ->delete();
-
         foreach ($this->record->paramItems as $paramItem) {
             // If variant exists but was deleted - restore it
             if (in_array($paramItem->id, $deletedVariants)) {
@@ -374,7 +312,7 @@ class ProductImporter extends Importer
 
     protected function createProductParams($data, ProductImporter $importer, ?Product $record)
     {
-        Log::info('createProductParams', ['data' => $data]);
+        
 
 
         foreach ($data as $key => $param) {
@@ -386,9 +324,11 @@ class ProductImporter extends Importer
                     'allow_filtering' => $param->allow_filtering ?? true
                 ]
             );
+            Log::info('createProductParams values', ['data' => $param->values]);
             foreach ($param->values as $value) {
+                Log::info('createProductParams value', ['data' => $value->title]);
                 // Создаем или находим значение параметра
-                $param_item = ProductParamItem::firstOrCreate(
+                $param_item = ProductParamItem::updateOrCreate(
                     [
                         'product_param_id' => $product_param->id,
                         'value' => $value->value
@@ -398,7 +338,9 @@ class ProductImporter extends Importer
                     ]
                 );
 
-                $record->params()->attach($param_item->id);
+                dump('param item: ' . $product_param->name . ' ' . $param_item->title);
+
+                $record->paramItems()->attach($param_item->id);
             }
         }
     }
