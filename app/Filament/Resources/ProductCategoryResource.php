@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductCategoryResource\Pages;
 use App\Filament\Resources\ProductCategoryResource\RelationManagers\ProductsRelationManager;
 use App\Models\ProductCategory;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -40,6 +41,11 @@ class ProductCategoryResource extends Resource
                 Textarea::make('description')
                     ->label('Описание')
                     ->required(),
+                FileUpload::make('image')
+                    ->disk('public')
+                    ->directory('categories')
+                    ->label('Картинка')
+                    ->image(),
                 IconPicker::make('icon')
                     ->required(),
                 
@@ -50,6 +56,8 @@ class ProductCategoryResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Картинка'),
                 Tables\Columns\TextColumn::make('title')
                     ->label('Название')
                     ->searchable(),

@@ -157,7 +157,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->assets([
                 // Css::make('custom-stylesheet', resource_path('css/custom.css')),
-                Js::make('yandex-maps-api-v3', 'https://api-maps.yandex.ru/2.1/?apikey='. config('services.maps.key') . '&lang=ru_RU&suggest_apikey=' . config('services.maps.suggestion_key')),
+                // Js::make('yandex-maps-api-v3', 'https://api-maps.yandex.ru/2.1/?apikey='. config('services.maps.key') . '&lang=ru_RU&suggest_apikey=' . config('services.maps.suggestion_key')),
             ])
             ->spa();
     }

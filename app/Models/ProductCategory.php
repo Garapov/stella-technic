@@ -30,7 +30,8 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
         'description',
         'is_visible',
         "parent_id",
-        "order"
+        "order",
+        "image"
     ];
 
     protected $casts = [

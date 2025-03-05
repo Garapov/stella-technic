@@ -18,7 +18,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Carbon\CarbonInterface;
 use Carbon\Carbon;
 use Exception;
+use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProductImporter extends Importer
 {
@@ -27,6 +29,7 @@ class ProductImporter extends Importer
     protected static ?string $model = Product::class;
     protected int $maxAttempts = 3;
     protected int $retryDelay = 500;
+
 
     public static function getColumns(): array
     {
@@ -74,50 +77,20 @@ class ProductImporter extends Importer
             ImportColumn::make('description')
                 ->example('Описание товара <div>в котором много текста</div><strong> и где можно использовать HTML</strong>'),
             ImportColumn::make('categories')
-                ->fillRecordUsing(function (?Product $record, ?string $state) {
-                    // $record->sku = strtoupper($state);
+                ->fillRecordUsing(function (?Product $record, ?string $state, ProductImporter $importer) {
                     if (blank($state) || !$record->id) return;
                     try {
-                        $category_names = explode('|', $state);
-                        $categories = [];
-                        $category_ids = [];
-
-
-                        foreach ($category_names as &$title) {
-                            $category = ProductCategory::firstOrCreate([
-                                'title' => $title,
-                            ], [
-                                'icon' => 'fas-box-archive',
-                                'is_visible' => true
-                            ]);
-                            $categories[] = $category;
-                            $category_ids[] = $category->id;
-                        }
-                        // [3, 2, 1]
-                        array_unshift($category_ids, -1);
-                        unset($category_ids[count($category_ids) - 1]);
-
-                        // Log::info('category_ids', ['category_ids' => $category_ids]);
-
-                        foreach ($categories as $index => $category) {
-
-                            $category->update([
-                                'parent_id' => $category_ids[$index]
-                            ]);
-                        }
-                        // Log::info('fillRecordUsing', ['state' => $state]);
-                        $record->categories()->sync($category_ids);
-
+                        $data = json_decode($state);
+                        $record->categories()->sync([]);
+                        static::createCategoriesTreeStatic($data, $importer, $record);
                     } catch (Exception $e) {
-
-                        Log::error('fillRecordUsing error', ['message' => $e->getMessage(), 'state' => $state, 'product' => $record]);
-                        // return null;
+                        throw new RowImportFailedException($e->getMessage());
                     }
                     
                 })
                 ->guess(['categories', 'parents', 'kategorii'])
-                ->example('Складское оборудование|Штабелеры|Электрические самоходные штабелеры')
-                ->rules(['string', 'required']),
+                ->example('{"name":"Мебельные","image": "https://stella-tech.ru/connectors/system/phpthumb.php?src=menu_images/mebelnye.jpg&source=2","parent": {"name": "Колеса Tellure Rota","image": "https://stella-tech.ru/connectors/system/phpthumb.php?src=menu_images/tellure.jpg&source=2","parent": {"name": "Колеса и колесные опоры","image": "https://stella-tech.ru/connectors/system/phpthumb.php?src=menu_images/kolesa-prew.png&source=2","parent": null}}}')
+                ->rules(['required', 'json']),
             ImportColumn::make('price')
                 ->requiredMapping()
                 ->numeric()
@@ -137,74 +110,80 @@ class ProductImporter extends Importer
                 ->example('100')
                 ->rules(['required']),
             ImportColumn::make('parameters')
-                ->fillRecordUsing(function (?Product $record, ?string $state) {
+                ->fillRecordUsing(function (?Product $record, ?string $state, ProductImporter $importer) {
                     if (blank($state) || !$record->id) return;
 
-                    
                     try {
-                        $param_items = [];
+                        $data = json_decode($state);
+                        $record->paramItems()->sync([]);
+                        static::createProductParamsStatic($data, $importer, $record);
+                    } catch (Exception $e) {
+                        throw new RowImportFailedException($e->getMessage());
+                    } 
+
+                    
+                    // try {
+                    //     $param_items = [];
                         
-                        // Разбиваем строку на отдельные параметры
-                        $params = explode('||', $state);
+                    //     // Разбиваем строку на отдельные параметры
+                    //     $params = explode('||', $state);
                         
-                        foreach ($params as $param) {
-                            if (empty($param)) continue;
+                    //     foreach ($params as $param) {
+                    //         if (empty($param)) continue;
                             
-                            // Разбиваем параметр на пары ключ-значение
-                            $pairs = explode(';;', $param);
-                            $data = [];
+                    //         // Разбиваем параметр на пары ключ-значение
+                    //         $pairs = explode(';;', $param);
+                    //         $data = [];
                             
-                            foreach ($pairs as $pair) {
-                                if (empty($pair)) continue;
-                                list($key, $value) = explode('::', $pair);
-                                $data[trim($key)] = trim($value);
-                            }
+                    //         foreach ($pairs as $pair) {
+                    //             if (empty($pair)) continue;
+                    //             list($key, $value) = explode('::', $pair);
+                    //             $data[trim($key)] = trim($value);
+                    //         }
                             
-                            // Проверяем обязательные поля
-                            if (!isset($data['name']) || !isset($data['value'])) {
-                                continue;
-                            }
+                    //         // Проверяем обязательные поля
+                    //         if (!isset($data['name']) || !isset($data['value'])) {
+                    //             continue;
+                    //         }
                             
-                            // Создаем или находим параметр
-                            $product_param = ProductParam::firstOrCreate(
-                                ['name' => $data['name']],
-                                [
-                                    'type' => $data['type'] ?? 'text',
-                                    'allow_filtering' => $data['allow_filtering'] ?? true
-                                ]
-                            );
+                    //         // Создаем или находим параметр
+                    //         $product_param = ProductParam::firstOrCreate(
+                    //             ['name' => $data['name']],
+                    //             [
+                    //                 'type' => $data['type'] ?? 'text',
+                    //                 'allow_filtering' => $data['allow_filtering'] ?? true
+                    //             ]
+                    //         );
                             
-                            // Создаем или находим значение параметра
-                            $param_item = ProductParamItem::firstOrCreate(
-                                [
-                                    'product_param_id' => $product_param->id,
-                                    'value' => $data['value']
-                                ],
-                                [
-                                    'title' => $data['title'] ?? $data['value']
-                                ]
-                            );
+                    //         // Создаем или находим значение параметра
+                    //         $param_item = ProductParamItem::firstOrCreate(
+                    //             [
+                    //                 'product_param_id' => $product_param->id,
+                    //                 'value' => $data['value']
+                    //             ],
+                    //             [
+                    //                 'title' => $data['title'] ?? $data['value']
+                    //             ]
+                    //         );
                             
-                            $param_items[] = $param_item->id;
-                        }
+                    //         $param_items[] = $param_item->id;
+                    //     }
                         
-                        // Привязываем параметры к продукту
-                        if (!empty($param_items)) {
-                            $record->paramItems()->sync($param_items);
-                        }
+                    //     // Привязываем параметры к продукту
+                    //     if (!empty($param_items)) {
+                    //         $record->paramItems()->sync($param_items);
+                    //     }
 
-
-
-
-                    } catch (\Exception $e) {
-                        Log::error('Error processing parameters', [
-                            'error' => $e->getMessage(),
-                            'state' => $state,
-                            'product_id' => $record->id
-                        ]);
-                    }
+                    // } catch (\Exception $e) {
+                    //     Log::error('Error processing parameters', [
+                    //         'error' => $e->getMessage(),
+                    //         'state' => $state,
+                    //         'product_id' => $record->id
+                    //     ]);
+                    // }
                 })
-                ->example('name::Грузоподъемность;;type::number;;value::1500;;title::1500 кг||name::Высота подъема;;type::number;;value::3000;;title::3000 мм'),
+                ->rules(['required', 'json'])
+                ->example('[{"name": "Грузоподъемность","type": "number","values": [{"value": 1500,"title": "1500 кг"},{"value": 300,"title": "300 кг"},{"value": 800,"title": "800 кг"}]},{"name": "Высота подъема","type": "number","values": [{"value": 3000,"title": "3000 мм"},{"value": 1500,"title": "1500 мм"}]}]'),
             ImportColumn::make('synonims')
                 ->example('тут может быть какой то текст|который может быть разделен любым символом|и будет учавствовать в поиске')
         ];
@@ -393,6 +372,104 @@ class ProductImporter extends Importer
         return "Импорт товаров завершен. Успешно импортировано: {$import->successful_rows} записей.";
     }
 
+    protected function createProductParams($data, ProductImporter $importer, ?Product $record)
+    {
+        Log::info('createProductParams', ['data' => $data]);
+
+
+        foreach ($data as $key => $param) {
+            // Создаем или находим параметр
+            $product_param = ProductParam::firstOrCreate(
+                ['name' => $param->name],
+                [
+                    'type' => $param->type ?? 'text',
+                    'allow_filtering' => $param->allow_filtering ?? true
+                ]
+            );
+            foreach ($param->values as $value) {
+                // Создаем или находим значение параметра
+                $param_item = ProductParamItem::firstOrCreate(
+                    [
+                        'product_param_id' => $product_param->id,
+                        'value' => $value->value
+                    ],
+                    [
+                        'title' => $value->title ?? $value->value
+                    ]
+                );
+
+                $record->params()->attach($param_item->id);
+            }
+        }
+    }
+    protected static function createProductParamsStatic($data, ProductImporter $importer, ?Product $record)
+    {
+        $importer->createProductParams($data, $importer, $record);
+    }
+
+    protected function createCategoriesTree($category, ProductImporter $importer, ?Product $record): ?ProductCategory
+    {
+        
+        $categiry_model = ProductCategory::updateOrCreate([
+            'title' => $category->name,
+        ], [
+            'icon' => 'fas-box-archive',
+            'image' => $category->image ? static::storeImageFromUrlStatic($category->image) : null,
+            'is_visible' => true,
+            'parent_id' => $category->parent ? $importer->createCategoriesTree($category->parent, $importer, $record)->id : -1,
+        ]);
+
+        $record->categories()->attach($categiry_model->id);
+
+        return $categiry_model;
+    }
+
+    protected static function createCategoriesTreeStatic($category, ProductImporter $importer, ?Product $record): ?ProductCategory
+    {
+        return $importer->createCategoriesTree($category, $importer, $record);
+    }
+
+    protected static function storeImageFromUrlStatic($imageUrl) {
+        $tempDir = storage_path('app/temp');
+        if (!file_exists($tempDir)) {
+            mkdir($tempDir, 0755, true);
+        }
+
+        $ctx = stream_context_create([
+            'http' => [
+                'timeout' => 10
+            ]
+        ]);
+
+        $imageContent = @file_get_contents($imageUrl, false, $ctx);
+
+        if ($imageContent === false) {
+            throw new \Exception("Не удалось загрузить изображение");
+        }
+
+        $extension = pathinfo(parse_url($imageUrl, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
+        $tempImagePath = $tempDir . '/' . uniqid() . '.' . $extension;
+        
+        if (!file_put_contents($tempImagePath, $imageContent)) {
+            throw new \Exception("Не удалось сохранить временный файл");
+        }
+
+        $uploadedFile = new \Illuminate\Http\UploadedFile(
+            $tempImagePath,
+            basename($imageUrl),
+            mime_content_type($tempImagePath),
+            null,
+            true
+        );
+
+        $image = Storage::disk('public')->put('categories/', $uploadedFile);
+        @unlink($tempImagePath);
+
+        dump('image: ' . $image);
+        // Возвращаем путь до файла
+        return $image;
+    }
+
     protected function processImage(string $imageUrl): ?int 
     {
         dump('processImage start');
@@ -441,6 +518,7 @@ class ProductImporter extends Importer
                             'alt' => json_encode(['Product Image']),
                         ]
                     );
+                    @unlink($tempImagePath);
 
                     return $image->id;
 
