@@ -20,6 +20,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\ProductParamItem;
 use Illuminate\Database\Eloquent\Model;
 use App\Tables\Columns\ImageByIdColumn;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Get;
+use Illuminate\Support\Facades\Log;
 
 class ProductResource extends Resource
 {
@@ -42,6 +45,7 @@ class ProductResource extends Resource
                         Tab::make('Основная информация')->schema([
                                 Forms\Components\TextInput::make('name')
                                     ->required()
+                                    ->live()
                                     ->label('Название'),
                                 Forms\Components\TextInput::make('price')
                                     ->required()
@@ -140,6 +144,66 @@ class ProductResource extends Resource
                                         });
                                 })
                                 ->columnSpanFull()
+                        ])->columnSpan('full'),
+                        Tab::make('Вариации')->schema([
+                            Repeater::make('variants')
+                                ->label(false)
+                                ->addActionLabel('Добавить вариацию')
+                                ->defaultItems(1)
+                                ->reorderable(false)
+                                ->itemLabel(function (array $state, Get $get): string {
+                                    $title = "";
+
+                                    $title .= $get('name');
+
+                                    foreach ($state['row'] as $param) {
+                                        if (!$param['params']) continue;
+                                        $parametr = ProductParamItem::where('id', $param['params'])->first();
+
+                                        if (!$parametr) continue;
+
+                                        $title .= " {$parametr->title}";
+                                    }
+
+                                    return $title;
+                                })
+                                ->schema([
+                                    Repeater::make('row')
+                                        ->label(false)
+                                        ->defaultItems(3)
+                                        ->addActionLabel('Добавить связь')
+                                        ->grid(3)
+                                        ->minItems(2)
+                                        ->maxItems(3)
+                                        ->simple(
+                                            Forms\Components\Select::make('params')
+                                                ->label('Параметр')
+                                                ->preload()
+                                                ->distinct()
+                                                ->required()
+                                                ->live()
+                                                ->createOptionForm([
+                                                    Forms\Components\Select::make('product_param_id')
+                                                        ->relationship('productParam', 'name')
+                                                        ->required(),
+                                                    Forms\Components\TextInput::make('title')
+                                                        ->required()
+                                                        ->maxLength(255),
+                                                    Forms\Components\TextInput::make('value')
+                                                        ->required()
+                                                ])
+                                                ->options(function () {
+                                                    return ProductParamItem::query()
+                                                        ->with('productParam')
+                                                        ->get()
+                                                        ->mapWithKeys(function ($item) {
+                                                            return [$item->id => "{$item->productParam->name}: {$item->title}"];
+                                                  
+                                                        });
+                                            })
+                                        )
+                                ])
+                                
                         ])->columnSpan('full'),
                         Tab::make('Бренд')->schema([
                             Forms\Components\Select::make('brand')
