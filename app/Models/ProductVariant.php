@@ -6,8 +6,10 @@ use App\Forms\Components\ImagePicker;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Outerweb\ImageLibrary\Models\Image;
+use Illuminate\Support\Str;
 
 class ProductVariant extends Model
 {
@@ -22,12 +24,15 @@ class ProductVariant extends Model
         'price',
         'new_price',
         'image',
+        'sku',
         'is_default'
     ];
 
     protected $casts = [
-        'is_default' => 'boolean'
+        'is_default' => 'boolean',
     ];
+
+    protected $dates = ['deleted_at'];
 
     protected $with = [
         'img'
@@ -36,9 +41,12 @@ class ProductVariant extends Model
     protected static function booted()
     {
         static::creating(function ($variant) {
-            // Check if this is the first variant for the product
-            if (!$variant->product->variants()->exists()) {
+            if (!$variant->product->variants()->where('is_default', true)->exists()) {
                 $variant->is_default = true;
+            }
+
+            if (!$variant->sku) {
+                $variant->sku = (string) Str::random(10);
             }
         });
     }
@@ -48,9 +56,10 @@ class ProductVariant extends Model
         return $this->belongsTo(Image::class, 'image');
     }
 
-    public function param(): BelongsTo
+    public function paramItems(): BelongsToMany
     {
-        return $this->belongsTo(ProductParamItem::class, 'product_param_item_id');
+        return $this->belongsToMany(ProductParamItem::class, 'product_variant_product_param_item')
+            ->withTimestamps();
     }
 
     public function product()

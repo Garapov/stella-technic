@@ -12,6 +12,7 @@ use Outerweb\ImageLibrary\Models\Image;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 use Illuminate\Support\Str;
@@ -36,11 +37,14 @@ class Product extends Model implements Searchable
         'description',
         'synonims',
         'is_popular',
-        'uuid'
+        'uuid',
+        'links',
+        'sku'
     ];
 
     protected $casts = [
-        'gallery' => 'array'
+        'gallery' => 'array',
+        'links' => 'array',
     ];
 
     protected $with = [
@@ -117,8 +121,12 @@ class Product extends Model implements Searchable
         parent::boot();
 
         static::creating(function ($model) {
-            if (! $model->uuid) {
+            if (!$model->uuid) {
                 $model->uuid = (string) Str::uuid();
+            }
+
+            if (!$model->sku) {
+                $model->sku = (string) Str::random(10);
             }
         });
 
@@ -131,5 +139,55 @@ class Product extends Model implements Searchable
             }
         });
     }
+
+    public function makeProductVariations()
+    {
+        
+
+        // foreach (ProductVariant::where('product_id', $this->id)->get() as $var) {
+        //     $var->forceDelete();
+        // }
+
+        // foreach (ProductVariant::onlyTrashed()->where('product_id', $this->id)->get() as $vardel) {
+        //     $vardel->forceDelete();
+        // }
+        // return;
+
+        $existingVariationsIds = ProductVariant::where('product_id', $this->id)->pluck('id')->toArray();
+        $createdVariationsIds = [];
+
+        foreach ($this->links as $link) {
+
+            $name = "";
+
+            $name .= $this->name;
+
+            foreach ($link['row'] as $param) {
+                $parametr = ProductParamItem::where('id', $param)->first();
+
+                if (!$parametr) continue;
+
+                $name .= " {$parametr->title}";
+            }
+
+            $findedVariant = ProductVariant::withTrashed()->firstOrCreate([
+                'product_id' => $this->id,
+                'name' => $name
+            ], [
+                'price' => $this->price,
+                'new_price' => $this->new_price,
+                'image' => $this->image
+            ]);
+
+            $createdVariationsIds[] = $findedVariant->id;
+            
+            if ($findedVariant->trashed()) {
+                $findedVariant->restore();
+            }
+        }
+        
+        if (!empty(array_diff($existingVariationsIds, $createdVariationsIds))) {
+            ProductVariant::whereIn('id', array_diff($existingVariationsIds, $createdVariationsIds))->delete();
+        }
+    }
 }
-// TODO Добавить UUID

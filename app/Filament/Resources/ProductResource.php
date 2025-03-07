@@ -20,6 +20,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\ProductParamItem;
 use Illuminate\Database\Eloquent\Model;
 use App\Tables\Columns\ImageByIdColumn;
+use Exception;
+use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Get;
 use Illuminate\Support\Facades\Log;
@@ -61,6 +63,9 @@ class ProductResource extends Resource
                                     ->required()
                                     ->numeric()
                                     ->label('Остаток'),
+                                Forms\Components\TextInput::make('sku')
+                                    ->required()
+                                    ->label('Артикул'),
                                 Forms\Components\Toggle::make('is_popular')
                                     ->label('Популярный')
                                     ->inline(false),
@@ -146,7 +151,7 @@ class ProductResource extends Resource
                                 ->columnSpanFull()
                         ])->columnSpan('full'),
                         Tab::make('Вариации')->schema([
-                            Repeater::make('variants')
+                            Repeater::make('links')
                                 ->label(false)
                                 ->addActionLabel('Добавить вариацию')
                                 ->defaultItems(1)
@@ -157,8 +162,8 @@ class ProductResource extends Resource
                                     $title .= $get('name');
 
                                     foreach ($state['row'] as $param) {
-                                        if (!$param['params']) continue;
-                                        $parametr = ProductParamItem::where('id', $param['params'])->first();
+                                        if (!$param['parametrs']) continue;
+                                        $parametr = ProductParamItem::where('id', $param['parametrs'])->first();
 
                                         if (!$parametr) continue;
 
@@ -170,28 +175,18 @@ class ProductResource extends Resource
                                 ->schema([
                                     Repeater::make('row')
                                         ->label(false)
-                                        ->defaultItems(3)
+                                        ->reorderable(false)
                                         ->addActionLabel('Добавить связь')
                                         ->grid(3)
+                                        ->defaultItems(3)
                                         ->minItems(2)
                                         ->maxItems(3)
                                         ->simple(
-                                            Forms\Components\Select::make('params')
+                                            Forms\Components\Select::make('parametrs')
                                                 ->label('Параметр')
-                                                ->preload()
                                                 ->distinct()
                                                 ->required()
                                                 ->live()
-                                                ->createOptionForm([
-                                                    Forms\Components\Select::make('product_param_id')
-                                                        ->relationship('productParam', 'name')
-                                                        ->required(),
-                                                    Forms\Components\TextInput::make('title')
-                                                        ->required()
-                                                        ->maxLength(255),
-                                                    Forms\Components\TextInput::make('value')
-                                                        ->required()
-                                                ])
                                                 ->options(function () {
                                                     return ProductParamItem::query()
                                                         ->with('productParam')

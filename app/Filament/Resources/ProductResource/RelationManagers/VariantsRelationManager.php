@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Tables\Columns\ImageByIdColumn;
+use Livewire\Attributes\On;
 
 class VariantsRelationManager extends RelationManager
 {
@@ -20,13 +21,20 @@ class VariantsRelationManager extends RelationManager
 
     protected static ?string $title = 'Варианты товара';
 
+    #[On('refreshVariations')]
+    public function refresh(): void
+    {}
+
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                // TextInput::make('name')
+                //     ->required()
+                //     ->label('Название'),
+                TextInput::make('sku')
                     ->required()
-                    ->label('Название'),
+                    ->label('Артикул'),
                 TextInput::make('price')
                     ->required()
                     ->numeric()
@@ -40,19 +48,19 @@ class VariantsRelationManager extends RelationManager
                 ImagePicker::make('image')
                     ->label('Картинка')
                     ->required(),
-                Toggle::make('is_default')
-                    ->label('Вариант по умолчанию')
-                    ->afterStateUpdated(function ($state, Forms\Set $set, $record) {
-                        if ($state && $record && $record->exists) {
-                            // Get the owning product through the relationship manager
-                            $product = $this->getOwnerRecord();
+                // Toggle::make('is_default')
+                //     ->label('Вариант по умолчанию')
+                //     ->afterStateUpdated(function ($state, Forms\Set $set, $record) {
+                //         if ($state && $record && $record->exists) {
+                //             // Get the owning product through the relationship manager
+                //             $product = $this->getOwnerRecord();
                             
-                            // Unset other default variants for this product
-                            $product->variants()
-                                ->where('id', '!=', $record->id)
-                                ->update(['is_default' => false]);
-                        }
-                    })
+                //             // Unset other default variants for this product
+                //             $product->variants()
+                //                 ->where('id', '!=', $record->id)
+                //                 ->update(['is_default' => false]);
+                //         }
+                //     })
             ]);
     }
 
