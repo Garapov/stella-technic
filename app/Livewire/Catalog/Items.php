@@ -79,38 +79,38 @@ class Items extends Component
                     ]);
                 }
             }
-            
-            $this->display_filter = $filter;
-            
-            if ($slug) {
-                $this->category = ProductCategory::where('slug', $slug)->first();
+
+        $this->display_filter = $filter;
+        
+        if ($slug) {
+            $this->category = ProductCategory::where('slug', $slug)->first();
                 \Illuminate\Support\Facades\Log::info('Категория найдена', [
                     'category_id' => $this->category->id ?? null,
                     'category_name' => $this->category->name ?? null
                 ]);
-            }
-            if ($brand_slug) {
-                $brand = Brand::where('slug', $brand_slug)->first();
-                $this->product_ids = $brand->products()->pluck('id');
+        }
+        if ($brand_slug) {
+            $brand = Brand::where('slug', $brand_slug)->first();
+            $this->product_ids = $brand->products()->pluck('id');
                 \Illuminate\Support\Facades\Log::info('Бренд найден', [
                     'brand_id' => $brand->id ?? null,
                     'brand_name' => $brand->name ?? null,
                     'product_count' => count($this->product_ids)
                 ]);
-            }
-            if ($products) {
-                $this->product_ids = $products;
+        }
+        if ($products) {
+            $this->product_ids = $products;
                 \Illuminate\Support\Facades\Log::info('Установлены ID товаров', [
                     'product_count' => count($this->product_ids)
                 ]);
             }
             
             // Устанавливаем диапазон цен по умолчанию, если не указан в URL
-            if ($this->priceFrom === null && $this->priceTo === null) {
-                $priceRange = $this->getPriceRangeProperty();
-                $this->priceFrom = $priceRange->min_price;
-                $this->priceTo = $priceRange->max_price;
-                
+        if ($this->priceFrom === null && $this->priceTo === null) {
+            $priceRange = $this->getPriceRangeProperty();
+            $this->priceFrom = $priceRange->min_price;
+            $this->priceTo = $priceRange->max_price;
+
                 \Illuminate\Support\Facades\Log::info('Установлен диапазон цен по умолчанию', [
                     'priceFrom' => $this->priceFrom,
                     'priceTo' => $this->priceTo
@@ -484,7 +484,7 @@ class Items extends Component
             $baseQuery = clone $query;
             $products = $baseQuery->with([
                 'variants', 
-                'variants.paramItems', 
+                'variants.paramItems.productParam', 
                 'variants.img'
             ])->select('products.*')->get();
             
@@ -586,29 +586,29 @@ class Items extends Component
             }
             
             // Применяем сортировку к коллекции вариаций
-            switch ($this->selectedSort) {
-                case 'price_asc':
+        switch ($this->selectedSort) {
+            case 'price_asc':
                     $variants = $variants->sortBy(function ($variant) {
                         return $variant->new_price > 0 ? $variant->new_price : $variant->price;
                     })->values();
-                    break;
-                case 'price_desc':
+                break;
+            case 'price_desc':
                     $variants = $variants->sortByDesc(function ($variant) {
                         return $variant->new_price > 0 ? $variant->new_price : $variant->price;
                     })->values();
-                    break;
-                case 'name_asc':
+                break;
+            case 'name_asc':
                     $variants = $variants->sortBy('name')->values();
-                    break;
-                case 'name_desc':
+                break;
+            case 'name_desc':
                     $variants = $variants->sortByDesc('name')->values();
-                    break;
-                default:
+                break;
+            default:
                     // По умолчанию сортировка по популярности (id)
                     $variants = $variants->sortBy('id')->values();
-                    break;
-            }
-            
+                break;
+        }
+
             // Применяем пагинацию к коллекции вариаций
             $perPage = 18;
             $page = request()->get('page', 1);
@@ -638,7 +638,7 @@ class Items extends Component
 
     public function getAvailableBrandsProperty()
     {
-        if ($this->category) {
+                if ($this->category) {
             $query = $this->category->products();
         } elseif ($this->product_ids) {
             $query = \App\Models\Product::whereIn('id', $this->product_ids);
@@ -661,10 +661,10 @@ class Items extends Component
                     $q->where(function ($sq) {
                         $sq->where('new_price', 0)->orWhereNull('new_price');
                     });
-                    if ($this->priceFrom !== null) {
+                if ($this->priceFrom !== null) {
                         $q->where('price', '>=', $this->priceFrom);
-                    }
-                    if ($this->priceTo !== null) {
+                }
+                if ($this->priceTo !== null) {
                         $q->where('price', '<=', $this->priceTo);
                     }
                 });
@@ -685,7 +685,7 @@ class Items extends Component
             $brand->products_count = $brandCounts[$brand->id] ?? 0;
             $brand->would_have_results = $brand->products_count > 0;
         }
-        
+
         return $brands;
     }
 
@@ -751,107 +751,88 @@ class Items extends Component
             $paramGroups = [];
             
             // Получаем все вариации товаров, соответствующие текущим фильтрам
-            $products = $this->products;
+            $variants = $this->products;
             
-            if (!$products) {
-                \Illuminate\Support\Facades\Log::warning('Нет продуктов для получения параметров');
+            if (!$variants) {
+                \Illuminate\Support\Facades\Log::warning('Нет вариаций для получения параметров');
                 return collect();
             }
             
-            \Illuminate\Support\Facades\Log::info('Получены продукты для параметров', [
-                'products_count' => $products->count(),
-                'products_ids' => $products->pluck('id')->toArray()
+            \Illuminate\Support\Facades\Log::info('Получены вариации для параметров', [
+                'variants_count' => $variants->count(),
+                'variants_ids' => $variants->pluck('id')->toArray()
             ]);
             
-            // Собираем все параметры из вариаций
-            foreach ($products as $product) {
-                if (!$product) {
-                    \Illuminate\Support\Facades\Log::warning('Обнаружен null продукт');
+            // Обрабатываем каждую вариацию
+            foreach ($variants as $variant) {
+                if (!$variant) {
+                    \Illuminate\Support\Facades\Log::warning('Обнаружена null вариация');
                     continue;
                 }
                 
-                \Illuminate\Support\Facades\Log::info('Обработка продукта для параметров', [
-                    'product_id' => $product->id,
-                    'product_name' => $product->name,
-                    'has_variants' => $product->variants && $product->variants->count() > 0
+                \Illuminate\Support\Facades\Log::info('Обработка вариации для параметров', [
+                    'variant_id' => $variant->id,
+                    'variant_name' => $variant->name,
+                    'has_param_items' => $variant->paramItems && $variant->paramItems->count() > 0,
+                    'param_items_count' => $variant->paramItems ? $variant->paramItems->count() : 0
                 ]);
                 
-                // Получаем все вариации продукта
-                if (!$product->variants) {
-                    \Illuminate\Support\Facades\Log::warning('У продукта нет вариаций', [
-                        'product_id' => $product->id,
-                        'product_name' => $product->name
+                // Добавляем параметры вариации
+                if (!$variant->paramItems || $variant->paramItems->count() === 0) {
+                    \Illuminate\Support\Facades\Log::warning('Вариация без параметров', [
+                        'variant_id' => $variant->id,
+                        'variant_name' => $variant->name
                     ]);
                     continue;
                 }
                 
-                $variants = $product->variants;
+                // Загружаем отношение paramItems, если оно не загружено
+                if (!$variant->relationLoaded('paramItems')) {
+                    $variant->load('paramItems.productParam');
+                }
                 
-                foreach ($variants as $variant) {
-                    if (!$variant) {
-                        \Illuminate\Support\Facades\Log::warning('Обнаружена null вариация');
+                foreach ($variant->paramItems as $paramItem) {
+                    if (!$paramItem) {
+                        \Illuminate\Support\Facades\Log::warning('Обнаружен null параметр вариации');
                         continue;
                     }
                     
-                    \Illuminate\Support\Facades\Log::info('Обработка вариации для параметров', [
-                        'variant_id' => $variant->id,
-                        'variant_name' => $variant->name,
-                        'has_param_items' => $variant->paramItems && $variant->paramItems->count() > 0,
-                        'param_items' => $variant->paramItems ? $variant->paramItems->pluck('id')->toArray() : []
+                    // Получаем родительский параметр
+                    $param = $paramItem->productParam;
+                    
+                    if (!$param) {
+                        \Illuminate\Support\Facades\Log::warning('Параметр вариации без родительского параметра', [
+                            'param_item_id' => $paramItem->id,
+                            'param_item_title' => $paramItem->title
+                        ]);
+                        continue;
+                    }
+                    
+                    \Illuminate\Support\Facades\Log::info('Добавление параметра вариации', [
+                        'param_id' => $param->id,
+                        'param_name' => $param->name,
+                        'param_item_id' => $paramItem->id,
+                        'param_item_title' => $paramItem->title,
+                        'param_item_value' => $paramItem->value
                     ]);
                     
-                    // Добавляем параметры вариации
-                    if (!$variant->paramItems) {
-                        \Illuminate\Support\Facades\Log::warning('Вариация без параметров', [
-                            'variant_id' => $variant->id,
-                            'variant_name' => $variant->name
-                        ]);
-                        continue;
+                    // Добавляем группу параметров, если ее еще нет
+                    if (!isset($paramGroups[$param->id])) {
+                        $paramGroups[$param->id] = [
+                            'id' => $param->id,
+                            'name' => $param->name,
+                            'items' => []
+                        ];
                     }
                     
-                    foreach ($variant->paramItems as $paramItem) {
-                        if (!$paramItem) {
-                            \Illuminate\Support\Facades\Log::warning('Обнаружен null параметр вариации');
-                            continue;
-                        }
-                        
-                        // Получаем родительский параметр
-                        $param = $paramItem->productParam;
-                        
-                        if (!$param) {
-                            \Illuminate\Support\Facades\Log::warning('Параметр вариации без родительского параметра', [
-                                'param_item_id' => $paramItem->id,
-                                'param_item_title' => $paramItem->title
-                            ]);
-                            continue;
-                        }
-                        
-                        \Illuminate\Support\Facades\Log::info('Добавление параметра вариации', [
-                            'param_id' => $param->id,
-                            'param_name' => $param->name,
-                            'param_item_id' => $paramItem->id,
-                            'param_item_title' => $paramItem->title,
-                            'param_item_value' => $paramItem->value
-                        ]);
-                        
-                        // Добавляем группу параметров, если ее еще нет
-                        if (!isset($paramGroups[$param->id])) {
-                            $paramGroups[$param->id] = [
-                                'id' => $param->id,
-                                'name' => $param->name,
-                                'items' => []
-                            ];
-                        }
-                        
-                        // Добавляем элемент параметра, если его еще нет
-                        if (!isset($paramGroups[$param->id]['items'][$paramItem->id])) {
-                            $paramGroups[$param->id]['items'][$paramItem->id] = [
-                                'id' => $paramItem->id,
-                                'title' => $paramItem->title,
-                                'value' => $paramItem->value,
-                                'selected' => in_array($paramItem->id, $this->selectedVariations)
-                            ];
-                        }
+                    // Добавляем элемент параметра, если его еще нет
+                    if (!isset($paramGroups[$param->id]['items'][$paramItem->id])) {
+                        $paramGroups[$param->id]['items'][$paramItem->id] = [
+                            'id' => $paramItem->id,
+                            'title' => $paramItem->title,
+                            'value' => $paramItem->value,
+                            'selected' => in_array($paramItem->id, $this->selectedVariations)
+                        ];
                     }
                 }
             }
