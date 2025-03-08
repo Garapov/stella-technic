@@ -142,30 +142,23 @@ class Product extends Model implements Searchable
 
     public function makeProductVariations()
     {
-        
-
-        // foreach (ProductVariant::where('product_id', $this->id)->get() as $var) {
-        //     $var->forceDelete();
-        // }
-
-        // foreach (ProductVariant::onlyTrashed()->where('product_id', $this->id)->get() as $vardel) {
-        //     $vardel->forceDelete();
-        // }
-        // return;
-
         $existingVariationsIds = ProductVariant::where('product_id', $this->id)->pluck('id')->toArray();
         $createdVariationsIds = [];
 
         foreach ($this->links as $link) {
-
             $name = "";
-
             $name .= $this->name;
+            
+            // Собираем параметры для привязки к вариации
+            $paramIds = [];
 
             foreach ($link['row'] as $param) {
                 $parametr = ProductParamItem::where('id', $param)->first();
 
                 if (!$parametr) continue;
+
+                // Добавляем параметр в список для привязки
+                $paramIds[] = $param;
 
                 $name .= " {$parametr->title}";
             }
@@ -183,6 +176,12 @@ class Product extends Model implements Searchable
             
             if ($findedVariant->trashed()) {
                 $findedVariant->restore();
+            }
+            
+            // Привязываем параметры к вариации
+            if (!empty($paramIds)) {
+                // Синхронизируем параметры, чтобы избежать дублирования
+                $findedVariant->paramItems()->sync($paramIds);
             }
         }
         

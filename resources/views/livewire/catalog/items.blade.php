@@ -1,12 +1,54 @@
-<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
+<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased" 
+    x-data="{ 
+        isLoading: false,
+        hasError: false,
+        errorMessage: '',
+        init() {
+            Livewire.on('filter-changed', () => {
+                this.isLoading = true;
+                this.hasError = false;
+                setTimeout(() => {
+                    this.isLoading = false;
+                }, 500);
+            });
+            
+            Livewire.on('filter-error', (message) => {
+                this.hasError = true;
+                this.errorMessage = message || 'Произошла ошибка при обработке фильтра';
+                this.isLoading = false;
+            });
+        }
+    }"
+>
     @if ($category || $product_ids)
         <div class="mx-auto container relative">
             <!-- Loading Overlay -->
-            <div wire:loading.flex wire:target="selectedCategories, selectedVariations, priceFrom, priceTo, updateSort, selectedBrands" 
-            class="fixed inset-0 z-[9999] items-center justify-center bg-black/20 backdrop-blur-sm">
+            <div x-show="isLoading" 
+                class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm">
                 <div class="flex items-center gap-2 rounded-lg bg-white/80 px-6 py-4 shadow-lg dark:bg-gray-800/80">
                     <div class="animate-spin w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full"></div>
                     <span class="text-gray-700 dark:text-gray-300">Загрузка...</span>
+                </div>
+            </div>
+            
+            <!-- Error Message -->
+            <div x-show="hasError" 
+                class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm"
+                x-on:click="hasError = false">
+                <div class="flex flex-col items-center gap-2 rounded-lg bg-white/80 px-6 py-4 shadow-lg dark:bg-gray-800/80 max-w-md">
+                    <div class="text-red-600 dark:text-red-400 text-xl mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        Ошибка
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300" x-text="errorMessage"></p>
+                    <button 
+                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        x-on:click="hasError = false"
+                    >
+                        Закрыть
+                    </button>
                 </div>
             </div>
             <!-- Heading & Filters -->
@@ -30,7 +72,7 @@
                         </button>
                         <div class="absolute right-0 top-[calc(100%+10px)] z-50 w-48 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
                             wire:click.outside="closeSorting"
-                            x-show="$wire.isSortingOpened"
+                            x-show="$wire.showSorting"
                             x-transition:enter="transition ease-out duration-100"
                             x-transition:enter-start="transform opacity-0 scale-95"
                             x-transition:enter-end="transform opacity-100 scale-100"
@@ -133,48 +175,44 @@
                                     </div>
                                 </div>
                                 
-                                @foreach ($this->availableFilters as $param)
+                                @foreach ($this->availableFilters as $filter)
                                     <div class="mb-4">
                                         <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                            {{ $param->name }}
+                                            {{ $filter['name'] }}
                                         </h4>
                                         
-                                        @if($param->type === 'color')
-                                            <div class="flex flex-wrap gap-2">
-                                                @foreach ($param->params as $item)
-                                                    <label for="param-{{ $item->id }}" 
-                                                        @if(!$item->would_have_results && !in_array($item->id, $selectedVariations))
-                                                            class="relative cursor-not-allowed"
-                                                        @else
-                                                            class="relative cursor-pointer"
-                                                        @endif>
-                                                        <input type="checkbox"
-                                                            id="param-{{ $item->id }}"
-                                                            value="{{ $item->id }}"
-                                                            wire:model.live="selectedVariations"
-                                                            @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) disabled @endif
-                                                            class="sr-only peer">
-                                                        <div class="w-8 h-8 rounded-full border-2 peer-checked:border-blue-500"
-                                                            style="background-color: {{ $item->value }}; @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) opacity: 0.3; filter: grayscale(70%); @endif"
-                                                            title="{{ $item->title }}">
-                                                        </div>
-                                                        <div class="absolute inset-0 rounded-full peer-checked:ring-2 peer-checked:ring-blue-500 peer-checked:ring-offset-2"></div>
-                                                    </label>
-                                                @endforeach
-                                            </div>
-                                        @else
+                                        @if($filter['type'] === 'param')
                                             <div class="space-y-2">
-                                                @foreach ($param->params as $item)
+                                                @foreach ($filter['items'] as $item)
                                                     <div class="flex items-center">
                                                         <input type="checkbox"
-                                                            id="param-{{ $item->id }}"
-                                                            value="{{ $item->id }}"
-                                                            wire:model.live="selectedVariations"
-                                                            @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) disabled @endif
-                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) opacity-50 cursor-not-allowed @endif">
-                                                        <label for="param-{{ $item->id }}"
-                                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 @if(!$item->would_have_results && !in_array($item->id, $selectedVariations)) opacity-50 @endif">
-                                                            {{ $item->title }}
+                                                            id="param-{{ $item['id'] }}"
+                                                            value="{{ $item['id'] }}"
+                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                            @checked($item['selected'])
+                                                            wire:click.debounce.500ms="updateParamSelection('{{ $filter['name'] }}', {{ $item['id'] }})"
+                                                            wire:loading.attr="disabled"
+                                                            wire:target="updateParamSelection">
+                                                        <label for="param-{{ $item['id'] }}"
+                                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                                            {{ $item['title'] }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @elseif($filter['type'] === 'brand')
+                                            <div class="space-y-2">
+                                                @foreach ($filter['items'] as $brand)
+                                                    <div class="flex items-center">
+                                                        <input type="checkbox"
+                                                            id="brand-{{ $brand['id'] }}"
+                                                            value="{{ $brand['id'] }}"
+                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                            @checked($brand['selected'])
+                                                            wire:model.live="selectedBrands">
+                                                        <label for="brand-{{ $brand['id'] }}"
+                                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                                            {{ $brand['title'] }}
                                                         </label>
                                                     </div>
                                                 @endforeach
@@ -182,54 +220,6 @@
                                         @endif
                                     </div>
                                 @endforeach
-
-                                <!-- Brand Filter -->
-                                <div class="mb-4">
-                                    <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        Бренд
-                                    </h4>
-                                    <ul class="space-y-3">
-                                        @foreach ($this->availableBrands as $brand)
-                                            <li>
-                                                <label for="brand-{{ $brand->id }}" 
-                                                    @class([
-                                                        'flex items-center p-2 rounded-lg transition-colors',
-                                                        'hover:bg-gray-50 cursor-pointer' => $brand->would_have_results,
-                                                        'opacity-50 cursor-not-allowed' => !$brand->would_have_results
-                                                    ])>
-                                                    <input type="checkbox" 
-                                                        id="brand-{{ $brand->id }}"
-                                                        wire:model.live="selectedBrands"
-                                                        value="{{ $brand->id }}"
-                                                        @disabled(!$brand->would_have_results)
-                                                        @class([
-                                                            'h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500',
-                                                            'dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600',
-                                                            'cursor-not-allowed' => !$brand->would_have_results
-                                                        ])>
-                                                    <div class="flex items-center gap-3 ms-2">
-                                                        @if($brand->image)
-                                                            <img src="{{ asset('storage/' . $brand->image) }}" 
-                                                                alt="{{ $brand->name }}" 
-                                                                class="w-8 h-8 object-contain">
-                                                        @endif
-                                                        <span @class([
-                                                            'text-sm font-medium',
-                                                            'text-gray-900 dark:text-gray-300' => $brand->would_have_results,
-                                                            'text-gray-400 dark:text-gray-500' => !$brand->would_have_results
-                                                        ])>
-                                                            {{ $brand->name }}
-                                                            @if($brand->products_count > 0)
-                                                                <span class="text-xs text-gray-500">({{ $brand->products_count }})</span>
-                                                            @endif
-                                                        </span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                                <!-- End Brand Filter -->
                             </div>
                         </div>
                     </div>
@@ -253,10 +243,11 @@
                         </div>
                     @else
                         <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 @if ($display_filter) lg:grid-cols-2 xl:grid-cols-3 @else lg:grid-cols-3 xl:grid-cols-4 @endif">
-                            @foreach ($this->products as $product)
-                                @livewire('general.product', [
-                                    'product' => $product,
-                                ], key($product->id))
+                            @foreach ($this->products as $variant)
+                                @livewire('general.product-variant', [
+                                    'variant' => $variant,
+                                    'product' => $variant->product,
+                                ], key('variant_' . $variant->id))
                             @endforeach
                         </div>
                     @endif
