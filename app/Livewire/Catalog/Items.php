@@ -638,55 +638,47 @@ class Items extends Component
 
     public function getAvailableBrandsProperty()
     {
-                if ($this->category) {
-            $query = $this->category->products();
-        } elseif ($this->product_ids) {
-            $query = \App\Models\Product::whereIn('id', $this->product_ids);
-        } else {
-            $query = \App\Models\Product::query();
-        }
-
-        // Применяем фильтр по цене, если он установлен
-        if ($this->priceFrom !== null || $this->priceTo !== null) {
-            $query->where(function ($query) {
-                $query->where(function ($q) {
-                    $q->where('new_price', '>', 0);
-                    if ($this->priceFrom !== null) {
-                        $q->where('new_price', '>=', $this->priceFrom);
-                    }
-                    if ($this->priceTo !== null) {
-                        $q->where('new_price', '<=', $this->priceTo);
-                    }
-                })->orWhere(function ($q) {
-                    $q->where(function ($sq) {
-                        $sq->where('new_price', 0)->orWhereNull('new_price');
-                    });
-                if ($this->priceFrom !== null) {
-                        $q->where('price', '>=', $this->priceFrom);
-                }
-                if ($this->priceTo !== null) {
-                        $q->where('price', '<=', $this->priceTo);
-                    }
+        try {
+            // Получаем все бренды из базы данных
+            $allBrands = \App\Models\Brand::all();
+            $activeBrandIds = collect();
+            
+            // Получаем вариации товаров
+            $variants = $this->products;
+            
+            if (!$variants || $variants->isEmpty()) {
+                // Если нет вариаций, возвращаем все бренды как неактивные
+                return $allBrands->map(function($brand) {
+                    $brand->would_have_results = false;
+                    $brand->selected = in_array($brand->id, $this->selectedBrands);
+                    return $brand;
                 });
+            }
+            
+            // Собираем ID брендов из вариаций
+            foreach ($variants as $variant) {
+                if ($variant->product && $variant->product->brand_id) {
+                    $activeBrandIds->push($variant->product->brand_id);
+                }
+            }
+            
+            // Делаем уникальными
+            $activeBrandIds = $activeBrandIds->unique();
+            
+            // Отмечаем активные и неактивные бренды
+            return $allBrands->map(function($brand) use ($activeBrandIds) {
+                $brand->would_have_results = $activeBrandIds->contains($brand->id);
+                $brand->selected = in_array($brand->id, $this->selectedBrands);
+                return $brand;
             });
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Ошибка в методе getAvailableBrandsProperty', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return collect();
         }
-
-        // Получаем все бренды товаров, которые соответствуют фильтрам
-        $brands = \App\Models\Brand::whereIn('id', $query->select('products.brand_id')->pluck('brand_id'))->get();
-        
-        // Подсчитываем количество товаров для каждого бренда
-        $brandCounts = $query->select('products.brand_id')
-            ->selectRaw('COUNT(*) as count')
-            ->groupBy('products.brand_id')
-            ->pluck('count', 'brand_id')
-            ->toArray();
-        
-        foreach ($brands as $brand) {
-            $brand->products_count = $brandCounts[$brand->id] ?? 0;
-            $brand->would_have_results = $brand->products_count > 0;
-        }
-
-        return $brands;
     }
 
     public function getPriceRangeProperty()
@@ -753,17 +745,50 @@ class Items extends Component
             // Получаем все вариации товаров, соответствующие текущим фильтрам
             $variants = $this->products;
             
-            if (!$variants) {
+            if (!$variants || $variants->isEmpty()) {
                 \Illuminate\Support\Facades\Log::warning('Нет вариаций для получения параметров');
-                return collect();
+                
+                // Получаем все параметры из базы данных
+                $allParams = \App\Models\ProductParam::with('params')->get();
+                
+                foreach ($allParams as $param) {
+                    $paramGroups[$param->id] = [
+                        'id' => $param->id,
+                        'name' => $param->name,
+                        'items' => []
+                    ];
+                    
+                    foreach ($param->params as $item) {
+                        $paramGroups[$param->id]['items'][$item->id] = [
+                            'id' => $item->id,
+                            'title' => $item->title,
+                            'value' => $item->value,
+                            'selected' => in_array($item->id, $this->selectedVariations),
+                            'would_have_results' => false
+                        ];
+                    }
+                }
+                
+                // Преобразуем массив групп параметров в коллекцию
+                $paramItems = collect();
+                foreach ($paramGroups as $paramGroup) {
+                    $paramGroup['items'] = collect($paramGroup['items'])->values();
+                    $paramItems->push($paramGroup);
+                }
+                
+                return $paramItems;
             }
+            
+            // Получаем все параметры из базы данных для полного списка
+            $allParams = \App\Models\ProductParam::with('params')->get();
+            $activeParamItemIds = collect();
             
             \Illuminate\Support\Facades\Log::info('Получены вариации для параметров', [
                 'variants_count' => $variants->count(),
                 'variants_ids' => $variants->pluck('id')->toArray()
             ]);
             
-            // Обрабатываем каждую вариацию
+            // Обрабатываем каждую вариацию для сбора активных параметров
             foreach ($variants as $variant) {
                 if (!$variant) {
                     \Illuminate\Support\Facades\Log::warning('Обнаружена null вариация');
@@ -816,6 +841,9 @@ class Items extends Component
                         'param_item_value' => $paramItem->value
                     ]);
                     
+                    // Добавляем ID параметра в список активных
+                    $activeParamItemIds->push($paramItem->id);
+                    
                     // Добавляем группу параметров, если ее еще нет
                     if (!isset($paramGroups[$param->id])) {
                         $paramGroups[$param->id] = [
@@ -831,7 +859,31 @@ class Items extends Component
                             'id' => $paramItem->id,
                             'title' => $paramItem->title,
                             'value' => $paramItem->value,
-                            'selected' => in_array($paramItem->id, $this->selectedVariations)
+                            'selected' => in_array($paramItem->id, $this->selectedVariations),
+                            'would_have_results' => true
+                        ];
+                    }
+                }
+            }
+            
+            // Добавляем все параметры, которых нет в активных, как неактивные
+            foreach ($allParams as $param) {
+                if (!isset($paramGroups[$param->id])) {
+                    $paramGroups[$param->id] = [
+                        'id' => $param->id,
+                        'name' => $param->name,
+                        'items' => []
+                    ];
+                }
+                
+                foreach ($param->params as $item) {
+                    if (!isset($paramGroups[$param->id]['items'][$item->id])) {
+                        $paramGroups[$param->id]['items'][$item->id] = [
+                            'id' => $item->id,
+                            'title' => $item->title,
+                            'value' => $item->value,
+                            'selected' => in_array($item->id, $this->selectedVariations),
+                            'would_have_results' => false
                         ];
                     }
                 }
@@ -851,6 +903,7 @@ class Items extends Component
                     return [
                         'group' => $group['name'],
                         'items_count' => $group['items']->count(),
+                        'active_items_count' => $group['items']->where('would_have_results', true)->count(),
                         'items' => $group['items']->pluck('title')->toArray()
                     ];
                 })->toArray()
@@ -919,7 +972,8 @@ class Items extends Component
                         return [
                             'id' => $brand->id,
                             'title' => $brand->name,
-                            'selected' => in_array($brand->id, $this->selectedBrands)
+                            'selected' => $brand->selected,
+                            'would_have_results' => $brand->would_have_results
                         ];
                     })
                 ]);

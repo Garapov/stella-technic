@@ -174,8 +174,22 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                @foreach ($this->availableFilters as $filter)
+                                @if (Auth::user() && Auth::user()->hasRole('super_admin'))
+                                    <!-- Debug info -->
+                                    <div class="mb-4 p-2 bg-gray-100 dark:bg-gray-800 rounded">
+                                        <h5 class="text-sm font-medium text-gray-900 dark:text-white mb-1">Debug Info:</h5>
+                                        <p class="text-xs text-gray-700 dark:text-gray-300">Filters count: {{ count($filters) }}</p>
+                                        @foreach ($filters as $filter)
+                                            <div class="mt-1">
+                                                <p class="text-xs text-gray-700 dark:text-gray-300">
+                                                    Filter: {{ $filter['name'] }} ({{ $filter['type'] }}) - 
+                                                    Items: {{ count($filter['items']) }}
+                                                </p>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif  
+                                @foreach ($filters as $filter)
                                     <div class="mb-4">
                                         <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                             {{ $filter['name'] }}
@@ -188,13 +202,14 @@
                                                         <input type="checkbox"
                                                             id="param-{{ $item['id'] }}"
                                                             value="{{ $item['id'] }}"
-                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                            @if(!$item['would_have_results'] && !in_array($item['id'], $selectedVariations)) disabled @endif
+                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 @if(!$item['would_have_results'] && !in_array($item['id'], $selectedVariations)) opacity-50 cursor-not-allowed @endif"
                                                             @checked($item['selected'])
-                                                            wire:click="updateParamSelection('{{ $filter['name'] }}', {{ $item['id'] }})"
+                                                            wire:click.debounce.500ms="updateParamSelection('{{ $filter['name'] }}', {{ $item['id'] }})"
                                                             wire:loading.attr="disabled"
                                                             wire:target="updateParamSelection">
                                                         <label for="param-{{ $item['id'] }}"
-                                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 @if(!$item['would_have_results'] && !in_array($item['id'], $selectedVariations)) opacity-50 @endif">
                                                             {{ $item['title'] }}
                                                         </label>
                                                     </div>
@@ -207,11 +222,12 @@
                                                         <input type="checkbox"
                                                             id="brand-{{ $brand['id'] }}"
                                                             value="{{ $brand['id'] }}"
-                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                            @if(!$brand['would_have_results'] && !in_array($brand['id'], $selectedBrands)) disabled @endif
+                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 @if(!$brand['would_have_results'] && !in_array($brand['id'], $selectedBrands)) opacity-50 cursor-not-allowed @endif"
                                                             @checked($brand['selected'])
                                                             wire:model.live="selectedBrands">
                                                         <label for="brand-{{ $brand['id'] }}"
-                                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 @if(!$brand['would_have_results'] && !in_array($brand['id'], $selectedBrands)) opacity-50 @endif">
                                                             {{ $brand['title'] }}
                                                         </label>
                                                     </div>
@@ -220,6 +236,7 @@
                                         @endif
                                     </div>
                                 @endforeach
+                                
                             </div>
                         </div>
                     </div>
