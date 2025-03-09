@@ -741,7 +741,6 @@ class Items extends Component
             \Illuminate\Support\Facades\Log::info('Начало метода getAvailableParamItemsProperty');
             
             $paramGroups = [];
-            $paramIds = collect(); // Для хранения ID параметров, которые есть у вариаций
             
             // Получаем все вариации товаров, соответствующие текущим фильтрам
             $variants = $this->products;
@@ -756,7 +755,38 @@ class Items extends Component
                 'variants_ids' => $variants->pluck('id')->toArray()
             ]);
             
-            // Сначала собираем все ID параметров и их элементов из вариаций
+            // Получаем все параметры для текущей категории (без учета фильтров)
+            $allCategoryParamItems = collect();
+            
+            if ($this->category) {
+                // Получаем все товары в категории без фильтров
+                $allCategoryProducts = $this->category->products()->with([
+                    'variants.paramItems.productParam'
+                ])->get();
+                
+                // Собираем все параметры из всех вариаций в категории
+                foreach ($allCategoryProducts as $product) {
+                    if (!$product->variants) continue;
+                    
+                    foreach ($product->variants as $variant) {
+                        if (!$variant->paramItems) continue;
+                        
+                        foreach ($variant->paramItems as $paramItem) {
+                            if (!$paramItem->productParam) continue;
+                            
+                            $allCategoryParamItems->push([
+                                'id' => $paramItem->id,
+                                'param_id' => $paramItem->productParam->id,
+                                'param_name' => $paramItem->productParam->name,
+                                'title' => $paramItem->title,
+                                'value' => $paramItem->value
+                            ]);
+                        }
+                    }
+                }
+            }
+            
+            // Сначала собираем все ID параметров и их элементов из вариаций после фильтрации
             $activeParamItemIds = collect();
             $activeParamIds = collect();
             
@@ -791,11 +821,6 @@ class Items extends Component
                 foreach ($variant->paramItems as $paramItem) {
                     if (!$paramItem) {
                         \Illuminate\Support\Facades\Log::warning('Обнаружен null параметр вариации');
-                        continue;
-                    }
-
-                    if (!$paramItem->productParam->allow_filtering) {
-                        \Illuminate\Support\Facades\Log::warning('Отображение параметра отключено для фильтрации');
                         continue;
                     }
                     
@@ -856,13 +881,34 @@ class Items extends Component
                 'active_param_item_ids' => $activeParamItemIds->toArray()
             ]);
             
-            // Получаем только те параметры, которые есть в активных
-            $relevantParams = \App\Models\ProductParam::whereIn('id', $activeParamIds)
-                ->with(['params' => function($query) use ($activeParamItemIds) {
-                    // Загружаем только те элементы параметров, которые есть в активных
-                    $query->whereIn('id', $activeParamItemIds);
-                }])
-                ->get();
+            // Добавляем все параметры из категории, которых нет в активных, как неактивные
+            if ($allCategoryParamItems->isNotEmpty()) {
+                $allCategoryParamItems = $allCategoryParamItems->unique(function ($item) {
+                    return $item['param_id'] . '-' . $item['id'];
+                });
+                
+                foreach ($allCategoryParamItems as $item) {
+                    // Добавляем группу параметров, если ее еще нет
+                    if (!isset($paramGroups[$item['param_id']])) {
+                        $paramGroups[$item['param_id']] = [
+                            'id' => $item['param_id'],
+                            'name' => $item['param_name'],
+                            'items' => []
+                        ];
+                    }
+                    
+                    // Добавляем элемент параметра, если его еще нет
+                    if (!isset($paramGroups[$item['param_id']]['items'][$item['id']])) {
+                        $paramGroups[$item['param_id']]['items'][$item['id']] = [
+                            'id' => $item['id'],
+                            'title' => $item['title'],
+                            'value' => $item['value'],
+                            'selected' => in_array($item['id'], $this->selectedVariations),
+                            'would_have_results' => $activeParamItemIds->contains($item['id'])
+                        ];
+                    }
+                }
+            }
             
             // Добавляем выбранные параметры, даже если они не активны
             if (!empty($this->selectedVariations)) {
@@ -891,8 +937,11 @@ class Items extends Component
                             'title' => $item->title,
                             'value' => $item->value,
                             'selected' => true,
-                            'would_have_results' => false
+                            'would_have_results' => $activeParamItemIds->contains($item->id)
                         ];
+                    } else {
+                        // Если элемент уже есть, обновляем его статус
+                        $paramGroups[$param->id]['items'][$item->id]['selected'] = true;
                     }
                 }
             }
