@@ -69,12 +69,15 @@
             </a>
         </div>
 
-        @if($variant->param)
-            <div class="mt-2">
-                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    {{ $variant->param->productParam->name }}: {{ $variant->param->title }}
-                </span>
-            </div>
+        @if($variant->paramItems)
+            <ul class="flex flex-col gap-4">
+                @foreach($variant->paramItems as $paramItem)
+                    <li class="flex flex-center justify-between text-xs">
+                        <span>{{ $paramItem->productParam->name }}</span>
+                        <span>{{ $paramItem->title }}</span>
+                    </li>
+                @endforeach
+            </ul>
         @endif
 
         <div class="mt-4 flex items-center justify-between gap-4">

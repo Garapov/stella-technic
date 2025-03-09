@@ -180,7 +180,7 @@ class ProductResource extends Resource
                                         ->grid(3)
                                         ->defaultItems(3)
                                         ->minItems(2)
-                                        ->maxItems(3)
+                                        ->maxItems(6)
                                         ->simple(
                                             Forms\Components\Select::make('parametrs')
                                                 ->label('Параметр')

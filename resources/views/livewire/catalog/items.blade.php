@@ -114,7 +114,7 @@
                                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Фильтры</h3>
                                 </div>
 
-                                @if(!empty($selectedVariations) || $priceFrom !== null || $priceTo !== null)
+                                @if(!empty($selectedVariations))
                                     <button
                                         wire:click="resetFilters"
                                         class="w-full mb-6 inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
@@ -190,7 +190,7 @@
                                                             value="{{ $item['id'] }}"
                                                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                                             @checked($item['selected'])
-                                                            wire:click.debounce.500ms="updateParamSelection('{{ $filter['name'] }}', {{ $item['id'] }})"
+                                                            wire:click="updateParamSelection('{{ $filter['name'] }}', {{ $item['id'] }})"
                                                             wire:loading.attr="disabled"
                                                             wire:target="updateParamSelection">
                                                         <label for="param-{{ $item['id'] }}"
