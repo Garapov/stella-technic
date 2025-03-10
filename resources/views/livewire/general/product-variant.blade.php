@@ -2,6 +2,9 @@
     cart_quantity: 1,
     product: @js($product),
     variant: @js($variant),
+    init () {
+        console.log(this.variant);
+    },
     addVariationToCart: function () {
         $store.cart.addVariationToCart({
             product: this.product,
@@ -72,6 +75,9 @@
         @if($variant->paramItems)
             <ul class="flex flex-col gap-4">
                 @foreach($variant->paramItems as $paramItem)
+                    @if (!$paramItem->productParam->show_on_preview)
+                        @continue
+                    @endif
                     <li class="flex flex-center justify-between text-xs">
                         <span>{{ $paramItem->productParam->name }}</span>
                         <span>{{ $paramItem->title }}</span>

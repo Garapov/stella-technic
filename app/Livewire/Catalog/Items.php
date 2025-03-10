@@ -683,56 +683,112 @@ class Items extends Component
 
     public function getPriceRangeProperty()
     {
-        if ($this->category) {
-            $query = $this->category->products();
-        } elseif ($this->product_ids) {
-            $query = \App\Models\Product::whereIn('id', $this->product_ids);
-        } else {
-            $query = \App\Models\Product::query();
+        try {
+            \Illuminate\Support\Facades\Log::info('Начало метода getPriceRangeProperty');
+            
+            // Получаем все вариации товаров без учета ценовых фильтров
+            $variants = collect();
+            
+            if ($this->category) {
+                // Получаем все товары в категории
+                $query = $this->category->products();
+            } elseif ($this->product_ids) {
+                $query = \App\Models\Product::whereIn('id', $this->product_ids);
+            } else {
+                $query = \App\Models\Product::query();
+            }
+            
+            // Применяем фильтр по брендам, если он выбран
+            if (!empty($this->selectedBrands)) {
+                $query->whereIn('brand_id', $this->selectedBrands);
+            }
+            
+            // Применяем фильтр по параметрам, если он выбран
+            if (!empty($this->selectedVariations)) {
+                $products = $query->with(['variants.paramItems'])->get();
+                
+                foreach ($products as $product) {
+                    if (!$product->variants) continue;
+                    
+                    foreach ($product->variants as $variant) {
+                        $variantMatches = true;
+                        
+                        if (!$variant->paramItems) {
+                            $variantMatches = false;
+                            continue;
+                        }
+                        
+                        $variantParamIds = $variant->paramItems->pluck('id')->toArray();
+                        
+                        // Проверяем, содержит ли вариация все выбранные параметры
+                        foreach ($this->selectedVariations as $selectedParamId) {
+                            if (!in_array($selectedParamId, $variantParamIds)) {
+                                $variantMatches = false;
+                                break;
+                            }
+                        }
+                        
+                        if ($variantMatches) {
+                            $variants->push($variant);
+                        }
+                    }
+                }
+            } else {
+                // Если параметры не выбраны, получаем все вариации
+                $products = $query->with('variants')->get();
+                
+                foreach ($products as $product) {
+                    if (!$product->variants) continue;
+                    
+                    foreach ($product->variants as $variant) {
+                        $variants->push($variant);
+                    }
+                }
+            }
+            
+            // Если нет вариаций, возвращаем значения по умолчанию
+            if ($variants->isEmpty()) {
+                \Illuminate\Support\Facades\Log::info('Нет вариаций для расчета диапазона цен, используем значения по умолчанию');
+                return (object) [
+                    'min_price' => 0,
+                    'max_price' => 100000
+                ];
+            }
+            
+            // Рассчитываем минимальную и максимальную цену
+            $prices = $variants->map(function($variant) {
+                // Если есть цена со скидкой и она больше 0, используем ее, иначе используем обычную цену
+                return $variant->new_price > 0 ? $variant->new_price : $variant->price;
+            });
+            
+            $minPrice = $prices->min();
+            $maxPrice = $prices->max();
+            
+            // Если цены не определены, используем значения по умолчанию
+            if ($minPrice === null) $minPrice = 0;
+            if ($maxPrice === null) $maxPrice = 100000;
+            
+            \Illuminate\Support\Facades\Log::info('Рассчитан диапазон цен', [
+                'variants_count' => $variants->count(),
+                'min_price' => $minPrice,
+                'max_price' => $maxPrice
+            ]);
+            
+            return (object) [
+                'min_price' => $minPrice,
+                'max_price' => $maxPrice
+            ];
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Ошибка в методе getPriceRangeProperty', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return (object) [
+                'min_price' => 0,
+                'max_price' => 100000
+            ];
         }
-
-        // Применяем фильтр по брендам, если он выбран
-        if (!empty($this->selectedBrands)) {
-            $query->whereIn('brand_id', $this->selectedBrands);
-        }
-
-        // Получаем минимальную и максимальную цену
-        $minPriceNewPrice = $query->where('new_price', '>', 0)->min('new_price');
-        $minPriceRegular = $query->where(function($q) {
-            $q->where('new_price', 0)->orWhereNull('new_price');
-        })->min('price');
-        
-        $maxPriceNewPrice = $query->where('new_price', '>', 0)->max('new_price');
-        $maxPriceRegular = $query->where(function($q) {
-            $q->where('new_price', 0)->orWhereNull('new_price');
-        })->max('price');
-        
-        // Определяем минимальную цену
-        if ($minPriceNewPrice !== null && $minPriceRegular !== null) {
-            $minPrice = min($minPriceNewPrice, $minPriceRegular);
-        } elseif ($minPriceNewPrice !== null) {
-            $minPrice = $minPriceNewPrice;
-        } elseif ($minPriceRegular !== null) {
-            $minPrice = $minPriceRegular;
-        } else {
-            $minPrice = 0;
-        }
-        
-        // Определяем максимальную цену
-        if ($maxPriceNewPrice !== null && $maxPriceRegular !== null) {
-            $maxPrice = max($maxPriceNewPrice, $maxPriceRegular);
-        } elseif ($maxPriceNewPrice !== null) {
-            $maxPrice = $maxPriceNewPrice;
-        } elseif ($maxPriceRegular !== null) {
-            $maxPrice = $maxPriceRegular;
-        } else {
-            $maxPrice = 100000;
-        }
-
-        return (object) [
-            'min_price' => $minPrice,
-            'max_price' => $maxPrice
-        ];
     }
 
     public function getAvailableParamItemsProperty()
