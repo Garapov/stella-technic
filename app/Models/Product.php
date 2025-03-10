@@ -169,7 +169,12 @@ class Product extends Model implements Searchable
             ], [
                 'price' => $this->price,
                 'new_price' => $this->new_price,
-                'image' => $this->image
+                'image' => $this->image,
+                'short_description' => $this->short_description,
+                'description' => $this->description,
+                'is_popular' => $this->is_popular,
+                'count' => $this->count,
+                'synonims' => $this->synonims,
             ]);
 
             $createdVariationsIds[] = $findedVariant->id;

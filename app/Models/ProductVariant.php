@@ -9,12 +9,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Outerweb\ImageLibrary\Models\Image;
+use Spatie\Sluggable\HasSlug;
 use Illuminate\Support\Str;
+use Spatie\Sluggable\SlugOptions;
 
 class ProductVariant extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductVariantFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasSlug;
 
     protected $fillable = [
         'product_id',
@@ -24,12 +26,18 @@ class ProductVariant extends Model
         'price',
         'new_price',
         'image',
-        'sku',
-        'is_default'
+        'is_default',
+        'slug',
+        'short_description',
+        'description',
+        'is_popular',
+        'count',
+        'synonims',
     ];
 
     protected $casts = [
         'is_default' => 'boolean',
+        'is_popular' => 'boolean',
     ];
 
     protected $dates = ['deleted_at'];
@@ -37,6 +45,27 @@ class ProductVariant extends Model
     protected $with = [
         'img'
     ];
+
+    /**
+     * Get the options for generating the slug.
+     */
+    public function getSlugOptions() : SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate();
+    }
+
+
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     protected static function booted()
     {
