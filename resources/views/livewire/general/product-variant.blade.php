@@ -22,7 +22,7 @@
     @endif
 
     <div class="h-56 w-full {{ $product->trashed() ? 'opacity-50' : '' }}">
-        <a href="{{ route('client.product_detail', $product->slug) }}" wire:navigate>
+        <a href="{{ route('client.product_detail', $variant->slug) }}" wire:navigate>
             <img class="mx-auto h-full w-full"
                 src="/storage/{{ $image->uuid }}/filament-thumbnail.{{ $image->file_extension }}" alt="{{ $variant->name }}" />
         </a>
@@ -66,13 +66,13 @@
                 </div>
             </div>
 
-            <a href="{{ route('client.product_detail', $product->slug) }}"
+            <a href="{{ route('client.product_detail', $variant->slug) }}"
                 class="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate>
                 {{ $variant->name }}
             </a>
         </div>
 
-        @if($variant->paramItems)
+        @if($variant->paramItems || $variant->parametrs)
             <ul class="flex flex-col gap-4">
                 @foreach($variant->paramItems as $paramItem)
                     @if (!$paramItem->productParam->show_on_preview)
@@ -81,6 +81,15 @@
                     <li class="flex flex-center justify-between text-xs">
                         <span>{{ $paramItem->productParam->name }}</span>
                         <span>{{ $paramItem->title }}</span>
+                    </li>
+                @endforeach
+                @foreach($variant->parametrs as $parametr)
+                    @if (!$parametr->productParam->show_on_preview)
+                        @continue
+                    @endif
+                    <li class="flex flex-center justify-between text-xs">
+                        <span>{{ $parametr->productParam->name }}</span>
+                        <span>{{ $parametr->title }}</span>
                     </li>
                 @endforeach
             </ul>

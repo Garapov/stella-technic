@@ -91,6 +91,12 @@ class ProductVariant extends Model
             ->withTimestamps();
     }
 
+    public function parametrs(): BelongsToMany
+    {
+        return $this->belongsToMany(ProductParamItem::class, 'variation_product_param_item')
+            ->withTimestamps();
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class);

@@ -4,6 +4,7 @@ namespace App\Livewire\Product;
 
 use App\Models\Product;
 use App\Models\Image;
+use App\Models\ProductVariant;
 use Livewire\Component;
 
 class Detail extends Component
@@ -13,8 +14,9 @@ class Detail extends Component
 
     public function mount($slug) {
         // dd($this->product);
-        $this->product = Product::where('slug', $slug)->first();
-        $this->gallery = Image::whereIn('id', $this->product->gallery)->get();
+        $this->product = ProductVariant::where('slug', $slug)->first();
+        dd($this->product);
+        $this->gallery = Image::whereIn('id', $this->product->product->gallery)->get();
         // dd($this->gallery);
     }
     public function render()

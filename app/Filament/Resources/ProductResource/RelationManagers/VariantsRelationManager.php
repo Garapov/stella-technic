@@ -104,13 +104,13 @@ class VariantsRelationManager extends RelationManager
                             '2xl' => 3,
                         ])->columnSpan('full'),
                         Tab::make('Параметры')->schema([
-                            Forms\Components\Select::make('paramItems')
+                            Forms\Components\Select::make('parametrs')
                                 ->multiple()
-                                ->relationship('paramItems', 'title')
+                                ->relationship('parametrs', 'title')
                                 ->preload()
                                 ->createOptionForm([
                                     Forms\Components\Select::make('product_param_id')
-                                        ->relationship('productParam', 'name')
+                                        ->relationship('parametrs', 'name')
                                         ->required(),
                                     Forms\Components\TextInput::make('title')
                                         ->required()
