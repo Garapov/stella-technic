@@ -103,5 +103,15 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
         return Number::format($this->products()->where('price', '>', 0)->min('price') ?? 0, 0);
     }
 
+    public function variationsCount()
+    {
+        $count = 0;
+
+        foreach ($this->products as $product) {
+            $count += $product->variants->count();
+        }
+        return $count;
+    }
+
     
 }

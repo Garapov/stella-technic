@@ -4,14 +4,17 @@
     </div>
     <div class="flex flex-col items-start gap-2">
         <span class="bg-yellow-100 text-yellow-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-yellow-900 dark:text-yellow-300">
-            {{ count($category->products) . ' ' . (count($category->products) % 10 === 1 && count($category->products) % 100 !== 11 ? 'товар' : (count($category->products) % 10 >= 2 && count($category->products) % 10 <= 4 && (count($category->products) % 100 < 10 || count($category->products) % 100 >= 20) ? 'товара' : 'товаров')) }}
+            @php
+                $count = $category->variationsCount();
+            @endphp
+            {{ $count . ' ' . ($count % 10 === 1 && $count % 100 !== 11 ? 'товар' : ($count % 10 >= 2 && $count % 10 <= 4 && ($count % 100 < 10 || $count % 100 >= 20) ? 'товара' : 'товаров')) }}
         </span>
         <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ $category->title }}</h5>
         @if ($category->categories) 
             <ul class="flex flex-col gap-0.5">
                 @foreach ($category->categories as $subcategory)
-                    @if ($subcategory->products->count() > 0)
-                        <li><a href="{{ route('client.catalog', $subcategory->slug) }}" wire:navigate class="text-gray-500 hover:text-gray-900 dark:hover:text-white text-xs flex items-center gap-2">{{ $subcategory->title }} <span class="bg-yellow-100 text-yellow-800 text-sm font-medium px-1.5 py-0.5 rounded-sm dark:bg-yellow-900 dark:text-yellow-300 text-xs">{{ $subcategory->products->count() }}</span></a></li>
+                    @if ($subcategory->variationsCount() > 0)
+                        <li><a href="{{ route('client.catalog', $subcategory->slug) }}" wire:navigate class="text-gray-500 hover:text-gray-900 dark:hover:text-white text-xs flex items-center gap-2">{{ $subcategory->title }} <span class="bg-yellow-100 text-yellow-800 text-sm font-medium px-1.5 py-0.5 rounded-sm dark:bg-yellow-900 dark:text-yellow-300 text-xs">{{ $subcategory->variationsCount() }}</span></a></li>
                     @endif
                 @endforeach
             </ul>
