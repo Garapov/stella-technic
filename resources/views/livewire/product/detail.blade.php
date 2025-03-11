@@ -41,16 +41,24 @@
             <hr class="my-6 border-slate-300" />
 
             <div>
-                <h3 class="text-lg sm:text-xl font-semibold text-slate-900">Sizes</h3>
-                <div class="flex flex-wrap gap-4 mt-4">
-                    <button type="button"
-                        class="w-10 h-9 border border-slate-300 hover:border-blue-600 text-sm  flex items-center justify-center shrink-0">SM</button>
-                    <button type="button"
-                        class="w-10 h-9 border border-blue-600 hover:border-blue-600 text-sm  flex items-center justify-center shrink-0">MD</button>
-                    <button type="button"
-                        class="w-10 h-9 border border-slate-300 hover:border-blue-600 text-sm  flex items-center justify-center shrink-0">LG</button>
-                    <button type="button"
-                        class="w-10 h-9 border border-slate-300 hover:border-blue-600 text-sm  flex items-center justify-center shrink-0">XL</button>
+                <div class="parametrs">
+                    @foreach($groupedParams as $paramGroup)
+                        <div class="mb-6">
+                            <h3 class="text-lg sm:text-xl font-semibold text-slate-900">{{ $paramGroup['name'] }}</h3>
+                            <div class="flex flex-wrap gap-4 mt-4">
+                                @foreach($paramGroup['values'] as $value)
+                                    <a href="{{ route('client.product_detail', $variation->product->variants->where('id', $value['variant_id'])->first()->slug) }}"
+                                        @class([
+                                            'px-4 h-9 border text-sm flex items-center justify-center shrink-0',
+                                            'border-blue-600 bg-blue-50' => $value['is_current'],
+                                            'border-slate-300 hover:border-blue-600' => !$value['is_current']
+                                        ]) wire:navigate>
+                                        {{ $value['title'] }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
 
                 <div class="mt-6 flex flex-wrap gap-4">
