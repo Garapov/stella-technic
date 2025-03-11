@@ -30,7 +30,6 @@
         <div class="w-full">
             <div>
                 <h1 class="text-lg sm:text-xl font-semibold text-slate-900">{{ $variation->name }}</h1>
-                <p class="text-slate-500 mt-2 text-sm">{{ $variation->short_description }}</p>
                 <div class="flex items-center flex-wrap gap-4 mt-6">
                     <h4 class="text-slate-900 text-2xl sm:text-3xl font-semibold">{{ $variation->new_price ? Number::format($variation->new_price, 0) : Number::format($variation->price, 0) }} ₽</h4>
                     @if ($variation->new_price)

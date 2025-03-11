@@ -66,7 +66,6 @@ class VariantsRelationManager extends RelationManager
                         ])->columnSpan('full'),
                         Tab::make('Описание')->schema([
                                 Forms\Components\Textarea::make('short_description')
-                                    ->required()
                                     ->label('Короткое описание')
                                     ->columnSpanFull(),
                                 Forms\Components\RichEditor::make('description')
@@ -97,7 +96,7 @@ class VariantsRelationManager extends RelationManager
                                 ImagePicker::make('image')
                                     ->label('Картинка')
                                     ->required()
-                                    ->columnSpan('1'),
+                                    ->columnSpan('2'),
                         ])->columns([
                             'sm' => 1,
                             'xl' => 2,
@@ -108,16 +107,6 @@ class VariantsRelationManager extends RelationManager
                                 ->multiple()
                                 ->relationship('parametrs', 'title')
                                 ->preload()
-                                ->createOptionForm([
-                                    Forms\Components\Select::make('product_param_id')
-                                        ->relationship('parametrs', 'name')
-                                        ->required(),
-                                    Forms\Components\TextInput::make('title')
-                                        ->required()
-                                        ->maxLength(255),
-                                    Forms\Components\TextInput::make('value')
-                                        ->required()
-                                ])
                                 ->options(function () {
                                     return ProductParamItem::query()
                                         ->with('productParam')
@@ -141,14 +130,12 @@ class VariantsRelationManager extends RelationManager
                     ->label('Картинка'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Название'),
+                Tables\Columns\TextColumn::make('sku')
+                    ->label('Артикул'),
                 Tables\Columns\TextColumn::make('price')
                     ->money('RUB', locale: 'ru')
                     ->sortable()
                     ->label('Цена'),
-                Tables\Columns\TextColumn::make('new_price')
-                    ->money('RUB', locale: 'ru')
-                    ->sortable()
-                    ->label('Цена со скидкой'),
                 Tables\Columns\ToggleColumn::make('is_popular')
                     ->label('Популярный'),
                 Tables\Columns\ToggleColumn::make('is_default')

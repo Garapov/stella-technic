@@ -50,6 +50,12 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
             ->saveSlugsTo('slug');
     }
 
+    public function paramItems(): BelongsToMany
+    {
+        return $this->belongsToMany(ProductParamItem::class, 'product_category_product_param_item')
+            ->withTimestamps();
+    }
+
     public function getSearchResult(): SearchResult
      {
         $url = route('client.product_detail', $this->slug);

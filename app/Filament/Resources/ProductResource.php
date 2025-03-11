@@ -64,7 +64,6 @@ class ProductResource extends Resource
                                     ->numeric()
                                     ->label('Остаток'),
                                 Forms\Components\TextInput::make('sku')
-                                    ->required()
                                     ->label('Артикул'),
                                 Forms\Components\Toggle::make('is_popular')
                                     ->label('Популярный')
@@ -76,7 +75,6 @@ class ProductResource extends Resource
                         ])->columnSpan('full'),
                         Tab::make('Описание')->schema([
                                 Forms\Components\Textarea::make('short_description')
-                                    ->required()
                                     ->label('Короткое описание')
                                     ->columnSpanFull(),
                                 Forms\Components\RichEditor::make('description')
@@ -155,6 +153,8 @@ class ProductResource extends Resource
                                 ->label(false)
                                 ->addActionLabel('Добавить вариацию')
                                 ->defaultItems(1)
+                                ->collapsible()
+                                ->collapsed()
                                 ->reorderable(false)
                                 ->itemLabel(function (array $state, Get $get): string {
                                     $title = "";
@@ -187,6 +187,8 @@ class ProductResource extends Resource
                                                 ->distinct()
                                                 ->required()
                                                 ->live()
+                                                ->searchable()
+                                                ->native(false)
                                                 ->options(function () {
                                                     return ProductParamItem::query()
                                                         ->with('productParam')

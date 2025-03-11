@@ -9,7 +9,7 @@
             @endphp
             {{ $count . ' ' . ($count % 10 === 1 && $count % 100 !== 11 ? 'товар' : ($count % 10 >= 2 && $count % 10 <= 4 && ($count % 100 < 10 || $count % 100 >= 20) ? 'товара' : 'товаров')) }}
         </span>
-        <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ $category->title }}</h5>
+        <a href="{{ route('client.catalog', $category->slug) }}" wire:navigate class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white hover:text-blue-600">{{ $category->title }}</a>
         @if ($category->categories) 
             <ul class="flex flex-col gap-0.5">
                 @foreach ($category->categories as $subcategory)
@@ -20,12 +20,6 @@
             </ul>
         @endif
     </div>
-    <a href="{{ route('client.catalog', $category->slug) }}" wire:navigate class="flex items-center justify-between">
-        <span class="inline-flex items-center text-yellow-800 hover:underline dark:text-yellow-300">
-            Все товары
-            <x-carbon-arrow-up-right class="w-3 h-3 ms-2.5 rtl:rotate-[270deg]" />
-        </span>
-        <div class="text-lg font-bold text-gray-900 dark:text-white">От {{ $category->minProductPrice() }} ₽</div>
-    </a>
+    <div class="text-md font-bold text-gray-900 dark:text-white">От {{ $category->minProductPrice() }} ₽</div>
 </div>
 

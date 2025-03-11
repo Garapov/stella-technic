@@ -42,7 +42,7 @@ document.addEventListener('articles_slider', (data) => {
         document.querySelectorAll('.article_slider.glide').forEach(articles => {
             new Glide(articles, {
                 autoplay: 5000,
-                perView: 2,
+                perView: 3,
                 bound: true
             }).mount()
         })

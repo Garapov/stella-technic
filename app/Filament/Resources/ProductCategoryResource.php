@@ -9,11 +9,13 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
+use App\Models\ProductParamItem;
 
 class ProductCategoryResource extends Resource
 {
@@ -35,6 +37,18 @@ class ProductCategoryResource extends Resource
                 TextInput::make('title')
                     ->label('Заголовок')
                     ->required(),
+                Select::make('paramItems')
+                    ->multiple()
+                    ->relationship('paramItems', 'title')
+                    ->preload()
+                    ->options(function () {
+                        return ProductParamItem::query()
+                            ->with('productParam')
+                            ->get()
+                            ->mapWithKeys(function ($item) {
+                                return [$item->id => "{$item->productParam->name}: {$item->title}"];
+                            });
+                    }),
                 Toggle::make('is_visible')
                     ->inline(false)
                     ->label('Видимость'),
