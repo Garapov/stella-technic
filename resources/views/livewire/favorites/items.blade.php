@@ -26,7 +26,7 @@
         @else
             <div class="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
                 @foreach($products as $product)
-                    @livewire('general.product', ['product' => $product], key('product-'.$product->id))
+                    @livewire('general.product-variant', ['variant' => $product], key('product-'.$product->id))
                 @endforeach
             </div>
         @endif

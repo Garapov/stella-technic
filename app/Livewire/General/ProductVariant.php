@@ -11,10 +11,10 @@ class ProductVariant extends Component
     public $product;
     public $image;
 
-    public function mount($variant, $product)
+    public function mount($variant)
     {
         $this->variant = $variant;
-        $this->product = $product;
+        $this->product = $variant->product;
         
         // Если изображение не загружено, используем изображение товара
         if (!$variant->img && $product->img) {

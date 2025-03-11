@@ -3,6 +3,7 @@
 namespace App\Livewire\Favorites;
 
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Illuminate\Database\Eloquent\Collection;
@@ -30,8 +31,7 @@ class Items extends Component
             return;
         }
 
-        $this->products = Product::with(['variants', 'variants.param', 'variants.param.productParam', 'img'])
-            ->whereIn('id', $favoriteIds)
+        $this->products = ProductVariant::whereIn('id', $favoriteIds)
             ->withTrashed()
             ->get();
     }
