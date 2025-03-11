@@ -484,7 +484,8 @@ class Items extends Component
             $baseQuery = clone $query;
             $products = $baseQuery->with([
                 'variants', 
-                'variants.paramItems.productParam', 
+                'variants.paramItems.productParam',
+                'variants.parametrs.productParam',
                 'variants.img'
             ])->select('products.*')->get();
             
@@ -516,8 +517,18 @@ class Items extends Component
                         
                         // Проверяем соответствие параметрам фильтра
                         if (!empty($this->selectedVariations)) {
-                            // Получаем параметры вариации
-                            $variantParamIds = $variant->paramItems ? $variant->paramItems->pluck('id')->toArray() : [];
+                            // Получаем параметры вариации из обеих связей
+                            $variantParamIds = collect();
+                            
+                            if ($variant->paramItems) {
+                                $variantParamIds = $variantParamIds->merge($variant->paramItems->pluck('id'));
+                            }
+                            
+                            if ($variant->parametrs) {
+                                $variantParamIds = $variantParamIds->merge($variant->parametrs->pluck('id'));
+                            }
+                            
+                            $variantParamIds = $variantParamIds->unique()->toArray();
                             
                             \Illuminate\Support\Facades\Log::info('Параметры вариации', [
                                 'variant_id' => $variant->id,
@@ -817,7 +828,8 @@ class Items extends Component
             if ($this->category) {
                 // Получаем все товары в категории без фильтров
                 $allCategoryProducts = $this->category->products()->with([
-                    'variants.paramItems.productParam'
+                    'variants.paramItems.productParam',
+                    'variants.parametrs.productParam'
                 ])->get();
                 
                 // Собираем все параметры из всех вариаций в категории
@@ -825,18 +837,34 @@ class Items extends Component
                     if (!$product->variants) continue;
                     
                     foreach ($product->variants as $variant) {
-                        if (!$variant->paramItems) continue;
+                        // Обрабатываем paramItems
+                        if ($variant->paramItems) {
+                            foreach ($variant->paramItems as $paramItem) {
+                                if (!$paramItem->productParam) continue;
+                                
+                                $allCategoryParamItems->push([
+                                    'id' => $paramItem->id,
+                                    'param_id' => $paramItem->productParam->id,
+                                    'param_name' => $paramItem->productParam->name,
+                                    'title' => $paramItem->title,
+                                    'value' => $paramItem->value
+                                ]);
+                            }
+                        }
                         
-                        foreach ($variant->paramItems as $paramItem) {
-                            if (!$paramItem->productParam) continue;
-                            
-                            $allCategoryParamItems->push([
-                                'id' => $paramItem->id,
-                                'param_id' => $paramItem->productParam->id,
-                                'param_name' => $paramItem->productParam->name,
-                                'title' => $paramItem->title,
-                                'value' => $paramItem->value
-                            ]);
+                        // Обрабатываем parametrs
+                        if ($variant->parametrs) {
+                            foreach ($variant->parametrs as $paramItem) {
+                                if (!$paramItem->productParam) continue;
+                                
+                                $allCategoryParamItems->push([
+                                    'id' => $paramItem->id,
+                                    'param_id' => $paramItem->productParam->id,
+                                    'param_name' => $paramItem->productParam->name,
+                                    'title' => $paramItem->title,
+                                    'value' => $paramItem->value
+                                ]);
+                            }
                         }
                     }
                 }
@@ -861,7 +889,7 @@ class Items extends Component
                 ]);
                 
                 // Добавляем параметры вариации
-                if (!$variant->paramItems || $variant->paramItems->count() === 0) {
+                if (!$variant->paramItems && !$variant->parametrs) {
                     \Illuminate\Support\Facades\Log::warning('Вариация без параметров', [
                         'variant_id' => $variant->id,
                         'variant_name' => $variant->name
@@ -869,59 +897,101 @@ class Items extends Component
                     continue;
                 }
                 
-                // Загружаем отношение paramItems, если оно не загружено
+                // Загружаем отношения, если они не загружены
                 if (!$variant->relationLoaded('paramItems')) {
                     $variant->load('paramItems.productParam');
                 }
+                if (!$variant->relationLoaded('parametrs')) {
+                    $variant->load('parametrs.productParam');
+                }
                 
-                foreach ($variant->paramItems as $paramItem) {
-                    if (!$paramItem) {
-                        \Illuminate\Support\Facades\Log::warning('Обнаружен null параметр вариации');
-                        continue;
-                    }
-                    
-                    // Получаем родительский параметр
-                    $param = $paramItem->productParam;
-                    
-                    if (!$param) {
-                        \Illuminate\Support\Facades\Log::warning('Параметр вариации без родительского параметра', [
+                // Обрабатываем paramItems
+                if ($variant->paramItems) {
+                    foreach ($variant->paramItems as $paramItem) {
+                        if (!$paramItem) continue;
+                        
+                        // Получаем родительский параметр
+                        $param = $paramItem->productParam;
+                        
+                        if (!$param) continue;
+                        
+                        // Добавляем ID параметра в список активных
+                        $activeParamIds->push($param->id);
+                        // Добавляем ID элемента параметра в список активных
+                        $activeParamItemIds->push($paramItem->id);
+                        
+                        \Illuminate\Support\Facades\Log::info('Добавление параметра вариации (paramItems)', [
+                            'param_id' => $param->id,
+                            'param_name' => $param->name,
                             'param_item_id' => $paramItem->id,
-                            'param_item_title' => $paramItem->title
+                            'param_item_title' => $paramItem->title,
+                            'param_item_value' => $paramItem->value
                         ]);
-                        continue;
+                        
+                        // Добавляем группу параметров, если ее еще нет
+                        if (!isset($paramGroups[$param->id])) {
+                            $paramGroups[$param->id] = [
+                                'id' => $param->id,
+                                'name' => $param->name,
+                                'items' => []
+                            ];
+                        }
+                        
+                        // Добавляем элемент параметра, если его еще нет
+                        if (!isset($paramGroups[$param->id]['items'][$paramItem->id])) {
+                            $paramGroups[$param->id]['items'][$paramItem->id] = [
+                                'id' => $paramItem->id,
+                                'title' => $paramItem->title,
+                                'value' => $paramItem->value,
+                                'selected' => in_array($paramItem->id, $this->selectedVariations),
+                                'would_have_results' => true
+                            ];
+                        }
                     }
-                    
-                    // Добавляем ID параметра в список активных
-                    $activeParamIds->push($param->id);
-                    // Добавляем ID элемента параметра в список активных
-                    $activeParamItemIds->push($paramItem->id);
-                    
-                    \Illuminate\Support\Facades\Log::info('Добавление параметра вариации', [
-                        'param_id' => $param->id,
-                        'param_name' => $param->name,
-                        'param_item_id' => $paramItem->id,
-                        'param_item_title' => $paramItem->title,
-                        'param_item_value' => $paramItem->value
-                    ]);
-                    
-                    // Добавляем группу параметров, если ее еще нет
-                    if (!isset($paramGroups[$param->id])) {
-                        $paramGroups[$param->id] = [
-                            'id' => $param->id,
-                            'name' => $param->name,
-                            'items' => []
-                        ];
-                    }
-                    
-                    // Добавляем элемент параметра, если его еще нет
-                    if (!isset($paramGroups[$param->id]['items'][$paramItem->id])) {
-                        $paramGroups[$param->id]['items'][$paramItem->id] = [
-                            'id' => $paramItem->id,
-                            'title' => $paramItem->title,
-                            'value' => $paramItem->value,
-                            'selected' => in_array($paramItem->id, $this->selectedVariations),
-                            'would_have_results' => true
-                        ];
+                }
+                
+                // Обрабатываем parametrs
+                if ($variant->parametrs) {
+                    foreach ($variant->parametrs as $paramItem) {
+                        if (!$paramItem) continue;
+                        
+                        // Получаем родительский параметр
+                        $param = $paramItem->productParam;
+                        
+                        if (!$param) continue;
+                        
+                        // Добавляем ID параметра в список активных
+                        $activeParamIds->push($param->id);
+                        // Добавляем ID элемента параметра в список активных
+                        $activeParamItemIds->push($paramItem->id);
+                        
+                        \Illuminate\Support\Facades\Log::info('Добавление параметра вариации (parametrs)', [
+                            'param_id' => $param->id,
+                            'param_name' => $param->name,
+                            'param_item_id' => $paramItem->id,
+                            'param_item_title' => $paramItem->title,
+                            'param_item_value' => $paramItem->value
+                        ]);
+                        
+                        // Добавляем группу параметров, если ее еще нет
+                        if (!isset($paramGroups[$param->id])) {
+                            $paramGroups[$param->id] = [
+                                'id' => $param->id,
+                                'name' => $param->name,
+                                'items' => []
+                            ];
+                        }
+                        
+                        // Добавляем элемент параметра, если его еще нет
+                        if (!isset($paramGroups[$param->id]['items'][$paramItem->id])) {
+                            $paramGroups[$param->id]['items'][$paramItem->id] = [
+                                'id' => $paramItem->id,
+                                'title' => $paramItem->title,
+                                'value' => $paramItem->value,
+                                'selected' => in_array($paramItem->id, $this->selectedVariations),
+                                'would_have_results' => true
+                            ];
+                        }
                     }
                 }
             }
