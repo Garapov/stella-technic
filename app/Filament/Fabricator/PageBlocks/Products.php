@@ -22,61 +22,72 @@ class Products extends PageBlock
     {
         $products = ProductVariant::all();
         $categories = ProductCategory::all();
-        return Block::make('products')
-            ->icon('heroicon-o-rectangle-stack')
-            ->icon('heroicon-o-rectangle-stack')
-            ->label('Товары')
+        return Block::make("products")
+            ->icon("heroicon-o-rectangle-stack")
+            ->icon("heroicon-o-rectangle-stack")
+            ->label("Товары")
             ->schema([
                 Split::make([
                     Section::make([
-                        TextInput::make('title')
-                            ->label('Заголовок'),
-                        Select::make('items')
-                            ->label('Товары')
-                            ->options($products ? $products->pluck('name', 'id') : [])
+                        TextInput::make("title")->label("Заголовок"),
+                        Select::make("items")
+                            ->label("Товары")
+                            ->live()
+                            ->options(
+                                $products ? $products->pluck("name", "id") : []
+                            )
                             ->searchable()
-                            ->visible(fn (Get $get) => $get('type') == 'products')
+                            ->visible(
+                                fn(Get $get) => $get("type") == "products"
+                            )
                             ->multiple()
                             ->required(),
-                        Select::make('category')
-                            ->label('Категория')
-                            ->options($categories ? $categories->pluck('name', 'id') : [])
+                        Select::make("category")
+                            ->label("Категория")
+                            ->live()
+                            ->options(
+                                $categories
+                                    ? $categories->pluck("title", "slug")
+                                    : []
+                            )
                             ->searchable()
-                            ->visible(fn (Get $get) => $get('type') == 'category')
+                            ->visible(
+                                fn(Get $get) => $get("type") == "category"
+                            )
                             ->required(),
-                        Select::make('paramItems')
+                        Select::make("parametrs")
                             ->multiple()
-                            ->label('Параметры')
+                            ->label("Параметры")
+                            ->live()
                             ->required()
-                            ->relationship('paramItems', 'title')
                             ->preload()
-                            ->visible(fn (Get $get) => $get('type') == 'filtr')
+                            ->visible(fn(Get $get) => $get("type") == "filter")
                             ->options(function () {
                                 return ProductParamItem::query()
-                                    ->with('productParam')
+                                    ->with("productParam")
                                     ->get()
                                     ->mapWithKeys(function ($item) {
-                                        return [$item->id => "{$item->productParam->name}: {$item->title}"];
+                                        return [
+                                            $item->id => "{$item->productParam->name}: {$item->title}",
+                                        ];
                                     });
                             }),
                     ]),
                     Section::make([
-                        Select::make('type')
-                            ->label('Тип выбора товаров')
+                        Select::make("type")
+                            ->label("Тип выбора товаров")
                             ->live()
-                            ->default('products')
+                            ->default("products")
                             ->required()
                             ->selectablePlaceholder(false)
                             ->options([
-                                'products' => 'Выбор товаров',
-                                'category' => 'Выбор категории',
-                                'filtr' => 'Выбор параметров' 
+                                "products" => "Выбор товаров",
+                                "category" => "Выбор категории",
+                                "filter" => "Выбор параметров",
                             ]),
-                        Toggle::make('filter')
-                            ->label('Показывать фильтр')
+                        Toggle::make("filter")->label("Показывать фильтр"),
                     ])->grow(false),
-                ])->from('md')
-                
+                ])->from("md"),
             ]);
     }
 

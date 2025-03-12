@@ -39,22 +39,27 @@ use Filament\Support\Assets\Js;
 
 class AdminPanelProvider extends PanelProvider
 {
-    public function boot(Panel $panel) {
+    public function boot(Panel $panel)
+    {
         FilamentSettingsHub::register([
             SettingHold::make()
                 ->page(GeneralSettings::class)
                 ->order(0)
-                ->label('filament-settings-hub::messages.settings.site.title')
-                ->icon('heroicon-o-globe-alt')
-                ->description('filament-settings-hub::messages.settings.site.description')
-                ->group('filament-settings-hub::messages.group'),
+                ->label("filament-settings-hub::messages.settings.site.title")
+                ->icon("heroicon-o-globe-alt")
+                ->description(
+                    "filament-settings-hub::messages.settings.site.description"
+                )
+                ->group("filament-settings-hub::messages.group"),
             SettingHold::make()
                 ->page(SocialSettings::class)
                 ->order(0)
-                ->label('filament-settings-hub::messages.settings.social.title')
-                ->icon('heroicon-s-bars-3')
-                ->description('filament-settings-hub::messages.settings.social.description')
-                ->group('filament-settings-hub::messages.group')
+                ->label("filament-settings-hub::messages.settings.social.title")
+                ->icon("heroicon-s-bars-3")
+                ->description(
+                    "filament-settings-hub::messages.settings.social.description"
+                )
+                ->group("filament-settings-hub::messages.group"),
         ]);
     }
 
@@ -62,34 +67,40 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->viteTheme('resources/css/filament/admin/theme.css')
-            ->id('admin')
-            ->path('admin')
+            ->viteTheme("resources/css/filament/admin/theme.css")
+            ->id("admin")
+            ->path("admin")
             ->login()
             ->databaseNotifications()
             ->colors([
-                'primary' => Color::Amber,
+                "primary" => Color::Amber,
             ])
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-                ImportProducts::class,
-            ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->discoverResources(
+                in: app_path("Filament/Resources"),
+                for: "App\\Filament\\Resources"
+            )
+            ->discoverPages(
+                in: app_path("Filament/Pages"),
+                for: "App\\Filament\\Pages"
+            )
+            ->pages([Pages\Dashboard::class, ImportProducts::class])
+            ->discoverWidgets(
+                in: app_path("Filament/Widgets"),
+                for: "App\\Filament\\Widgets"
+            )
             ->widgets([
                 // Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,
             ])
             ->navigationItems([
-                NavigationItem::make('Телескоп')
-                    ->url('/telescope', shouldOpenInNewTab: true)
-                    ->icon('fas-file-lines')
-                    ->group('Аналитика'),
-                NavigationItem::make('Документация')
-                    ->url('/docs/api', shouldOpenInNewTab: true)
-                    ->icon('fas-file-lines')
-                    ->group('Аналитика')
+                NavigationItem::make("Телескоп")
+                    ->url("/telescope", shouldOpenInNewTab: true)
+                    ->icon("fas-file-lines")
+                    ->group("Аналитика"),
+                NavigationItem::make("Документация")
+                    ->url("/docs/api", shouldOpenInNewTab: true)
+                    ->icon("fas-file-lines")
+                    ->group("Аналитика"),
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -102,9 +113,7 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->authMiddleware([
-                Authenticate::class,
-            ])
+            ->authMiddleware([Authenticate::class])
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
                 BlogPlugin::make(),
@@ -114,22 +123,23 @@ class AdminPanelProvider extends PanelProvider
                 FilamentTourPlugin::make(),
                 ApiServicePlugin::make(),
                 FilamentSpatieRolesPermissionsPlugin::make(),
-                BreezyCore::make()->myProfile(
-                    shouldRegisterUserMenu: true, // Sets the 'account' link in the panel User Menu (default = true)
-                    userMenuLabel: 'Мой профиль', // Customizes the 'account' link label in the panel User Menu (default = null)
-                    shouldRegisterNavigation: false, // Adds a main navigation item for the My Profile page (default = false)
-                    navigationGroup: 'User', // Sets the navigation group for the My Profile page (default = null)
-                    hasAvatars: false, // Enables the avatar upload form component (default = false)
-                    slug: 'my-profile' // Sets the slug for the profile page (default = 'my-profile')
-                )->withoutMyProfileComponents([
-                    'update_password'
-                ])->enableTwoFactorAuthentication(),
+                BreezyCore::make()
+                    ->myProfile(
+                        shouldRegisterUserMenu: true, // Sets the 'account' link in the panel User Menu (default = true)
+                        userMenuLabel: "Мой профиль", // Customizes the 'account' link label in the panel User Menu (default = null)
+                        shouldRegisterNavigation: false, // Adds a main navigation item for the My Profile page (default = false)
+                        navigationGroup: "User", // Sets the navigation group for the My Profile page (default = null)
+                        hasAvatars: false, // Enables the avatar upload form component (default = false)
+                        slug: "my-profile" // Sets the slug for the profile page (default = 'my-profile')
+                    )
+                    ->withoutMyProfileComponents(["update_password"])
+                    ->enableTwoFactorAuthentication(),
                 MenuBuilderPlugin::make()
                     ->addLocations([
-                        'top_menu' => 'Верхнее меню',
-                        'search_menu' => 'Поисковое меню',
-                        'header' => 'Главное меню',
-                        'footer' => 'Меню в подвале',
+                        "top_menu" => "Верхнее меню",
+                        "search_menu" => "Поисковое меню",
+                        "header" => "Главное меню",
+                        "footer" => "Меню в подвале",
                     ])
                     ->addMenuPanels([
                         ModelMenuPanel::make()
@@ -141,24 +151,37 @@ class AdminPanelProvider extends PanelProvider
                         ModelMenuPanel::make()
                             ->model(\App\Models\ProductCategory::class)
                             ->paginate(perPage: 15, condition: true),
-                        StaticMenuPanel::make('Статичные страницы')
+                        StaticMenuPanel::make("Статичные страницы")
                             ->paginate(perPage: 5, condition: true)
-                            ->add('Бренды', function() {return route('client.brands.index');})
-                            ->add('Популярные товары', function() {return route('client.catalog.popular');})
-                            ->add('Статьи', function() {return route('client.articles.index');})
-                            ->add('Блог', function() {return route('client.posts.index');})
-                            ->add('Сертификаты', function() {return route('client.certificates');})
-                            ->add('Вакансии', function() {return route('client.vacancies');})
-                            ->add('Сотрудники', function() {return route('client.workers');})
+                            ->add("Бренды", function () {
+                                return route("client.brands.index");
+                            })
+                            ->add("Популярные товары", function () {
+                                return route("client.catalog.popular");
+                            })
+                            ->add("Статьи", function () {
+                                return route("client.articles.index");
+                            })
+                            ->add("Блог", function () {
+                                return route("client.posts.index");
+                            })
+                            ->add("Сертификаты", function () {
+                                return route("client.certificates");
+                            })
+                            ->add("Вакансии", function () {
+                                return route("client.vacancies");
+                            })
+                            ->add("Сотрудники", function () {
+                                return route("client.workers");
+                            }),
                     ]),
                 FilamentSettingsHubPlugin::make()
                     ->allowSiteSettings(false)
-                    ->allowSocialMenuSettings(false)
+                    ->allowSocialMenuSettings(false),
             ])
             ->assets([
                 // Css::make('custom-stylesheet', resource_path('css/custom.css')),
                 // Js::make('yandex-maps-api-v3', 'https://api-maps.yandex.ru/2.1/?apikey='. config('services.maps.key') . '&lang=ru_RU&suggest_apikey=' . config('services.maps.suggestion_key')),
-            ])
-            ->spa();
+            ]);
     }
 }
