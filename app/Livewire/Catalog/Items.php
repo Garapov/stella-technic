@@ -100,10 +100,11 @@ class Items extends Component
         }
         if ($products) {
             $this->product_ids = $products;
-                \Illuminate\Support\Facades\Log::info('Установлены ID товаров', [
-                    'product_count' => count($this->product_ids)
-                ]);
-            }
+            \Illuminate\Support\Facades\Log::info('Установлены ID товаров', [
+                'product_count' => count($this->product_ids)
+            ]);
+            // dd($this->product_ids);
+        }
             
             // Устанавливаем диапазон цен по умолчанию, если не указан в URL
         if ($this->priceFrom === null && $this->priceTo === null) {
@@ -705,6 +706,7 @@ class Items extends Component
                 $query = $this->category->products();
             } elseif ($this->product_ids) {
                 $query = \App\Models\Product::whereIn('id', $this->product_ids);
+               
             } else {
                 $query = \App\Models\Product::query();
             }
@@ -717,6 +719,7 @@ class Items extends Component
             // Применяем фильтр по параметрам, если он выбран
             if (!empty($this->selectedVariations)) {
                 $products = $query->with(['variants.paramItems'])->get();
+                
                 
                 foreach ($products as $product) {
                     if (!$product->variants) continue;

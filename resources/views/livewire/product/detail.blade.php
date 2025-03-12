@@ -51,8 +51,9 @@
                                         @class([
                                             'px-4 h-9 border text-sm flex items-center justify-center shrink-0',
                                             'border-blue-600 bg-blue-50' => $value['is_current'],
-                                            'border-slate-300 hover:border-blue-600' => !$value['is_current']
-                                        ]) wire:navigate>
+                                            'border-slate-300 hover:border-blue-600' => !$value['is_current'] && $value['is_available'],
+                                            'border-slate-200 bg-slate-50 text-slate-400' => !$value['is_available']
+                                        ]) wire:navigate >
                                         {{ $value['title'] }}
                                     </a>
                                 @endforeach

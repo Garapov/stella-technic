@@ -29,7 +29,7 @@
     </div>
 
     <div class="pt-6 flex-auto shrink flex flex-col gap-2 justify-between">
-        <div>
+        <div class="mb-4">
             <div class="mb-4 flex items-center justify-between gap-2">
                 @if($variant->new_price)
                     <span class="me-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300 dark:text-white">
@@ -73,7 +73,7 @@
         </div>
 
         @if($variant->paramItems || $variant->parametrs)
-            <ul class="flex flex-col gap-4">
+            <ul class="flex flex-col gap-4 flex-grow">
                 @foreach($variant->paramItems as $paramItem)
                     @if (!$paramItem->productParam->show_on_preview)
                         @continue

@@ -14,10 +14,10 @@
                 </div>
                 <div class="mt-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
                     
-                    @foreach ($products as $product)
-                        @livewire('general.product', [
-                            'product' => $product
-                        ], key($product->id))
+                    @foreach ($products as $variant)
+                        @livewire('general.product-variant', [
+                            'variant' => $variant
+                        ], key($variant->id))
                         
                     @endforeach
                 </div>
