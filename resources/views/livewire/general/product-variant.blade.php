@@ -1,4 +1,4 @@
-<div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900 relative flex flex-col" x-data="{
+<div class="rounded-lg border border-gray-200 bg-white p-0 shadow-sm dark:border-gray-700 dark:bg-gray-900 relative flex flex-col" x-data="{
     cart_quantity: 1,
     product: @js($product),
     variant: @js($variant),
@@ -23,12 +23,12 @@
 
     <div class="aspect-[1/1] w-full {{ $product->trashed() ? 'opacity-50' : '' }}">
         <a href="{{ route('client.product_detail', $variant->slug) }}" wire:navigate>
-            <img class="mx-auto h-full w-full rounded-lg"
+            <img class="mx-auto h-full w-full object-cover"
                 src="/storage/{{ $image->uuid }}/filament-thumbnail.{{ $image->file_extension }}" alt="{{ $variant->name }}" />
         </a>
     </div>
 
-    <div class="pt-6 flex-auto shrink flex flex-col gap-2 justify-between">
+    <div class="p-4 flex-auto shrink flex flex-col gap-2 justify-between">
         <div class="mb-4">
             <div class="mb-4 flex items-center justify-between gap-2">
                 @if($variant->new_price)
@@ -68,7 +68,7 @@
 
             <a href="{{ route('client.product_detail', $variant->slug) }}"
                 class="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate>
-                {{ $variant->name }}
+                {{ $variant->name }} @if ($variant->product->brand) {{ $variant->product->brand->name }} @endif ({{ $variant->sku }})
             </a>
         </div>
 

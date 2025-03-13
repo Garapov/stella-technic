@@ -28,7 +28,6 @@ document.addEventListener('alpine:init', () => {
 
 
 
-
 document.addEventListener('livewire:init', () => {
     window.Livewire.on('cart-cleared', (event) => {
         Alpine.store('cart').list = [];
