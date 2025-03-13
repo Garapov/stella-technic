@@ -21,9 +21,9 @@
         </div>
     @endif
 
-    <div class="h-56 w-full {{ $product->trashed() ? 'opacity-50' : '' }}">
+    <div class="aspect-[1/1] w-full {{ $product->trashed() ? 'opacity-50' : '' }}">
         <a href="{{ route('client.product_detail', $variant->slug) }}" wire:navigate>
-            <img class="mx-auto h-full w-full"
+            <img class="mx-auto h-full w-full rounded-lg"
                 src="/storage/{{ $image->uuid }}/filament-thumbnail.{{ $image->file_extension }}" alt="{{ $variant->name }}" />
         </a>
     </div>
@@ -39,7 +39,7 @@
 
                 <div class="flex items-center justify-end gap-1">
                     <div class="relative" x-data="{ showTooltip: false }">
-                        <button type="button" 
+                        <button type="button"
                             @mouseenter="showTooltip = true"
                             @mouseleave="showTooltip = false"
                             @click.prevent="$store.favorites.toggleProduct(variant.id)"
@@ -47,7 +47,7 @@
                             <span class="sr-only">Добавить в избранное</span>
                             <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 :class="{ 'text-red-500 fill-red-500': $store.favorites.list.includes(variant.id.toString()) }">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                             </svg>
                         </button>
@@ -108,7 +108,7 @@
             </div>
 
             <button type="button"
-                class="inline-flex items-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800" 
+                class="inline-flex items-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800"
                 @click="addVariationToCart()">
                 <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -119,4 +119,4 @@
             </button>
         </div>
     </div>
-</div> 
+</div>
