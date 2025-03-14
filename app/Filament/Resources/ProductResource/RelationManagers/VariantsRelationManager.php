@@ -96,7 +96,11 @@ class VariantsRelationManager extends RelationManager
                                 ImagePicker::make('image')
                                     ->label('Картинка')
                                     ->required()
-                                    ->columnSpan('2'),
+                                    ->columnSpan('1'),
+                                ImagePicker::make('gallery')
+                                    ->label('Галерея')
+                                    ->multiple()
+                                    ->columnSpan('2')
                         ])->columns([
                             'sm' => 1,
                             'xl' => 2,
@@ -144,7 +148,7 @@ class VariantsRelationManager extends RelationManager
                         if ($state && $record && $record->exists) {
                             // Get the owning product through the relationship manager
                             $product = $this->getOwnerRecord();
-                            
+
                             // Unset other default variants for this product
                             $product->variants()
                                 ->where('id', '!=', $record->id)

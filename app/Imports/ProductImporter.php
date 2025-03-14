@@ -37,9 +37,56 @@ class ProductImporter extends Importer
             ImportColumn::make('uuid')
                 ->requiredMapping()
                 ->numeric()
+                ->fillRecordUsing(function (?Product $record, ?string $state, ProductImporter $importer) {
+                    // Проверяем, есть ли uuid у записи и совпадает ли он с импортируемым значением
+                    if (isset($record->uuid) && $record->uuid == $state) {
+                        // UUID совпадает с текущим, ничего не обновляем
+                        Log::debug('UUID не обновлен, значение совпадает с текущим', [
+                            'product_id' => $record->id,
+                            'uuid' => $state
+                        ]);
+                        return;
+                    }
+
+                    // Проверяем, существует ли другая запись с таким UUID
+                    $existingWithUuid = Product::where('uuid', $state)
+                        ->where('id', '!=', $record->id)
+                        ->exists();
+
+                    if ($existingWithUuid) {
+                        // Если существует другая запись с таким UUID, логируем и пропускаем
+                        Log::warning('Пропуск обновления UUID из-за конфликта уникальности', [
+                            'product_id' => $record->id,
+                            'current_uuid' => $record->uuid,
+                            'imported_uuid' => $state
+                        ]);
+                        return;
+                    }
+
+                    // Обновляем UUID только если он не существует у других записей
+                    try {
+                        DB::table('products')
+                            ->where('id', $record->id)
+                            ->update(['uuid' => $state]);
+
+                        // Обновляем запись в памяти для поддержания согласованности
+                        $record->uuid = $state;
+
+                        Log::debug('UUID успешно обновлен', [
+                            'product_id' => $record->id,
+                            'uuid' => $state
+                        ]);
+                    } catch (Exception $e) {
+                        Log::error('Ошибка обновления UUID', [
+                            'product_id' => $record->id,
+                            'uuid' => $state,
+                            'error' => $e->getMessage()
+                        ]);
+                    }
+                })
                 ->example('asd667a6d-asdd77887-77as87d7-787a8sd78'),
             ImportColumn::make('name')
-            
+
                 ->requiredMapping()
                 ->example('Название товара')
                 ->rules(['required', 'string']),
@@ -52,6 +99,66 @@ class ProductImporter extends Importer
                 ->example('https://stella-tech.ru/assets/images/products/83/km-rps-veni-24.png')
                 ->rules(['required', 'url']),
             ImportColumn::make('slug')
+                ->fillRecordUsing(function (?Product $record, ?string $state, ProductImporter $importer) {
+                    // Если значение пустое, пропускаем
+                    if (blank($state)) return;
+
+                    // Проверяем, есть ли slug у записи и совпадает ли он с импортируемым значением
+                    if (isset($record->slug) && $record->slug == $state) {
+                        // Slug совпадает с текущим, ничего не обновляем
+                        Log::debug('Slug не обновлен, значение совпадает с текущим', [
+                            'product_id' => $record->id,
+                            'slug' => $state
+                        ]);
+                        return;
+                    }
+
+                    // Если slug не указан, генерируем его из названия
+                    $slugValue = $state ?: Str::slug($record->name);
+
+                    // Проверяем, существует ли другая запись с таким Slug
+                    $existingWithSlug = Product::where('slug', $slugValue)
+                        ->where('id', '!=', $record->id)
+                        ->exists();
+
+                    if ($existingWithSlug) {
+                        // Если существует другая запись с таким Slug, генерируем уникальный
+                        $baseSlug = $slugValue;
+                        $counter = 1;
+                        $slugValue = $baseSlug;
+
+                        while (Product::where('slug', $slugValue)->where('id', '!=', $record->id)->exists()) {
+                            $slugValue = $baseSlug . '-' . $counter++;
+                        }
+
+                        Log::info('Сгенерирован уникальный slug из-за конфликта', [
+                            'product_id' => $record->id,
+                            'original_slug' => $baseSlug,
+                            'generated_slug' => $slugValue
+                        ]);
+                    }
+
+                    // Обновляем Slug только если он не существует у других записей
+                    try {
+                        DB::table('products')
+                            ->where('id', $record->id)
+                            ->update(['slug' => $slugValue]);
+
+                        // Обновляем запись в памяти для поддержания согласованности
+                        $record->slug = $slugValue;
+
+                        Log::debug('Slug успешно обновлен', [
+                            'product_id' => $record->id,
+                            'slug' => $slugValue
+                        ]);
+                    } catch (Exception $e) {
+                        Log::error('Ошибка обновления Slug', [
+                            'product_id' => $record->id,
+                            'slug' => $slugValue,
+                            'error' => $e->getMessage()
+                        ]);
+                    }
+                })
                 ->example('nazvaniye-tovara')
                 ->rules(['string', 'nullable']),
             ImportColumn::make('gallery')
@@ -59,7 +166,7 @@ class ProductImporter extends Importer
                     if (blank($state)) return null;
 
                     $gallery_ids = [];
-        
+
                     foreach (explode('|', $state) as $image) {
                         $imageId = static::processImageStatic($image, $importer);
                         if ($imageId) {
@@ -86,7 +193,7 @@ class ProductImporter extends Importer
                     } catch (Exception $e) {
                         throw new RowImportFailedException($e->getMessage());
                     }
-                    
+
                 })
                 ->guess(['categories', 'parents', 'kategorii'])
                 ->example('{"name":"Мебельные","image": "https://stella-tech.ru/connectors/system/phpthumb.php?src=menu_images/mebelnye.jpg&source=2","parent": {"name": "Колеса Tellure Rota","image": "https://stella-tech.ru/connectors/system/phpthumb.php?src=menu_images/tellure.jpg&source=2","parent": {"name": "Колеса и колесные опоры","image": "https://stella-tech.ru/connectors/system/phpthumb.php?src=menu_images/kolesa-prew.png&source=2","parent": null}}}')
@@ -114,20 +221,252 @@ class ProductImporter extends Importer
                     if (blank($state) || !$record->id) return;
 
                     try {
-                        $data = json_decode($state);
+                        $data = json_decode($state, true);
                         $record->paramItems()->sync([]);
-                        static::createProductParamsStatic($data, $importer, $record);
+
+                        // Глобальный массив для хранения созданных paramItems и их соответствия названиям параметров и значениям
+                        // Это будет использоваться при создании вариаций
+                        $GLOBALS['paramItemsMapping'] = [];
+
+                        foreach ($data as $paramData) {
+                            // Создаем или находим параметр
+                            $productParam = ProductParam::updateOrCreate(
+                                ['name' => $paramData['name']],
+                                [
+                                    'type' => $paramData['type'] ?? 'checkboxes',
+                                    'allow_filtering' => $paramData['allow_filtering'] ?? true,
+                                    'show_on_preview' => $paramData['show_on_preview'] ?? false
+                                ]
+                            );
+
+                            foreach ($paramData['values'] as $valueData) {
+                                // Создаем или находим значение параметра
+                                $paramItem = ProductParamItem::updateOrCreate(
+                                    [
+                                        'product_param_id' => $productParam->id,
+                                        'value' => (string)$valueData['value']
+                                    ],
+                                    [
+                                        'title' => $valueData['title'] ?? (string)$valueData['value']
+                                    ]
+                                );
+
+                                // Привязываем значение параметра к товару
+                                $record->paramItems()->attach($paramItem->id);
+
+                                // Сохраняем mapping для использования при создании вариаций
+                                $GLOBALS['paramItemsMapping'][$paramData['name']][(string)$valueData['value']] = $paramItem->id;
+                            }
+                        }
                     } catch (Exception $e) {
                         throw new RowImportFailedException($e->getMessage());
-                    } 
+                    }
                 })
                 ->rules(['required', 'json'])
                 ->example('[{"name": "Грузоподъемность","type": "number","values": [{"value": 1500,"title": "1500 кг"},{"value": 300,"title": "300 кг"},{"value": 800,"title": "800 кг"}]},{"name": "Высота подъема","type": "number","values": [{"value": 3000,"title": "3000 мм"},{"value": 1500,"title": "1500 мм"}]}]'),
+            ImportColumn::make('variations')
+                ->fillRecordUsing(function (?Product $record, ?string $state, ProductImporter $importer) {
+                    if (blank($state) || !$record->id) return;
+
+                    try {
+                        $variationsData = json_decode($state, true);
+                        $links = [];
+                        $existingVariantSlugs = [];
+
+                        // Результаты обработки
+                        $results = [
+                            'success' => 0,
+                            'errors' => [],
+                            'created' => [],
+                            'updated' => []
+                        ];
+
+                        foreach ($variationsData as $variation) {
+                            // Проверка обязательных полей
+                            $requiredFields = ['name', 'sku', 'price'];
+                            $hasAllRequired = true;
+
+                            foreach ($requiredFields as $field) {
+                                if (empty($variation[$field])) {
+                                    $results['errors'][] = "Отсутствует обязательное поле '{$field}' в вариации SKU: " .
+                                        ($variation['sku'] ?? 'неизвестный');
+                                    $hasAllRequired = false;
+                                    break;
+                                }
+                            }
+
+                            if (!$hasAllRequired) continue;
+
+                            // Подготовка слага для вариации
+                            $variantName = $variation['name'];
+                            $slug = $variation['slug'] ?? Str::slug($variantName);
+
+                            // Поиск существующей вариации
+                            $variant = ProductVariant::withTrashed()->where('sku', $variation['sku'])->first();
+                            $isUpdate = !empty($variant);
+
+                            // Обрабатываем изображение
+                            $imageId = null;
+                            if (!empty($variation['image'])) {
+                                $imageId = static::processImageStatic($variation['image'], $importer);
+                            }
+
+                            // Обрабатываем галерею
+                            $galleryIds = [];
+                            if (!empty($variation['gallery'])) {
+                                foreach (explode('|', $variation['gallery']) as $image) {
+                                    $galleryImageId = static::processImageStatic($image, $importer);
+                                    if ($galleryImageId) {
+                                        $galleryIds[] = $galleryImageId;
+                                    }
+                                }
+                            }
+
+                            // Данные для создания/обновления вариации
+                            $variantData = [
+                                'product_id' => $record->id,
+                                'name' => $variantName,
+                                'slug' => $slug,
+                                'sku' => $variation['sku'],
+                                'price' => $variation['price'],
+                                'new_price' => $variation['new_price'] ?? null,
+                                'image' => $imageId ?? $record->image,
+                                'gallery' => !empty($galleryIds) ? $galleryIds : null,
+                                'short_description' => $variation['short_description'] ?? $record->short_description,
+                                'description' => $variation['description'] ?? $record->description,
+                                'is_popular' => $variation['is_popular'] ?? false,
+                                'count' => $variation['count'] ?? $record->count,
+                                'synonims' => $variation['synonims'] ?? $record->synonims
+                            ];
+
+                            // Создаем или обновляем вариацию
+                            if ($isUpdate) {
+                                if ($variant->trashed()) {
+                                    $variant->restore();
+                                }
+
+                                $variant->update($variantData);
+                                $results['updated'][] = $variation['sku'];
+                            } else {
+                                $variant = ProductVariant::create($variantData);
+                                $results['created'][] = $variation['sku'];
+                            }
+
+                            $results['success']++;
+                            $existingVariantSlugs[] = $slug;
+
+                            // Обработка paramItems - основных параметров вариации
+                            if (!empty($variation['paramItems'])) {
+                                $rowIds = [];
+
+                                foreach ($variation['paramItems'] as $paramItem) {
+                                    if (empty($paramItem['param']) || !isset($paramItem['name']) || !isset($paramItem['value'])) {
+                                        continue;
+                                    }
+
+                                    // Проверяем существует ли параметр, если нет - создаем
+                                    $productParam = ProductParam::firstOrCreate([
+                                        'name' => $paramItem['param'],
+                                    ], [
+                                        'type' => $paramItem['type'] ?? 'checkboxes'
+                                    ]);
+
+                                    // Создаем или находим значение параметра
+                                    $paramItemModel = ProductParamItem::firstOrCreate(
+                                        [
+                                            'product_param_id' => $productParam->id,
+                                            'value' => (string)$paramItem['value']
+                                        ],
+                                        [
+                                            'title' => $paramItem['name'] ?? (string)$paramItem['value']
+                                        ]
+                                    );
+
+                                    $rowIds[] = $paramItemModel->id;
+                                }
+
+                                // Привязываем параметры к вариации
+                                if (!empty($rowIds)) {
+                                    $variant->paramItems()->sync($rowIds);
+
+                                    // Добавляем комбинацию для links
+                                    $links[] = ['row' => $rowIds];
+                                }
+                            }
+
+                            // Обработка дополнительных параметров вариации
+                            if (!empty($variation['params'])) {
+                                $additionalParams = [];
+
+                                foreach ($variation['params'] as $param) {
+                                    if (empty($param['param']) || !isset($param['name']) || !isset($param['value'])) {
+                                        continue;
+                                    }
+
+                                    // Проверяем существует ли параметр, если нет - создаем
+                                    $productParam = ProductParam::firstOrCreate([
+                                            'name' => $param['param'],
+                                        ], [
+                                            'type' => $param['type'] ?? 'checkboxes'
+                                        ]);
+
+                                    // Создаем или находим значение параметра
+                                    $paramItemModel = ProductParamItem::firstOrCreate(
+                                        [
+                                            'product_param_id' => $productParam->id,
+                                            'value' => $param['value']
+                                        ],
+                                        [
+                                            'title' => $param['name'] ?? $param['value']
+                                        ]
+                                    );
+
+                                    $additionalParams[] = $paramItemModel->id;
+                                }
+
+                                // Добавляем дополнительные параметры к вариации, не заменяя существующие
+                                if (!empty($additionalParams)) {
+                                    $variant->parametrs()->sync(array_unique($additionalParams));
+                                }
+                            }
+                        }
+
+                        // Обновляем поле links в модели товара
+                        if (!empty($links)) {
+                            $record->update(['links' => $links]);
+                        }
+
+                        // Удаляем вариации, которых нет в импорте
+                        if (!empty($existingVariantSlugs)) {
+                            ProductVariant::where('product_id', $record->id)
+                                ->whereNotIn('slug', $existingVariantSlugs)
+                                ->delete();
+                        }
+
+                        // Логирование результатов
+                        Log::info('Импорт вариаций', [
+                            'product_id' => $record->id,
+                            'success' => $results['success'],
+                            'created' => count($results['created']),
+                            'updated' => count($results['updated']),
+                            'errors' => $results['errors']
+                        ]);
+
+                    } catch (Exception $e) {
+                        Log::error('Ошибка импорта вариаций', [
+                            'product_id' => $record->id,
+                            'message' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString()
+                        ]);
+                        throw new RowImportFailedException($e->getMessage());
+                    }
+                })
+                ->rules(['nullable', 'json']),
             ImportColumn::make('synonims')
                 ->example('тут может быть какой то текст|который может быть разделен любым символом|и будет учавствовать в поиске')
         ];
     }
-    
+
 
     public function getJobQueue(): ?string
     {
@@ -138,48 +477,48 @@ class ProductImporter extends Importer
     {
         dump('afterSave complete');
 
-        $param_items = $this->record->paramItems->pluck('id')->toArray();
+        // $param_items = $this->record->paramItems->pluck('id')->toArray();
 
-        // dump($param_items);
-        // Get active variants
-        $activeVariants = ProductVariant::where('product_id', $this->record->id)
-        ->pluck('product_param_item_id')
-        ->toArray();
+        // // dump($param_items);
+        // // Get active variants
+        // $activeVariants = ProductVariant::where('product_id', $this->record->id)
+        // ->pluck('product_param_item_id')
+        // ->toArray();
 
-        // Get deleted variants
-        $deletedVariants = ProductVariant::onlyTrashed()
-        ->where('product_id', $this->record->id)
-        ->pluck('product_param_item_id')
-        ->toArray();
+        // // Get deleted variants
+        // $deletedVariants = ProductVariant::onlyTrashed()
+        // ->where('product_id', $this->record->id)
+        // ->pluck('product_param_item_id')
+        // ->toArray();
 
-        // Delete variants that are not in paramItems anymore
-        ProductVariant::where('product_id', $this->record->id)
-        ->whereIn('product_param_item_id', array_diff($activeVariants, $param_items))
-        ->delete();
-        foreach ($this->record->paramItems as $paramItem) {
-            // If variant exists but was deleted - restore it
-            if (in_array($paramItem->id, $deletedVariants)) {
-                ProductVariant::onlyTrashed()
-                    ->where('product_id', $this->record->id)
-                    ->where('product_param_item_id', $paramItem->id)
-                    ->restore();
-            } 
-            // If variant never existed - create it
-            elseif (!in_array($paramItem->id, $activeVariants)) {
-                ProductVariant::create([
-                    'product_id' => $this->record->id,
-                    'product_param_item_id' => $paramItem->id,
-                    'name' => $this->record->name . ' ' . $paramItem->title,
-                    'price' => $this->record->price,
-                    'new_price' => $this->record->new_price,
-                    'image' => $this->record->image
-                ]);
-            }
-        }
+        // // Delete variants that are not in paramItems anymore
+        // ProductVariant::where('product_id', $this->record->id)
+        // ->whereIn('product_param_item_id', array_diff($activeVariants, $param_items))
+        // ->delete();
+        // foreach ($this->record->paramItems as $paramItem) {
+        //     // If variant exists but was deleted - restore it
+        //     if (in_array($paramItem->id, $deletedVariants)) {
+        //         ProductVariant::onlyTrashed()
+        //             ->where('product_id', $this->record->id)
+        //             ->where('product_param_item_id', $paramItem->id)
+        //             ->restore();
+        //     }
+        //     // If variant never existed - create it
+        //     elseif (!in_array($paramItem->id, $activeVariants)) {
+        //         ProductVariant::create([
+        //             'product_id' => $this->record->id,
+        //             'product_param_item_id' => $paramItem->id,
+        //             'name' => $this->record->name . ' ' . $paramItem->title,
+        //             'price' => $this->record->price,
+        //             'new_price' => $this->record->new_price,
+        //             'image' => $this->record->image
+        //         ]);
+        //     }
+        // }
 
 
-        dump($this->record->id);
-        dump('===================================================');
+        // dump($this->record->id);
+        // dump('===================================================');
     }
 
     public function resolveRecord(): ?Product
@@ -187,7 +526,7 @@ class ProductImporter extends Importer
         // Log::info('resolveRecord start', ['name' => $this->data['name']]);
         if (empty($this->data['name'])) return null;
         // dump($this->data['name']);
-        
+
         $product = Product::where('name', $this->data['name'])->first();
 
         if ($product) {
@@ -246,11 +585,11 @@ class ProductImporter extends Importer
         //     'product_name' => $this->record->name,
         //     'data' => $this->data
         // ]);
-        
+
         try {
             $this->record->save();
             // Log::info('saveRecord: product saved successfully', ['id' => $this->record->id]);
-            
+
             $this->import->update([
                 'processed_rows' => $this->import->processed_rows + 1,
                 'successful_rows' => $this->import->successful_rows + 1
@@ -260,7 +599,7 @@ class ProductImporter extends Importer
                 'message' => $e->getMessage(),
                 'product_name' => $this->record->name
             ]);
-            
+
             $this->import->update([
                 'processed_rows' => $this->import->processed_rows + 1,
                 'failed_rows' => $this->import->failed_rows + 1
@@ -312,7 +651,7 @@ class ProductImporter extends Importer
 
     protected function createProductParams($data, ProductImporter $importer, ?Product $record)
     {
-        
+
 
 
         foreach ($data as $key => $param) {
@@ -352,7 +691,7 @@ class ProductImporter extends Importer
 
     protected function createCategoriesTree($category, ProductImporter $importer, ?Product $record): ?ProductCategory
     {
-        
+
         $categiry_model = ProductCategory::updateOrCreate([
             'title' => $category->name,
         ], [
@@ -392,7 +731,7 @@ class ProductImporter extends Importer
 
         $extension = pathinfo(parse_url($imageUrl, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
         $tempImagePath = $tempDir . '/' . uniqid() . '.' . $extension;
-        
+
         if (!file_put_contents($tempImagePath, $imageContent)) {
             throw new \Exception("Не удалось сохранить временный файл");
         }
@@ -413,12 +752,12 @@ class ProductImporter extends Importer
         return $image;
     }
 
-    protected function processImage(string $imageUrl): ?int 
+    protected function processImage(string $imageUrl): ?int
     {
         dump('processImage start');
         try {
             $attempt = 1;
-            
+
             while ($attempt <= $this->maxAttempts) {
                 try {
 
@@ -440,7 +779,7 @@ class ProductImporter extends Importer
 
                     $extension = pathinfo(parse_url($imageUrl, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
                     $tempImagePath = $tempDir . '/' . uniqid() . '.' . $extension;
-                    
+
                     if (!file_put_contents($tempImagePath, $imageContent)) {
                         throw new \Exception("Не удалось сохранить временный файл");
                     }
@@ -480,7 +819,7 @@ class ProductImporter extends Importer
         }
     }
 
-    protected static function processImageStatic(string $imageUrl, ProductImporter $importer): ?int 
+    protected static function processImageStatic(string $imageUrl, ProductImporter $importer): ?int
     {
         return $importer->processImage($imageUrl);
     }

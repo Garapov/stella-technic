@@ -17,7 +17,7 @@ class Detail extends Component
     public function mount($slug) {
         $this->variation = ProductVariant::where('slug', $slug)->first();
         $this->product = $this->variation->product;
-        $this->gallery = Image::whereIn('id', $this->variation->product->gallery)->get();
+        $this->gallery = $this->variation->gallery ? Image::whereIn('id', $this->variation->gallery)->get() : [];
         $this->groupedParams = $this->getGroupedParams();
     }
 
@@ -105,39 +105,39 @@ class Detail extends Component
 
                 foreach ($availableCombinations as $combination) {
                     $combinationParams = $combination['params'];
-                    
+
                     if (isset($combinationParams[$paramName]) && $combinationParams[$paramName]['title'] === $value['title']) {
                         $isCompatible = true;
-                        
+
                         // Проверяем только те параметры, которые есть в текущей комбинации
                         foreach ($combinationParams as $checkParamName => $checkParam) {
                             if ($checkParamName === $paramName) {
                                 continue;
                             }
-                            
-                            if (isset($currentParams[$checkParamName]) && 
+
+                            if (isset($currentParams[$checkParamName]) &&
                                 $currentParams[$checkParamName]['title'] !== $checkParam['title']) {
                                 $isCompatible = false;
                                 break;
                             }
                         }
-                        
+
                         if ($isCompatible) {
                             $value['is_available'] = true;
                             $value['variant_id'] = $combination['variant_id'];
-                            
+
                             \Illuminate\Support\Facades\Log::info('Параметр доступен', [
                                 'param_name' => $paramName,
                                 'param_value' => $value['title'],
                                 'variant_id' => $combination['variant_id'],
                                 'combination' => $combinationParams
                             ]);
-                            
+
                             break;
                         }
                     }
                 }
-                
+
                 \Illuminate\Support\Facades\Log::info('Статус параметра', [
                     'param_name' => $paramName,
                     'param_value' => $value['title'],

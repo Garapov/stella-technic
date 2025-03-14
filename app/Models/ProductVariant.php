@@ -36,6 +36,7 @@ class ProductVariant extends Model
     ];
 
     protected $casts = [
+        'gallery' => 'array',
         'is_default' => 'boolean',
         'is_popular' => 'boolean',
     ];
