@@ -24,7 +24,7 @@
     <div class="aspect-[1/1] w-full {{ $product->trashed() ? 'opacity-50' : '' }}">
         <a href="{{ route('client.product_detail', $variant->slug) }}" wire:navigate>
             <img class="mx-auto h-full w-full object-cover"
-                src="/storage/{{ $image->uuid }}/filament-thumbnail.{{ $image->file_extension }}" alt="{{ $variant->name }}" />
+                src="/storage/{{ $image->uuid }}/original.{{ $image->file_extension }}" alt="{{ $variant->name }}" />
         </a>
     </div>
 

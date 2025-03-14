@@ -1782,7 +1782,6 @@ class Items extends Component
                         "items_count" => $paramGroup["items"]->count(),
                     ]
                 );
-
                 $filters->push([
                     "id" => $paramGroup["id"],
                     "name" => $paramGroup["name"],

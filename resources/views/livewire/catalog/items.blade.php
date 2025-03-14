@@ -1,5 +1,5 @@
-<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased" 
-    x-data="{ 
+<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased"
+    x-data="{
         isLoading: false,
         hasError: false,
         errorMessage: '',
@@ -11,7 +11,7 @@
                     this.isLoading = false;
                 }, 500);
             });
-            
+
             Livewire.on('filter-error', (message) => {
                 this.hasError = true;
                 this.errorMessage = message || 'Произошла ошибка при обработке фильтра';
@@ -26,16 +26,16 @@
     @if ($category || $product_ids)
         <div class="mx-auto container relative">
             <!-- Loading Overlay -->
-            <div x-show="isLoading" 
+            <div x-show="isLoading"
                 class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm">
                 <div class="flex items-center gap-2 rounded-lg bg-white/80 px-6 py-4 shadow-lg dark:bg-gray-800/80">
                     <div class="animate-spin w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full"></div>
                     <span class="text-gray-700 dark:text-gray-300">Загрузка...</span>
                 </div>
             </div>
-            
+
             <!-- Error Message -->
-            <div x-show="hasError" 
+            <div x-show="hasError"
                 class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm"
                 x-on:click="hasError = false">
                 <div class="flex flex-col items-center gap-2 rounded-lg bg-white/80 px-6 py-4 shadow-lg dark:bg-gray-800/80 max-w-md">
@@ -46,7 +46,7 @@
                         Ошибка
                     </div>
                     <p class="text-gray-700 dark:text-gray-300" x-text="errorMessage"></p>
-                    <button 
+                    <button
                         class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                         x-on:click="hasError = false"
                     >
@@ -61,7 +61,7 @@
                             @livewire('general.breadcrumbs')
                             <h2 class="mt-3 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">{{ $category->name }}</h2>
                         </div>
-                    
+
                     <div class="flex items-center space-x-4 relative">
                         <button id="sortDropdownButton1" data-dropdown-toggle="dropdownSort1" type="button"
                             class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
@@ -128,7 +128,7 @@
                                         Сбросить фильтры
                                     </button>
                                 @endif
-                                
+
                                 <!-- Price Range Filter -->
                                 <div class="mb-6">
                                     <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">Цена</h4>
@@ -152,7 +152,7 @@
                                                 max="{{ $this->priceTo }}"
                                                 class="block w-full rounded-lg bg-gray-50 p-0.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                                             >
-                                            
+
 
                                         </div>
                                         <div>
@@ -185,19 +185,19 @@
                                         @foreach ($filters as $filter)
                                             <div class="mt-1">
                                                 <p class="text-xs text-gray-700 dark:text-gray-300">
-                                                    Filter: {{ $filter['name'] }} ({{ $filter['type'] }}) - 
+                                                    Filter: {{ $filter['name'] }} ({{ $filter['type'] }}) -
                                                     Items: {{ count($filter['items']) }}
                                                 </p>
                                             </div>
                                         @endforeach
                                     </div>
-                                @endif  
+                                @endif
                                 @foreach ($filters as $filter)
                                     <div class="mb-4">
                                         <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                             {{ $filter['name'] }}
                                         </h4>
-                                        
+
                                         @if($filter['type'] === 'param')
                                             <div class="space-y-2">
                                                 @foreach ($filter['items'] as $item)
@@ -240,7 +240,7 @@
                                         @endif
                                     </div>
                                 @endforeach
-                                
+
                             </div>
                         </div>
                     </div>
@@ -286,7 +286,7 @@
                 const url = new URL(window.location.href);
                 const path = url.pathname;
                 console.log(path);
-            
+
                 window.history.pushState({}, '', path);
             }, 0);
         });

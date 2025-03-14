@@ -65,9 +65,10 @@ class ProductParamResource extends Resource
                         'checkboxes' => 'Список чекбоксов',
                         'color' => 'Цвет',
                     } : ''),
-                Tables\Columns\IconColumn::make('allow_filtering')
-                    ->label('Разрешить фильтрацию')
-                    ->boolean(),
+                Tables\Columns\ToggleColumn::make('allow_filtering')
+                    ->label('Разрешить фильтрацию'),
+                Tables\Columns\ToggleColumn::make('show_on_preview')
+                    ->label('Показывать в листинге'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Дата создания')
                     ->dateTime()

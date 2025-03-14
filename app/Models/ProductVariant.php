@@ -33,6 +33,7 @@ class ProductVariant extends Model
         'is_popular',
         'count',
         'synonims',
+        'gallery'
     ];
 
     protected $casts = [

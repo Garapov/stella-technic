@@ -321,7 +321,7 @@ class ProductImporter extends Importer
                                     }
                                 }
                             }
-
+                            Log::info('Gallery images processed', ['images' => $galleryIds]);
                             // Данные для создания/обновления вариации
                             $variantData = [
                                 'product_id' => $record->id,

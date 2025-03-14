@@ -13,21 +13,29 @@
 }">
 
     <div class="grid items-start grid-cols-1 lg:grid-cols-2 gap-8 max-lg:gap-12 max-sm:gap-8">
-        <div class="w-full lg:sticky top-0">
+        <div class="w-full lg:sticky top-10">
             <div class="flex flex-row gap-2">
                 <div class="flex flex-col gap-2 w-16 max-sm:w-14 shrink-0">
-                    <img src="{{ asset('/storage/' . $variation->img->uuid .'/filament-thumbnail.' . $variation->img->file_extension) }}" alt="Product1"
-                        class="aspect-[1/1] object-cover object-top w-full cursor-pointer  border-b-2 border-black" />
-                    
+                    @if ($variation->img->gallery)
+                        @php
+                            $gallery = \App\Models\Image::whereIn('id', $variation->img->gallery)->get();
+                        @endphp
+                    @endif
+                    <img src="{{ asset('/storage/' . $variation->img->uuid .'/filament-thumbnail.' . $variation->img->file_extension) }}" alt="Product1" class="aspect-[1/1] object-cover object-top w-full cursor-pointer  border-b-2 border-black" />
+                    @foreach ($gallery as $image)
+                        <img src="{{ asset('/storage/' . $image->uuid .'/filament-thumbnail.' . $image->file_extension) }}" alt="Product1" class="aspect-[1/1] object-cover object-top w-full cursor-pointer  border-b-2 border-black" />
+                    @endforeach
                 </div>
                 <div class="flex-1">
-                    <img src="{{ asset('/storage/' . $variation->img->uuid .'/original.' . $variation->img->file_extension) }}" alt="Product1"
-                        class="w-full  aspect-[1/1] object-cover"  />
+                    <img src="{{ asset('/storage/' . $variation->img->uuid .'/original.' . $variation->img->file_extension) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  />
+                    @foreach ($gallery as $image)
+                        <img src="{{ asset('/storage/' . $image->uuid .'/original.' . $image->file_extension) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  />
+                    @endforeach
                 </div>
             </div>
         </div>
 
-        <div class="w-full">
+        <div class="w-full lg:sticky top-10">
             <div>
                 <h1 class="text-lg sm:text-xl font-semibold text-slate-900">{{ $variation->name }} ({{$variation->sku}})</h1>
                 <div class="flex items-center flex-wrap gap-4 mt-6">
