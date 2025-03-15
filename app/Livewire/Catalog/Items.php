@@ -339,7 +339,9 @@ class Items extends Component
             $paramItemId = (int) $paramItemId;
 
             // Получаем информацию о параметре
-            $paramItem = \App\Models\ProductParamItem::find($paramItemId);
+            $paramItem = \App\Models\ProductParamItem::with(
+                "productParam"
+            )->find($paramItemId);
 
             if (!$paramItem) {
                 \Illuminate\Support\Facades\Log::error("Параметр не найден", [
@@ -348,6 +350,27 @@ class Items extends Component
                 ]);
 
                 $this->dispatch("filter-error", "Параметр не найден");
+                return;
+            }
+
+            // Проверяем, можно ли использовать этот параметр для фильтрации
+            if (
+                !$paramItem->productParam ||
+                !$paramItem->productParam->allow_filtering
+            ) {
+                \Illuminate\Support\Facades\Log::error(
+                    "Параметр не разрешен для фильтрации",
+                    [
+                        "paramName" => $paramName,
+                        "paramItemId" => $paramItemId,
+                        "paramTitle" => $paramItem->title,
+                    ]
+                );
+
+                $this->dispatch(
+                    "filter-error",
+                    "Параметр не разрешен для фильтрации"
+                );
                 return;
             }
 
@@ -553,26 +576,67 @@ class Items extends Component
             // Получаем информацию о выбранных параметрах
             $selectedParamItems = [];
             if (!empty($this->selectedVariations)) {
-                $selectedParamItems = \App\Models\ProductParamItem::whereIn(
-                    "id",
-                    $this->selectedVariations
-                )
-                    ->get()
-                    ->keyBy("id");
+                $variants = $variants->filter(function ($variant) {
+                    $variantMatches = true;
 
-                \Illuminate\Support\Facades\Log::info(
-                    "Получена информация о выбранных параметрах",
-                    [
-                        "count" => $selectedParamItems->count(),
-                        "items" => $selectedParamItems->map(function ($item) {
-                            return [
-                                "id" => $item->id,
-                                "title" => $item->title,
-                                "value" => $item->value,
-                            ];
-                        }),
-                    ]
-                );
+                    // Получаем параметры вариации из обеих связей
+                    $variantParamIds = collect();
+
+                    if ($variant->paramItems) {
+                        // Отфильтруем параметры, у которых allow_filtering = true
+                        $filteredParamItems = $variant->paramItems->filter(
+                            function ($item) {
+                                return $item->productParam &&
+                                    $item->productParam->allow_filtering;
+                            }
+                        );
+                        $variantParamIds = $variantParamIds->merge(
+                            $filteredParamItems->pluck("id")
+                        );
+                    }
+
+                    if ($variant->parametrs) {
+                        // Отфильтруем параметры, у которых allow_filtering = true
+                        $filteredParamItems = $variant->parametrs->filter(
+                            function ($item) {
+                                return $item->productParam &&
+                                    $item->productParam->allow_filtering;
+                            }
+                        );
+                        $variantParamIds = $variantParamIds->merge(
+                            $filteredParamItems->pluck("id")
+                        );
+                    }
+
+                    $variantParamIds = $variantParamIds->unique()->toArray();
+
+                    // Загрузим информацию о выбранных параметрах, чтобы проверить allow_filtering
+                    $selectedParamItems = ProductParamItem::whereIn(
+                        "id",
+                        $this->selectedVariations
+                    )
+                        ->with("productParam")
+                        ->get();
+
+                    // Проверяем, содержит ли вариация все выбранные параметры
+                    foreach ($selectedParamItems as $selectedItem) {
+                        // Пропускаем параметры, у которых allow_filtering = false
+                        if (
+                            !$selectedItem->productParam ||
+                            !$selectedItem->productParam->allow_filtering
+                        ) {
+                            continue;
+                        }
+
+                        // Если параметр доступен для фильтрации и не содержится в вариации
+                        if (!in_array($selectedItem->id, $variantParamIds)) {
+                            $variantMatches = false;
+                            break;
+                        }
+                    }
+
+                    return $variantMatches;
+                });
             }
 
             // Проверка, является ли product_ids массивом ID вариантов товаров
@@ -1287,6 +1351,20 @@ class Items extends Component
                                 continue;
                             }
 
+                            // Проверяем свойство allow_filtering
+                            if (!$paramItem->productParam->allow_filtering) {
+                                \Illuminate\Support\Facades\Log::info(
+                                    "Параметр исключен из фильтра (allow_filtering=false)",
+                                    [
+                                        "param_id" =>
+                                            $paramItem->productParam->id,
+                                        "param_name" =>
+                                            $paramItem->productParam->name,
+                                    ]
+                                );
+                                continue;
+                            }
+
                             $allCategoryParamItems->push([
                                 "id" => $paramItem->id,
                                 "param_id" => $paramItem->productParam->id,
@@ -1301,6 +1379,20 @@ class Items extends Component
                     if ($variant->parametrs) {
                         foreach ($variant->parametrs as $paramItem) {
                             if (!$paramItem->productParam) {
+                                continue;
+                            }
+
+                            // Проверяем свойство allow_filtering
+                            if (!$paramItem->productParam->allow_filtering) {
+                                \Illuminate\Support\Facades\Log::info(
+                                    "Параметр исключен из фильтра (allow_filtering=false)",
+                                    [
+                                        "param_id" =>
+                                            $paramItem->productParam->id,
+                                        "param_name" =>
+                                            $paramItem->productParam->name,
+                                    ]
+                                );
                                 continue;
                             }
 
@@ -1338,6 +1430,22 @@ class Items extends Component
                                     continue;
                                 }
 
+                                // Проверяем свойство allow_filtering
+                                if (
+                                    !$paramItem->productParam->allow_filtering
+                                ) {
+                                    \Illuminate\Support\Facades\Log::info(
+                                        "Параметр исключен из фильтра (allow_filtering=false)",
+                                        [
+                                            "param_id" =>
+                                                $paramItem->productParam->id,
+                                            "param_name" =>
+                                                $paramItem->productParam->name,
+                                        ]
+                                    );
+                                    continue;
+                                }
+
                                 $allCategoryParamItems->push([
                                     "id" => $paramItem->id,
                                     "param_id" => $paramItem->productParam->id,
@@ -1353,6 +1461,22 @@ class Items extends Component
                         if ($variant->parametrs) {
                             foreach ($variant->parametrs as $paramItem) {
                                 if (!$paramItem->productParam) {
+                                    continue;
+                                }
+
+                                // Проверяем свойство allow_filtering
+                                if (
+                                    !$paramItem->productParam->allow_filtering
+                                ) {
+                                    \Illuminate\Support\Facades\Log::info(
+                                        "Параметр исключен из фильтра (allow_filtering=false)",
+                                        [
+                                            "param_id" =>
+                                                $paramItem->productParam->id,
+                                            "param_name" =>
+                                                $paramItem->productParam->name,
+                                        ]
+                                    );
                                     continue;
                                 }
 
@@ -1394,6 +1518,22 @@ class Items extends Component
                                     continue;
                                 }
 
+                                // Проверяем свойство allow_filtering
+                                if (
+                                    !$paramItem->productParam->allow_filtering
+                                ) {
+                                    \Illuminate\Support\Facades\Log::info(
+                                        "Параметр исключен из фильтра (allow_filtering=false)",
+                                        [
+                                            "param_id" =>
+                                                $paramItem->productParam->id,
+                                            "param_name" =>
+                                                $paramItem->productParam->name,
+                                        ]
+                                    );
+                                    continue;
+                                }
+
                                 $allCategoryParamItems->push([
                                     "id" => $paramItem->id,
                                     "param_id" => $paramItem->productParam->id,
@@ -1409,6 +1549,22 @@ class Items extends Component
                         if ($variant->parametrs) {
                             foreach ($variant->parametrs as $paramItem) {
                                 if (!$paramItem->productParam) {
+                                    continue;
+                                }
+
+                                // Проверяем свойство allow_filtering
+                                if (
+                                    !$paramItem->productParam->allow_filtering
+                                ) {
+                                    \Illuminate\Support\Facades\Log::info(
+                                        "Параметр исключен из фильтра (allow_filtering=false)",
+                                        [
+                                            "param_id" =>
+                                                $paramItem->productParam->id,
+                                            "param_name" =>
+                                                $paramItem->productParam->name,
+                                        ]
+                                    );
                                     continue;
                                 }
 
@@ -1487,6 +1643,18 @@ class Items extends Component
                             continue;
                         }
 
+                        // Проверяем свойство allow_filtering
+                        if (!$param->allow_filtering) {
+                            \Illuminate\Support\Facades\Log::info(
+                                "Параметр пропущен в активных (allow_filtering=false)",
+                                [
+                                    "param_id" => $param->id,
+                                    "param_name" => $param->name,
+                                ]
+                            );
+                            continue;
+                        }
+
                         // Добавляем ID параметра в список активных
                         $activeParamIds->push($param->id);
                         // Добавляем ID элемента параметра в список активных
@@ -1547,6 +1715,18 @@ class Items extends Component
                         $param = $paramItem->productParam;
 
                         if (!$param) {
+                            continue;
+                        }
+
+                        // Проверяем свойство allow_filtering
+                        if (!$param->allow_filtering) {
+                            \Illuminate\Support\Facades\Log::info(
+                                "Параметр пропущен в активных (allow_filtering=false)",
+                                [
+                                    "param_id" => $param->id,
+                                    "param_name" => $param->name,
+                                ]
+                            );
                             continue;
                         }
 
@@ -1673,6 +1853,19 @@ class Items extends Component
                     }
 
                     $param = $item->productParam;
+
+                    // Проверяем свойство allow_filtering
+                    if (!$param->allow_filtering) {
+                        \Illuminate\Support\Facades\Log::info(
+                            "Выбранный параметр пропущен (allow_filtering=false)",
+                            [
+                                "param_id" => $param->id,
+                                "param_name" => $param->name,
+                                "param_item_id" => $item->id,
+                            ]
+                        );
+                        continue;
+                    }
 
                     // Добавляем группу параметров, если ее еще нет
                     if (!isset($paramGroups[$param->id])) {
