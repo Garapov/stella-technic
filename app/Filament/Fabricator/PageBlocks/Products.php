@@ -2,7 +2,6 @@
 
 namespace App\Filament\Fabricator\PageBlocks;
 
-use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductParamItem;
 use App\Models\ProductVariant;
@@ -13,7 +12,6 @@ use Filament\Forms\Components\Split;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Z3d0X\FilamentFabricator\PageBlocks\PageBlock;
 
 class Products extends PageBlock
