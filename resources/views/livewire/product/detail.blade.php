@@ -1,8 +1,40 @@
+@if ($variation->img->gallery)
+    @php
+        $gallery = \App\Models\Image::whereIn('id', $variation->img->gallery)->get();
+    @endphp
+@endif
+
 <div x-data="{
     product: @js($variation->product),
     variation: @js($variation),
     gallery: @js($gallery),
     cart_quantity: 1,
+    gallerySlider: new window.splide('.gallery-slider', {
+      type       : 'fade',
+      heightRatio: 1,
+      pagination : true,
+      arrows     : false,
+      cover      : true,
+    }),
+    thumbnailSlider: new window.splide('.gallery-thumbnails', {
+      rewind          : true,
+      isNavigation    : true,
+      gap             : 10,
+      perPage : 7,
+      heightRatio: 0.1,
+      focus           : 'center',
+      pagination      : false,
+      cover           : true,
+      dragMinThreshold: {
+        mouse: 4,
+        touch: 10,
+      },
+    }),
+    init() {
+        this.gallerySlider.sync( this.thumbnailSlider );
+        this.gallerySlider.mount();
+        this.thumbnailSlider.mount();
+    },
     addVariationToCart: function () {
         $store.cart.addVariationToCart({
             product: this.product,
@@ -14,24 +46,31 @@
 
     <div class="grid items-start grid-cols-1 lg:grid-cols-2 gap-8 max-lg:gap-12 max-sm:gap-8">
         <div class="w-full lg:sticky top-10">
-            <div class="flex flex-row gap-2">
-                <div class="flex flex-col gap-2 w-16 max-sm:w-14 shrink-0">
-                    @if ($variation->img->gallery)
-                        @php
-                            $gallery = \App\Models\Image::whereIn('id', $variation->img->gallery)->get();
-                        @endphp
-                    @endif
-                    <img src="{{ asset('/storage/' . $variation->img->uuid .'/filament-thumbnail.' . $variation->img->file_extension) }}" alt="Product1" class="aspect-[1/1] object-cover object-top w-full cursor-pointer  border-b-2 border-black" />
-                    @foreach ($gallery as $image)
-                        <img src="{{ asset('/storage/' . $image->uuid .'/filament-thumbnail.' . $image->file_extension) }}" alt="Product1" class="aspect-[1/1] object-cover object-top w-full cursor-pointer  border-b-2 border-black" />
-                    @endforeach
-                </div>
-                <div class="flex-1">
-                    <img src="{{ asset('/storage/' . $variation->img->uuid .'/original.' . $variation->img->file_extension) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  />
-                    @foreach ($gallery as $image)
-                        <img src="{{ asset('/storage/' . $image->uuid .'/original.' . $image->file_extension) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  />
-                    @endforeach
-                </div>
+            <div class="flex flex-col-reverse gap-4">
+                <section class="splide gallery-thumbnails" aria-label="Splide Basic HTML Example" ref="gallerySlider">
+                    <div class="splide__track h-full">
+                  		<ul class="splide__list">
+                 			<li class="splide__slide"><img src="{{ asset('/storage/' . $variation->img->uuid .'/original.' . $variation->img->file_extension) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
+
+                            @foreach ($gallery as $image)
+                                <li class="splide__slide"> <img src="{{ asset('/storage/' . $image->uuid .'/original.' . $image->file_extension) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
+
+                            @endforeach
+                  		</ul>
+                    </div>
+                </section>
+                <section class="splide gallery-slider" aria-label="Splide Basic HTML Example" ref="gallerySlider">
+                    <div class="splide__track">
+                  		<ul class="splide__list">
+                 			<li class="splide__slide"><img src="{{ asset('/storage/' . $variation->img->uuid .'/original.' . $variation->img->file_extension) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
+
+                            @foreach ($gallery as $image)
+                                <li class="splide__slide"> <img src="{{ asset('/storage/' . $image->uuid .'/original.' . $image->file_extension) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
+
+                            @endforeach
+                  		</ul>
+                    </div>
+                </section>
             </div>
         </div>
 

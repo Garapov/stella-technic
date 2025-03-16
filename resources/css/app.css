@@ -1,4 +1,7 @@
-@import '@glidejs/glide/dist/css/glide.core.min.css';
+@import "@glidejs/glide/dist/css/glide.core.min.css";
+@import "@splidejs/splide/css";
+@import "@splidejs/splide/css/skyblue";
+
 @import "toastify-js/src/toastify.css";
 @import "@fancyapps/ui/dist/fancybox/fancybox.css";
 

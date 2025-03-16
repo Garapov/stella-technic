@@ -22,6 +22,7 @@
         "@alpinejs/persist": "^3.14.5",
         "@fancyapps/ui": "^5.0.36",
         "@glidejs/glide": "^3.6.2",
+        "@splidejs/splide": "^4.1.4",
         "toastify-js": "^1.12.0"
     }
 }
