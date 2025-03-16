@@ -179,7 +179,7 @@
                                 </div>
                                 @if (Auth::user() && Auth::user()->hasRole('super_admin'))
                                     <!-- Debug info -->
-                                    <div class="mb-4 p-2 bg-gray-100 dark:bg-gray-800 rounded">
+                                    <div class="mb-4 p-2 bg-gray-100 dark:bg-gray-800 rounded hidden">
                                         <h5 class="text-sm font-medium text-gray-900 dark:text-white mb-1">Debug Info:</h5>
                                         <p class="text-xs text-gray-700 dark:text-gray-300">Filters count: {{ count($filters) }}</p>
                                         @foreach ($filters as $filter)

@@ -34,10 +34,10 @@ class VariantsRelationManager extends RelationManager
                 ->tabs([
                     Tab::make("Основная информация")
                         ->schema([
-                            Forms\Components\TextInput::make("name")
-                                ->required()
-                                ->live()
-                                ->label("Название"),
+                            // Forms\Components\TextInput::make("name")
+                            //     ->required()
+                            //     ->live()
+                            //     ->label("Название"),
                             Forms\Components\TextInput::make("price")
                                 ->required()
                                 ->numeric()
@@ -124,9 +124,11 @@ class VariantsRelationManager extends RelationManager
                                         ->with("productParam")
                                         ->get()
                                         ->mapWithKeys(function ($item) {
-                                            return [
-                                                $item->id => "{$item->productParam->name}: {$item->title}",
-                                            ];
+                                            $paramName = $item->productParam
+                                                ? $item->productParam->name
+                                                : "Unknown";
+                                            $name = "$paramName: $item->title";
+                                            return [$item->id => $name];
                                         });
                                 })
                                 ->columnSpanFull(),
