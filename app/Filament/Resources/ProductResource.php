@@ -6,6 +6,7 @@ use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Forms\Components\ImagePicker;
 use App\Models\Product;
+use App\Models\ProductParam;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
@@ -225,18 +226,12 @@ class ProductResource extends Resource
                                                     return ProductParamItem::query()
                                                         ->with("productParam")
                                                         ->get()
-                                                        ->mapWithKeys(function (
-                                                            $item
-                                                        ) {
+                                                        ->mapWithKeys(function ($item) {
                                                             $paramName = $item->productParam
-                                                                ? $item
-                                                                    ->productParam
-                                                                    ->name
+                                                                ? $item->productParam->name
                                                                 : "Unknown";
                                                             $name = "$paramName: $item->title";
-                                                            return [
-                                                                $item->id => $name,
-                                                            ];
+                                                            return [$item->id => $name];
                                                         });
                                                 })
                                         ),

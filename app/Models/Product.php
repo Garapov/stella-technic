@@ -146,6 +146,7 @@ class Product extends Model implements Searchable
         foreach ($this->links as $link) {
             $name = "";
             $name .= $this->name;
+            $links = '';
 
             // Собираем параметры для привязки к вариации
             $paramIds = [];
@@ -159,6 +160,7 @@ class Product extends Model implements Searchable
 
                 // Добавляем параметр в список для привязки
                 $paramIds[] = $param;
+                $links .= $param;
 
                 $name .= " {$parametr->title}";
             }
@@ -166,7 +168,7 @@ class Product extends Model implements Searchable
             $findedVariant = ProductVariant::withTrashed()->firstOrCreate(
                 [
                     "product_id" => $this->id,
-                    "name" => $name,
+                    "links" => $links,
                 ],
                 [
                     "price" => $this->price,
@@ -177,17 +179,19 @@ class Product extends Model implements Searchable
                     "is_popular" => $this->is_popular,
                     "count" => $this->count,
                     "synonims" => $this->synonims,
+                    "name" => $name
                 ]
             );
 
             Log::info("Product variant name", [
-                "name" => $name,
+                "links" => $links,
             ]);
             Log::info("Product variant created", [
                 "product_id" => $this->id,
                 "variant_id" => $findedVariant->id,
                 "variant_sku" => $findedVariant->sku,
                 "name" => $findedVariant->name,
+                "links" => $findedVariant->links,
             ]);
 
             $createdVariationsIds[] = $findedVariant->id;

@@ -23,9 +23,10 @@ class ProductParamItem extends Model
         'productParam'
     ];
 
+
     public function productParam()
     {
-        return $this->belongsTo(ProductParam::class);
+        return $this->belongsTo(ProductParam::class, 'product_param_id', 'id');
     }
 
     public function products(): BelongsToMany

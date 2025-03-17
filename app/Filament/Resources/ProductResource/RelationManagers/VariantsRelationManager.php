@@ -34,10 +34,10 @@ class VariantsRelationManager extends RelationManager
                 ->tabs([
                     Tab::make("Основная информация")
                         ->schema([
-                            // Forms\Components\TextInput::make("name")
-                            //     ->required()
-                            //     ->live()
-                            //     ->label("Название"),
+                            Forms\Components\TextInput::make("name")
+                                ->required()
+                                ->live()
+                                ->label("Название"),
                             Forms\Components\TextInput::make("price")
                                 ->required()
                                 ->numeric()

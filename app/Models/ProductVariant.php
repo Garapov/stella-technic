@@ -33,6 +33,7 @@ class ProductVariant extends Model
         "count",
         "synonims",
         "gallery",
+        "links"
     ];
 
     protected $casts = [

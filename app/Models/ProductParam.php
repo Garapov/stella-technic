@@ -22,4 +22,15 @@ class ProductParam extends Model
     {
         return $this->hasMany(ProductParamItem::class);
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($param) {
+            foreach($param->params as $item) {
+                $item->delete();
+            }
+        });
+    }
 }
