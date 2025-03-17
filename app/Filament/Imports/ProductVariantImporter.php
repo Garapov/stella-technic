@@ -22,6 +22,7 @@ class ProductVariantImporter extends Importer
     protected int $retryDelay = 500;
 
     protected array $paramItemIds = [];
+    protected array $additionalParamItemIds = [];
 
     public static function getColumns(): array
     {
@@ -45,7 +46,11 @@ class ProductVariantImporter extends Importer
                         $importer
                     );
                     
-                    $product = Product::firstOrCreate($data);
+                    $product = Product::where('name', $data['name'])->first();
+
+                    if (!$product) {
+                        $product = Product::create($data);
+                    }
 
                     if (isset($data['categories']) && !empty($data['categories'])) {
                         
@@ -66,6 +71,9 @@ class ProductVariantImporter extends Importer
                     return $product->id;
                 })
                 ->rules(['required', 'json']),
+            ImportColumn::make('name')
+                ->ignoreBlankState()
+                ->rules(['nullable']),
             ImportColumn::make('price')
                 ->numeric()
                 ->ignoreBlankState()
@@ -73,7 +81,7 @@ class ProductVariantImporter extends Importer
             ImportColumn::make('new_price')
                 ->numeric()
                 ->ignoreBlankState()
-                ->rules(['integer']),
+                ->rules(['integer', 'nullable']),
             ImportColumn::make('image')
                 ->fillRecordUsing(function ($state, ProductVariantImporter $importer, $record): void  {
                     $record->image = static::processImageStatic(
@@ -98,10 +106,11 @@ class ProductVariantImporter extends Importer
                 ->numeric()
                 ->rules(['required', 'integer']),
             ImportColumn::make('paramItems')
-                ->fillRecordUsing(function ($state, ProductVariantImporter $importer, $record, ): void  {
+                ->fillRecordUsing(function ($state, ProductVariantImporter $importer, $record): void  {
                     $data = \json_decode($state, true);
 
                     $variationName = $record->product->name;
+                    $variatinLinks = '';
 
                     Log::info('param items', ['data' => $data, 'state' => $state, '$importer->paramItemIds' => $importer->paramItemIds]);
 
@@ -136,14 +145,56 @@ class ProductVariantImporter extends Importer
                         );
                         $variationName .= " {$paramItemModel->title}";
                         $importer->paramItemIds[] = $paramItemModel->id;
+                        $variatinLinks .= $paramItemModel->id;
                     }
 
                     
                     $record->name = $variationName;
+                    $record->links = $variatinLinks;
                     
                 })
                 ->rules(['required', 'json']),
-            ImportColumn::make('synonims'),
+            ImportColumn::make('parametrs')
+                ->fillRecordUsing(function ($state, ProductVariantImporter $importer, $record, ): void  {
+                    $data = \json_decode($state, true);
+
+                    foreach ($data as $paramItem) {
+                        if (
+                            empty($paramItem["param"]) ||
+                            !isset($paramItem["name"]) ||
+                            !isset($paramItem["value"])
+                        ) {
+                            continue;
+                        }
+
+                        // Проверяем существует ли параметр, если нет - создаем
+                        $productParam = ProductParam::firstOrCreate(
+                            [
+                                "name" => $paramItem["param"],
+                            ],
+                            [
+                                "type" => $paramItem["type"] ?? "checkboxes",
+                            ]
+                        );
+
+                        // Создаем или находим значение параметра
+                        $paramItemModel = ProductParamItem::firstOrCreate(
+                            [
+                                "product_param_id" => $productParam->id,
+                                "value" => (string) $paramItem["value"],
+                            ],
+                            [
+                                "title" => $paramItem["name"] ?? (string) $paramItem["value"],
+                            ]
+                        );
+                        $importer->additionalParamItemIds[] = $paramItemModel->id;
+                    }
+                    
+                })
+                ->rules(['required', 'json']),
+            ImportColumn::make('synonims')
+                ->ignoreBlankState()
+                ->rules(['nullable']),
             ImportColumn::make('gallery')
                 ->array(',')
                 ->fillRecordUsing(function ($state, ProductVariantImporter $importer, $record)  {
@@ -221,6 +272,51 @@ class ProductVariantImporter extends Importer
     public function afterSave(): void
     {
         $this->record->paramItems()->sync($this->paramItemIds);
+        $this->record->parametrs()->sync($this->additionalParamItemIds);
+        if ($this->data['name']) {
+            $this->record->update([
+                'name' => $this->data['name']
+            ]);
+        }
+
+        // Проверяем текущее значение links в продукте
+        $links = $this->record->product->links ?? [];
+        
+        // Если links не является массивом, создаем новый массив
+        if (!is_array($links)) {
+            $links = [];
+        }
+        
+        // Преобразуем $this->paramItemIds в строку для корректного сравнения
+        $currentIds = json_encode($this->paramItemIds);
+        
+        // Флаг, указывающий, найдена ли уже такая запись
+        $rowExists = false;
+        
+        // Проверяем, есть ли уже такая строка в массиве links
+        foreach ($links as $row) {
+            if (isset($row['row'])) {
+                // Преобразуем существующую строку для сравнения
+                $existingRow = json_encode($row['row']);
+                if ($existingRow === $currentIds) {
+                    $rowExists = true;
+                    break;
+                }
+            }
+        }
+        
+        // Если такой записи нет, добавляем её
+        if (!$rowExists) {
+            $links[] = ['row' => $this->paramItemIds];
+            
+            // Обновляем links в продукте
+            $this->record->product->update([
+                'links' => $links
+            ]);
+        }
+
+        $this->paramItemIds = [];
+        $this->additionalParamItemIds = [];
         dump("afterSave complete");
     }
 
