@@ -81,7 +81,7 @@ class ProductVariant extends Model
             if (!$variant->sku) {
                 $variant->sku = (string) Str::random(10);
             }
-            Log::info("Creating product variant", ["variant" => $variant->sku]);
+            Log::info("Creating product variant", ["variant" => $variant]);
         });
     }
 

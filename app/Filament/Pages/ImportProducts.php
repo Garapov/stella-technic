@@ -3,11 +3,13 @@
 namespace App\Filament\Pages;
 
 use App\Imports\ProductImporter;
+use App\Filament\Imports\ProductVariantImporter;
 use App\Models\Import;
 use Filament\Actions\ImportAction;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables;
 use Filament\Tables\Table;
 use JibayMcs\FilamentTour\Tour\HasTour;
 use JibayMcs\FilamentTour\Tour\Step;
@@ -37,7 +39,7 @@ class ImportProducts extends Page implements HasTable
     {
         return [
             ImportAction::make()
-                ->importer(ProductImporter::class)
+                ->importer(ProductVariantImporter::class)
                 ->chunkSize(10)
                 ->color('primary')
                 ->maxRows(2000)
@@ -49,7 +51,7 @@ class ImportProducts extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Import::query()->where('importer', ProductImporter::class))
+            ->query(Import::query()->where('importer', ProductVariantImporter::class))
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('id')
@@ -118,9 +120,11 @@ class ImportProducts extends Page implements HasTable
             ])->filters([
                 // Add filters if needed
             ])->actions([
-                // Add actions if needed
+                Tables\Actions\EditAction::make(),
             ])->bulkActions([
-                // Add bulk actions if needed
-            ])->poll('2s');
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ])->poll('8s');
     }
 }

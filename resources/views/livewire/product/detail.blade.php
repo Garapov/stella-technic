@@ -15,6 +15,7 @@
       pagination : true,
       arrows     : false,
       cover      : true,
+      rewind          : true,
     }),
     thumbnailSlider: new window.splide('.gallery-thumbnails', {
       rewind          : true,
@@ -91,12 +92,12 @@
                 <div class="parametrs">
                     @foreach($groupedParams as $paramGroup)
                         <div class="mb-6">
-                            <h3 class="text-lg sm:text-xl font-semibold text-slate-900">{{ $paramGroup['name'] }}</h3>
-                            <div class="flex flex-wrap gap-4 mt-4">
+                            <h3 class="text-lg sm:text-sm font-semibold text-slate-900">{{ $paramGroup['name'] }}</h3>
+                            <div class="flex flex-wrap gap-4 mt-2">
                                 @foreach($paramGroup['values'] as $value)
                                     <a href="{{ route('client.product_detail', $variation->product->variants->where('id', $value['variant_id'])->first()->slug) }}"
                                         @class([
-                                            'px-4 h-9 border text-sm flex items-center justify-center shrink-0',
+                                            'px-2 py-2 border text-sm flex items-center justify-center shrink-0 text-xs rounded-xl',
                                             'border-blue-600 bg-blue-50' => $value['is_current'],
                                             'border-slate-300 hover:border-blue-600' => !$value['is_current'] && $value['is_available'],
                                             'border-slate-200 bg-slate-50 text-slate-400' => !$value['is_available']

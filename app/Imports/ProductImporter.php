@@ -93,7 +93,6 @@ class ProductImporter extends Importer
                 })
                 ->example("asd667a6d-asdd77887-77as87d7-787a8sd78"),
             ImportColumn::make("name")
-
                 ->requiredMapping()
                 ->example("Название товара")
                 ->rules(["required", "string"]),
@@ -121,7 +120,7 @@ class ProductImporter extends Importer
                     ProductImporter $importer
                 ) {
                     // Если значение пустое, пропускаем
-                    if (blank($state)) {
+                    if (\blank($state)) {
                         return;
                     }
 

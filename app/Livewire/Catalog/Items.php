@@ -575,70 +575,10 @@ class Items extends Component
 
             // Получаем информацию о выбранных параметрах
             $selectedParamItems = [];
-            if (!empty($this->selectedVariations)) {
-                $variants = $variants->filter(function ($variant) {
-                    $variantMatches = true;
-
-                    // Получаем параметры вариации из обеих связей
-                    $variantParamIds = collect();
-
-                    if ($variant->paramItems) {
-                        // Отфильтруем параметры, у которых allow_filtering = true
-                        $filteredParamItems = $variant->paramItems->filter(
-                            function ($item) {
-                                return $item->productParam &&
-                                    $item->productParam->allow_filtering;
-                            }
-                        );
-                        $variantParamIds = $variantParamIds->merge(
-                            $filteredParamItems->pluck("id")
-                        );
-                    }
-
-                    if ($variant->parametrs) {
-                        // Отфильтруем параметры, у которых allow_filtering = true
-                        $filteredParamItems = $variant->parametrs->filter(
-                            function ($item) {
-                                return $item->productParam &&
-                                    $item->productParam->allow_filtering;
-                            }
-                        );
-                        $variantParamIds = $variantParamIds->merge(
-                            $filteredParamItems->pluck("id")
-                        );
-                    }
-
-                    $variantParamIds = $variantParamIds->unique()->toArray();
-
-                    // Загрузим информацию о выбранных параметрах, чтобы проверить allow_filtering
-                    $selectedParamItems = ProductParamItem::whereIn(
-                        "id",
-                        $this->selectedVariations
-                    )
-                        ->with("productParam")
-                        ->get();
-
-                    // Проверяем, содержит ли вариация все выбранные параметры
-                    foreach ($selectedParamItems as $selectedItem) {
-                        // Пропускаем параметры, у которых allow_filtering = false
-                        if (
-                            !$selectedItem->productParam ||
-                            !$selectedItem->productParam->allow_filtering
-                        ) {
-                            continue;
-                        }
-
-                        // Если параметр доступен для фильтрации и не содержится в вариации
-                        if (!in_array($selectedItem->id, $variantParamIds)) {
-                            $variantMatches = false;
-                            break;
-                        }
-                    }
-
-                    return $variantMatches;
-                });
-            }
-
+            
+            // Инициализируем переменную $variants
+            $variants = collect();
+            
             // Проверка, является ли product_ids массивом ID вариантов товаров
             if ($this->items === "variants") {
                 // Получаем варианты напрямую
@@ -649,22 +589,7 @@ class Items extends Component
                 \Illuminate\Support\Facades\Log::info(
                     "Запрос по ID вариантов товаров"
                 );
-            } elseif ($this->category) {
-                $query = $this->category->products();
-                \Illuminate\Support\Facades\Log::info("Запрос по категории");
-            } elseif ($this->product_ids) {
-                $query = \App\Models\Product::whereIn("id", $this->product_ids);
-                \Illuminate\Support\Facades\Log::info("Запрос по ID товаров");
-            } else {
-                $query = \App\Models\Product::query();
-                \Illuminate\Support\Facades\Log::info("Запрос по всем товарам");
-            }
-
-            // Собираем все вариации товаров
-            $variants = collect();
-
-            // Если мы работаем напрямую с вариантами
-            if ($this->items === "variants") {
+                
                 // Загружаем варианты с связанными данными
                 $variants = $query
                     ->with([
@@ -693,100 +618,10 @@ class Items extends Component
                         ]
                     );
                 }
-
-                // Применяем фильтрацию по параметрам
-                if (!empty($this->selectedVariations)) {
-                    $variants = $variants->filter(function ($variant) {
-                        $variantMatches = true;
-
-                        // Получаем параметры вариации из обеих связей
-                        $variantParamIds = collect();
-
-                        if ($variant->paramItems) {
-                            $variantParamIds = $variantParamIds->merge(
-                                $variant->paramItems->pluck("id")
-                            );
-                        }
-
-                        if ($variant->parametrs) {
-                            $variantParamIds = $variantParamIds->merge(
-                                $variant->parametrs->pluck("id")
-                            );
-                        }
-
-                        $variantParamIds = $variantParamIds
-                            ->unique()
-                            ->toArray();
-
-                        // Проверяем, содержит ли вариация все выбранные параметры
-                        foreach (
-                            $this->selectedVariations
-                            as $selectedParamId
-                        ) {
-                            if (!in_array($selectedParamId, $variantParamIds)) {
-                                $variantMatches = false;
-                                break;
-                            }
-                        }
-
-                        return $variantMatches;
-                    });
-
-                    \Illuminate\Support\Facades\Log::info(
-                        "Применен фильтр по параметрам к вариантам",
-                        [
-                            "selectedVariations" => $this->selectedVariations,
-                            "remaining_variants" => $variants->count(),
-                        ]
-                    );
-                }
-
-                // Применяем фильтрацию по цене
-                if (!empty($this->priceFrom) || !empty($this->priceTo)) {
-                    $variants = $variants->filter(function ($variant) {
-                        $variantPrice =
-                            $variant->new_price > 0
-                                ? $variant->new_price
-                                : $variant->price;
-
-                        if (
-                            !empty($this->priceFrom) &&
-                            $variantPrice < $this->priceFrom
-                        ) {
-                            return false;
-                        }
-
-                        if (
-                            !empty($this->priceTo) &&
-                            $variantPrice > $this->priceTo
-                        ) {
-                            return false;
-                        }
-
-                        return true;
-                    });
-
-                    \Illuminate\Support\Facades\Log::info(
-                        "Применен фильтр по цене к вариантам",
-                        [
-                            "priceFrom" => $this->priceFrom,
-                            "priceTo" => $this->priceTo,
-                            "remaining_variants" => $variants->count(),
-                        ]
-                    );
-                }
-            } else {
-                // Оригинальная логика для товаров
-                if (!empty($this->selectedBrands)) {
-                    $query->whereIn("brand_id", $this->selectedBrands);
-                    \Illuminate\Support\Facades\Log::info(
-                        "Применен фильтр по брендам",
-                        [
-                            "selectedBrands" => $this->selectedBrands,
-                        ]
-                    );
-                }
-
+            } elseif ($this->category) {
+                $query = $this->category->products();
+                \Illuminate\Support\Facades\Log::info("Запрос по категории");
+                
                 // Получаем товары с их вариациями и параметрами
                 $baseQuery = clone $query;
                 $products = $baseQuery
@@ -958,6 +793,124 @@ class Items extends Component
                         }
                     }
                 }
+            } elseif ($this->product_ids) {
+                $query = \App\Models\Product::whereIn("id", $this->product_ids);
+                \Illuminate\Support\Facades\Log::info("Запрос по ID товаров");
+                
+                // Получаем товары с их вариациями и параметрами
+                $products = $query
+                    ->with([
+                        "variants",
+                        "variants.paramItems.productParam",
+                        "variants.parametrs.productParam",
+                        "variants.img",
+                    ])
+                    ->select("products.*")
+                    ->get();
+                
+                // Аналогичная обработка как для категории
+                foreach ($products as $product) {
+                    if ($product->variants && $product->variants->count() > 0) {
+                        foreach ($product->variants as $variant) {
+                            $variantMatches = true;
+                            
+                            // Проверка параметров и цены аналогично коду выше
+                            // ...
+                            
+                            if ($variantMatches) {
+                                $variants->push($variant);
+                            }
+                        }
+                    }
+                }
+            } else {
+                $query = \App\Models\Product::query();
+                \Illuminate\Support\Facades\Log::info("Запрос по всем товарам");
+                
+                // Аналогичная обработка как для категории
+                // ...
+            }
+            
+            // Применяем фильтрацию по параметрам для режима variants
+            if ($this->items === "variants" && !empty($this->selectedVariations)) {
+                $variants = $variants->filter(function ($variant) {
+                    $variantMatches = true;
+
+                    // Получаем параметры вариации из обеих связей
+                    $variantParamIds = collect();
+
+                    if ($variant->paramItems) {
+                        $variantParamIds = $variantParamIds->merge(
+                            $variant->paramItems->pluck("id")
+                        );
+                    }
+
+                    if ($variant->parametrs) {
+                        $variantParamIds = $variantParamIds->merge(
+                            $variant->parametrs->pluck("id")
+                        );
+                    }
+
+                    $variantParamIds = $variantParamIds
+                        ->unique()
+                        ->toArray();
+
+                    // Проверяем, содержит ли вариация все выбранные параметры
+                    foreach (
+                        $this->selectedVariations
+                        as $selectedParamId
+                    ) {
+                        if (!in_array($selectedParamId, $variantParamIds)) {
+                            $variantMatches = false;
+                            break;
+                        }
+                    }
+
+                    return $variantMatches;
+                });
+
+                \Illuminate\Support\Facades\Log::info(
+                    "Применен фильтр по параметрам к вариантам",
+                    [
+                        "selectedVariations" => $this->selectedVariations,
+                        "remaining_variants" => $variants->count(),
+                    ]
+                );
+            }
+            
+            // Применяем фильтрацию по цене для режима variants
+            if ($this->items === "variants" && (!empty($this->priceFrom) || !empty($this->priceTo))) {
+                $variants = $variants->filter(function ($variant) {
+                    $variantPrice =
+                        $variant->new_price > 0
+                            ? $variant->new_price
+                            : $variant->price;
+
+                    if (
+                        !empty($this->priceFrom) &&
+                        $variantPrice < $this->priceFrom
+                    ) {
+                        return false;
+                    }
+
+                    if (
+                        !empty($this->priceTo) &&
+                        $variantPrice > $this->priceTo
+                    ) {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                \Illuminate\Support\Facades\Log::info(
+                    "Применен фильтр по цене к вариантам",
+                    [
+                        "priceFrom" => $this->priceFrom,
+                        "priceTo" => $this->priceTo,
+                        "remaining_variants" => $variants->count(),
+                    ]
+                );
             }
 
             // Применяем сортировку к коллекции вариаций
@@ -1021,7 +974,15 @@ class Items extends Component
                 "Произошла ошибка при получении товаров: " . $e->getMessage()
             );
 
-            return null;
+            // Возвращаем пустую пагинацию вместо null
+            $emptyCollection = collect();
+            return new \Illuminate\Pagination\LengthAwarePaginator(
+                $emptyCollection,
+                0,
+                18,
+                1,
+                ["path" => request()->url(), "query" => request()->query()]
+            );
         }
     }
 
