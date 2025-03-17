@@ -21,6 +21,8 @@ class ProductVariantImporter extends Importer
     protected $maxAttempts = 3;
     protected int $retryDelay = 500;
 
+    protected array $paramItemIds = [];
+
     public static function getColumns(): array
     {
         return [
@@ -78,7 +80,6 @@ class ProductVariantImporter extends Importer
                         $state,
                         $importer
                     );
-                    Log::info('$record->image', ['data' => $record->image]);
                 })
                 ->requiredMapping()
                 ->rules(['required', 'url']),
@@ -97,13 +98,12 @@ class ProductVariantImporter extends Importer
                 ->numeric()
                 ->rules(['required', 'integer']),
             ImportColumn::make('paramItems')
-                ->fillRecordUsing(function ($state, ProductVariantImporter $importer, $record): void  {
+                ->fillRecordUsing(function ($state, ProductVariantImporter $importer, $record, ): void  {
                     $data = \json_decode($state, true);
-                    $rowIds = [];
 
                     $variationName = $record->product->name;
 
-                    Log::info('param items', ['data' => $data, 'state' => $state]);
+                    Log::info('param items', ['data' => $data, 'state' => $state, '$importer->paramItemIds' => $importer->paramItemIds]);
 
                     foreach ($data as $paramItem) {
                         if (
@@ -134,15 +134,38 @@ class ProductVariantImporter extends Importer
                                 "title" => $paramItem["name"] ?? (string) $paramItem["value"],
                             ]
                         );
-
-                        $rowIds[] = $paramItemModel->id;
+                        $variationName .= " {$paramItemModel->title}";
+                        $importer->paramItemIds[] = $paramItemModel->id;
                     }
-                    $record->paramItems->sync($rowIds);
+
+                    
+                    $record->name = $variationName;
+                    
                 })
                 ->rules(['required', 'json']),
             ImportColumn::make('synonims'),
             ImportColumn::make('gallery')
                 ->array(',')
+                ->fillRecordUsing(function ($state, ProductVariantImporter $importer, $record)  {
+                    Log::warning('gallery', ['data' => $state]);
+
+                    if (blank($state)) {
+                        return [];
+                    }
+
+                    $gallery_ids = [];
+                    foreach ($state as $image) {
+                        Log::warning('image', ['data' => $image]);
+                        $imageId = static::processImageStatic(
+                            $image,
+                            $importer
+                        );
+                        if ($imageId) {
+                            $gallery_ids[] = $imageId;
+                        }
+                    }
+                    $record->gallery = $gallery_ids;
+                })
                 ->rules(['array'])
                 ->nestedRecursiveRules(['url']),
         ];
@@ -197,6 +220,7 @@ class ProductVariantImporter extends Importer
 
     public function afterSave(): void
     {
+        $this->record->paramItems()->sync($this->paramItemIds);
         dump("afterSave complete");
     }
 
@@ -262,50 +286,6 @@ class ProductVariantImporter extends Importer
     public function beforeSave(): void
     {
         dump("beforeSave start");
-        // Log::info('beforeSave start', ['record' => $this->record]);
-        
-        // Проверяем, что запись и родительский продукт существуют
-        // if ($this->record && $this->record->product) {
-        //     // Получаем ID параметров вариации
-        //     $paramItemIds = $this->record->paramItems()->pluck('product_param_items.id')->toArray();
-            
-        //     if (!empty($paramItemIds)) {
-        //         // Получаем текущие links родительского продукта
-        //         $links = $this->record->product->links ?? [];
-                
-        //         // Добавляем новую комбинацию параметров
-        //         $links[] = ["row" => $paramItemIds];
-                
-        //         // Обновляем links родительского продукта
-        //         $this->record->product->update(['links' => $links]);
-                
-        //         Log::info('Updated product links in beforeSave', [
-        //             'product_id' => $this->record->product->id,
-        //             'variant_id' => $this->record->id,
-        //             'paramItemIds' => $paramItemIds,
-        //             'links' => $links
-        //         ]);
-        //     }
-            
-        //     // Обновляем название вариации на основе названия продукта и параметров
-        //     $variantName = $this->record->product->name;
-            
-        //     foreach ($this->record->paramItems as $paramItem) {
-        //         $variantName .= " {$paramItem->title}";
-        //     }
-            
-        //     $this->record->name = $variantName;
-            
-        //     Log::info('Updated variant name in beforeSave', [
-        //         'variant_id' => $this->record->id,
-        //         'name' => $variantName
-        //     ]);
-        // } else {
-        //     Log::error('Record or product is null in beforeSave', [
-        //         'record' => $this->record ? 'exists' : 'null',
-        //         'product' => ($this->record && $this->record->product) ? 'exists' : 'null'
-        //     ]);
-        // }
     }
 
     protected function createCategoriesTree(
