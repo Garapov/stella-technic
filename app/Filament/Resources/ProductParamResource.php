@@ -53,9 +53,6 @@ class ProductParamResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Название')
                     ->searchable(),
@@ -72,6 +69,8 @@ class ProductParamResource extends Resource
                     ->label('Разрешить фильтрацию'),
                 Tables\Columns\ToggleColumn::make('show_on_preview')
                     ->label('Показывать в листинге'),
+                Tables\Columns\ToggleColumn::make('show_on_table')
+                    ->label('Показывать в таблице'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Дата создания')
                     ->dateTime()

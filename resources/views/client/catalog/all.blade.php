@@ -1,6 +1,6 @@
 <x-guest-layout>
     @php
-        $products = \App\Models\Product::all();
+        $products = \App\Models\ProductVariant::all();
     @endphp
     
     @livewire('catalog.items', [

@@ -3,6 +3,7 @@
         isLoading: false,
         hasError: false,
         errorMessage: '',
+        displayMode: $wire.entangle('displayMode'),
         init() {
             Livewire.on('filter-changed', () => {
                 this.isLoading = true;
@@ -20,14 +21,14 @@
         },
         makeFilterIsLoading() {
             this.isLoading = true;
-        }
+        },
     }"
 >
     @if ($category || $product_ids)
         <div class="mx-auto container relative">
             <!-- Loading Overlay -->
-            <div x-show="isLoading"
-                class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm">
+            <div x-show="isLoading" :class="{'hidden': !isLoading}"
+                class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm hidden">
                 <div class="flex items-center gap-2 rounded-lg bg-white/80 px-6 py-4 shadow-lg dark:bg-gray-800/80">
                     <div class="animate-spin w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full"></div>
                     <span class="text-gray-700 dark:text-gray-300">Загрузка...</span>
@@ -35,8 +36,8 @@
             </div>
 
             <!-- Error Message -->
-            <div x-show="hasError"
-                class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm"
+            <div x-show="hasError" :class="{'hidden': !hasError}"
+                class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm hidden"
                 x-on:click="hasError = false">
                 <div class="flex flex-col items-center gap-2 rounded-lg bg-white/80 px-6 py-4 shadow-lg dark:bg-gray-800/80 max-w-md">
                     <div class="text-red-600 dark:text-red-400 text-xl mb-2">
@@ -55,7 +56,7 @@
                 </div>
             </div>
             <!-- Heading & Filters -->
-            @if ($category )
+            @if ($category)
                 <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">
                         <div>
                             @livewire('general.breadcrumbs')
@@ -63,6 +64,17 @@
                         </div>
 
                     <div class="flex items-center space-x-4 relative">
+                        
+
+                            <div class="inline-flex rounded-md shadow-xs" role="group">
+                                <div class="inline-flex items-center px-3 py-2 text-sm font-medium border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700" wire:click="changeDisplayMode('list')" :class="{'bg-gray-100 text-blue-700': displayMode == 'list', 'bg-white text-gray-900 cursor-pointer': displayMode != 'list'}">
+                                    <x-carbon-horizontal-view class="w-4 h-4" />
+                                </div>
+                                <div class="inline-flex items-center px-3 py-2 text-sm font-medium border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700" wire:click="changeDisplayMode('block')" :class="{'bg-gray-100 text-blue-700': displayMode == 'block', 'bg-white text-gray-900 cursor-pointer': displayMode != 'block'}">
+                                    <x-carbon-vertical-view class="w-4 h-4" />
+                                </div>
+                            </div>
+
                         <button id="sortDropdownButton1" data-dropdown-toggle="dropdownSort1" type="button"
                             class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
                             wire:click="toggleSorting">
@@ -263,16 +275,36 @@
                             </button>
                         </div>
                     @else
-                        <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 @if ($display_filter) lg:grid-cols-2 xl:grid-cols-3 @else lg:grid-cols-3 xl:grid-cols-4 @endif">
-                            @foreach ($this->products as $variant)
-                                @livewire('general.product-variant', [
-                                    'variant' => $variant,
-                                    'product' => $variant->product,
-                                ], key('variant_' . $variant->id))
-                            @endforeach
-                        </div>
+                        @if ($displayMode == 'block')
+                            <div>
+                                <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 @if ($display_filter) lg:grid-cols-2 xl:grid-cols-3 @else lg:grid-cols-3 xl:grid-cols-4 @endif">
+                                    @foreach ($this->products as $variant)
+                                        @livewire('general.product-variant', [
+                                            'variant' => $variant,
+                                            'product' => $variant->product,
+                                        ], key('variant_' . $variant->id))
+                                    @endforeach
+                                </div>
+                                {{ $this->products->links() }}
+                            </div>
+                        @endif
+                        @if ($displayMode == 'list')
+                            <div>
+                                @php
+                                    $group = $this->products->groupBy('product.id');
+                                @endphp
+                                @foreach ($group as $key=>$group_item)
+                                    @php
+                                        $product = \App\Models\Product::where('id', $key)->first();
+                                    @endphp
+                                    @livewire('general.product', [
+                                        'product' => $product,
+                                    ], key('product_' . $product->id))
+                                @endforeach
+                            </div>
+                        @endif
                     @endif
-                    {{ $this->products->links() }}
+                    
                 </div>
             </div>
         </div>

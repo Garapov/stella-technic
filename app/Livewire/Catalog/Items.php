@@ -37,12 +37,14 @@ class Items extends Component
 
     public $showFilters = false;
     public $showSorting = false;
+    public $displayMode = 'block';
 
     protected $queryString = [
         "selectedParams" => ["except" => []],
         "priceFrom" => ["as" => "price_from", "except" => null],
         "priceTo" => ["as" => "price_to", "except" => null],
         "selectedSort" => ["as" => "sort", "except" => "default"],
+        "displayMode" => ["as" => "display_mode", "except" => "block"],
         "selectedBrands" => ["as" => "brand", "except" => []],
     ];
 
@@ -2236,6 +2238,12 @@ class Items extends Component
             ]);
         }
     }
+    
+    public function changeDisplayMode($mode)
+    {
+        $this->displayMode = $mode;
+        $this->dispatch("filter-changed");
+    }
 
     public function toggleFilters()
     {
@@ -2290,6 +2298,7 @@ class Items extends Component
         $this->priceTo = $this->priceRange->max_price;
         $this->selectedBrands = [];
         $this->selectedSort = "default";
+        $this->displayMode = "block";
         $this->resetPage();
 
         \Illuminate\Support\Facades\Log::info("Фильтры сброшены", [

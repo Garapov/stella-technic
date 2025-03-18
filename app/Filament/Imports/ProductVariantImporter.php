@@ -34,7 +34,7 @@ class ProductVariantImporter extends Importer
                 ->castStateUsing(function ($state, ProductVariantImporter $importer): ?int {
                     $data = json_decode($state, true);
                     // Log::info('$data', ['data' => $data]);
-                    $requiredFields = ['name', 'image'];
+                    $requiredFields = ['name', 'image', 'categories'];
                     foreach ($requiredFields as $field) {
                         if (empty($data[$field])) {
                             throw new RowImportFailedException("Отсутствует обязательное поле '{$field}' в поле родительского товара.");
