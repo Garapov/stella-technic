@@ -23,7 +23,7 @@ document.addEventListener("alpine:init", () => {
     Alpine.data("main_slider", mainSlider);
     Alpine.data("clients", clientsSlider);
     Alpine.store("favorites", favorites);
-    Alpine.store("favorites").init();
+    // Alpine.store("favorites").init();
 });
 
 document.addEventListener("livewire:init", () => {
