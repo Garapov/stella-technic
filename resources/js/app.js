@@ -22,13 +22,15 @@ document.addEventListener("alpine:init", () => {
     Alpine.data("dropdown", dropdown);
     Alpine.data("main_slider", mainSlider);
     Alpine.data("clients", clientsSlider);
-    Alpine.store("favorites", favorites);
-    // Alpine.store("favorites").init();
 });
 
 document.addEventListener("livewire:init", () => {
     window.Livewire.on("cart-cleared", (event) => {
         Alpine.store("cart").list = [];
+    });
+
+    window.Livewire.on("favorites-cleared", (event) => {
+        Alpine.store("favorites").list = [];
     });
 });
 

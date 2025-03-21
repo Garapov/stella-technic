@@ -50,12 +50,16 @@ class ProductVariantImporter extends Importer
 
                     if (!$product) {
                         $product = Product::create($data);
+                        dump("Обновляется товар: " . $product->name);
+                    } else {
+                        dump("Найден товар: " . $product->name);
                     }
 
                     if (isset($data['categories']) && !empty($data['categories'])) {
                         
                         try {
                             $product->categories()->sync([]);
+                            sleep(0.3);
                             foreach($data['categories'] as $category) {
                                 static::createCategoriesTreeStatic(
                                     $category,
@@ -67,7 +71,7 @@ class ProductVariantImporter extends Importer
                             throw new RowImportFailedException($e->getMessage());
                         }
                     }
-
+                    sleep(0.3);
                     return $product->id;
                 })
                 ->rules(['required', 'json']),
@@ -132,6 +136,7 @@ class ProductVariantImporter extends Importer
                                 "type" => $paramItem["type"] ?? "checkboxes",
                             ]
                         );
+                        sleep(0.3);
 
                         // Создаем или находим значение параметра
                         $paramItemModel = ProductParamItem::firstOrCreate(
@@ -143,6 +148,7 @@ class ProductVariantImporter extends Importer
                                 "title" => $paramItem["name"] ?? (string) $paramItem["value"],
                             ]
                         );
+                        sleep(0.3);
                         $variationName .= " {$paramItemModel->title}";
                         $importer->paramItemIds[] = $paramItemModel->id;
                         $variatinLinks .= $paramItemModel->id;
@@ -176,6 +182,7 @@ class ProductVariantImporter extends Importer
                                 "type" => $paramItem["type"] ?? "checkboxes",
                             ]
                         );
+                        sleep(0.3);
 
                         // Создаем или находим значение параметра
                         $paramItemModel = ProductParamItem::firstOrCreate(
@@ -187,6 +194,7 @@ class ProductVariantImporter extends Importer
                                 "title" => $paramItem["name"] ?? (string) $paramItem["value"],
                             ]
                         );
+                        sleep(0.3);
                         $importer->additionalParamItemIds[] = $paramItemModel->id;
                     }
                     
@@ -230,15 +238,18 @@ class ProductVariantImporter extends Importer
     public function resolveRecord(): ?ProductVariant
     {
         if ($this->options['updateExisting'] ?? false) {
-            return ProductVariant::firstOrNew([
+            $product = ProductVariant::firstOrNew([
                 // Update existing records, matching them by `$this->data['column_name']`
                 'sku' => $this->data['sku'],
             ]);
+            dump("Создана или обновлена вариация: " . $product->name);
+            return $product;
         } else {
             $product = ProductVariant::where('sku', $this->data['sku'])->first();
             
             if ($product) {
-                throw new RowImportFailedException("Найден товар с артикулом '{$this->data['sku']}', но обновление товаров отключено.");
+                dump("Найдена вариация с артикулом '{$product->sku}', но обновление вариаций отключено.");
+                throw new RowImportFailedException("Найден товар с артикулом '{$product->sku}', но обновление товаров отключено.");
             }
         }
 
@@ -272,12 +283,15 @@ class ProductVariantImporter extends Importer
     public function afterSave(): void
     {
         $this->record->paramItems()->sync($this->paramItemIds);
+        sleep(0.3);
         $this->record->parametrs()->sync($this->additionalParamItemIds);
+        sleep(0.3);
         if ($this->data['name']) {
             $this->record->update([
                 'name' => $this->data['name']
             ]);
         }
+        sleep(0.3);
 
         // Проверяем текущее значение links в продукте
         $links = $this->record->product->links ?? [];
@@ -304,7 +318,7 @@ class ProductVariantImporter extends Importer
                 }
             }
         }
-        
+        sleep(0.3);
         // Если такой записи нет, добавляем её
         if (!$rowExists) {
             $links[] = ['row' => $this->paramItemIds];
@@ -317,13 +331,11 @@ class ProductVariantImporter extends Importer
 
         $this->paramItemIds = [];
         $this->additionalParamItemIds = [];
-        dump("afterSave complete");
     }
 
 
     public function saveRecord(): void
     {
-        dump("saveRecord start");
         // Log::info('saveRecord start', [
         //     'product_name' => $this->record->name,
         //     'data' => $this->data
@@ -332,7 +344,7 @@ class ProductVariantImporter extends Importer
         try {
             $this->record->save();
             // Log::info('saveRecord: product saved successfully', ['id' => $this->record->id]);
-
+            sleep(0.3);
             $this->import->update([
                 "processed_rows" => $this->import->processed_rows + 1,
                 "successful_rows" => $this->import->successful_rows + 1,
@@ -357,31 +369,26 @@ class ProductVariantImporter extends Importer
         $this->import->update([
             "status" => "processing",
         ]);
-        dump("beforeValidate start");
     }
 
     public function afterValidate(): void
     {
-        dump("afterValidate");
         // Log::info('afterValidate', ['validation_passed' => true]);
     }
 
     public function beforeFill(): void
     {
-        dump("beforeFill start");
         // Log::info('beforeFill start');
     }
 
     public function afterFill(): void
     {
         
-        dump("afterFill complete");
         // Log::info('afterFill complete', ['filled_data' => $this->data]);
     }
 
     public function beforeSave(): void
     {
-        dump("beforeSave start");
     }
 
     protected function createCategoriesTree(
@@ -462,14 +469,13 @@ class ProductVariantImporter extends Importer
         $image = Storage::disk("public")->put("categories/", $uploadedFile);
         @unlink($tempImagePath);
 
-        dump("image: " . $image);
+        
         // Возвращаем путь до файла
         return $image;
     }
 
     protected function processImage(string $imageUrl): ?int
     {
-        dump("processImage start");
         try {
             $attempt = 1;
 

@@ -3,13 +3,14 @@
 namespace App\Livewire\Cart;
 
 use App\Models\Product;
+use App\Models\ProductVariant;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class Index extends Component
 {
     public $products = [];
-    protected $listeners = ['cartUpdated' => 'handleCartUpdate'];
 
     public function mount()
     {
@@ -18,38 +19,27 @@ class Index extends Component
 
     public function render()
     {
-        return view('livewire.cart.index');
-    }
-
-    public function handleCartUpdate($products)
-    {
-        $this->loadProducts($products);
+        return view("livewire.cart.index");
     }
 
     public function loadProducts($cartItems = [])
     {
-        $this->products = [];
-        
+        $this->products = new Collection();
+
         if (empty($cartItems)) {
             return $this->products;
         }
 
-        foreach ($cartItems as $cartItem) {
-            if (!$cartItem) continue;
+        $productIds = [];
 
-            $product = Product::with(['variants', 'img'])->find($cartItem['id']);
-            if ($product) {
-                $productArray = $product->toArray();
-                $productArray['quantity'] = $cartItem['count'];
-                
-                // Add variations data
-                if (isset($cartItem['variations'])) {
-                    $productArray['cart_variations'] = $cartItem['variations'];
-                }
-                
-                $this->products[] = $productArray;
+        foreach ($cartItems as $key => $item) {
+            if ($item == null) {
+                continue;
             }
+            $productIds[] = $key;
         }
+
+        $this->products = ProductVariant::whereIn("id", $productIds)->get();
 
         return $this->products;
     }

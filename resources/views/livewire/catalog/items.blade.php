@@ -67,10 +67,10 @@
                         
 
                             <div class="inline-flex rounded-md shadow-xs" role="group">
-                                <div class="inline-flex items-center px-3 py-2 text-sm font-medium border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700" wire:click="changeDisplayMode('list')" :class="{'bg-gray-100 text-blue-700': displayMode == 'list', 'bg-white text-gray-900 cursor-pointer': displayMode != 'list'}">
+                                <div class="inline-flex items-center px-3 py-2 text-sm font-medium border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700" wire:click="changeDisplayMode('list'); isLoading = true;" :class="{'bg-gray-100 text-blue-700': displayMode == 'list', 'bg-white text-gray-900 cursor-pointer': displayMode != 'list'}">
                                     <x-carbon-horizontal-view class="w-4 h-4" />
                                 </div>
-                                <div class="inline-flex items-center px-3 py-2 text-sm font-medium border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700" wire:click="changeDisplayMode('block')" :class="{'bg-gray-100 text-blue-700': displayMode == 'block', 'bg-white text-gray-900 cursor-pointer': displayMode != 'block'}">
+                                <div class="inline-flex items-center px-3 py-2 text-sm font-medium border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700" wire:click="changeDisplayMode('block'); isLoading = true;" :class="{'bg-gray-100 text-blue-700': displayMode == 'block', 'bg-white text-gray-900 cursor-pointer': displayMode != 'block'}">
                                     <x-carbon-vertical-view class="w-4 h-4" />
                                 </div>
                             </div>

@@ -1,46 +1,19 @@
-export default {
-    list: [],
+import Toastify from "toastify-js";
 
-    init() {
-        this.list = this.getFavorites();
-        this.updateFavoritesCount();
-    },
-
-    getFavorites() {
-        const favorites = localStorage.getItem('favorites');
-        return favorites ? JSON.parse(favorites) : [];
-    },
-
-    saveFavorites() {
-        localStorage.setItem('favorites', JSON.stringify(this.list));
-        this.updateFavoritesCount();
-        Livewire.dispatch('favorites-updated', { favorites: this.list });
-    },
-
-    toggleProduct(productId) {
-        productId = productId.toString();
-        const index = this.list.indexOf(productId);
-        
-        if (index === -1) {
-            this.list.push(productId);
-        } else {
-            this.list.splice(index, 1);
-        }
-        
-        this.saveFavorites();
-    },
-
-    updateFavoritesCount() {
-        document.querySelectorAll('[data-favorites-count]').forEach(counter => {
-            counter.textContent = this.list.length || '';
+export default (() => {
+    document.addEventListener("alpine:init", () => {
+        Alpine.store("favorites", {
+            list: Alpine.$persist([]).as("favorites"),
+            getCount() {
+                console.log("$store.favorites.list before counting", this.list);
+                return this.list.filter((item) => item).length;
+            },
+            toggleProduct(id) {
+                this.list[id] ? (this.list[id] = null) : (this.list[id] = true);
+                Livewire.dispatch("favorites-updated", {
+                    favorites: this.list,
+                });
+            },
         });
-    },
-
-    getCount() {
-        return this.list.length;
-    },
-
-    includes(productId) {
-        return this.list.includes(productId.toString());
-    }
-} 
+    });
+})();

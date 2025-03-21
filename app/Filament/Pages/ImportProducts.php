@@ -40,9 +40,9 @@ class ImportProducts extends Page implements HasTable
         return [
             ImportAction::make()
                 ->importer(ProductVariantImporter::class)
-                ->chunkSize(10)
+                ->chunkSize(100)
                 ->color('primary')
-                ->maxRows(2000)
+                ->maxRows(100)
                 ->label('Импортировать товары')
                 ->icon('heroicon-o-arrow-up-tray'),
         ];
@@ -125,6 +125,6 @@ class ImportProducts extends Page implements HasTable
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])->poll('8s');
+            ])->poll('3s');
     }
 }
