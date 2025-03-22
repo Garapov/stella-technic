@@ -1,7 +1,7 @@
 <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
     <div class="container mx-auto px-4 py-8">
         @if($order)
-            <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+            <div class="max-w-4xl w-full mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
                 <div class="text-center mb-6">
                     <svg class="mx-auto mb-4 w-16 h-16 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
@@ -23,9 +23,9 @@
                         @foreach($orderItems as $item)
                             <div class="flex justify-between items-center border-b pb-4 last:border-b-0">
                                 <div class="flex items-center space-x-4">
-                                    <img 
-                                        src="{{ asset('/storage/' . $item['img']['uuid'] .  '/filament-thumbnail.' . $item['img']['file_extension']) }}" 
-                                        alt="{{ $item['name'] }}" 
+                                    <img
+                                        src="{{ asset('/storage/' . $item['img']['uuid'] .  '/filament-thumbnail.' . $item['img']['file_extension']) }}"
+                                        alt="{{ $item['name'] }}"
                                         class="w-16 h-16 object-cover rounded"
                                     >
                                     <div>
@@ -59,8 +59,8 @@
                         Мы свяжемся с вами в ближайшее время для подтверждения заказа.
                     </p>
                     <div class="flex justify-center space-x-4">
-                        <a 
-                            href="{{ route('client.index') }}" 
+                        <a
+                            href="{{ route('client.index') }}"
                             class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-500 transition-colors"
                         >
                             На главную

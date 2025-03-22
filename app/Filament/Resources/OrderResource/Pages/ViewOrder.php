@@ -11,8 +11,6 @@ class ViewOrder extends ViewRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-            \Filament\Actions\EditAction::make(),
-        ];
+        return [\Filament\Actions\EditAction::make()];
     }
 }
