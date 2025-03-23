@@ -46,7 +46,7 @@ class Product extends Model implements Searchable
         "links" => "array",
     ];
 
-    protected $with = ["paramItems", "categories", "variants", "img"];
+    protected $with = ["paramItems", "categories", "variants"];
 
     public function getSearchResult(): SearchResult
     {
@@ -89,11 +89,6 @@ class Product extends Model implements Searchable
         )->withTimestamps();
     }
 
-    public function img(): BelongsTo
-    {
-        return $this->belongsTo(Image::class, "image");
-    }
-
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -126,12 +121,36 @@ class Product extends Model implements Searchable
             }
         });
 
-        static::deleting(function ($model) {
+        static::deleted(function ($model) {
             if ($model->variants->isNotEmpty()) {
                 // dd($model->variants);
                 $model->variants->each(function ($variant) {
                     $variant->forceDelete();
                 });
+            }
+            // Удаление файлов изображений из галереи
+            if (!empty($model->gallery) && is_array($model->gallery)) {
+                foreach ($model->gallery as $imagePath) {
+                    $fullPath = public_path($imagePath);
+                    if (file_exists($fullPath)) {
+                        try {
+                            unlink($fullPath);
+                            Log::info("Файл изображения успешно удален", [
+                                "path" => $fullPath,
+                                "product_id" => $model->id,
+                            ]);
+                        } catch (\Exception $e) {
+                            Log::error(
+                                "Ошибка при удалении файла изображения",
+                                [
+                                    "path" => $fullPath,
+                                    "error" => $e->getMessage(),
+                                    "product_id" => $model->id,
+                                ]
+                            );
+                        }
+                    }
+                }
             }
         });
     }
@@ -146,7 +165,7 @@ class Product extends Model implements Searchable
         foreach ($this->links as $link) {
             $name = "";
             $name .= $this->name;
-            $links = '';
+            $links = "";
 
             // Собираем параметры для привязки к вариации
             $paramIds = [];
@@ -174,12 +193,13 @@ class Product extends Model implements Searchable
                     "price" => $this->price,
                     "new_price" => $this->new_price,
                     "image" => $this->image,
+                    "gallery" => $this->gallery,
                     "short_description" => $this->short_description,
                     "description" => $this->description,
                     "is_popular" => $this->is_popular,
                     "count" => $this->count,
                     "synonims" => $this->synonims,
-                    "name" => $name
+                    "name" => $name,
                 ]
             );
 

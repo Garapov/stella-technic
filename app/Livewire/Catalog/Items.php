@@ -37,7 +37,7 @@ class Items extends Component
 
     public $showFilters = false;
     public $showSorting = false;
-    public $displayMode = 'block';
+    public $displayMode = "block";
 
     protected $queryString = [
         "selectedParams" => ["except" => []],
@@ -577,10 +577,10 @@ class Items extends Component
 
             // Получаем информацию о выбранных параметрах
             $selectedParamItems = [];
-            
+
             // Инициализируем переменную $variants
             $variants = collect();
-            
+
             // Проверка, является ли product_ids массивом ID вариантов товаров
             if ($this->items === "variants") {
                 // Получаем варианты напрямую
@@ -591,13 +591,12 @@ class Items extends Component
                 \Illuminate\Support\Facades\Log::info(
                     "Запрос по ID вариантов товаров"
                 );
-                
+
                 // Загружаем варианты с связанными данными
                 $variants = $query
                     ->with([
                         "paramItems.productParam",
                         "parametrs.productParam",
-                        "img",
                         "product.brand", // Для фильтрации по бренду
                     ])
                     ->get();
@@ -623,7 +622,7 @@ class Items extends Component
             } elseif ($this->category) {
                 $query = $this->category->products();
                 \Illuminate\Support\Facades\Log::info("Запрос по категории");
-                
+
                 // Получаем товары с их вариациями и параметрами
                 $baseQuery = clone $query;
                 $products = $baseQuery
@@ -631,7 +630,6 @@ class Items extends Component
                         "variants",
                         "variants.paramItems.productParam",
                         "variants.parametrs.productParam",
-                        "variants.img",
                     ])
                     ->select("products.*")
                     ->get();
@@ -798,27 +796,26 @@ class Items extends Component
             } elseif ($this->product_ids) {
                 $query = \App\Models\Product::whereIn("id", $this->product_ids);
                 \Illuminate\Support\Facades\Log::info("Запрос по ID товаров");
-                
+
                 // Получаем товары с их вариациями и параметрами
                 $products = $query
                     ->with([
                         "variants",
                         "variants.paramItems.productParam",
                         "variants.parametrs.productParam",
-                        "variants.img",
                     ])
                     ->select("products.*")
                     ->get();
-                
+
                 // Аналогичная обработка как для категории
                 foreach ($products as $product) {
                     if ($product->variants && $product->variants->count() > 0) {
                         foreach ($product->variants as $variant) {
                             $variantMatches = true;
-                            
+
                             // Проверка параметров и цены аналогично коду выше
                             // ...
-                            
+
                             if ($variantMatches) {
                                 $variants->push($variant);
                             }
@@ -828,13 +825,16 @@ class Items extends Component
             } else {
                 $query = \App\Models\Product::query();
                 \Illuminate\Support\Facades\Log::info("Запрос по всем товарам");
-                
+
                 // Аналогичная обработка как для категории
                 // ...
             }
-            
+
             // Применяем фильтрацию по параметрам для режима variants
-            if ($this->items === "variants" && !empty($this->selectedVariations)) {
+            if (
+                $this->items === "variants" &&
+                !empty($this->selectedVariations)
+            ) {
                 $variants = $variants->filter(function ($variant) {
                     $variantMatches = true;
 
@@ -853,15 +853,10 @@ class Items extends Component
                         );
                     }
 
-                    $variantParamIds = $variantParamIds
-                        ->unique()
-                        ->toArray();
+                    $variantParamIds = $variantParamIds->unique()->toArray();
 
                     // Проверяем, содержит ли вариация все выбранные параметры
-                    foreach (
-                        $this->selectedVariations
-                        as $selectedParamId
-                    ) {
+                    foreach ($this->selectedVariations as $selectedParamId) {
                         if (!in_array($selectedParamId, $variantParamIds)) {
                             $variantMatches = false;
                             break;
@@ -879,9 +874,12 @@ class Items extends Component
                     ]
                 );
             }
-            
+
             // Применяем фильтрацию по цене для режима variants
-            if ($this->items === "variants" && (!empty($this->priceFrom) || !empty($this->priceTo))) {
+            if (
+                $this->items === "variants" &&
+                (!empty($this->priceFrom) || !empty($this->priceTo))
+            ) {
                 $variants = $variants->filter(function ($variant) {
                     $variantPrice =
                         $variant->new_price > 0
@@ -2238,7 +2236,7 @@ class Items extends Component
             ]);
         }
     }
-    
+
     public function changeDisplayMode($mode)
     {
         $this->displayMode = $mode;

@@ -98,19 +98,24 @@ class VariantsRelationManager extends RelationManager
                         ->columnSpan("full"),
                     Tab::make("Изображения")
                         ->schema([
-                            ImagePicker::make("image")
-                                ->label("Картинка")
+                            Forms\Components\FileUpload::make("gallery")
                                 ->required()
-                                ->columnSpan("1"),
-                            ImagePicker::make("gallery")
+                                ->image()
                                 ->label("Галерея")
+                                ->directory("variations")
+                                ->visibility("public")
                                 ->multiple()
-                                ->columnSpan("2"),
+                                ->reorderable()
+                                ->panelLayout("grid")
+                                ->imageEditor()
+                                ->preserveFilenames()
+                                ->imageCropAspectRatio("1:1")
+                                ->imageEditorMode(2),
                         ])
                         ->columns([
                             "sm" => 1,
-                            "xl" => 2,
-                            "2xl" => 3,
+                            "xl" => 1,
+                            "2xl" => 1,
                         ])
                         ->columnSpan("full"),
                     Tab::make("Параметры")
@@ -144,7 +149,13 @@ class VariantsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute("name")
             ->columns([
-                ImageByIdColumn::make("image")->label("Картинка"),
+                Tables\Columns\ImageColumn::make("gallery")
+                    ->label("Галерея")
+                    ->square()
+                    ->size(100)
+                    ->stacked()
+                    ->limit(1)
+                    ->limitedRemainingText(),
                 Tables\Columns\TextColumn::make("name")->label("Название"),
                 Tables\Columns\TextColumn::make("sku")->label("Артикул"),
                 Tables\Columns\TextColumn::make("price")
@@ -176,7 +187,7 @@ class VariantsRelationManager extends RelationManager
                 // Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->modalWidth("7xl"),
                 // Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

@@ -11,13 +11,12 @@ class Detail extends Component
 {
     public $product;
     public $variation;
-    public $gallery;
     public $groupedParams;
 
-    public function mount($slug) {
-        $this->variation = ProductVariant::where('slug', $slug)->first();
+    public function mount($slug)
+    {
+        $this->variation = ProductVariant::where("slug", $slug)->first();
         $this->product = $this->variation->product;
-        $this->gallery = $this->variation->gallery ? Image::whereIn('id', $this->variation->gallery)->get() : [];
         $this->groupedParams = $this->getGroupedParams();
     }
 
@@ -30,19 +29,21 @@ class Detail extends Component
         // Получаем текущие параметры
         $currentParams = $this->variation->paramItems
             ->unique(function ($item) {
-                return $item->productParam->name . '_' . $item->title;
+                return $item->productParam->name . "_" . $item->title;
             })
             ->mapWithKeys(function ($param) {
-                return [$param->productParam->name => [
-                    'id' => $param->id,
-                    'title' => $param->title
-                ]];
+                return [
+                    $param->productParam->name => [
+                        "id" => $param->id,
+                        "title" => $param->title,
+                    ],
+                ];
             })
             ->toArray();
 
-        \Illuminate\Support\Facades\Log::info('Текущие параметры', [
-            'variant_id' => $currentVariantId,
-            'params' => $currentParams
+        \Illuminate\Support\Facades\Log::info("Текущие параметры", [
+            "variant_id" => $currentVariantId,
+            "params" => $currentParams,
         ]);
 
         // Собираем все возможные параметры и их комбинации
@@ -51,99 +52,118 @@ class Detail extends Component
             // Собираем уникальные параметры для варианта
             $variantParams = $variant->paramItems
                 ->unique(function ($item) {
-                    return $item->productParam->name . '_' . $item->title;
+                    return $item->productParam->name . "_" . $item->title;
                 })
                 ->mapWithKeys(function ($param) {
-                    return [$param->productParam->name => [
-                        'id' => $param->id,
-                        'title' => $param->title
-                    ]];
+                    return [
+                        $param->productParam->name => [
+                            "id" => $param->id,
+                            "title" => $param->title,
+                        ],
+                    ];
                 })
                 ->toArray();
 
             if (!empty($variantParams)) {
                 $availableCombinations[] = [
-                    'variant_id' => $variant->id,
-                    'params' => $variantParams
+                    "variant_id" => $variant->id,
+                    "params" => $variantParams,
                 ];
 
                 foreach ($variantParams as $paramName => $param) {
                     if (!isset($groupedParams[$paramName])) {
                         $groupedParams[$paramName] = [
-                            'name' => $paramName,
-                            'values' => []
+                            "name" => $paramName,
+                            "values" => [],
                         ];
                     }
 
-                    $existingValue = collect($groupedParams[$paramName]['values'])
-                        ->firstWhere('title', $param['title']);
+                    $existingValue = collect(
+                        $groupedParams[$paramName]["values"]
+                    )->firstWhere("title", $param["title"]);
 
                     if (!$existingValue) {
-                        $groupedParams[$paramName]['values'][] = [
-                            'id' => $param['id'],
-                            'title' => $param['title'],
-                            'variant_id' => $variant->id,
-                            'is_current' => isset($currentParams[$paramName]) && $currentParams[$paramName]['title'] === $param['title'],
-                            'is_available' => false
+                        $groupedParams[$paramName]["values"][] = [
+                            "id" => $param["id"],
+                            "title" => $param["title"],
+                            "variant_id" => $variant->id,
+                            "is_current" =>
+                                isset($currentParams[$paramName]) &&
+                                $currentParams[$paramName]["title"] ===
+                                    $param["title"],
+                            "is_available" => false,
                         ];
                     }
                 }
             }
         }
 
-        \Illuminate\Support\Facades\Log::info('Доступные комбинации', [
-            'combinations' => $availableCombinations
+        \Illuminate\Support\Facades\Log::info("Доступные комбинации", [
+            "combinations" => $availableCombinations,
         ]);
 
         // Проверяем доступность значений
         foreach ($groupedParams as $paramName => &$paramGroup) {
-            foreach ($paramGroup['values'] as &$value) {
-                if ($value['is_current']) {
-                    $value['is_available'] = true;
+            foreach ($paramGroup["values"] as &$value) {
+                if ($value["is_current"]) {
+                    $value["is_available"] = true;
                     continue;
                 }
 
                 foreach ($availableCombinations as $combination) {
-                    $combinationParams = $combination['params'];
+                    $combinationParams = $combination["params"];
 
-                    if (isset($combinationParams[$paramName]) && $combinationParams[$paramName]['title'] === $value['title']) {
+                    if (
+                        isset($combinationParams[$paramName]) &&
+                        $combinationParams[$paramName]["title"] ===
+                            $value["title"]
+                    ) {
                         $isCompatible = true;
 
                         // Проверяем только те параметры, которые есть в текущей комбинации
-                        foreach ($combinationParams as $checkParamName => $checkParam) {
+                        foreach (
+                            $combinationParams
+                            as $checkParamName => $checkParam
+                        ) {
                             if ($checkParamName === $paramName) {
                                 continue;
                             }
 
-                            if (isset($currentParams[$checkParamName]) &&
-                                $currentParams[$checkParamName]['title'] !== $checkParam['title']) {
+                            if (
+                                isset($currentParams[$checkParamName]) &&
+                                $currentParams[$checkParamName]["title"] !==
+                                    $checkParam["title"]
+                            ) {
                                 $isCompatible = false;
                                 break;
                             }
                         }
 
                         if ($isCompatible) {
-                            $value['is_available'] = true;
-                            $value['variant_id'] = $combination['variant_id'];
+                            $value["is_available"] = true;
+                            $value["variant_id"] = $combination["variant_id"];
 
-                            \Illuminate\Support\Facades\Log::info('Параметр доступен', [
-                                'param_name' => $paramName,
-                                'param_value' => $value['title'],
-                                'variant_id' => $combination['variant_id'],
-                                'combination' => $combinationParams
-                            ]);
+                            \Illuminate\Support\Facades\Log::info(
+                                "Параметр доступен",
+                                [
+                                    "param_name" => $paramName,
+                                    "param_value" => $value["title"],
+                                    "variant_id" => $combination["variant_id"],
+                                    "combination" => $combinationParams,
+                                ]
+                            );
 
                             break;
                         }
                     }
                 }
 
-                \Illuminate\Support\Facades\Log::info('Статус параметра', [
-                    'param_name' => $paramName,
-                    'param_value' => $value['title'],
-                    'is_current' => $value['is_current'],
-                    'is_available' => $value['is_available'],
-                    'variant_id' => $value['variant_id']
+                \Illuminate\Support\Facades\Log::info("Статус параметра", [
+                    "param_name" => $paramName,
+                    "param_value" => $value["title"],
+                    "is_current" => $value["is_current"],
+                    "is_available" => $value["is_available"],
+                    "variant_id" => $value["variant_id"],
                 ]);
             }
         }
@@ -153,11 +173,10 @@ class Detail extends Component
 
     public function render()
     {
-        return view('livewire.product.detail', [
-            'product' => $this->product,
-            'variation' => $this->variation,
-            'gallery' => $this->gallery,
-            'groupedParams' => $this->groupedParams
+        return view("livewire.product.detail", [
+            "product" => $this->product,
+            "variation" => $this->variation,
+            "groupedParams" => $this->groupedParams,
         ]);
     }
 }

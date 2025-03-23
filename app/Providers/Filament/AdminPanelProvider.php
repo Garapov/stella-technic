@@ -119,7 +119,7 @@ class AdminPanelProvider extends PanelProvider
                 BlogPlugin::make(),
                 FilamentClearCachePlugin::make(),
                 FilamentFabricatorPlugin::make(),
-                FilamentImageLibraryPlugin::make(),
+                // FilamentImageLibraryPlugin::make(),
                 FilamentTourPlugin::make(),
                 ApiServicePlugin::make(),
                 FilamentSpatieRolesPermissionsPlugin::make(),

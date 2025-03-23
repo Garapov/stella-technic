@@ -33,7 +33,7 @@ class ProductVariant extends Model
         "count",
         "synonims",
         "gallery",
-        "links"
+        "links",
     ];
 
     protected $casts = [
@@ -43,8 +43,6 @@ class ProductVariant extends Model
     ];
 
     protected $dates = ["deleted_at"];
-
-    protected $with = ["img"];
 
     /**
      * Get the options for generating the slug.
@@ -84,11 +82,33 @@ class ProductVariant extends Model
             }
             Log::info("Creating product variant", ["variant" => $variant]);
         });
-    }
 
-    public function img(): BelongsTo
-    {
-        return $this->belongsTo(Image::class, "image");
+        static::deleted(function ($model) {
+            // Удаление файлов изображений из галереи
+            if (!empty($model->gallery) && is_array($model->gallery)) {
+                foreach ($model->gallery as $imagePath) {
+                    $fullPath = public_path($imagePath);
+                    if (file_exists($fullPath)) {
+                        try {
+                            unlink($fullPath);
+                            Log::info("Файл изображения успешно удален", [
+                                "path" => $fullPath,
+                                "product_id" => $model->id,
+                            ]);
+                        } catch (\Exception $e) {
+                            Log::error(
+                                "Ошибка при удалении файла изображения",
+                                [
+                                    "path" => $fullPath,
+                                    "error" => $e->getMessage(),
+                                    "product_id" => $model->id,
+                                ]
+                            );
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public function paramItems(): BelongsToMany

@@ -6,6 +6,7 @@ use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Forms\Components\ImagePicker;
 use App\Models\Product;
+use App\Models\Image;
 use App\Models\ProductParam;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
@@ -109,19 +110,24 @@ class ProductResource extends Resource
                         ->columnSpan("full"),
                     Tab::make("Изображения")
                         ->schema([
-                            ImagePicker::make("image")
-                                ->label("Картинка")
+                            Forms\Components\FileUpload::make("gallery")
                                 ->required()
-                                ->columnSpan("1"),
-                            ImagePicker::make("gallery")
+                                ->image()
                                 ->label("Галерея")
+                                ->directory("products")
+                                ->visibility("public")
                                 ->multiple()
-                                ->columnSpan("2"),
+                                ->reorderable()
+                                ->panelLayout("grid")
+                                ->imageEditor()
+                                ->preserveFilenames()
+                                ->imageCropAspectRatio("1:1")
+                                ->imageEditorMode(2),
                         ])
                         ->columns([
                             "sm" => 1,
-                            "xl" => 2,
-                            "2xl" => 3,
+                            "xl" => 1,
+                            "2xl" => 1,
                         ])
                         ->columnSpan("full"),
                     Tab::make("Категории")
@@ -226,12 +232,18 @@ class ProductResource extends Resource
                                                     return ProductParamItem::query()
                                                         ->with("productParam")
                                                         ->get()
-                                                        ->mapWithKeys(function ($item) {
+                                                        ->mapWithKeys(function (
+                                                            $item
+                                                        ) {
                                                             $paramName = $item->productParam
-                                                                ? $item->productParam->name
+                                                                ? $item
+                                                                    ->productParam
+                                                                    ->name
                                                                 : "Unknown";
                                                             $name = "$paramName: $item->title";
-                                                            return [$item->id => $name];
+                                                            return [
+                                                                $item->id => $name,
+                                                            ];
                                                         });
                                                 })
                                         ),
@@ -253,7 +265,11 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                ImageByIdColumn::make("image")->label("Картинка"),
+                Tables\Columns\ImageColumn::make("gallery")
+                    ->label("Галерея")
+                    ->square()
+                    ->size(50)
+                    ->stacked(),
                 Tables\Columns\TextColumn::make("name")
                     ->label("Название")
                     ->searchable(),

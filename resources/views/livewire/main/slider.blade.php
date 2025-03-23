@@ -30,7 +30,9 @@
                                                 <a href="{{ url($slide->link) }}" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center" wire:navigate>{{ $slide->button_text }}</a>
                                             </div>
                                             <div class="flex items-center justify-center h-full">
-                                                <img class="rounded-lg" src="{{ asset('/storage/' . $slide->img->uuid . '/filament-thumbnail.' . $slide->img->file_extension) }}" alt="">
+                                                @if ($slide->img)
+                                                    <img class="rounded-lg" src="{{ asset('/storage/' . $slide->img->uuid . '/filament-thumbnail.' . $slide->img->file_extension) }}" alt="">
+                                                @endif
                                             </div>
                                         </div>
                                     @endif
@@ -62,4 +64,3 @@
         </div>
     @endif
 </div>
-
