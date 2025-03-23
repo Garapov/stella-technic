@@ -11,8 +11,8 @@
     <div class="container mx-auto">
         <div class="grid grid-cols-{{ $grid }} gap-4">
             @foreach ($gallery as $image)
-                <div class="rounded-lg cursor-zoom-in" data-fancybox="{{ $lightbox_selector }}" data-src="{{ asset('/storage/' . $image->uuid . '/filament-thumbnail.' . $image->file_extension) }}">
-                    <img src="{{ asset('/storage/' . $image->uuid . '/filament-thumbnail.' . $image->file_extension) }}" class="w-full h-full object-cover object-center rounded-lg">
+                <div class="rounded-lg cursor-zoom-in" data-fancybox="{{ $lightbox_selector }}" data-src="{{ asset('/storage/' . $image) }}">
+                    <img src="{{ asset('/storage/' . $image) }}" class="w-full h-full object-cover object-center rounded-lg">
                 </div>
             @endforeach
         </div>

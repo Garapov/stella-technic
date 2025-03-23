@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\ProductResource\RelationManagers;
 
-use App\Forms\Components\ImagePicker;
 use App\Models\ProductParamItem;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;

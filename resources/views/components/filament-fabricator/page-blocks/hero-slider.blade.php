@@ -17,9 +17,9 @@
                     <div class="glide__track" data-glide-el="track">
                         <div class="glide__slides">
                             @foreach ($slides as $slide)
-                                <div class="whitespace-normal @if (!$slide->backgroundImg) p-10 @endif rounded-xl" style="background-color: {{ $slide->background }};">
-                                    @if ($slide->backgroundImg)
-                                        <img class="rounded-xl h-full w-full object-cover object-center" src="{{ asset('/storage/' . $slide->backgroundImg->uuid . '/original.' . $slide->backgroundImg->file_extension) }}" alt="">
+                                <div class="whitespace-normal @if (!$slide->background_image) p-10 @endif rounded-xl" style="background-color: {{ $slide->background }};">
+                                    @if ($slide->background_image)
+                                        <img class="rounded-xl h-full w-full object-cover object-center" src="{{ asset('/storage/' . $slide->background_image) }}" alt="">
                                     @else
                                         <div class="grid grid-cols-2 gap-10 h-full">
                                             <div class="flex flex-col gap-4 items-start justify-between">
@@ -31,7 +31,7 @@
                                                 <a href="{{ url($slide->link) }}" class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center" wire:navigate>{{ $slide->button_text }}</a>
                                             </div>
                                             <div class="flex items-center justify-center h-full">
-                                                <img class="rounded-lg" src="{{ asset('/storage/' . $slide->img->uuid . '/filament-thumbnail.' . $slide->img->file_extension) }}" alt="">
+                                                <img class="rounded-lg" src="{{ asset('/storage/' . $slide->image) }}" alt="">
                                             </div>
                                         </div>
                                     @endif
@@ -63,4 +63,3 @@
         </div>
     @endif
 </div>
-

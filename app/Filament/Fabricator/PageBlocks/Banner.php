@@ -10,13 +10,20 @@ class Banner extends PageBlock
 {
     public static function getBlockSchema(): Block
     {
-        return Block::make('banner')
-            ->icon('heroicon-o-rectangle-stack')
-            ->label('Баннер')
+        return Block::make("banner")
+            ->icon("heroicon-o-rectangle-stack")
+            ->label("Баннер")
             ->schema([
-                FileUpload::make('image')
-                    ->label('Изображение')
+                FileUpload::make("image")
                     ->required()
+                    ->image()
+                    ->label("Изображение")
+                    ->directory("banners")
+                    ->visibility("public")
+                    ->imageEditor()
+                    ->preserveFilenames()
+                    ->imageCropAspectRatio("21:9")
+                    ->imageEditorMode(2),
             ]);
     }
 

@@ -12,32 +12,37 @@ class ImageTextBlock extends PageBlock
 {
     public static function getBlockSchema(): Block
     {
-        return Block::make('image-text')
-            ->icon('heroicon-o-rectangle-stack')
-            ->label('Блок с изображением и текстом')
+        return Block::make("image-text")
+            ->icon("heroicon-o-rectangle-stack")
+            ->label("Блок с изображением и текстом")
             ->schema([
-                FileUpload::make('image')
-                    ->label('Изображение')
-                    ->required(),
-                RichEditor::make('text')
-                    ->label('Текст')
-                    ->required(),
-                ToggleButtons::make('alignment')
-                    ->label('Выравнивание')
-                    ->default('start')
+                FileUpload::make("image")
+                    ->required()
+                    ->image()
+                    ->label("Картинка")
+                    ->directory("image-text")
+                    ->visibility("public")
+                    ->panelLayout("grid")
+                    ->imageEditor()
+                    ->preserveFilenames()
+                    ->imageEditorMode(2),
+                RichEditor::make("text")->label("Текст")->required(),
+                ToggleButtons::make("alignment")
+                    ->label("Выравнивание")
+                    ->default("start")
                     ->required()
                     ->grouped()
                     ->options([
-                        'start' => 'По верху',
-                        'center' => ' По центру',
-                        'end' => 'По низу',
+                        "start" => "По верху",
+                        "center" => " По центру",
+                        "end" => "По низу",
                     ])
                     ->icons([
-                        'start' => 'carbon-align-vertical-top',
-                        'center' => 'carbon-align-vertical-center',
-                        'end' => 'carbon-align-vertical-bottom',
+                        "start" => "carbon-align-vertical-top",
+                        "center" => "carbon-align-vertical-center",
+                        "end" => "carbon-align-vertical-bottom",
                     ])
-                    ->required()
+                    ->required(),
             ]);
     }
 

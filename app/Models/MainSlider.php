@@ -13,24 +13,13 @@ class MainSlider extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
-        'description',
-        'image',
-        'button_text',
-        'link',
-        'background',
-        'background_image',
-        'show_on_main'
+        "title",
+        "description",
+        "image",
+        "button_text",
+        "link",
+        "background",
+        "background_image",
+        "show_on_main",
     ];
-
-
-    public function img(): BelongsTo
-    {
-        return $this->belongsTo(Image::class, 'image');
-    }
-
-    public function backgroundImg(): BelongsTo
-    {
-        return $this->belongsTo(Image::class, 'background_image');
-    }
 }

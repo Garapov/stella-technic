@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
-use App\Forms\Components\ImagePicker;
 use App\Models\Product;
 use App\Models\Image;
 use App\Models\ProductParam;

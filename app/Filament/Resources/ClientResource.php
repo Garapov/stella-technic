@@ -16,43 +16,46 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
-    protected static ?string $navigationIcon = 'carbon-user-certification';
+    protected static ?string $navigationIcon = "carbon-user-certification";
 
-    protected static ?string $navigationLabel = 'Клиенты';
-    protected static ?string $modelLabel = 'Клиента';
-    protected static ?string $pluralModelLabel = 'Клиенты';
-    protected static ?string $navigationGroup = 'Страницы';
+    protected static ?string $navigationLabel = "Клиенты";
+    protected static ?string $modelLabel = "Клиента";
+    protected static ?string $pluralModelLabel = "Клиенты";
+    protected static ?string $navigationGroup = "Страницы";
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\FileUpload::make('image')
-                    ->label('Логотип')
-                    ->image()
-                    ->required(),
-                Forms\Components\TextInput::make('name')
-                    ->label('Название')
-                    ->required(),
-            ]);
+        return $form->schema([
+            Forms\Components\FileUpload::make("image")
+                ->required()
+                ->image()
+                ->label("Логотип")
+                ->directory("clients")
+                ->visibility("public")
+                ->imageEditor()
+                ->preserveFilenames()
+                ->imageEditorMode(2),
+            Forms\Components\TextInput::make("name")
+                ->label("Название")
+                ->required(),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image')
-                    ->label('Логотип'),
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Название')
+                Tables\Columns\ImageColumn::make("image")->label("Логотип"),
+                Tables\Columns\TextColumn::make("name")
+                    ->label("Название")
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Дата создания')
+                Tables\Columns\TextColumn::make("created_at")
+                    ->label("Дата создания")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Дата обновления')
+                Tables\Columns\TextColumn::make("updated_at")
+                    ->label("Дата обновления")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -74,16 +77,16 @@ class ClientResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListClients::route('/'),
-            'create' => Pages\CreateClient::route('/create'),
-            'edit' => Pages\EditClient::route('/{record}/edit'),
+            "index" => Pages\ListClients::route("/"),
+            "create" => Pages\CreateClient::route("/create"),
+            "edit" => Pages\EditClient::route("/{record}/edit"),
         ];
     }
 }
