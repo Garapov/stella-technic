@@ -15,14 +15,14 @@ class ImageSeeder extends Seeder
         $faker = \Faker\Factory::create();
 
         // Ensure storage is linked
-        if (! file_exists(public_path('storage'))) {
-            \Log::info('Creating storage symlink...');
-            \Artisan::call('storage:link');
+        if (!file_exists(public_path("storage"))) {
+            \Log::info("Creating storage symlink...");
+            \Artisan::call("storage:link");
         }
 
         // Create temporary directory if it doesn't exist
-        $tempDir = storage_path('app/temp');
-        if (! file_exists($tempDir)) {
+        $tempDir = storage_path("app/temp");
+        if (!file_exists($tempDir)) {
             \Log::info("Creating temp directory: {$tempDir}");
             mkdir($tempDir, 0755, true);
         }
@@ -37,17 +37,34 @@ class ImageSeeder extends Seeder
                 $image = imagecreatetruecolor($width, $height);
 
                 // Fill with random color
-                $color = imagecolorallocate($image, rand(0, 255), rand(0, 255), rand(0, 255));
+                $color = imagecolorallocate(
+                    $image,
+                    rand(0, 255),
+                    rand(0, 255),
+                    rand(0, 255)
+                );
                 imagefill($image, 0, 0, $color);
 
                 // Add some random shapes
                 for ($j = 0; $j < 5; $j++) {
-                    $shape_color = imagecolorallocate($image, rand(0, 255), rand(0, 255), rand(0, 255));
-                    imagefilledellipse($image, rand(0, $width), rand(0, $height), rand(20, 100), rand(20, 100), $shape_color);
+                    $shape_color = imagecolorallocate(
+                        $image,
+                        rand(0, 255),
+                        rand(0, 255),
+                        rand(0, 255)
+                    );
+                    imagefilledellipse(
+                        $image,
+                        rand(0, $width),
+                        rand(0, $height),
+                        rand(20, 100),
+                        rand(20, 100),
+                        $shape_color
+                    );
                 }
 
                 // Save to temporary file
-                $tempImagePath = $tempDir.'/'.uniqid().'.png';
+                $tempImagePath = $tempDir . "/" . uniqid() . ".png";
                 imagepng($image, $tempImagePath);
                 imagedestroy($image);
 
@@ -58,35 +75,39 @@ class ImageSeeder extends Seeder
                     $uploadedFile = new \Illuminate\Http\UploadedFile(
                         $tempImagePath,
                         basename($tempImagePath),
-                        'image/png',
+                        "image/png",
                         null,
                         true
                     );
 
                     // Upload using Outerweb Image Library
                     $attributes = [
-                        'title' => json_encode($faker->words(3)),
-                        'alt' => json_encode($faker->words(3)),
+                        "title" => json_encode($faker->words(3)),
+                        "alt" => json_encode($faker->words(3)),
                     ];
 
-                    \Log::info('Uploading image with attributes:', $attributes);
+                    \Log::info("Uploading image with attributes:", $attributes);
 
                     $image = \App\Models\Image::upload(
                         $uploadedFile,
-                        'public',
+                        config("filesystems.default"),
                         $attributes
                     );
 
-                    \Log::info("Image created successfully with UUID: {$image->uuid}");
+                    \Log::info(
+                        "Image created successfully with UUID: {$image->uuid}"
+                    );
 
                     // Clean up
                     @unlink($tempImagePath);
                 } else {
-                    \Log::error("Failed to create temporary image at: {$tempImagePath}");
+                    \Log::error(
+                        "Failed to create temporary image at: {$tempImagePath}"
+                    );
                 }
             } catch (\Exception $e) {
-                \Log::error('Failed to create image: '.$e->getMessage());
-                \Log::error('Stack trace: '.$e->getTraceAsString());
+                \Log::error("Failed to create image: " . $e->getMessage());
+                \Log::error("Stack trace: " . $e->getTraceAsString());
             }
         }
 

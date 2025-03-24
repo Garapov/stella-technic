@@ -437,7 +437,11 @@ class ProductVariantImporter extends Importer
             [
                 "icon" => "fas-box-archive",
                 "image" => $category["image"]
-                    ? static::storeImageFromUrlStatic($category["image"])
+                    ? static::processImageStatic(
+                        $category["image"],
+                        "categories",
+                        $importer
+                    )
                     : null,
                 "is_visible" => true,
                 "parent_id" => $category["parent"]
@@ -499,7 +503,10 @@ class ProductVariantImporter extends Importer
             true
         );
 
-        $image = Storage::disk("public")->put("categories/", $uploadedFile);
+        $image = Storage::disk(config("filesystems.default"))->put(
+            "categories/",
+            $uploadedFile
+        );
         @unlink($tempImagePath);
 
         // Возвращаем путь до файла
@@ -556,13 +563,10 @@ class ProductVariantImporter extends Importer
                         true
                     );
 
-                    $disk = Storage::disk("public");
                     $filename = $uploadedFile->getClientOriginalName();
-                    $path = $disk->putFileAs(
-                        $imagePath,
-                        $uploadedFile,
-                        $filename
-                    );
+                    $path = Storage::disk(
+                        config("filesystems.default")
+                    )->putFileAs($imagePath, $uploadedFile, $filename);
 
                     @unlink($tempImagePath);
 

@@ -56,9 +56,7 @@ class ArticleResource extends Resource
                 Tables\Columns\TextColumn::make("title")
                     ->label("Название")
                     ->searchable(),
-                Tables\Columns\ImageColumn::make("image")
-                    ->disk("public")
-                    ->label("Изображение"),
+                Tables\Columns\ImageColumn::make("image")->label("Изображение"),
                 Tables\Columns\IconColumn::make("is_popular")
                     ->label("Популярная")
                     ->boolean(),

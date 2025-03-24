@@ -82,7 +82,7 @@
                         <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
                             <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
                                 <a href="#" class="shrink-0">
-                                    <img class="h-20 w-20" :src="`/storage/${cart_item.img.uuid}/filament-thumbnail.${cart_item.img.file_extension}`" alt="imac image" />
+                                    <img class="h-20 w-20" :src="`https://s3.stella-technic.ru/${cart_item.gallery[0]}`" alt="imac image" />
                                 </a>
                                 <a href="#" class="text-base font-medium text-gray-900 hover:underline dark:text-white" x-text="cart_item.name"></a>
                                 <div class="relative flex items-center">

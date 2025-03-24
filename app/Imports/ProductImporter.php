@@ -907,7 +907,10 @@ class ProductImporter extends Importer
             true
         );
 
-        $image = Storage::disk("public")->put("categories/", $uploadedFile);
+        $image = Storage::disk(config("filesystems.default"))->put(
+            "categories/",
+            $uploadedFile
+        );
         @unlink($tempImagePath);
 
         dump("image: " . $image);

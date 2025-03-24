@@ -23,12 +23,12 @@
                     <li>
                         <a href="{{ route('client.catalog', $category->slug) }}" wire:navigate class="flex flex-center justify-between gap-2 text-gray-600" :class="{ 'text-red-700': selectedCategory == {{ $category->id }}}" @mouseover="changeSelectedCategory({{ $category->id }})">
                             <div class="flex items-center gap-2">
-                                <div class="min-w-5 max-w-5">
-                                    @svg( $category->icon )
+                                <div class="min-w-8 max-w-8">
+                                    <img src="{{ Storage::disk(config('filesystems.default'))->url($category->image) }}">
                                 </div>
                                 {{ $category->title }}
                             </div>
-                            @if ($category->categories) 
+                            @if ($category->categories)
                                 <x-heroicon-o-arrow-long-right class="min-w-4 max-w-4" />
                             @endif
                         </a>
@@ -36,7 +36,7 @@
                 @endforeach
             </ul>
             @foreach ($categories as $category)
-                @if (!$category->categories) 
+                @if (!$category->categories)
                     @continue
                 @endif
                 <div class="max-h-[60vh] col-span-4"  x-show="selectedCategory == {{ $category->id }}">
@@ -56,40 +56,4 @@
             @endforeach
         </div>
     </div>
-    {{-- <div class="absolute top-full left-[50%] transform translate-x-[-50%] z-[999] hidden container overflow-auto border border-blue-gray-50 bg-white p-3 font-sans text-sm font-normal text-blue-gray-500  shadow-lg shadow-blue-gray-500/10 focus:outline-none lg:block" role="menu" x-show="isOpened" >
-        <ul class="grid grid-cols-3 gap-y-2 outline-none outline-0" role="menuitem">
-
-            @foreach ($categories as $category)
-                <a href="{{ route('client.catalog', $category->slug) }}" wire:navigate>
-                    <button role="menuitem"
-                        class="flex w-full cursor-pointer select-none items-center gap-3 rounded-lg px-3 pb-2 pt-[9px] text-start leading-tight outline-none transition-all hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900">
-                        <div class="flex items-center justify-center rounded-lg !bg-blue-gray-50 p-2 ">
-                            <div class="w-6">
-                                {{ svg($category->icon) }}
-                            </div>
-                        </div>
-                        <div>
-                            <h6
-                                class="flex items-center font-sans text-sm font-bold tracking-normal text-blue-gray-900 antialiased">
-                                {{ $category->title }}
-                            </h6>
-                        </div>
-                    </button>
-                </a>
-                @if ($category->categories)
-                <ul class="ml-4">
-                    @foreach ($category->categories as $subcategory)
-                        <li>
-                            <a href="{{ route('client.catalog', $subcategory->slug) }}" class="text-blue-gray-500 hover:underline">
-                                {{ $subcategory->title }}
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-                @endif
-            @endforeach
-
-            
-        </ul>
-    </div> --}}
 </div>

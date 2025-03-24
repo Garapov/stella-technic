@@ -45,7 +45,7 @@
                     <div class="splide__track h-full">
                   		<ul class="splide__list">
                             @foreach ($variation->gallery as $image)
-                                <li class="splide__slide"> <img src="{{ asset('/storage/' . $image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
+                                <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
 
                             @endforeach
                   		</ul>
@@ -55,7 +55,7 @@
                     <div class="splide__track">
                   		<ul class="splide__list">
                             @foreach ($variation->gallery as $image)
-                                <li class="splide__slide"> <img src="{{ asset('/storage/' . $image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
+                                <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
 
                             @endforeach
                   		</ul>
@@ -66,7 +66,7 @@
 
         <div class="w-full lg:sticky top-10">
             <div>
-                <h1 class="text-lg sm:text-xl font-semibold text-slate-900">{{ $variation->name }} ({{$variation->sku}})</h1>
+                <h1 class="text-lg sm:text-xl font-semibold text-slate-900">{{ $variation->name }} @if ($variation->product->brand){{$variation->product->brand->name}}@endif ({{$variation->sku}})</h1>
                 <div class="flex items-center flex-wrap gap-4 mt-6">
                     <h4 class="text-slate-900 text-2xl sm:text-3xl font-semibold">{{ $variation->new_price ? Number::format($variation->new_price, 0) : Number::format($variation->price, 0) }} ₽</h4>
                     @if ($variation->new_price)

@@ -11,7 +11,7 @@
 
     <div class="grid grid-cols-4 gap-4">
         <div class="rounded-lg overflow-hidden">
-            <img src="/storage/{{ $product->img->uuid }}/original.{{ $product->img->file_extension }}" alt="{{ $product->img->alt }}" />
+            <img src="{{ Storage::disk(config('filesystems.default'))->url($product->gallery[0]) }}" alt="" />
         </div>
         <div class="col-span-3 flex flex-col gap-4">
             <h3 class="text-lg sm:text-xl font-semibold text-slate-900">{{ $product->name }}</h3>
@@ -24,7 +24,7 @@
     @php
         // Инициализируем пустой массив для уникальных параметров
         $uniqueParamNames = [];
-        
+
         // Проходим по всем вариантам продукта
         foreach($product->variants as $variant) {
             // Проверяем, есть ли у варианта параметры
@@ -85,7 +85,7 @@
                             <a href="{{ route('client.product_detail', $variant->slug) }}" wire:navigate>{{ $variant->sku }}</a>
                         </th>
                         @foreach($variant->paramItems as $paramItem)
-                            @if (!$paramItem->productParam->show_on_table) 
+                            @if (!$paramItem->productParam->show_on_table)
                                 @continue
                             @endif
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -93,7 +93,7 @@
                             </th>
                         @endforeach
                         @foreach($variant->parametrs as $parametrs)
-                            @if (!$parametrs->productParam->show_on_table) 
+                            @if (!$parametrs->productParam->show_on_table)
                                 @continue
                             @endif
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">

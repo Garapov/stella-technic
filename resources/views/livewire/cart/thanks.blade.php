@@ -24,7 +24,7 @@
                             <div class="flex justify-between items-center border-b pb-4 last:border-b-0">
                                 <div class="flex items-center space-x-4">
                                     <img
-                                        src="{{ asset('/storage/' . $item['img']['uuid'] .  '/filament-thumbnail.' . $item['img']['file_extension']) }}"
+                                        src="{{ Storage::disk(config('filesystems.default'))->url($item['gallery'][0]) }}"
                                         alt="{{ $item['name'] }}"
                                         class="w-16 h-16 object-cover rounded"
                                     >

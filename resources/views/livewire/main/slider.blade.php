@@ -18,7 +18,7 @@
                             @foreach ($slides as $slide)
                                 <div class="whitespace-normal @if (!$slide->background_image) p-10 @endif rounded-xl" style="background-color: {{ $slide->background }};">
                                     @if ($slide->background_image)
-                                        <img class="rounded-xl h-full w-full object-cover object-center" src="{{ asset('/storage/' . $slide->background_image) }}" alt="">
+                                        <img class="rounded-xl h-full w-full object-cover object-center" src="{{ Storage::disk(config('filesystems.default'))->url($slide->background_image) }}" alt="">
                                     @else
                                         <div class="grid grid-cols-2 gap-10 h-full">
                                             <div class="flex flex-col gap-4 items-start justify-between">
@@ -31,7 +31,7 @@
                                             </div>
                                             <div class="flex items-center justify-center h-full">
                                                 @if ($slide->image)
-                                                    <img class="rounded-lg" src="{{ asset('/storage/' . $slide->image) }}" alt="">
+                                                    <img class="rounded-lg" src="{{ Storage::disk(config('filesystems.default'))->url($slide->image) }}" alt="">
                                                 @endif
                                             </div>
                                         </div>

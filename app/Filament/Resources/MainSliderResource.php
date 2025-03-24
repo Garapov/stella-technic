@@ -72,7 +72,7 @@ class MainSliderResource extends Resource
     {
         return $table
             ->columns([
-                ImageByIdColumn::make("image")->label("Картинка"),
+                Tables\Columns\ImageColumn::make("image")->label("Картинка"),
                 Tables\Columns\TextColumn::make("title")
                     ->label("Заголовок")
                     ->searchable(),

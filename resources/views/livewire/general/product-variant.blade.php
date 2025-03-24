@@ -24,7 +24,7 @@
     <div class="aspect-[1/1] w-full {{ $product->trashed() ? 'opacity-50' : '' }}">
         <a href="{{ route('client.product_detail', $variant->slug) }}" wire:navigate>
             <img class="mx-auto h-full w-full object-cover"
-                src="{{ asset('storage/' . $variant->gallery[0]) }}" />
+                src="{{ Storage::disk(config('filesystems.default'))->url($variant->gallery[0]) }}" />
         </a>
     </div>
 

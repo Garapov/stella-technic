@@ -2,13 +2,10 @@
 
 namespace App\Livewire\General\Header;
 
-use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Models\Page;
+use App\Models\ProductVariant;
 use Livewire\Component;
-use Spatie\Searchable\Search as SearchableSearch;
 use Livewire\Attributes\Url;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
@@ -26,7 +23,7 @@ class Search extends Component
         ];
 
         if (Str::length($this->q) > 3) {
-            $results['products'] = Product::where('name', 'like', "%{$this->q}%")->orWhere('synonims', 'like', "%{$this->q}%")->get();
+            $results['products'] = ProductVariant::where('name', 'like', "%{$this->q}%")->orWhere('synonims', 'like', "%{$this->q}%")->orWhere('sku', 'like', "%{$this->q}%")->get();
             $results['categories'] = ProductCategory::where('title', 'like', "%{$this->q}%")->get();
             // $results['pages'] = Page::where('title', 'like', "%{$this->q}%")->get();
         }

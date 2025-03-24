@@ -31,7 +31,7 @@
         <div class="flex flex-wrap gap-8 justify-between items-center mx-auto container">
             @if (setting('site_logo'))
                 <a href="/" class="flex items-center" wire:navigate>
-                    <img src="{{ asset('storage/' . setting('site_logo')) }}" class="mr-3 h-6 sm:h-9 block"
+                    <img src="{{ Storage::disk(config('filesystems.default'))->url(setting('site_logo')) }}" class="mr-3 h-6 sm:h-9 block"
                         alt="Stella-tech Logo" />
                 </a>
             @endif
