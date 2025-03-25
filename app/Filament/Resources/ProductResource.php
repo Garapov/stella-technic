@@ -35,6 +35,7 @@ class ProductResource extends Resource
     protected static ?string $modelLabel = "Товар";
     protected static ?string $pluralModelLabel = "Товары";
     protected static ?string $navigationGroup = "Магазин";
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = "name";
 

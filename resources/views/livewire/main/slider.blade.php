@@ -12,13 +12,15 @@
             },
         }">
             <div class="m-auto container">
-                <div class="glide" x-ref="slider">
-                    <div class="glide__track" data-glide-el="track">
+                <div class="glide relative" x-ref="slider">
+                    <div class="glide__track rounded-xl overflow-hidden" data-glide-el="track">
                         <div class="glide__slides">
                             @foreach ($slides as $slide)
-                                <div class="whitespace-normal @if (!$slide->background_image) p-10 @endif rounded-xl" style="background-color: {{ $slide->background }};">
+                                <div class="whitespace-normal @if (!$slide->background_image) p-10 @endif" style="background-color: {{ $slide->background }};">
                                     @if ($slide->background_image)
-                                        <img class="rounded-xl h-full w-full object-cover object-center" src="{{ Storage::disk(config('filesystems.default'))->url($slide->background_image) }}" alt="">
+                                        <a href="{{ url($slide->link) }}" wire:navigate>
+                                            <img class="w-full object-cover object-center aspect-[31/10] text-0" src="{{ Storage::disk(config('filesystems.default'))->url($slide->background_image) }}" alt="">
+                                        </a>
                                     @else
                                         <div class="grid grid-cols-2 gap-10 h-full">
                                             <div class="flex flex-col gap-4 items-start justify-between">
@@ -41,20 +43,20 @@
                         </div>
                     </div>
                     @if (count($slides) > 1)
-                        <div class="flex items-center justify-between mt-4">
+                        <div class="flex items-center justify-between gap-4 pt-2 ps-3 absolute right-0 bottom-0 bg-white dark:bg-gray-700 rounded-tl-lg">
                             <div class="flex items-center gap-2" data-glide-el="controls[nav]">
                                 @foreach ($slides as $key=>$slide)
                                     <div class="h-2.5 rounded-full transition-width" :class="{'w-6 bg-blue-400': index == {{ $key }}, 'w-2.5 bg-gray-400': index != {{ $key }} }" data-glide-dir="={{ $key }}"></div>
                                 @endforeach
                             </div>
                             <div class="flex items-center gap-2" data-glide-el="controls">
-                                <button type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800" data-glide-dir="<">
-                                    <x-fas-arrow-left-long class="w-5 h-5" />
-                                    <span class="sr-only">Icon description</span>
+                                <button type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800" data-glide-dir="<">
+                                    <x-fas-arrow-left-long class="w-4 h-4" />
+                                    <span class="sr-only">Предыдущий слайд</span>
                                 </button>
-                                <button type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800" data-glide-dir=">">
-                                    <x-fas-arrow-right-long class="w-5 h-5" />
-                                    <span class="sr-only">Icon description</span>
+                                <button type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800" data-glide-dir=">">
+                                    <x-fas-arrow-right-long class="w-4 h-4" />
+                                    <span class="sr-only">Следующий слайд</span>
                                 </button>
                             </div>
                         </div>

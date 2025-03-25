@@ -18,7 +18,7 @@ class Banner extends PageBlock
                     ->required()
                     ->image()
                     ->label("Изображение")
-                    ->directory("banners")
+                    ->directory("sliders")
                     ->visibility("public")
                     ->imageEditor()
                     ->preserveFilenames()

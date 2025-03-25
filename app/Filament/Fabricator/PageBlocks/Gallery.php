@@ -16,7 +16,7 @@ class Gallery extends PageBlock
             ->icon("heroicon-o-rectangle-stack")
             ->label("Галерея")
             ->schema([
-                FileUpload::make("gallery")
+                FileUpload::make("images")
                     ->required()
                     ->image()
                     ->label("Галерея")

@@ -22,10 +22,11 @@ class ProductCategoryResource extends Resource
     protected static ?string $model = ProductCategory::class;
 
     protected static ?string $navigationIcon = "carbon-center-circle";
-    protected static ?string $navigationLabel = "Категории";
-    protected static ?string $modelLabel = "Категорию";
-    protected static ?string $pluralModelLabel = "Категории";
+    protected static ?string $navigationLabel = "Категории товаров";
+    protected static ?string $modelLabel = "Категорию товаров";
+    protected static ?string $pluralModelLabel = "Категории товаров";
     protected static ?string $navigationGroup = "Магазин";
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = "title";
 
