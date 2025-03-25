@@ -41,26 +41,31 @@
     <div class="grid items-start grid-cols-1 lg:grid-cols-2 gap-8 max-lg:gap-12 max-sm:gap-8">
         <div class="w-full lg:sticky top-10">
             <div class="flex flex-col-reverse gap-4">
-                <section class="splide gallery-thumbnails" aria-label="Splide Basic HTML Example" ref="gallerySlider">
-                    <div class="splide__track h-full">
-                  		<ul class="splide__list">
-                            @foreach ($variation->gallery as $image)
-                                <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
+                @if ($variation->gallery)
+                    <section class="splide gallery-thumbnails" aria-label="Splide Basic HTML Example" ref="gallerySlider">
+                        <div class="splide__track h-full">
+                            <ul class="splide__list">
+                                @foreach ($variation->gallery as $image)
+                                    <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
 
-                            @endforeach
-                  		</ul>
-                    </div>
-                </section>
-                <section class="splide gallery-slider" aria-label="Splide Basic HTML Example" ref="gallerySlider">
-                    <div class="splide__track">
-                  		<ul class="splide__list">
-                            @foreach ($variation->gallery as $image)
-                                <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
+                                @endforeach
+                            
+                            </ul>
+                        </div>
+                    </section>
+                    <section class="splide gallery-slider" aria-label="Splide Basic HTML Example" ref="gallerySlider">
+                        <div class="splide__track">
+                            <ul class="splide__list">
+                                @foreach ($variation->gallery as $image)
+                                    <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
 
-                            @endforeach
-                  		</ul>
-                    </div>
-                </section>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </section>
+                @else
+                    <img src="{{ asset('assets/placeholder.svg') }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  />
+                @endif
             </div>
         </div>
 
@@ -84,15 +89,41 @@
                             <h3 class="text-lg sm:text-sm font-semibold text-slate-900">{{ $paramGroup['name'] }}</h3>
                             <div class="flex flex-wrap gap-4 mt-2">
                                 @foreach($paramGroup['values'] as $value)
-                                    <a href="{{ route('client.product_detail', $variation->product->variants->where('id', $value['variant_id'])->first()->slug) }}"
-                                        @class([
-                                            'px-2 py-2 border text-sm flex items-center justify-center shrink-0 text-xs rounded-xl',
-                                            'border-blue-600 bg-blue-50' => $value['is_current'],
-                                            'border-slate-300 hover:border-blue-600' => !$value['is_current'] && $value['is_available'],
-                                            'border-slate-200 bg-slate-50 text-slate-400' => !$value['is_available']
-                                        ]) wire:navigate >
-                                        {{ $value['title'] }}
-                                    </a>
+                                    @if($paramGroup['name'] === 'Цвет')
+                                        <a href="{{ route('client.product_detail', $variation->product->variants->where('id', $value['variant_id'])->first()->slug) }}" wire:navigate
+                                            @class([
+                                                'relative flex items-center gap-2 border rounded-full',
+                                                'border-blue-600' => $value['is_current'],
+                                                'border-slate-300 hover:border-blue-600' => !$value['is_current'] && $value['is_available'],
+                                                'border-slate-200 opacity-30' => !$value['is_available']
+                                            ]) 
+                                            
+                                            @if(!$value['is_available']) disabled @endif>
+                                            @php
+                                                $colors = explode('|', $value['value']);
+                                            @endphp
+                                            <div class="relative w-8 h-8 rounded-full border @if($value['is_current']) border-blue-500 @else border-gray-300 @endif overflow-hidden">
+                                                @if(count($colors) > 1)
+                                                    <div class="absolute inset-0">
+                                                        <div class="h-full w-1/2 float-left" style="background-color: {{ trim($colors[0]) }}"></div>
+                                                        <div class="h-full w-1/2 float-right" style="background-color: {{ trim($colors[1]) }}"></div>
+                                                    </div>
+                                                @else
+                                                    <div class="absolute inset-0" style="background-color: {{ trim($colors[0]) }}"></div>
+                                                @endif
+                                            </div>
+                                        </a>
+                                    @else
+                                        <a href="{{ route('client.product_detail', $variation->product->variants->where('id', $value['variant_id'])->first()->slug) }}"
+                                            @class([
+                                                'px-2 py-2 border text-sm flex items-center justify-center shrink-0 text-xs rounded-xl',
+                                                'border-blue-600 bg-blue-50' => $value['is_current'],
+                                                'border-slate-300 hover:border-blue-600' => !$value['is_current'] && $value['is_available'],
+                                                'border-slate-200 bg-slate-50 text-slate-400' => !$value['is_available']
+                                            ]) wire:navigate >
+                                            {{ $value['title'] }}
+                                        </a>
+                                    @endif
                                 @endforeach
                             </div>
                         </div>

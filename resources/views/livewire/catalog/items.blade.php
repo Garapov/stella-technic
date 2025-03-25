@@ -209,26 +209,63 @@
                                         <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                             {{ $filter['name'] }}
                                         </h4>
-
                                         @if($filter['type'] === 'param')
-                                            <div class="space-y-2">
+                                            <div class="@if($filter['name'] === 'Цвет') flex gap-2 @else space-y-2 @endif">
                                                 @foreach ($filter['items'] as $item)
-                                                    <div class="flex items-center">
-                                                        <input type="checkbox"
-                                                            id="param-{{ $item['id'] }}"
-                                                            value="{{ $item['id'] }}"
-                                                            @if(!$item['would_have_results'] && !in_array($item['id'], $selectedVariations)) disabled @endif
-                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 @if(!$item['would_have_results'] && !in_array($item['id'], $selectedVariations)) opacity-50 cursor-not-allowed @endif"
-                                                            @checked($item['selected'])
-                                                            wire:click="updateParamSelection('{{ $filter['name'] }}', {{ $item['id'] }})"
-                                                            wire:loading.attr="disabled"
-                                                            wire:target="updateParamSelection"
-                                                            @click="makeFilterIsLoading">
-                                                        <label for="param-{{ $item['id'] }}"
-                                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 @if(!$item['would_have_results'] && !in_array($item['id'], $selectedVariations)) opacity-50 @endif">
-                                                            {{ $item['title'] }}
-                                                        </label>
-                                                    </div>
+                                                    @if($filter['name'] === 'Цвет')
+                                                        <div class="flex items-center">
+                                                            <input type="checkbox"
+                                                                id="param-{{ $item['id'] }}"
+                                                                value="{{ $item['id'] }}"
+                                                                @if(!$item['would_have_results'] && !in_array($item['id'], $selectedVariations)) disabled @endif
+                                                                class="hidden"
+                                                                @checked($item['selected'])
+                                                                wire:click="updateParamSelection('{{ $filter['name'] }}', {{ $item['id'] }})"
+                                                                wire:loading.attr="disabled"
+                                                                wire:target="updateParamSelection"
+                                                                @click="makeFilterIsLoading">
+                                                            <label for="param-{{ $item['id'] }}"
+                                                                class="flex items-center cursor-pointer @if(!$item['would_have_results'] && !in_array($item['id'], $selectedVariations)) opacity-50 pointer-events-none @endif">
+                                                                @php
+                                                                    $colors = explode('|', $item['value']);
+                                                                @endphp
+                                                                <div class="relative w-8 h-8 rounded-full border-2 @if($item['selected']) border-blue-500 @else border-gray-300 @endif overflow-hidden">
+                                                                    @if(count($colors) > 1)
+                                                                        <div class="absolute inset-0">
+                                                                            <div class="h-full w-1/2 float-left" style="background-color: {{ trim($colors[0]) }}"></div>
+                                                                            <div class="h-full w-1/2 float-right" style="background-color: {{ trim($colors[1]) }}"></div>
+                                                                        </div>
+                                                                    @else
+                                                                        <div class="absolute inset-0" style="background-color: {{ trim($colors[0]) }}"></div>
+                                                                    @endif
+                                                                    @if($item['selected'])
+                                                                        <div class="absolute inset-0 flex items-center justify-center">
+                                                                            <svg class="w-4 h-4 text-white stroke-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                                            </svg>
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    @else
+                                                        <div class="flex items-center">
+                                                            <input type="checkbox"
+                                                                id="param-{{ $item['id'] }}"
+                                                                value="{{ $item['id'] }}"
+                                                                @if(!$item['would_have_results'] && !in_array($item['id'], $selectedVariations)) disabled @endif
+                                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 @if(!$item['would_have_results'] && !in_array($item['id'], $selectedVariations)) opacity-50 cursor-not-allowed @endif"
+                                                                @checked($item['selected'])
+                                                                wire:click="updateParamSelection('{{ $filter['name'] }}', {{ $item['id'] }})"
+                                                                wire:loading.attr="disabled"
+                                                                wire:target="updateParamSelection"
+                                                                @click="makeFilterIsLoading">
+                                                            <label for="param-{{ $item['id'] }}"
+                                                                class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 @if(!$item['would_have_results'] && !in_array($item['id'], $selectedVariations)) opacity-50 @endif">
+                                                                {{ $item['title'] }}
+                                                            </label>
+                                                        </div>
+                                                    @endif
                                                 @endforeach
                                             </div>
                                         @elseif($filter['type'] === 'brand')

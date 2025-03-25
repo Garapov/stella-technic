@@ -36,6 +36,7 @@ class Detail extends Component
                     $param->productParam->name => [
                         "id" => $param->id,
                         "title" => $param->title,
+                        "value" => $param->value,
                     ],
                 ];
             })
@@ -59,6 +60,7 @@ class Detail extends Component
                         $param->productParam->name => [
                             "id" => $param->id,
                             "title" => $param->title,
+                            "value" => $param->value,
                         ],
                     ];
                 })
@@ -86,6 +88,7 @@ class Detail extends Component
                         $groupedParams[$paramName]["values"][] = [
                             "id" => $param["id"],
                             "title" => $param["title"],
+                            "value" => $param["value"],
                             "variant_id" => $variant->id,
                             "is_current" =>
                                 isset($currentParams[$paramName]) &&
