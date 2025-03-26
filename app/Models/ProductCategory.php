@@ -14,6 +14,7 @@ use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 use Datlechin\FilamentMenuBuilder\Concerns\HasMenuPanel;
 use Datlechin\FilamentMenuBuilder\Contracts\MenuPanelable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
 class ProductCategory extends Model implements Searchable,MenuPanelable
@@ -106,7 +107,16 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
 
     public function minProductPrice()
     {
-        return Number::format($this->products()->where('price', '>', 0)->min('price') ?? 0, 0);
+        $category = $this;
+        
+        $minPrice = ProductVariant::query()
+        ->whereHas('product', function ($query) use ($category) {
+            $query->whereHas('categories', function ($q) use ($category) {
+                $q->where('product_categories.id', $category->id);
+            });
+        })
+        ->min(DB::raw('COALESCE(new_price, price)'));
+        return $minPrice;
     }
 
     public function variationsCount()

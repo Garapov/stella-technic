@@ -20,5 +20,7 @@
             </ul>
         @endif
     </div>
-    <div class="text-md font-bold text-gray-900 dark:text-white">От {{ $category->minProductPrice() }} ₽</div>
+    @if ($category->variationsCount())
+        <div class="text-md font-bold text-gray-900 dark:text-white">От {{ $category->minProductPrice() }} ₽</div>
+    @endif
 </div>
