@@ -18,24 +18,23 @@ export default (() => {
                 }
             },
 
-            addVariationToCart({ product, variation, count = 0 }) {
+            addVariationToCart({ variationId, count = 0, name }) {
                 console.log(
                     "Adding variation to cart:",
-                    product,
-                    variation,
+                    variationId,
                     count,
                 );
 
                 try {
                     // Ensure the product exists in the cart
-                    if (!this.list[variation.id]) {
-                        this.list[variation.id] = +count || 1;
+                    if (!this.list[variationId]) {
+                        this.list[variationId] = +count || 1;
                     } else {
-                        this.list[variation.id] += +count || 1;
+                        this.list[variationId] += +count || 1;
                     }
 
                     Toastify({
-                        text: `${variation.name} добавлен в корзину`,
+                        text: `${name} добавлен в корзину`,
                         duration: 3000,
                         close: true,
                         gravity: "bottom",
