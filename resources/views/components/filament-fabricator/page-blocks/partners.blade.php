@@ -10,7 +10,7 @@
                             @foreach ($partners as $partner)
                                 <a href="{{ $partner->link }}"
                                 class="flex w-[150px] items-center justify-center p-4 2xl:w-[180px] rounded bg-white" wire:navigate>
-                                    <img src="{{ asset('storage/' . $partner->image) }}" alt="image"
+                                    <img src="{{ Storage::disk(config('filesystems.default'))->url($partner->image) }}" alt="image"
                                         class="w-full" />
                                 </a>
                             @endforeach

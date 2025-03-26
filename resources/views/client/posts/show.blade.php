@@ -31,24 +31,9 @@
   
         <div class="flex flex-col lg:flex-row lg:space-x-12">
   
-            <div class="px-4 lg:px-0 mt-12 text-gray-700 dark:text-gray-200 text-lg leading-relaxed w-full lg:w-3/4">
+            <div class="px-4 lg:px-0 mt-12 text-gray-700 dark:text-gray-200 text-lg leading-relaxed w-full">
                 {!! $post->content !!}
             </div>
-  
-          <div class="w-full lg:w-1/4 m-auto mt-12 max-w-screen-sm">
-            <div class="p-4 border-t border-b md:border md:rounded">
-              <div class="flex py-2">
-                <img src="{{ asset($post->author->photo) }}" class="h-10 w-10 rounded-full mr-2 object-cover">
-                <div>
-                  <p class="font-semibold text-gray-700 dark:text-gray-200 text-sm"> {{ $post->author->name }} </p>
-                  <p class="font-semibold text-gray-600 dark:text-gray-200 text-xs"> {{ $post->author->email }} </p>
-                </div>
-              </div>
-              <div class="text-gray-700 dark:text-gray-200">
-                {!! $post->author->bio !!}
-              </div>
-            </div>
-          </div>
   
         </div>
       </main>

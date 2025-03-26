@@ -31,7 +31,7 @@
                         @foreach ($clients as $client)
                             <li class="glide__slide h-auto">
                                 <div class="flex justify-center items-center h-full p-4 rounded bg-white">
-                                    <img src="{{ asset('storage/' . $client->image) }}" alt="">    
+                                    <img src="{{ Storage::disk(config('filesystems.default'))->url($client->image) }}" alt="">    
                                 </div>
                             </li>
                         

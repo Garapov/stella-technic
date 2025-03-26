@@ -3,14 +3,14 @@
 namespace App\Livewire\Main;
 
 use Livewire\Component;
-use App\Models\Partner;
+use App\Models\Brand;
 
 class Brands extends Component
 {
     public function render()
     {
         return view('livewire.main.brands', [
-            'partners' => Partner::all(),
+            'brands' => Brand::all(),
         ]);
     }
 }

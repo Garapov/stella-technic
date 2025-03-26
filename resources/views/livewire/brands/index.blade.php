@@ -9,7 +9,7 @@
                             @foreach ($brands as $brand)
                                 <a href="{{ route('client.brands.show', ['slug' => $brand->slug]) }}"
                                 class="flex w-[150px] items-center justify-center p-4 2xl:w-[180px] rounded bg-white" wire:navigate>
-                                    <img src="{{ asset('storage/' . $brand->image) }}" alt="image"
+                                    <img src="{{ Storage::disk(config('filesystems.default'))->url($brand->image) }}" alt="image"
                                         class="w-full" />
                                 </a>
                             @endforeach

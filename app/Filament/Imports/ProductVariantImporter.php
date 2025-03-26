@@ -38,7 +38,13 @@ class ProductVariantImporter extends Importer
                     ProductVariantImporter $importer,
                     $record
                 ) {
-                    $data = json_decode($state, true);
+                    try {
+                        $data = json_decode($state, true);
+                    } catch (\Exception $e) {
+                        throw new RowImportFailedException(
+                            $e->getMessage()
+                        );
+                    }
 
                     // dump(['product_id data', $data]);
                     // Log::info('$data', ['data' => $data]);

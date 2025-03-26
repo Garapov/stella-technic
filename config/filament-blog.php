@@ -36,7 +36,7 @@ return [
      */
     "avatar" => [
         "disk" => config("filesystems.default"),
-        "directory" => "blog",
+        "directory" => "avatars",
         "maxSize" => 5120,
     ],
 

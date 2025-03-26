@@ -210,7 +210,7 @@
                                             {{ $filter['name'] }}
                                         </h4>
                                         @if($filter['type'] === 'param')
-                                            <div class="@if($filter['name'] === 'Цвет') flex gap-2 @else space-y-2 @endif">
+                                            <div class="@if($filter['name'] === 'Цвет') flex flex-wrap gap-2 @else space-y-2 @endif">
                                                 @foreach ($filter['items'] as $item)
                                                     @if($filter['name'] === 'Цвет')
                                                         <div class="flex items-center">
@@ -322,7 +322,7 @@
                                         ], key('variant_' . $variant->id))
                                     @endforeach
                                 </div>
-                                {{ $this->products->links() }}
+                                
                             </div>
                         @endif
                         @if ($displayMode == 'list')
@@ -341,6 +341,8 @@
                             </div>
                         @endif
                     @endif
+
+                    {{ $this->products->links() }}
 
                 </div>
             </div>

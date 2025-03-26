@@ -21,6 +21,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Outerweb\FilamentImageLibrary\Filament\Plugins\FilamentImageLibraryPlugin;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
@@ -61,6 +62,11 @@ class AdminPanelProvider extends PanelProvider
                 )
                 ->group("filament-settings-hub::messages.group"),
         ]);
+
+        $panel->renderHook(
+            name: "panels::user-menu.before",
+            hook: fn(): string => Blade::render("adasdasdasdads")
+        );
     }
 
     public function panel(Panel $panel): Panel
