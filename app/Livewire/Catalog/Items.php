@@ -53,11 +53,11 @@ class Items extends Component
                 "icon" => "M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25",
             ],
             "price_asc" => [
-                "label" => "Сначала дешевые",
+                "label" => "Дешевле",
                 "icon" => "M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12",
             ],
             "price_desc" => [
-                "label" => "Сначала дорогие",
+                "label" => "Дороже",
                 "icon" => "M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12",
             ],
             "name_asc" => [
@@ -71,10 +71,21 @@ class Items extends Component
         ];
     }
 
+    public function updateSort($sort)
+    {
+        $this->selectedSort = $sort;
+    }
+
     public function render()
     {
         return view('livewire.catalog.items', [
             'products' => ProductVariant::whereIn('product_id', $this->product_ids)->paginate(12),
+            'mode' => $this->displayMode,
         ]);
+    }
+
+    public function changeDisplayMode($mode)
+    {
+        $this->displayMode = $mode;
     }
 }
