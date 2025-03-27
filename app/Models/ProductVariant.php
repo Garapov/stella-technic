@@ -11,11 +11,13 @@ use Spatie\Sluggable\HasSlug;
 use Illuminate\Support\Str;
 use Spatie\Sluggable\SlugOptions;
 use Illuminate\Support\Facades\Log;
+use Abbasudo\Purity\Traits\Filterable;
+use Abbasudo\Purity\Traits\Sortable;
 
 class ProductVariant extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductVariantFactory> */
-    use HasFactory, SoftDeletes, HasSlug;
+    use HasFactory, SoftDeletes, HasSlug, Filterable, Sortable;
 
     protected $fillable = [
         "product_id",
