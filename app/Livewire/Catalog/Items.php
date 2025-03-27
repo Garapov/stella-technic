@@ -21,27 +21,32 @@ class Items extends Component
     public $selectedSort = "default";
     public $displayMode = "block";
     public $showSorting = false;
-    public $display_filter = true;
+    public $display_filter = false;
+    public $type = 'category';
 
     protected $queryString = [
         "selectedSort" => ["as" => "sort", "except" => "default"],
         "displayMode" => ["as" => "display_mode", "except" => "block"],
     ];
 
-    public function mount($slug = null, $brand_slug = null, $products = null)
+    public function mount($slug = null, $brand_slug = null, $products = null, $display_filter = false)
     {
+        $this->$display_filter = $display_filter;
         if ($slug) {
             $this->category = ProductCategory::where("slug", $slug)->first();
             $this->product_ids = $this->category->products->pluck('id');
+            $this->type = 'category';
         }
         
         if ($brand_slug) {
             $brand = Brand::where("slug", $brand_slug)->first();
             $this->product_ids = $brand->products()->pluck("id");
+            $this->type = 'brand';
         }
         
         if ($products) {
             $this->product_ids = $products;
+            $this->type = 'products';
         }
     }
 
@@ -78,8 +83,44 @@ class Items extends Component
 
     public function render()
     {
+
+        if ($this->type == 'products') {
+            $products = ProductVariant::whereIn('id', $this->product_ids)
+                ->when($this->selectedSort === 'price_asc', function ($query) {
+                    return $query->orderByRaw('COALESCE(new_price, price) asc');
+                })
+                ->when($this->selectedSort === 'price_desc', function ($query) {
+                    return $query->orderByRaw('COALESCE(new_price, price) desc');
+                })
+                ->when($this->selectedSort === 'name_asc', function ($query) {
+                    return $query->orderBy('name', 'asc');
+                })
+                ->when($this->selectedSort === 'name_desc', function ($query) {
+                    return $query->orderBy('name', 'desc');
+                })
+                ->paginate(12);
+        } else {
+            $products = ProductVariant::whereIn('product_id', $this->product_ids)
+                ->when($this->selectedSort === 'price_asc', function ($query) {
+                    return $query->orderByRaw('COALESCE(new_price, price) asc');
+                })
+                ->when($this->selectedSort === 'price_desc', function ($query) {
+                    return $query->orderByRaw('COALESCE(new_price, price) desc');
+                })
+                ->when($this->selectedSort === 'name_asc', function ($query) {
+                    return $query->orderBy('name', 'asc');
+                })
+                ->when($this->selectedSort === 'name_desc', function ($query) {
+                    return $query->orderBy('name', 'desc');
+                })
+                ->paginate(12);
+        }
+
+
+
+
         return view('livewire.catalog.items', [
-            'products' => ProductVariant::whereIn('product_id', $this->product_ids)->paginate(12),
+            'products' => $products,
             'mode' => $this->displayMode,
         ]);
     }

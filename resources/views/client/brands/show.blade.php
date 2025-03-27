@@ -1,6 +1,7 @@
 <x-guest-layout>
     @livewire('catalog.items', [
-        'brand_slug' => $slug
+        'brand_slug' => $slug,
+        'display_filter' => true
     ])
     @livewire('main.articles')
     @livewire('main.customers')
