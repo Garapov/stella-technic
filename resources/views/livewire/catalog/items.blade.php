@@ -1,58 +1,12 @@
-<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased"
-    x-data="{
-        isLoading: false,
-        hasError: false,
-        errorMessage: '',
-        displayMode: $wire.entangle('displayMode'),
-        init() {
-            Livewire.on('filter-changed', () => {
-                this.isLoading = true;
-                this.hasError = false;
-                setTimeout(() => {
-                    this.isLoading = false;
-                }, 500);
-            });
-
-            Livewire.on('filter-error', (message) => {
-                this.hasError = true;
-                this.errorMessage = message || 'Произошла ошибка при обработке фильтра';
-                this.isLoading = false;
-            });
-        },
-        makeFilterIsLoading() {
-            this.isLoading = true;
-        },
-    }"
->
+<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
     @if ($category || $product_ids)
         <div class="mx-auto container relative">
             <!-- Loading Overlay -->
-            <div x-show="isLoading" :class="{'hidden': !isLoading}"
+            <div 
                 class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm hidden">
                 <div class="flex items-center gap-2 rounded-lg bg-white/80 px-6 py-4 shadow-lg dark:bg-gray-800/80">
                     <div class="animate-spin w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full"></div>
                     <span class="text-gray-700 dark:text-gray-300">Загрузка...</span>
-                </div>
-            </div>
-
-            <!-- Error Message -->
-            <div x-show="hasError" :class="{'hidden': !hasError}"
-                class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm hidden"
-                x-on:click="hasError = false">
-                <div class="flex flex-col items-center gap-2 rounded-lg bg-white/80 px-6 py-4 shadow-lg dark:bg-gray-800/80 max-w-md">
-                    <div class="text-red-600 dark:text-red-400 text-xl mb-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                        Ошибка
-                    </div>
-                    <p class="text-gray-700 dark:text-gray-300" x-text="errorMessage"></p>
-                    <button
-                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        x-on:click="hasError = false"
-                    >
-                        Закрыть
-                    </button>
                 </div>
             </div>
             <!-- Heading & Filters -->
@@ -68,12 +22,19 @@
                         <div class="inline-flex rounded-md shadow-xs" role="group">
                             <div class="inline-flex items-center px-3 py-2 text-sm font-medium border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700" 
                                 wire:click="changeDisplayMode('list')" 
-                                :class="{'bg-gray-100 text-blue-700': displayMode == 'list', 'bg-white text-gray-900 cursor-pointer': displayMode != 'list'}">
+                                @class([
+                                    'bg-gray-100 text-blue-700' => $displayMode === 'list',
+                                    'bg-white text-gray-900 cursor-pointer' => $displayMode !== 'list',
+                                ])
+                            >
                                 <x-carbon-horizontal-view class="w-4 h-4" />
                             </div>
                             <div class="inline-flex items-center px-3 py-2 text-sm font-medium border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700" 
                                 wire:click="changeDisplayMode('block')" 
-                                :class="{'bg-gray-100 text-blue-700': displayMode == 'block', 'bg-white text-gray-900 cursor-pointer': displayMode != 'block'}">
+                                @class([
+                                    'bg-gray-100 text-blue-700' => $displayMode === 'block',
+                                    'bg-white text-gray-900 cursor-pointer' => $displayMode !== 'block',
+                                ])>
                                 <x-carbon-vertical-view class="w-4 h-4" />
                             </div>
                         </div>
@@ -83,9 +44,9 @@
                             <button type="button" class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
                                 @click="sortingOpened = true;">
                                 <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $this->getSortOptions()[$selectedSort]['icon'] }}" />
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $this->getSortOptions()[$sort]['icon'] }}" />
                                 </svg>
-                                {{ $this->getSortOptions()[$selectedSort]['label'] }}
+                                {{ $this->getSortOptions()[$sort]['label'] }}
                             </button>
 
                             <!-- Sort Options Dropdown -->
@@ -99,8 +60,8 @@
                                             <button type="button" @click="$wire.updateSort('{{ $value }}'); sortingOpened = false"
                                                 @class([
                                                     'inline-flex w-full items-center px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-lg',
-                                                    'text-blue-600 dark:text-blue-500' => $selectedSort === $value,
-                                                    'text-gray-500 dark:text-gray-400' => $selectedSort !== $value,
+                                                    'text-blue-600 dark:text-blue-500' => $sort === $value,
+                                                    'text-gray-500 dark:text-gray-400' => $sort !== $value,
                                                 ])>
                                                 <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $option['icon'] }}" />
