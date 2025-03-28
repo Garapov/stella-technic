@@ -28,7 +28,9 @@ class Items extends Component
     public $displayMode = "block";
     public $showSorting = false;
     public $display_filter = false;
-    public $type = 'category'; 
+    public $type = 'category';
+
+    
 
     public function mount($slug = null, $brand_slug = null, $products = null, $display_filter = false)
     {
@@ -96,9 +98,6 @@ class Items extends Component
         } else {
             $products = ProductVariant::filter($this->filters)->whereIn('product_id', $this->product_ids)->sort([$this->sort]);
         }
-
-
-
 
         return view('livewire.catalog.items', [
             'products' => $products,

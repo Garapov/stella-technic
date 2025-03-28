@@ -3,6 +3,7 @@ import Glide from "@glidejs/glide";
 import Splide from "@splidejs/splide";
 import { Fancybox } from "@fancyapps/ui";
 import mask from "@alpinejs/mask";
+import rangeSlider from 'range-slider-input';
 // import persist from '@alpinejs/persist';
 
 import dropdown from "./components/dropdown";
@@ -15,6 +16,7 @@ import favorites from "./components/favorites";
 window.glide = Glide;
 window.splide = Splide;
 window.fancybox = Fancybox;
+window.rangeSlider = rangeSlider;
 
 // window.Alpine = Alpine;
 

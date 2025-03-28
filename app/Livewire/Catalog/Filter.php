@@ -15,18 +15,35 @@ class Filter extends Component
     public $availableFilters = [];
     public $parameters = [];
     public $debugData = [];
+    public $priceRange = [0, 100000];
+    public $startPriceRange = [0, 100000];
+    public $priceRangeToDisplay = [0, 100000];
 
     public function mount($products = new Collection())
     {
         $this->products = $products;
         
-        // Убедимся, что все отношения загружены
-        if (!$this->products->first()?->relationLoaded('paramItems')) {
-            $this->products->load(['paramItems.productParam']);
-        }
+        $this->calculatePriceRangeOnMount();
+
         $this->dispatch('filters-changed',  filters: $this->filters);
         
         $this->initializeParameters();
+    }
+
+    public function updatedPriceRange()
+    {
+        $this->filters['price']['$between'] = $this->priceRange;
+        $this->dispatch('filters-changed',  filters: $this->filters);
+    }
+
+    public function calculatePriceRangeOnMount()
+    {
+        if (isset($this->filters['price']) && $this->filters['price']['$between']) {
+            $this->startPriceRange = $this->priceRangeToDisplay = $this->filters['price']['$between'];
+        } else {
+            $this->startPriceRange = $this->priceRangeToDisplay = [$this->products->min('price'), $this->products->max('price')];
+        }
+        $this->priceRange = [$this->products->min('price'), $this->products->max('price')];
     }
 
     protected function initializeParameters()
@@ -67,12 +84,6 @@ class Filter extends Component
             'first_param_item' => $this->products->first()?->paramItems->first()?->toArray(),
             'first_product_param' => $this->products->first()?->paramItems->first()?->productParam?->toArray()
         ]);
-
-        $this->debugData = [
-            'products_count' => $this->products->count(),
-            'first_product' => $this->products->first() ? $this->products->first()->toArray() : null,
-            'parameters' => $this->parameters->toArray()
-        ];
     }
 
     public function render()
