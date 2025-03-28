@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Abbasudo\Purity\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ProductParam;
@@ -11,7 +12,7 @@ use App\Models\Product;
 class ProductParamItem extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductParamItemFactory> */
-    use HasFactory;
+    use HasFactory, Filterable;
 
     protected $fillable = [
         'product_param_id',
