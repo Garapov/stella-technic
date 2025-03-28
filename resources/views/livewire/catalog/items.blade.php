@@ -2,7 +2,7 @@
     @if ($category || $product_ids)
         <div class="mx-auto container relative">
             <!-- Loading Overlay -->
-            <div 
+            <div wire:loading.class.remove="hidden" wire:target="updateSort, changeDisplayMode"
                 class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm hidden">
                 <div class="flex items-center gap-2 rounded-lg bg-white/80 px-6 py-4 shadow-lg dark:bg-gray-800/80">
                     <div class="animate-spin w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full"></div>
@@ -20,21 +20,12 @@
                     <div class="flex items-center space-x-4">
                         <!-- Display Mode Toggle -->
                         <div class="inline-flex rounded-md shadow-xs" role="group">
-                            <div class="inline-flex items-center px-3 py-2 text-sm font-medium border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700" 
-                                wire:click="changeDisplayMode('list')" 
-                                @class([
-                                    'bg-gray-100 text-blue-700' => $displayMode === 'list',
-                                    'bg-white text-gray-900 cursor-pointer' => $displayMode !== 'list',
-                                ])
-                            >
+                            <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-s-lg @if ($mode === 'list') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif" 
+                                wire:click="changeDisplayMode('list')">
                                 <x-carbon-horizontal-view class="w-4 h-4" />
                             </div>
-                            <div class="inline-flex items-center px-3 py-2 text-sm font-medium border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700" 
-                                wire:click="changeDisplayMode('block')" 
-                                @class([
-                                    'bg-gray-100 text-blue-700' => $displayMode === 'block',
-                                    'bg-white text-gray-900 cursor-pointer' => $displayMode !== 'block',
-                                ])>
+                            <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-e-lg @if ($mode === 'block') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif" 
+                                wire:click="changeDisplayMode('block')" >
                                 <x-carbon-vertical-view class="w-4 h-4" />
                             </div>
                         </div>
@@ -76,19 +67,22 @@
                     </div>
                 </div>
             @endif
+
+            @php
+                $all_products = $products->get();
+                $paginated_products = $products->paginate(12);
+            @endphp
             <div class="grid grid-cols-6 gap-4">
-                @if ($display_filter && !$products->isEmpty())
+                @if ($display_filter)
                     <div>
-                        фильтр переделывается {{ $mode }}
-                        {{--@livewire('catalog.filter', [
-                            'category' => $category,
-                            'product_ids' => $product_ids,
-                            'items' => $items
-                        ])--}}
+                        @livewire('catalog.filter', [
+                            'products' => $all_products,
+                        ])
+                        {{ print_r($filters) }}
                     </div>
                 @endif
-                <div class="flex flex-col gap-4 @if ($display_filter && !$products->isEmpty()) col-span-5 @else col-span-full @endif">
-                    @if($products->isEmpty())
+                <div class="flex flex-col gap-4 @if ($display_filter) col-span-5 @else col-span-full @endif">
+                    @if($paginated_products->isEmpty())
                         <div class="flex flex-col items-center justify-center p-8 text-center">
                             <div class="mb-4">
                                 <svg class="w-12 h-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -107,7 +101,7 @@
                     @else
                         <div>
                             <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 @if ($display_filter) lg:grid-cols-2 xl:grid-cols-4 @else lg:grid-cols-3 xl:grid-cols-5 @endif">
-                                @foreach ($products as $variant)
+                                @foreach ($paginated_products as $variant)
                                     @livewire('general.product-variant', [
                                         'variant' => $variant,
                                     ], key('variant_' . $variant->id))
@@ -116,7 +110,7 @@
                             
                         </div>
                     @endif
-                    {{ $products->links() }}
+                    {{ $paginated_products->links() }}
 
                 </div>
             </div>

@@ -1,7 +1,7 @@
 
 <div class="grid grid-cols-4 gap-4 bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 p-4">
     <div class="col-span-1 flex items-start py-4">
-        <img class="w-full h-auto aspect-square object-cover object-center rounded-full" src="{{ asset('storage/' . $worker->image) }}" alt="{{ $worker->name }}">
+        <img class="w-full h-auto aspect-square object-cover object-center rounded-full" src="{{ Storage::disk(config('filesystems.default'))->url($worker->image) }}" alt="{{ $worker->name }}">
     </div>
     <div class="flex flex-col gap-4 justify-between leading-normal col-span-3">
         <div class="flex flex-col gap-4">
