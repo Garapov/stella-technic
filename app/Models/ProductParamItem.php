@@ -24,6 +24,12 @@ class ProductParamItem extends Model
         'productParam'
     ];
 
+    protected $filterFields = [
+        'id',
+        'title',
+        'value'
+      ];
+
 
     public function productParam()
     {

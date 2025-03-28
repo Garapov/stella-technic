@@ -21,7 +21,7 @@ class Items extends Component
     public $product_ids = [];
     public ?ProductCategory $category = null;
     #[Url()]
-    public $sort = 'null';
+    public $sort = 'id:asc';
 
     public $filters = [];
     
@@ -54,7 +54,7 @@ class Items extends Component
     public function getSortOptions()
     {
         return [
-            "null" => [
+            "id:asc" => [
                 "label" => "По умолчанию",
                 "icon" => "M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25",
             ],

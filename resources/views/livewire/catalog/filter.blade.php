@@ -14,7 +14,7 @@
                                 <input 
                                     type="checkbox" 
                                     id="param_{{ $paramItemId }}"
-                                    wire:model.live="filters.product_param_items.{{ $paramData['param_id'] }}"
+                                    wire:model.live="filters.paramItems.id.$in"
                                     value="{{ $paramItemId }}"
                                     class="mr-2"
                                 >
@@ -31,7 +31,7 @@
                                 <input 
                                     type="checkbox" 
                                     id="param_{{ $paramItemId }}"
-                                    wire:model.live="filters.product_param_items.{{ $paramData['param_id'] }}"
+                                    wire:model.live="filters.paramItems.id.$in"
                                     value="{{ $paramItemId }}"
                                     class="mr-2"
                                 >

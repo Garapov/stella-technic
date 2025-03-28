@@ -11,7 +11,7 @@ class Filter extends Component
 
     public $products;
     #[Url()]
-    public $filters = [];
+    public $filters = array();
     public $availableFilters = [];
     public $parameters = [];
     public $debugData = [];
@@ -20,34 +20,29 @@ class Filter extends Component
     {
         $this->products = $products;
         
-        // Загружаем отношения и сразу фильтруем по allow_filtering
+        // Убедимся, что все отношения загружены
         if (!$this->products->first()?->relationLoaded('paramItems')) {
-            $this->products->load(['paramItems.productParam' => function($query) {
-                $query->where('allow_filtering', true);
-            }]);
+            $this->products->load(['paramItems.productParam']);
         }
+        $this->dispatch('filters-changed',  filters: $this->filters);
         
         $this->initializeParameters();
     }
 
     protected function initializeParameters()
     {
-        // Добавим отладку для просмотра структуры первого продукта
-        if ($this->products->first()) {
-            logger()->info('First product structure:', [
-                'product' => $this->products->first()->toArray(),
-            ]);
-        }
-
         $this->parameters = $this->products
             ->flatMap(function ($product) {
                 return $product->paramItems ?? collect();
             })
             ->filter(function ($paramItem) {
-                return $paramItem 
-                    && $paramItem->productParam 
-                    && $paramItem->productParam->name
-                    && $paramItem->productParam->allow_filtering;
+                // Сначала проверяем существование productParam
+                if (!$paramItem || !$paramItem->productParam) {
+                    return false;
+                }
+                // Затем проверяем allow_filtering
+                return $paramItem->productParam->allow_filtering 
+                    && $paramItem->productParam->name;
             })
             ->groupBy(function ($paramItem) {
                 return $paramItem->productParam->name;
@@ -61,23 +56,16 @@ class Filter extends Component
                                 'title' => $item->title ?? '',
                                 'value' => $item->value ?? '',
                                 'param_id' => $item->product_param_id,
-                                'type' => $item->productParam->type ?? 'default',
-                                'allow_filtering' => $item->productParam->allow_filtering
+                                'type' => $item->productParam->type ?? 'default'
                             ]
                         ];
                     });
             });
 
-        // Добавим отладочную информацию
-        logger()->info('Filtered parameters:', [
-            'params' => $this->parameters->map(function($items) {
-                return $items->map(function($item) {
-                    return [
-                        'id' => $item['param_id'],
-                        'allow_filtering' => $item['allow_filtering']
-                    ];
-                });
-            })->toArray()
+        // Отладочная информация
+        logger()->info('Parameters structure:', [
+            'first_param_item' => $this->products->first()?->paramItems->first()?->toArray(),
+            'first_product_param' => $this->products->first()?->paramItems->first()?->productParam?->toArray()
         ]);
 
         $this->debugData = [
