@@ -31,7 +31,7 @@
                     @if (!$paramItem->productParam->show_on_preview)
                         @continue
                     @endif
-                    <li class="flex flex-center justify-between text-xs">
+                    <li class="flex flex-center justify-between text-xs dark:text-white">
                         <span>{{ $paramItem->productParam->name }}</span>
                         <span>{{ $paramItem->title }}</span>
                     </li>
@@ -40,7 +40,7 @@
                     @if (!$parametr->productParam->show_on_preview)
                         @continue
                     @endif
-                    <li class="flex flex-center justify-between text-xs">
+                    <li class="flex flex-center justify-between text-xs dark:text-white">
                         <span>{{ $parametr->productParam->name }}</span>
                         <span>{{ $parametr->title }}</span>
                     </li>
@@ -103,7 +103,7 @@
                 </button>
             </div>
 
-            
+
         </div>
     </div>
 </div>

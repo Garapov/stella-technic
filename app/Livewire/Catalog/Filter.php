@@ -8,42 +8,73 @@ use Livewire\Attributes\Url;
 
 class Filter extends Component
 {
-
     public $products;
-    #[Url()]
-    public $filters = array();
+    #[Url]
+    public $filters = [];
     public $availableFilters = [];
     public $parameters = [];
     public $debugData = [];
     public $priceRange = [0, 100000];
     public $startPriceRange = [0, 100000];
     public $priceRangeToDisplay = [0, 100000];
+    public $selectedParams = [];
 
     public function mount($products = new Collection())
     {
         $this->products = $products;
-        
+
+        if (
+            isset($this->filters["paramItems"]) &&
+            !empty($this->filters["paramItems"]) &&
+            $this->filters["paramItems"]['$related']
+        ) {
+            $this->selectedParams = $this->filters["paramItems"]['$related'];
+        }
+
         $this->calculatePriceRangeOnMount();
 
-        $this->dispatch('filters-changed',  filters: $this->filters);
-        
+        $this->dispatch("filters-changed", filters: $this->filters);
+
         $this->initializeParameters();
     }
-
+    public function updatedSelectedParams()
+    {
+        if (
+            empty($this->selectedParams) &&
+            isset($this->filters["paramItems"])
+        ) {
+            unset($this->filters["paramItems"]);
+        } else {
+            $this->filters = array_merge($this->filters, [
+                "paramItems" => ['$related' => $this->selectedParams],
+            ]);
+        }
+        $this->dispatch("filters-changed", filters: $this->filters);
+    }
     public function updatedPriceRange()
     {
-        $this->filters['price']['$between'] = $this->priceRange;
-        $this->dispatch('filters-changed',  filters: $this->filters);
+        $this->filters["price"]['$between'] = $this->priceRange;
+        $this->dispatch("filters-changed", filters: $this->filters);
     }
 
     public function calculatePriceRangeOnMount()
     {
-        if (isset($this->filters['price']) && $this->filters['price']['$between']) {
-            $this->startPriceRange = $this->priceRangeToDisplay = $this->filters['price']['$between'];
+        if (
+            isset($this->filters["price"]) &&
+            $this->filters["price"]['$between']
+        ) {
+            $this->startPriceRange = $this->priceRangeToDisplay =
+                $this->filters["price"]['$between'];
         } else {
-            $this->startPriceRange = $this->priceRangeToDisplay = [$this->products->min('price'), $this->products->max('price')];
+            $this->startPriceRange = $this->priceRangeToDisplay = [
+                $this->products->min("price"),
+                $this->products->max("price"),
+            ];
         }
-        $this->priceRange = [$this->products->min('price'), $this->products->max('price')];
+        $this->priceRange = [
+            $this->products->min("price"),
+            $this->products->max("price"),
+        ];
     }
 
     protected function initializeParameters()
@@ -58,41 +89,33 @@ class Filter extends Component
                     return false;
                 }
                 // Затем проверяем allow_filtering
-                return $paramItem->productParam->allow_filtering 
-                    && $paramItem->productParam->name;
+                return $paramItem->productParam->allow_filtering &&
+                    $paramItem->productParam->name;
             })
             ->groupBy(function ($paramItem) {
                 return $paramItem->productParam->name;
             })
             ->map(function ($items) {
-                return $items
-                    ->unique('id')
-                    ->mapWithKeys(function ($item) {
-                        return [
-                            $item->id => [
-                                'title' => $item->title ?? '',
-                                'value' => $item->value ?? '',
-                                'param_id' => $item->product_param_id,
-                                'type' => $item->productParam->type ?? 'default'
-                            ]
-                        ];
-                    });
+                return $items->unique("id")->mapWithKeys(function ($item) {
+                    return [
+                        $item->id => [
+                            "title" => $item->title ?? "",
+                            "value" => $item->value ?? "",
+                            "param_id" => $item->product_param_id,
+                            "type" => $item->productParam->type ?? "default",
+                        ],
+                    ];
+                });
             });
-
-        // Отладочная информация
-        logger()->info('Parameters structure:', [
-            'first_param_item' => $this->products->first()?->paramItems->first()?->toArray(),
-            'first_product_param' => $this->products->first()?->paramItems->first()?->productParam?->toArray()
-        ]);
     }
 
     public function render()
     {
-        return view('livewire.catalog.filter');
+        return view("livewire.catalog.filter");
     }
 
     public function updatedFilters()
     {
-        $this->dispatch('filters-changed',  filters: $this->filters);
+        $this->dispatch("filters-changed", filters: $this->filters);
     }
-} 
+}

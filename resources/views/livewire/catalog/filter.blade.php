@@ -2,7 +2,7 @@
     rangeSlider: window.rangeSlider($refs.range, {
         min: @js($products->min('price')),
         max: @js($products->max('price')),
-        value: @js($filters['price']['$between']),
+        value: @js($startPriceRange),
         step: 1,
         onInput: function (value) {
             this.value = value;
@@ -22,15 +22,15 @@
         </div>
 
         <div class="mb-6">
-            <h4 class="text-md font-medium mb-3">Цена</h4>
-            
+            <h4 class="text-md font-medium mb-3 dark:text-white">Цена</h4>
+
             <div class="relative mt-4">
                 <div class="relative w-full h-2 bg-gray-200 rounded-md">
                     <div x-ref="range" wire:ignore></div>
                 </div>
             </div>
-            
-            <div class="flex justify-between mt-3 text-gray-600">
+
+            <div class="flex justify-between mt-3 text-gray-600 dark:text-white">
                 <span>{{ $priceRangeToDisplay[0] }} ₽</span>
                 <span>{{ $priceRangeToDisplay[1] }} ₽</span>
             </div>
@@ -38,36 +38,36 @@
 
         @foreach($parameters as $paramName => $params)
             <div class="mb-6">
-                <h4 class="text-md font-medium mb-3">{{ $paramName }}</h4>
+                <h4 class="text-md font-medium mb-3 dark:text-white">{{ $paramName }}</h4>
                 <div class="space-y-2">
                     @foreach($params as $paramItemId => $paramData)
                         @if($paramData['type'] === 'color')
                             <div class="flex items-center">
-                                <input 
-                                    type="checkbox" 
+                                <input
+                                    type="checkbox"
                                     id="param_{{ $paramItemId }}"
-                                    wire:model.live="filters.paramItems.id.$in"
+                                    wire:model.live="selectedParams"
                                     value="{{ $paramItemId }}"
                                     class="mr-2"
                                 >
-                                <label for="param_{{ $paramItemId }}" class="flex items-center">
+                                <label for="param_{{ $paramItemId }}" class="flex items-center dark:text-white">
                                     {{ $paramData['title'] }}
-                                    <span 
-                                        class="ml-2 w-4 h-4 inline-block rounded-full" 
+                                    <span
+                                        class="ml-2 w-4 h-4 inline-block rounded-full"
                                         style="background-color: {{ $paramData['value'] }}"
                                     ></span>
                                 </label>
                             </div>
                         @else
                             <div class="flex items-center">
-                                <input 
-                                    type="checkbox" 
+                                <input
+                                    type="checkbox"
                                     id="param_{{ $paramItemId }}"
-                                    wire:model.live="filters.paramItems.id.$in"
+                                    wire:model.live="selectedParams"
                                     value="{{ $paramItemId }}"
                                     class="mr-2"
                                 >
-                                <label for="param_{{ $paramItemId }}">
+                                <label for="param_{{ $paramItemId }}" class="dark:text-white">
                                     {{ $paramData['title'] }}
                                 </label>
                             </div>
@@ -77,4 +77,4 @@
             </div>
         @endforeach
     </div>
-</div> 
+</div>

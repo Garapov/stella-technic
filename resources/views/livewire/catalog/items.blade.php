@@ -20,11 +20,11 @@
                     <div class="flex items-center space-x-4">
                         <!-- Display Mode Toggle -->
                         <div class="inline-flex rounded-md shadow-xs" role="group">
-                            <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-s-lg @if ($mode === 'list') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif" 
+                            <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-s-lg @if ($mode === 'list') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
                                 wire:click="changeDisplayMode('list')">
                                 <x-carbon-horizontal-view class="w-4 h-4" />
                             </div>
-                            <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-e-lg @if ($mode === 'block') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif" 
+                            <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-e-lg @if ($mode === 'block') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
                                 wire:click="changeDisplayMode('block')" >
                                 <x-carbon-vertical-view class="w-4 h-4" />
                             </div>
@@ -78,7 +78,7 @@
                         @livewire('catalog.filter', [
                             'products' => $all_products,
                         ])
-                        {{ print_r($filters) }}
+
                     </div>
                 @endif
                 <div class="flex flex-col gap-4 @if ($display_filter) col-span-5 @else col-span-full @endif">
@@ -107,7 +107,7 @@
                                     ], key('variant_' . $variant->id))
                                 @endforeach
                             </div>
-                            
+
                         </div>
                     @endif
                     {{ $paginated_products->links() }}

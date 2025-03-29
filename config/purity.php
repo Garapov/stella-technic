@@ -23,6 +23,7 @@ use Abbasudo\Purity\Filters\Strategies\NullFilter;
 use Abbasudo\Purity\Filters\Strategies\OrFilter;
 use Abbasudo\Purity\Filters\Strategies\StartsWithCaseSensitiveFilter;
 use Abbasudo\Purity\Filters\Strategies\StartsWithFilter;
+use App\Filters\RelatedFilter;
 
 return [
     'filters' => [
@@ -49,6 +50,7 @@ return [
         EndsWithCaseSensitiveFilter::class,
         EqualCaseSensitiveFilter::class,
         ContainsCaseSensitiveFilter::class,
+        RelatedFilter::class
     ],
 
     'silent' => false,
