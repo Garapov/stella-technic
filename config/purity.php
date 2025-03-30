@@ -23,6 +23,7 @@ use Abbasudo\Purity\Filters\Strategies\NullFilter;
 use Abbasudo\Purity\Filters\Strategies\OrFilter;
 use Abbasudo\Purity\Filters\Strategies\StartsWithCaseSensitiveFilter;
 use Abbasudo\Purity\Filters\Strategies\StartsWithFilter;
+use App\Filters\ProductVariantHasBrand;
 use App\Filters\RelatedFilter;
 
 return [
@@ -50,7 +51,8 @@ return [
         EndsWithCaseSensitiveFilter::class,
         EqualCaseSensitiveFilter::class,
         ContainsCaseSensitiveFilter::class,
-        RelatedFilter::class
+        RelatedFilter::class,
+        ProductVariantHasBrand::class
     ],
 
     'silent' => false,

@@ -16,12 +16,12 @@
         }
     }),
 }">
-    <div>
+    <div class="flex flex-col gap-4">
         <div class="flex items-center justify-between mb-6">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Фильтры</h3>
         </div>
 
-        <div class="mb-6">
+        <div>
             <h4 class="text-md font-medium mb-3 dark:text-white">Цена</h4>
 
             <div class="relative mt-4">
@@ -37,44 +37,66 @@
         </div>
 
         @foreach($parameters as $paramName => $params)
-            <div class="mb-6">
-                <h4 class="text-md font-medium mb-3 dark:text-white">{{ $paramName }}</h4>
-                <div class="space-y-2">
-                    @foreach($params as $paramItemId => $paramData)
-                        @if($paramData['type'] === 'color')
-                            <div class="flex items-center">
-                                <input
-                                    type="checkbox"
-                                    id="param_{{ $paramItemId }}"
-                                    wire:model.live="selectedParams"
-                                    value="{{ $paramItemId }}"
-                                    class="mr-2"
-                                >
-                                <label for="param_{{ $paramItemId }}" class="flex items-center dark:text-white">
-                                    {{ $paramData['title'] }}
-                                    <span
-                                        class="ml-2 w-4 h-4 inline-block rounded-full"
-                                        style="background-color: {{ $paramData['value'] }}"
-                                    ></span>
+            <div>
+                <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
+                    {{ $paramName }}
+                </h6>
+                @if ($params->first()['type'] == 'color')
+                    <ul class="flex flex-wrap gap-2" aria-labelledby="dropdownDefault">
+                        @foreach($params as $colorItemId => $color)
+                            @php
+                                $colors = explode('|', $color['value']);
+                            @endphp
+                            <label class="relative w-5 h-5 rounded-full border @if(in_array($colorItemId, $selectedParams)) border-blue-800 border-4 @else border-gray-300 @endif overflow-hidden">
+                                <input type="checkbox" id="param_{{ $colorItemId }}" wire:model.live="selectedParams" value="{{ $colorItemId }}" class="hidden" />
+                                @if(count($colors) > 1)
+                                    <div class="absolute inset-0">
+                                        <div class="h-full w-1/2 float-left" style="background-color: {{ trim($colors[0]) }}"></div>
+                                        <div class="h-full w-1/2 float-right" style="background-color: {{ trim($colors[1]) }}"></div>
+                                    </div>
+                                @else
+                                    <div class="absolute inset-0" style="background-color: {{ trim($colors[0]) }}"></div>
+                                @endif
+                            </label>
+                        @endforeach
+                    </ul>
+                @else
+                    <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
+                        @foreach($params as $paramItemId => $paramData)
+                            <li class="flex items-center">
+                                <input type="checkbox" id="param_{{ $paramItemId }}" wire:model.live="selectedParams" value="{{ $paramItemId }}"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+
+                                <label for="param_{{ $paramItemId }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+                                {{ $paramData['title'] }}
                                 </label>
-                            </div>
-                        @else
-                            <div class="flex items-center">
-                                <input
-                                    type="checkbox"
-                                    id="param_{{ $paramItemId }}"
-                                    wire:model.live="selectedParams"
-                                    value="{{ $paramItemId }}"
-                                    class="mr-2"
-                                >
-                                <label for="param_{{ $paramItemId }}" class="dark:text-white">
-                                    {{ $paramData['title'] }}
-                                </label>
-                            </div>
-                        @endif
-                    @endforeach
-                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
             </div>
         @endforeach
+        @if ($brands)
+            <div>
+                <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
+                    Бренд
+                </h6>
+                <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
+                    @foreach ($brands as $brand)
+                        <li class="flex items-center">
+                            <input type="checkbox"
+                                id="brand_{{ $brand->id }}"
+                                wire:model.live="selectedBrands"
+                                value="{{ $brand->id }}"
+                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+
+                            <label for="brand_{{ $brand->id }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {{ $brand->name }}
+                            </label>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     </div>
 </div>

@@ -216,7 +216,7 @@ class ProductResource extends Resource
                                         ->addActionLabel("Добавить связь")
                                         ->grid(3)
                                         ->defaultItems(3)
-                                        ->minItems(2)
+                                        ->minItems(1)
                                         ->maxItems(6)
                                         ->simple(
                                             Forms\Components\Select::make(

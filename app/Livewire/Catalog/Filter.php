@@ -18,6 +18,8 @@ class Filter extends Component
     public $startPriceRange = [0, 100000];
     public $priceRangeToDisplay = [0, 100000];
     public $selectedParams = [];
+    public $selectedBrands = [];
+    public $brands = [];
 
     public function mount($products = new Collection())
     {
@@ -35,7 +37,24 @@ class Filter extends Component
 
         $this->dispatch("filters-changed", filters: $this->filters);
 
+        $this->initializeBrands();
         $this->initializeParameters();
+    }
+
+    public function updatedSelectedbrands()
+    {
+        // dd($this->selectedBrands);
+        if (
+             empty($this->selectedBrands) &&
+             isset($this->filters['$hasbrand'])
+        ) {
+             unset($this->filters['$hasbrand']);
+        } else {
+            $this->filters = array_merge($this->filters, [
+                '$hasbrand' => $this->selectedBrands,
+            ]);
+        }
+        $this->dispatch("filters-changed", filters: $this->filters);
     }
     public function updatedSelectedParams()
     {
@@ -75,6 +94,20 @@ class Filter extends Component
             $this->products->min("price"),
             $this->products->max("price"),
         ];
+    }
+
+
+    protected function initializeBrands()
+    {
+        $this->brands = $this->products
+            ->map(function ($product) {
+                // Получаем связанный product и его brand
+                return $product->product->brand ?? null;
+            })
+            ->filter() // Удаляем null значения
+            ->unique('id') // Оставляем только уникальные бренды по id
+            ->values() // Переиндексируем коллекцию
+            ->all(); // Преобразуем в массив
     }
 
     protected function initializeParameters()

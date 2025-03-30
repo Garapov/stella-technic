@@ -1,14 +1,29 @@
 <div class="rounded-lg border border-gray-200 bg-white p-0 shadow-sm dark:border-gray-700 dark:bg-gray-900 relative flex flex-col overflow-hidden">
-    <div class="aspect-[1/1] w-full">
-        <a href="{{ route('client.product_detail', $variant->slug) }}" wire:navigate>
+    <div class="w-full relative" x-data="{
+        imageIdToDisplay: 0,
+    }">
+        <a class="block aspect-[1/1] relative" href="{{ route('client.product_detail', $variant->slug) }}" wire:navigate @mouseleave="imageIdToDisplay = 0">
             @if($variant->gallery)
-                <img class="mx-auto h-full w-full object-cover"
-                src="{{ Storage::disk(config('filesystems.default'))->url($variant->gallery[0]) }}" />
+                @foreach($variant->gallery as $key => $image)
+                    <img class="absolute top-0 left-0 mx-auto h-full w-full object-cover" src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" x-show="imageIdToDisplay === {{ $key }}" />
+                @endforeach
             @else
-                <img class="mx-auto h-full w-full object-cover"
+                <img class="absolute top-0 left-0 mx-auto h-full w-full object-cover"
                     src="{{ asset('assets/placeholder.svg') }}" />
             @endif
+            <div class="absolute top-0 left-0 h-full w-full flex gap-0">
+                @foreach($variant->gallery as $key => $image)
+                    <div class="relative w-full" @mouseenter="imageIdToDisplay = {{ $key }}"></div>
+                @endforeach
+            </div>
         </a>
+        @if($variant->gallery && count($variant->gallery) > 1)
+            <div class="flex items-center justify-center gap-1 absolute top-full left-0 w-full p-2">
+                @foreach($variant->gallery as $key => $image)
+                    <div class="w-1.5 h-1.5 rounded-full" :class="{ 'bg-blue-500': imageIdToDisplay === {{ $key }}, 'bg-gray-300': imageIdToDisplay !== {{ $key }} }"></div>
+                @endforeach
+            </div>
+        @endif
     </div>
     <div class="p-4 flex-auto shrink flex flex-col gap-2 justify-between">
         <div class="mb-4">
