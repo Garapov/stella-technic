@@ -13,13 +13,14 @@ class Filter extends Component
     public $filters = [];
     public $availableFilters = [];
     public $parameters = [];
-    public $debugData = [];
+    public $brands = [];
+    public $batches = [];
     public $priceRange = [0, 100000];
     public $startPriceRange = [0, 100000];
     public $priceRangeToDisplay = [0, 100000];
     public $selectedParams = [];
     public $selectedBrands = [];
-    public $brands = [];
+    public $selectedBatches = [];
 
     public function mount($products = new Collection())
     {
@@ -39,9 +40,29 @@ class Filter extends Component
 
         $this->initializeBrands();
         $this->initializeParameters();
+        // $this->initializeBatches();
     }
 
-    public function updatedSelectedbrands()
+    public function updatedSelectedBatches()
+    {
+        // dd($this->selectedBatches);
+
+        if (
+            empty($this->selectedBatches) &&
+            isset($this->filters['batch_id'])
+        ) {
+            unset($this->filters['batch_id']);
+        } else {
+            $this->filters = array_merge($this->filters, [
+                'batch_id' => [
+                    '$in' => $this->selectedBatches,
+                ],
+            ]);
+        }
+        $this->dispatch("filters-changed", filters: $this->filters);
+    }
+
+    public function updatedSelectedBrands()
     {
         // dd($this->selectedBrands);
         if (
@@ -110,6 +131,19 @@ class Filter extends Component
             ->all(); // Преобразуем в массив
     }
 
+    protected function initializeBatches()
+    {
+        $this->batches = $this->products
+            ->map(function ($product) {
+                // Получаем связанный product и его brand
+                return $product->batch ?? null;
+            })
+            ->filter() // Удаляем null значения
+            ->unique('id') // Оставляем только уникальные бренды по id
+            ->values() // Переиндексируем коллекцию
+            ->all(); // Преобразуем в массив
+    }
+
     protected function initializeParameters()
     {
         $this->parameters = $this->products
@@ -149,6 +183,19 @@ class Filter extends Component
 
     public function updatedFilters()
     {
+        $this->dispatch("filters-changed", filters: $this->filters);
+    }
+
+    public function resetFilters()
+    {
+        $this->filters = [];
+        $this->selectedParams = [];
+        $this->selectedBrands = [];
+        $this->selectedBatches = [];
+        $this->startPriceRange = $this->priceRangeToDisplay = [
+            $this->products->min("price"),
+            $this->products->max("price"),
+        ];
         $this->dispatch("filters-changed", filters: $this->filters);
     }
 }

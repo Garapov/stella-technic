@@ -1,4 +1,4 @@
-<div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900" x-data="{
+<div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900 flex flex-col gap-4" x-data="{
     rangeSlider: window.rangeSlider($refs.range, {
         min: @js($products->min('price')),
         max: @js($products->max('price')),
@@ -15,6 +15,10 @@
             $wire.set('priceRange', this.value);
         }
     }),
+    resetFilters() {
+        $wire.resetFilters();
+        this.rangeSlider.value = [@js($products->min('price')), @js($products->max('price'))];
+    }
 }">
     <div class="flex flex-col gap-4">
         <div class="flex items-center justify-between mb-6">
@@ -41,7 +45,8 @@
                 <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
                     {{ $paramName }}
                 </h6>
-                @if ($params->first()['type'] == 'color')
+                {{--@if ($params->first()['type'] == 'color')--}}
+                @if (false)
                     <ul class="flex flex-wrap gap-2" aria-labelledby="dropdownDefault">
                         @foreach($params as $colorItemId => $color)
                             @php
@@ -98,5 +103,34 @@
                 </ul>
             </div>
         @endif
+
+        @if ($batches)
+            <div>
+                <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
+                    Серии
+                </h6>
+                <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
+                    @foreach ($batches as $batch)
+                        <li class="flex items-center">
+                            <input type="checkbox"
+                                id="batch_{{ $batch->id }}"
+                                wire:model.live="selectedBatches"
+                                value="{{ $batch->id }}"
+                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+
+                            <label for="batch_{{ $batch->id }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {{ $batch->name }}
+                            </label>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     </div>
+    @if (!empty($filters))
+        <button type="button" class="px-4 py-2.5 text-sm font-medium text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" @click="resetFilters">
+            <x-carbon-close-outline class="w-4 h-4 text-white me-2" />
+            Сбросить фильтры
+        </button>
+    @endif
 </div>

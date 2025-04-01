@@ -5,7 +5,7 @@
         <a class="block aspect-[1/1] relative" href="{{ route('client.product_detail', $variant->slug) }}" wire:navigate @mouseleave="imageIdToDisplay = 0">
             @if($variant->gallery)
                 @foreach($variant->gallery as $key => $image)
-                    <img class="absolute top-0 left-0 mx-auto h-full w-full object-cover" src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" x-show="imageIdToDisplay === {{ $key }}" />
+                    <img class="absolute top-0 left-0 mx-auto h-full w-full object-cover" src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" x-show="imageIdToDisplay === {{ $key }}" :loading="imageIdToDisplay === {{ $key }} ? 'eager' : 'lazy'" />
                 @endforeach
             @else
                 <img class="absolute top-0 left-0 mx-auto h-full w-full object-cover"

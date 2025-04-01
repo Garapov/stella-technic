@@ -138,6 +138,12 @@ class VariantsRelationManager extends RelationManager
                                 ->columnSpanFull(),
                         ])
                         ->columnSpan("full"),
+                    Tab::make("Серия")->schema([
+                        Forms\Components\Select::make("batch")
+                            ->label("Серия")
+                            ->relationship("batch", "name")
+                            ->preload(),
+                    ]),
                 ])
                 ->columnSpan("full"),
         ]);

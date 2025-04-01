@@ -47,9 +47,7 @@
                             <ul class="splide__list">
                                 @foreach ($variation->gallery as $image)
                                     <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
-
                                 @endforeach
-                            
                             </ul>
                         </div>
                     </section>
@@ -58,7 +56,6 @@
                             <ul class="splide__list">
                                 @foreach ($variation->gallery as $image)
                                     <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
-
                                 @endforeach
                             </ul>
                         </div>
@@ -86,7 +83,10 @@
                 <div class="parametrs">
                     @foreach($groupedParams as $paramGroup)
                         <div class="mb-6">
-                            <h3 class="text-lg sm:text-sm font-semibold text-slate-900">{{ $paramGroup['name'] }}</h3>
+                            @php
+                                $activeParamName = collect(array_filter($paramGroup['values'], fn ($paramValue) => $paramValue['is_current']));
+                            @endphp
+                            <h3 class="text-lg sm:text-sm font-semibold text-slate-900">{{ $paramGroup['name'] }} @if ($activeParamName->first())({{$activeParamName->first()['title']}})@endif</h3>
                             <div class="flex flex-wrap gap-4 mt-2">
                                 @foreach($paramGroup['values'] as $value)
                                     @if($paramGroup['name'] === 'Цвет')

@@ -72,6 +72,7 @@
                 $all_products = $products->get();
                 $paginated_products = $products->paginate(12);
             @endphp
+
             <div class="grid grid-cols-6 gap-4">
                 @if ($display_filter)
                     <div>
@@ -100,17 +101,143 @@
                         </div>
                     @else
                         <div>
-                            <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 @if ($display_filter) lg:grid-cols-2 xl:grid-cols-4 @else lg:grid-cols-3 xl:grid-cols-5 @endif">
-                                @foreach ($paginated_products as $variant)
-                                    @livewire('general.product-variant', [
-                                        'variant' => $variant,
-                                    ], key('variant_' . $variant->id))
-                                @endforeach
-                            </div>
+                            @if ($displayMode == 'block')
+                                <div>
+                                    <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 @if ($display_filter) lg:grid-cols-2 xl:grid-cols-4 @else lg:grid-cols-3 xl:grid-cols-5 @endif">
+                                        @foreach ($paginated_products as $variant)
+                                            @livewire('general.product-variant', [
+                                                'variant' => $variant,
+                                            ], key('variant_' . $variant->id))
+                                        @endforeach
+
+                                    </div>
+                                    {{ $paginated_products->links() }}
+                                </div>
+                            @else
+                                @php
+                                    $batches = $all_products->where('batch_id', '!=', null)->groupBy('batch_id');
+                                @endphp
+                                <div class="flex flex-col gap-4">
+                                    @forelse ($batches as $key => $batch)
+                                        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900 relative flex flex-col gap-4">
+                                            <h3 class="text-lg sm:text-xl font-semibold text-slate-900 text-grey-600 dark:text-white">{{ $batch->first()->batch->name }}</h3>
+                                            <div class="grid grid-cols-4 gap-4">
+                                                <div class="rounded-lg overflow-hidden">
+                                                    <img src="{{ Storage::disk(config('filesystems.default'))->url($batch->first()->batch->image) }}" alt="" />
+                                                </div>
+                                                <div class="col-span-3 flex flex-col gap-4">
+                                                    <div class="flex flex-col gap-2 text-gray-600 dark:text-gray-400">
+                                                        {!! str($batch->first()->batch->description)->sanitizeHtml() !!}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid gap-2 pt-2">
+                                                @php
+                                                    // Сбор всех параметров с show_on_table == true
+                                                    $uniqueParamNames = collect();
+                                                    foreach ($batch as $item) {
+                                                        // Сбор параметров из paramItems
+                                                        if ($item->paramItems) {
+                                                            foreach ($item->paramItems as $paramItem) {
+                                                                if ($paramItem->productParam && $paramItem->productParam->show_on_table) {
+                                                                    $uniqueParamNames->push($paramItem->productParam->name);
+                                                                }
+                                                            }
+                                                        }
+
+                                                        // Сбор параметров из parameters
+                                                        if ($item->parameters) {
+                                                            foreach ($item->parameters as $parameter) {
+                                                                if ($parameter->show_on_table) {
+                                                                    $uniqueParamNames->push($parameter->name);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    $uniqueParamNames = $uniqueParamNames->unique();
+                                                @endphp
+                                                <div class="grid grid-cols-{{ count($uniqueParamNames) + 2 }} gap-2 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 pb-2">
+                                                    <!-- Заголовок для SKU -->
+                                                    <div class="text-lg font-bold text-gray-500 dark:text-gray-400">
+                                                        Артикул
+                                                    </div>
+
+
+
+                                                    <!-- Заголовки параметров -->
+                                                    @foreach ($uniqueParamNames as $paramName)
+                                                        <div class="text-lg font-bold text-gray-500 dark:text-gray-400">
+                                                            {{ $paramName }}
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+
+                                                <!-- Строки таблицы для каждого элемента -->
+                                                @foreach($batch as $item)
+                                                    <div class="grid grid-cols-{{ count($uniqueParamNames) + 2 }} gap-2">
+                                                        <!-- SKU элемента -->
+                                                        <div class="text-grey-600 dark:text-white">
+                                                            {{ $item->sku }}
+                                                        </div>
+
+                                                        <!-- Значения параметров -->
+                                                        @foreach ($uniqueParamNames as $paramName)
+                                                            <div class="text-grey-600 dark:text-white">
+                                                                @php
+                                                                    $paramValue = '';
+
+                                                                    // Проверка paramItems
+                                                                    if ($item->paramItems) {
+                                                                        foreach ($item->paramItems as $paramItem) {
+                                                                            if ($paramItem->productParam &&
+                                                                                $paramItem->productParam->name === $paramName &&
+                                                                                $paramItem->productParam->show_on_table) {
+                                                                                $paramValue = $paramItem->title ?? '';
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    // Проверка parameters если значение еще не найдено
+                                                                    if ($paramValue === '' && $item->parameters) {
+                                                                        foreach ($item->parameters as $parameter) {
+                                                                            if ($parameter->name === $paramName && $parameter->show_on_table) {
+                                                                                $paramValue = $parameter->title ?? '';
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                @endphp
+                                                                {{ $paramValue }}
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="flex flex-col items-center justify-center p-8 text-center">
+                                            <div class="mb-4">
+                                                <svg class="w-12 h-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                            </div>
+                                            <h3 class="mb-2 text-xl font-semibold text-gray-900 dark:text-white">Ничего не найдено</h3>
+                                            <p class="text-gray-500 dark:text-gray-400">По выбранным фильтрам товары не найдены. Попробуйте изменить параметры поиска.</p>
+                                            <button wire:click="resetFilters" class="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800">
+                                                <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                </svg>
+                                                Сбросить фильтры
+                                            </button>
+                                        </div>
+                                    @endforelse
+                                </div>
+                            @endif
 
                         </div>
                     @endif
-                    {{ $paginated_products->links() }}
+
 
                 </div>
             </div>

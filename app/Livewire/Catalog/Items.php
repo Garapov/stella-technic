@@ -22,9 +22,8 @@ class Items extends Component
     public ?ProductCategory $category = null;
     #[Url]
     public $sort = "id:asc";
-
     public $filters = [];
-
+    #[Url]
     public $displayMode = "block";
     public $showSorting = false;
     public $display_filter = false;
@@ -118,6 +117,7 @@ class Items extends Component
 
     public function changeDisplayMode($mode)
     {
+        $this->resetPage();
         $this->displayMode = $mode;
     }
 

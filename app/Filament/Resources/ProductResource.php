@@ -5,11 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
-use App\Models\Image;
-use App\Models\ProductParam;
-use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
@@ -20,12 +16,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\ProductParamItem;
 use Illuminate\Database\Eloquent\Model;
-use App\Tables\Columns\ImageByIdColumn;
-use Exception;
-use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Get;
-use Illuminate\Support\Facades\Log;
+use App\Models\Batch;
 
 class ProductResource extends Resource
 {
@@ -41,6 +34,7 @@ class ProductResource extends Resource
 
     public static function form(Form $form): Form
     {
+        // dd(Batch::all());
         return $form->schema([
             Tabs::make("Tabs")
                 ->tabs([
@@ -98,7 +92,7 @@ class ProductResource extends Resource
                                     "underline",
                                     "undo",
                                 ])
-                                ->required()
+                                // ->required()
                                 ->label("Описание")
                                 ->columnSpanFull(),
                         ])
