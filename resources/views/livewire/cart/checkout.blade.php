@@ -2,6 +2,7 @@
   products: [],
   isLoading: true,
   isReloading: false,
+  userAuthenticated: @js(auth()->user() ? true : false),
   init() {
     this.loadProducts();
   },
@@ -29,14 +30,14 @@
   getTotalPrice() {
     let total = 0;
     this.products.forEach(product => {
-      total += product.price * +$store.cart.list[product.id];
+      total += (this.userAuthenticated & product.auth_price ? product.auth_price : product.price) * +$store.cart.list[product.id];
     });
     return total;
   },
   getDiscountedPrice() {
     let total = 0;
     this.products.forEach(product => {
-        let price = product.new_price ?? product.price;
+        let price = product.new_price ?? (this.userAuthenticated & product.auth_price ? product.auth_price : product.price);
         total += price * +$store.cart.list[product.id];
     });
     return total;

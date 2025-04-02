@@ -2,6 +2,7 @@
   products: [],
   isLoading: true,
   isReloading: false,
+  userAuthenticated: @js(auth()->user() ? true : false),
   init() {
     this.loadProducts();
   },
@@ -29,14 +30,14 @@
   getTotalPrice() {
     let total = 0;
     this.products.forEach(product => {
-      total += product.price * +$store.cart.list[product.id];
+      total += (this.userAuthenticated & product.auth_price ? product.auth_price : product.price) * +$store.cart.list[product.id];
     });
     return total;
   },
   getDiscountedPrice() {
     let total = 0;
     this.products.forEach(product => {
-        let price = product.new_price ?? product.price;
+        let price = product.new_price ?? (this.userAuthenticated & product.auth_price ? product.auth_price : product.price);
         total += price * +$store.cart.list[product.id];
     });
     return total;
@@ -100,8 +101,8 @@
                                 </div>
                                 <div class="flex items-center justify-between md:justify-end gap-4">
                                     <div class="text-end">
-                                        <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.new_price ?? cart_item.price)"></p>
-                                        <p class="text-md line-through font-extrabold leading-tight text-gray-600 dark:text-white" x-show="cart_item.new_price !== null" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.price)"></p>
+                                        <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.new_price ?? (userAuthenticated & cart_item.auth_price ? cart_item.auth_price : cart_item.price))"></p>
+                                        <p class="text-md line-through font-extrabold leading-tight text-gray-600 dark:text-white" x-show="cart_item.new_price !== null" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format((userAuthenticated & cart_item.auth_price ? cart_item.auth_price : cart_item.price))"></p>
                                     </div>
                                     <div class="flex items-center gap-4">
                                         <button type="button" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 hover:underline dark:text-gray-400 dark:hover:text-white" @click.prevent="$store.favorites.toggleProduct(cart_item.id)">
