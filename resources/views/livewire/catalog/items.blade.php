@@ -126,12 +126,12 @@
                                                     <img src="{{ Storage::disk(config('filesystems.default'))->url($batch->first()->batch->image) }}" alt="" />
                                                 </div>
                                                 <div class="col-span-3 flex flex-col gap-4">
-                                                    <div class="flex flex-col gap-2 text-gray-600 dark:text-gray-400">
+                                                    <div class="flex flex-col gap-2 text-gray-600 dark:text-gray-400 p-4 rounded-xl bg-gray-100 dark:bg-gray-600">
                                                         {!! str($batch->first()->batch->description)->sanitizeHtml() !!}
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="grid gap-2 pt-2">
+                                            <div class="relative overflow-x-auto">
                                                 @php
                                                     // Сбор всех параметров с show_on_table == true
                                                     $uniqueParamNames = collect();
@@ -140,7 +140,10 @@
                                                         if ($item->paramItems) {
                                                             foreach ($item->paramItems as $paramItem) {
                                                                 if ($paramItem->productParam && $paramItem->productParam->show_on_table) {
-                                                                    $uniqueParamNames->push($paramItem->productParam->name);
+                                                                    $uniqueParamNames->push([
+                                                                        'icon' => $paramItem->productParam->icon,
+                                                                        'name' => $paramItem->productParam->name,
+                                                                    ]);
                                                                 }
                                                             }
                                                         }
@@ -149,87 +152,154 @@
                                                         if ($item->parameters) {
                                                             foreach ($item->parameters as $parameter) {
                                                                 if ($parameter->show_on_table) {
-                                                                    $uniqueParamNames->push($parameter->name);
+                                                                    $uniqueParamNames->push([
+                                                                        'icon' => $paramItem->productParam->icon,
+                                                                        'name' => $paramItem->productParam->name,
+                                                                    ]);
                                                                 }
                                                             }
                                                         }
                                                     }
                                                     $uniqueParamNames = $uniqueParamNames->unique();
                                                 @endphp
-                                                <div class="grid grid-cols-{{ count($uniqueParamNames) + 2 }} gap-2 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 pb-2">
-                                                    <!-- Заголовок для SKU -->
-                                                    <div class="text-lg font-bold text-gray-500 dark:text-gray-400">
-                                                        Артикул
-                                                    </div>
+                                                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                                        <tr>
+                                                            <th scope="col" class="px-6 py-3">
+                                                                Артикул
+                                                            </th>
 
+                                                    
 
+                                                            <!-- Заголовки параметров -->
+                                                            @foreach ($uniqueParamNames as $paramName)
+                                                                <th scope="col" class="px-6 py-3">
+                                                                    @if ($paramName['icon'])
+                                                                        <img src="{{ Storage::disk(config('filesystems.default'))->url($paramName['icon']) }}" class="w-8">
+                                                                    @else
+                                                                        {{ $paramName['name'] }}
+                                                                    @endif
+                                                                </th>
+                                                            @endforeach
+                                                            <th scope="col" class="px-6 py-3">
+                                                                Цена
+                                                            </th>
+                                                            <th scope="col" class="px-6 py-3"></th>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($batch as $item)
+                                                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                                    {{ $item->sku }}
+                                                                </th>
+                                                                @foreach ($uniqueParamNames as $paramName)
+                                                                    <td class="px-6 py-4">
+                                                                        @php
+                                                                            $paramValue = '';
 
-                                                    <!-- Заголовки параметров -->
-                                                    @foreach ($uniqueParamNames as $paramName)
-                                                        <div class="text-lg font-bold text-gray-500 dark:text-gray-400">
-                                                            {{ $paramName }}
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-
-                                                <!-- Строки таблицы для каждого элемента -->
-                                                @foreach($batch as $item)
-                                                    <div class="grid grid-cols-{{ count($uniqueParamNames) + 2 }} gap-2">
-                                                        <!-- SKU элемента -->
-                                                        <div class="text-grey-600 dark:text-white">
-                                                            {{ $item->sku }}
-                                                        </div>
-
-                                                        <!-- Значения параметров -->
-                                                        @foreach ($uniqueParamNames as $paramName)
-                                                            <div class="text-grey-600 dark:text-white">
-                                                                @php
-                                                                    $paramValue = '';
-
-                                                                    // Проверка paramItems
-                                                                    if ($item->paramItems) {
-                                                                        foreach ($item->paramItems as $paramItem) {
-                                                                            if ($paramItem->productParam &&
-                                                                                $paramItem->productParam->name === $paramName &&
-                                                                                $paramItem->productParam->show_on_table) {
-                                                                                $paramValue = $paramItem->title ?? '';
-                                                                                break;
+                                                                            // Проверка paramItems
+                                                                            if ($item->paramItems) {
+                                                                                foreach ($item->paramItems as $paramItem) {
+                                                                                    if ($paramItem->productParam &&
+                                                                                        $paramItem->productParam->name === $paramName['name'] &&
+                                                                                        $paramItem->productParam->show_on_table) {
+                                                                                        $paramValue = $paramItem->title ?? '';
+                                                                                        break;
+                                                                                    }
+                                                                                }
                                                                             }
-                                                                        }
-                                                                    }
 
-                                                                    // Проверка parameters если значение еще не найдено
-                                                                    if ($paramValue === '' && $item->parameters) {
-                                                                        foreach ($item->parameters as $parameter) {
-                                                                            if ($parameter->name === $paramName && $parameter->show_on_table) {
-                                                                                $paramValue = $parameter->title ?? '';
-                                                                                break;
+                                                                            // Проверка parameters если значение еще не найдено
+                                                                            if ($paramValue === '' && $item->parameters) {
+                                                                                foreach ($item->parameters as $parameter) {
+                                                                                    if ($parameter->name === $paramName['name'] && $parameter->show_on_table) {
+                                                                                        $paramValue = $parameter->title ?? '';
+                                                                                        break;
+                                                                                    }
+                                                                                }
                                                                             }
+                                                                        @endphp
+                                                                        {{ $paramValue }}
+                                                                    </td>
+                                                                @endforeach
+                                                                <td class="px-6 py-4">
+                                                                    <div class="flex flex-col gap-2 relative">
+                                                                        @if (!auth()->user() && $item->auth_price)
+                                                                            <div class="flex items-center gap-2 text-green-800 dark:text-green-300 bg-green-100 text-md font-medium me-2 px-2.5 py-0.5 rounded-md dark:bg-green-900" x-data="{
+                                                                                popover: false,
+                                                                            }" @mouseover="popover = true"  @mouseover.away = "popover = false">
+                                                                                <span>{{ $item->auth_price }} ₽</span>
+                                                                                <x-carbon-information class="w-4 h-4" />
+
+                                                                                <div role="tooltip" class="absolute bottom-0 left-[calc(100%+10px)] z-10 inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-xs dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800" x-show="popover">
+                                                                                    <div class="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg dark:border-gray-600 dark:bg-gray-700">
+                                                                                        <h3 class="font-semibold text-gray-900 dark:text-white">Цена для авторизованных пользователей</h3>
+                                                                                    </div>
+                                                                                    <div class="px-3 py-2">
+                                                                                        <p>Эта цена доступна для авторизованных пользователей. <a class="text-blue-500" href="{{ route('login') }}" wire:navigate>Войдите</a> или <a class="text-blue-500" href="{{ route('register') }}" wire:navigate>зарегистрируйтесь</a> для применения этой цены.</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        @endif
+                                                                        <div class="flex items-center gap-4">
+                                                                            <span class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
+                                                                                {{ $item->new_price ?? $item->getActualPrice() }} ₽
+                                                                            </span>
+                                                                            @if($item->new_price)
+                                                                                <span class="text-lg line-through font-extrabold leading-tight text-gray-600 dark:text-white">
+                                                                                    {{ $item->getActualPrice() }} ₽
+                                                                                </span>
+                                                                            @endif                
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="px-6 py-4">
+                                                                    <div class="flex items-center justify-end gap-4" x-data="{
+                                                                        count: 1,
+                                                                        init() {
+                                                                            this.watchCountState();
+                                                                        },
+                                                                        watchCountState() {
+                                                                            $watch('count', () => {this.validate()});
+                                                                        },
+                                                                        validate() {
+                                                                            if (this.count < 1) this.count = 1;
                                                                         }
-                                                                    }
-                                                                @endphp
-                                                                {{ $paramValue }}
-                                                            </div>
+                                                                    }">
+                                                                        <div class="relative flex items-center max-w-[8rem]">
+                                                                            <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"  @click="count--">
+                                                                                <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                                                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                                                                                </svg>
+                                                                            </button>
+                                                                            <input type="number" class="[-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="999" x-model="count" />
+                                                                            <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" @click="count++">
+                                                                                <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                                                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                                                                                </svg>
+                                                                            </button>
+                                                                        </div>
+                                                                        <button type="button"
+                                                                        class="inline-flex items-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                                                                        @click="$store.cart.addVariationToCart({
+                                                                            count: count,
+                                                                            variationId: {{ $item->id }},
+                                                                            name: '{{ $item->name }}'
+                                                                        });">
+                                                                            <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                                                width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                                                    stroke-width="2"
+                                                                                    d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6" />
+                                                                            </svg>
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
                                                         @endforeach
-
-                                                        <div class="flex items-center justify-end">
-                                                            <button type="button"
-                                                            class="inline-flex items-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800"
-                                                            @click="$store.cart.addVariationToCart({
-                                                                count: 1,
-                                                                variationId: {{ $item->id }},
-                                                                name: '{{ $item->name }}'
-                                                            });">
-                                                                <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                                                    width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                                        stroke-width="2"
-                                                                        d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6" />
-                                                                </svg>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
+                                                    </tbody>
+    
+                                                </table>
                                             </div>
                                         </div>
                                     @empty

@@ -63,16 +63,38 @@
             </ul>
         @endif
 
-        <div class="mt-4 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <span class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
-                    {{ $variant->new_price ?? $variant->price }} ₽
-                </span>
-                @if($variant->new_price)
-                    <span class="text-lg line-through font-extrabold leading-tight text-gray-600 dark:text-white">
-                        {{ $variant->price }} ₽
-                    </span>
+        
+
+        <div class="flex items-end justify-between gap-4 mt-4 relative">
+            <div class="flex flex-col gap-2">
+                @if (!auth()->user() && $variant->auth_price)
+                    <div class="flex items-center gap-2 text-green-800 dark:text-green-300 bg-green-100 text-md font-medium me-2 px-2.5 py-0.5 rounded-md dark:bg-green-900" x-data="{
+                        popover: false,
+                    }" @mouseover="popover = true"  @mouseover.away = "popover = false">
+                        <span>{{ $variant->auth_price }} ₽</span>
+                        <x-carbon-information class="w-4 h-4" />
+
+                        <div role="tooltip" class="absolute bottom-[calc(100%+10px)] left-0 z-10 inline-block w-full text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-xs dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800" x-show="popover">
+                            <div class="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg dark:border-gray-600 dark:bg-gray-700">
+                                <h3 class="font-semibold text-gray-900 dark:text-white">Цена для авторизованных пользователей</h3>
+                            </div>
+                            <div class="px-3 py-2">
+                                <p>Эта цена доступна для авторизованных пользователей. <a class="text-blue-500" href="{{ route('login') }}" wire:navigate>Войдите</a> или <a class="text-blue-500" href="{{ route('register') }}" wire:navigate>зарегистрируйтесь</a> для применения этой цены.</p>
+                            </div>
+                        </div>
+                    </div>
                 @endif
+                <div class="flex items-center gap-4">
+                    <span class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
+                        {{ $variant->new_price ?? $variant->getActualPrice() }} ₽
+                    </span>
+                    @if($variant->new_price)
+                        <span class="text-lg line-through font-extrabold leading-tight text-gray-600 dark:text-white">
+                            {{ $variant->getActualPrice() }} ₽
+                        </span>
+                    @endif                
+                </div>
+                
             </div>
 
             <div class="flex items-center gap-3">

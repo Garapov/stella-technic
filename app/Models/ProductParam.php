@@ -16,7 +16,8 @@ class ProductParam extends Model
         'type',
         'allow_filtering',
         'show_on_preview',
-        'show_on_table'
+        'show_on_table',
+        'icon'
     ];
 
     public function params(): HasMany

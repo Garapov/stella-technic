@@ -14,6 +14,7 @@ use Spatie\Sluggable\SlugOptions;
 use Illuminate\Support\Facades\Log;
 use Abbasudo\Purity\Traits\Filterable;
 use Abbasudo\Purity\Traits\Sortable;
+use Illuminate\Support\Facades\Auth;
 
 class ProductVariant extends Model
 {
@@ -38,6 +39,7 @@ class ProductVariant extends Model
         "synonims",
         "gallery",
         "links",
+        "auth_price"
     ];
 
     protected $casts = [
@@ -131,7 +133,16 @@ class ProductVariant extends Model
         )->withTimestamps();
     }
 
-    public function product()
+    public function getActualPrice()
+    {
+        $price = $this->price;
+
+        if (Auth::id() && $this->auth_price) $price = $this->auth_price;
+
+        return $price;
+    }
+
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }

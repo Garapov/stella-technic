@@ -40,13 +40,18 @@ class VariantsRelationManager extends RelationManager
                             Forms\Components\TextInput::make("price")
                                 ->required()
                                 ->numeric()
-                                ->prefix("р.")
+                                ->prefix("₽")
                                 ->label("Цена"),
                             Forms\Components\TextInput::make("new_price")
                                 ->numeric()
                                 ->lt("price")
-                                ->prefix("р.")
+                                ->prefix("₽")
                                 ->label("Цена со скидкой"),
+                            Forms\Components\TextInput::make("auth_price")
+                                ->numeric()
+                                ->lt("price")
+                                ->prefix("₽")
+                                ->label("Цена после авторизации"),
                             Forms\Components\TextInput::make("count")
                                 ->required()
                                 ->numeric()

@@ -31,6 +31,14 @@ class ProductParamResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->label('Название')
                     ->required(),
+                Forms\Components\FileUpload::make("icon")
+                    ->image()
+                    ->label("Иконка")
+                    ->directory("param-icons")
+                    ->visibility("public")
+                    ->imageEditor()
+                    ->preserveFilenames()
+                    ->imageEditorMode(2),
                 Forms\Components\Select::make('type')
                     ->label('Тип')
                     ->options([
