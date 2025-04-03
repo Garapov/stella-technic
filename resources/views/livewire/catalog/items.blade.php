@@ -140,22 +140,22 @@
                                                         if ($item->paramItems) {
                                                             foreach ($item->paramItems as $paramItem) {
                                                                 if ($paramItem->productParam && $paramItem->productParam->show_on_table) {
-                                                                    $uniqueParamNames->push([
+                                                                    $uniqueParamNames[$paramItem->productParam->name] = [
                                                                         'icon' => $paramItem->productParam->icon,
                                                                         'name' => $paramItem->productParam->name,
-                                                                    ]);
+                                                                    ];
                                                                 }
                                                             }
                                                         }
 
                                                         // Сбор параметров из parameters
-                                                        if ($item->parameters) {
-                                                            foreach ($item->parameters as $parameter) {
-                                                                if ($parameter->show_on_table) {
-                                                                    $uniqueParamNames->push([
-                                                                        'icon' => $paramItem->productParam->icon,
-                                                                        'name' => $paramItem->productParam->name,
-                                                                    ]);
+                                                        if ($item->parametrs) {
+                                                            foreach ($item->parametrs as $parameter) {
+                                                                if ($parameter->productParam->show_on_table) {
+                                                                    $uniqueParamNames[$parameter->productParam->name] = [
+                                                                        'icon' => $parameter->productParam->icon,
+                                                                        'name' => $parameter->productParam->name,
+                                                                    ];
                                                                 }
                                                             }
                                                         }
@@ -175,7 +175,7 @@
                                                             @foreach ($uniqueParamNames as $paramName)
                                                                 <th scope="col" class="px-6 py-3">
                                                                     @if ($paramName['icon'])
-                                                                        <img src="{{ Storage::disk(config('filesystems.default'))->url($paramName['icon']) }}" class="w-8">
+                                                                        <img src="{{ Storage::disk(config('filesystems.default'))->url($paramName['icon']) }}" class="min-w-10 max-w-10">
                                                                     @else
                                                                         {{ $paramName['name'] }}
                                                                     @endif
@@ -190,10 +190,14 @@
                                                         @foreach($batch as $item)
                                                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                                                                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                                    {{ $item->sku }}
+                                                                    <a href="{{ route('client.product_detail', $item->slug) }}" class="flex items-center gap-2 text-blue-500" wire:navigate>
+                                                                        {{ $item->sku }}
+                                                                        <x-carbon-link class="w-4 h-4" />
+                                                                    </a>
                                                                 </th>
                                                                 @foreach ($uniqueParamNames as $paramName)
-                                                                    <td class="px-6 py-4">
+                                                                    
+                                                                    <td class="px-6 py-4 whitespace-nowrap">
                                                                         @php
                                                                             $paramValue = '';
 
@@ -208,11 +212,13 @@
                                                                                     }
                                                                                 }
                                                                             }
-
+                                                                            
                                                                             // Проверка parameters если значение еще не найдено
-                                                                            if ($paramValue === '' && $item->parameters) {
-                                                                                foreach ($item->parameters as $parameter) {
-                                                                                    if ($parameter->name === $paramName['name'] && $parameter->show_on_table) {
+                                                                            if ($paramValue === '' && $item->parametrs) {
+                                                                                
+                                                                                foreach ($item->parametrs as $parameter) {
+                                                                                    if ($parameter->productParam->name === $paramName['name'] && $parameter->productParam->show_on_table) {
+                                                                                        
                                                                                         $paramValue = $parameter->title ?? '';
                                                                                         break;
                                                                                     }
@@ -223,9 +229,29 @@
                                                                     </td>
                                                                 @endforeach
                                                                 <td class="px-6 py-4">
-                                                                    <div class="flex flex-col gap-2 relative">
+                                                                    <div class="flex flex-col gap-1 relative whitespace-nowrap">
+                                                                        
+                                                                        <div class="flex items-center gap-4">
+                                                                            <span class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white">
+                                                                                {{ $item->new_price ?? $item->getActualPrice() }} ₽
+                                                                            </span>
+                                                                            @if($item->new_price)
+                                                                                <div class="flex items-center gap-2">
+                                                                                    <span class="text-md line-through font-regular leading-tight text-gray-600 dark:text-white">
+                                                                                        {{ $item->getActualPrice() }} ₽
+                                                                                    </span>
+                                                                                    <div class="flex items-center justify-between gap-2">
+                                                                                        @if($item->new_price)
+                                                                                            <span class="me-2 rounded bg-green-600 px-2.5 py-0.5 text-xs font-medium text-white dark:bg-green-900 dark:text-white dark:text-white">
+                                                                                                {{ round(100 - ($item->new_price * 100 / $item->getActualPrice())) }}%
+                                                                                            </span>
+                                                                                        @endif
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endif                
+                                                                        </div>
                                                                         @if (!auth()->user() && $item->auth_price)
-                                                                            <div class="flex items-center gap-2 text-green-800 dark:text-green-300 bg-green-100 text-md font-medium me-2 px-2.5 py-0.5 rounded-md dark:bg-green-900" x-data="{
+                                                                            <div class="flex items-center self-start gap-2 bg-blue-600 text-white text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-white" x-data="{
                                                                                 popover: false,
                                                                             }" @mouseover="popover = true"  @mouseover.away = "popover = false">
                                                                                 <span>{{ $item->auth_price }} ₽</span>
@@ -233,24 +259,14 @@
 
                                                                                 <div role="tooltip" class="absolute bottom-0 right-[calc(100%+10px)] z-10 inline-block w-[400px] text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-xs dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800" x-show="popover">
                                                                                     <div class="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg dark:border-gray-600 dark:bg-gray-700">
-                                                                                        <h3 class="font-semibold text-gray-900 dark:text-white">Цена для авторизованных пользователей</h3>
+                                                                                        <h3 class="font-semibold text-gray-900 dark:text-white whitespace-break-spaces">Цена для авторизованных пользователей</h3>
                                                                                     </div>
                                                                                     <div class="px-3 py-2">
-                                                                                        <p>Эта цена доступна для авторизованных пользователей. <a class="text-blue-500" href="{{ route('login') }}" wire:navigate>Войдите</a> или <a class="text-blue-500" href="{{ route('register') }}" wire:navigate>зарегистрируйтесь</a> для применения этой цены.</p>
+                                                                                        <p class="whitespace-break-spaces">Эта цена доступна для авторизованных пользователей. <a class="text-blue-500" href="{{ route('login') }}" wire:navigate>Войдите</a> или <a class="text-blue-500" href="{{ route('register') }}" wire:navigate>зарегистрируйтесь</a> для применения этой цены.</p>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         @endif
-                                                                        <div class="flex items-center gap-4">
-                                                                            <span class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
-                                                                                {{ $item->new_price ?? $item->getActualPrice() }} ₽
-                                                                            </span>
-                                                                            @if($item->new_price)
-                                                                                <span class="text-lg line-through font-extrabold leading-tight text-gray-600 dark:text-white">
-                                                                                    {{ $item->getActualPrice() }} ₽
-                                                                                </span>
-                                                                            @endif                
-                                                                        </div>
                                                                     </div>
                                                                 </td>
                                                                 <td class="px-6 py-4">
@@ -267,13 +283,13 @@
                                                                         }
                                                                     }">
                                                                         <div class="relative flex items-center max-w-[8rem]">
-                                                                            <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"  @click="count--">
-                                                                                <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                                                                            <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-2 h-9 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"  @click="count--">
+                                                                                <svg class="w-2 h-2 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
                                                                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
                                                                                 </svg>
                                                                             </button>
-                                                                            <input type="number" class="[-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="999" x-model="count" />
-                                                                            <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" @click="count++">
+                                                                            <input type="number" class="[-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none bg-gray-50 border-x-0 border-gray-300 h-9 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 min-w-10" placeholder="999" x-model="count" />
+                                                                            <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-2 h-9 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" @click="count++">
                                                                                 <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                                                                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
                                                                                 </svg>
