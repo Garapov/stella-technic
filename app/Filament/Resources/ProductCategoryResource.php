@@ -9,7 +9,10 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Split;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -33,28 +36,74 @@ class ProductCategoryResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            TextInput::make("title")->label("Заголовок")->required(),
-            Select::make("paramItems")
-                ->multiple()
-                ->relationship("paramItems", "title")
-                ->preload()
-                ->options(function () {
-                    return ProductParamItem::query()
-                        ->with("productParam")
-                        ->get()
-                        ->mapWithKeys(function ($item) {
-                            return [
-                                $item->id => "{$item->productParam->name}: {$item->title}",
-                            ];
-                        });
-                }),
-            Toggle::make("is_visible")->inline(false)->label("Видимость"),
-            Textarea::make("description")->label("Описание")->required(),
-            FileUpload::make("image")
-                ->directory("categories")
-                ->label("Картинка")
-                ->image(),
-            IconPicker::make("icon")->required(),
+            Split::make([
+                Tabs::make('Tabs')
+                    ->tabs([
+                        Tabs\Tab::make('Основная информация')
+                            ->schema([
+                                TextInput::make("title")->label("Заголовок")->required(),
+                                Textarea::make("description")->label("Описание")->required(),
+                                // Select::make("paramItems")
+                                //     ->multiple()
+                                //     ->relationship("paramItems", "title")
+                                //     ->preload()
+                                //     ->options(function () {
+                                //         return ProductParamItem::query()
+                                //             ->with("productParam")
+                                //             ->get()
+                                //             ->mapWithKeys(function ($item) {
+                                //                 return [
+                                //                     $item->id => "{$item->productParam->name}: {$item->title}",
+                                //                 ];
+                                //             });
+                                //     }),
+                            ]),
+                        Tabs\Tab::make('Изображения')
+                            ->schema([
+                                FileUpload::make("image")
+                                    ->directory("categories")
+                                    ->label("Картинка")
+                                    ->image(),
+                                IconPicker::make("icon")->required(),
+                            ]),
+                        Tabs\Tab::make('SEO')
+                            ->schema([
+                                Builder::make('seo')
+                                    ->label('SEO данные')
+                                    ->addActionLabel('Добавить данные')
+                                    ->blockNumbers(false)
+                                    ->blocks([
+                                        Builder\Block::make('title')
+                                            ->label("Заголовок")
+                                            ->schema([
+                                                TextInput::make("title")->label("Заголовок")->required(),
+                                            ])->maxItems(1),
+                                        Builder\Block::make('description')
+                                            ->label("Описание")
+                                            ->schema([
+                                                Textarea::make("description")->label("Описание")->required(),
+                                            ])->maxItems(1),
+                                        Builder\Block::make('image')
+                                            ->label("Картинка")
+                                            ->schema([
+                                                FileUpload::make("image")
+                                                    ->required()
+                                                    ->image()
+                                                    ->label("Картинка")
+                                                    ->directory("categories/seo")
+                                                    ->visibility("public")
+                                                    ->imageEditor()
+                                                    ->preserveFilenames()
+                                                    ->imageCropAspectRatio("1:1")
+                                                    ->imageEditorMode(2),
+                                            ])->maxItems(1)
+                                    ])
+                            ]),
+                    ]),                    
+                Section::make([
+                    Toggle::make("is_visible")->inline(false)->label("Видимость"),
+                ])->grow(false),
+            ])->columnSpanFull()->from('md')
         ]);
     }
 

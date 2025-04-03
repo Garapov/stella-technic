@@ -32,11 +32,13 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
         'is_visible',
         "parent_id",
         "order",
-        "image"
+        "image",
+        "seo"
     ];
 
     protected $casts = [
-        'parent_id' => 'int'
+        'parent_id' => 'int',
+        'seo' => 'array'
     ];
  
     protected $table = 'product_categories';

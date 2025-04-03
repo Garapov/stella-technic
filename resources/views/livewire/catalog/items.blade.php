@@ -1,6 +1,8 @@
+
 <section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
     @if ($category || $product_ids)
-        <div class="mx-auto container relative">
+    <div class="mx-auto container relative">
+            
             <!-- Loading Overlay -->
             <div wire:loading.class.remove="hidden"
                 class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm hidden">
@@ -11,6 +13,19 @@
             </div>
             <!-- Heading & Filters -->
             @if ($category)
+                @forelse($category->seo as $seo_tag)
+                    @foreach($seo_tag['data'] as $key => $tag)
+                        
+                        @if ($key == 'image')
+                            @seo(['image' => Storage::disk(config('filesystems.default'))->url($tag)])
+                        @else
+                            @seo([$key => $tag])
+                        @endif
+                    @endforeach
+                    
+                @empty
+                    @seo(['title' => $category->name])
+                @endforelse
                 <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">
                     <div>
                         @livewire('general.breadcrumbs')
