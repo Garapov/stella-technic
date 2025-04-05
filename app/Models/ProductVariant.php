@@ -39,13 +39,15 @@ class ProductVariant extends Model
         "synonims",
         "gallery",
         "links",
-        "auth_price"
+        "auth_price",
+        "seo"
     ];
 
     protected $casts = [
         "gallery" => "array",
         "is_default" => "boolean",
         "is_popular" => "boolean",
+        "seo" => "array"
     ];
 
     protected $dates = ["deleted_at"];

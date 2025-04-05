@@ -13,19 +13,27 @@
             </div>
             <!-- Heading & Filters -->
             @if ($category)
-                @forelse($category->seo as $seo_tag)
-                    @foreach($seo_tag['data'] as $key => $tag)
+                @if ($category->seo)
+                    @forelse($category->seo as $seo_tag)
+                        @foreach($seo_tag['data'] as $key => $tag)
+                            
+                            @if ($key == 'image')
+                                @seo(['image' => Storage::disk(config('filesystems.default'))->url($tag)])
+                            @else
+                                @seo([$key => $tag])
+                            @endif
+                        @endforeach
                         
-                        @if ($key == 'image')
-                            @seo(['image' => Storage::disk(config('filesystems.default'))->url($tag)])
-                        @else
-                            @seo([$key => $tag])
-                        @endif
-                    @endforeach
-                    
-                @empty
-                    @seo(['title' => $category->name])
-                @endforelse
+                    @empty
+                        @seo(['title' => $category->title])
+                        @seo(['description' => $category->description])
+                        @seo(['image' => Storage::disk(config('filesystems.default'))->url($category->image)])
+                    @endforelse
+                @else
+                    @seo(['title' => $category->title])
+                    @seo(['description' => $category->description])
+                    @seo(['image' => Storage::disk(config('filesystems.default'))->url($category->image)])
+                @endif
                 <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">
                     <div>
                         @livewire('general.breadcrumbs')

@@ -10,9 +10,9 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Tables\Columns\ImageByIdColumn;
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Livewire\Attributes\On;
@@ -149,6 +149,39 @@ class VariantsRelationManager extends RelationManager
                             ->relationship("batch", "name")
                             ->preload(),
                     ]),
+                    Tabs\Tab::make('SEO')
+                            ->schema([
+                                Builder::make('seo')
+                                    ->label('SEO данные')
+                                    ->addActionLabel('Добавить данные')
+                                    ->blockNumbers(false)
+                                    ->blocks([
+                                        Builder\Block::make('title')
+                                            ->label("Заголовок")
+                                            ->schema([
+                                                TextInput::make("title")->label("Заголовок")->required(),
+                                            ])->maxItems(1),
+                                        Builder\Block::make('description')
+                                            ->label("Описание")
+                                            ->schema([
+                                                Forms\Components\Textarea::make("description")->label("Описание")->required(),
+                                            ])->maxItems(1),
+                                        Builder\Block::make('image')
+                                            ->label("Картинка")
+                                            ->schema([
+                                                Forms\Components\FileUpload::make("image")
+                                                    ->required()
+                                                    ->image()
+                                                    ->label("Картинка")
+                                                    ->directory("categories/seo")
+                                                    ->visibility("public")
+                                                    ->imageEditor()
+                                                    ->preserveFilenames()
+                                                    ->imageCropAspectRatio("1:1")
+                                                    ->imageEditorMode(2),
+                                            ])->maxItems(1)
+                                    ])
+                            ]),
                 ])
                 ->columnSpan("full"),
         ]);

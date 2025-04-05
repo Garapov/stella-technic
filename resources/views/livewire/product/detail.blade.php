@@ -38,6 +38,32 @@
     }
 }">
 
+    @if ($variation->seo)
+        @forelse($variation->seo as $seo_tag)
+            @foreach($seo_tag['data'] as $key => $tag)
+                
+                @if ($key == 'image')
+                    @seo(['image' => Storage::disk(config('filesystems.default'))->url($tag)])
+                @else
+                    @seo([$key => $tag])
+                @endif
+            @endforeach
+            
+        @empty
+            @seo(['title' => $variation->name])
+            @if ($variation->short_description)
+                @seo(['description' => $variation->short_description])
+            @endif
+            @seo(['image' => Storage::disk(config('filesystems.default'))->url($variation->gallery[0])])
+        @endforelse
+    @else
+        @seo(['title' => $variation->name])
+        @if ($variation->short_description)
+            @seo(['description' => $variation->short_description])
+        @endif
+        @seo(['image' => Storage::disk(config('filesystems.default'))->url($variation->gallery[0])])
+    @endif
+
     <div class="grid items-start grid-cols-1 lg:grid-cols-2 gap-8 max-lg:gap-12 max-sm:gap-8">
         <div class="w-full lg:sticky top-10">
             <div class="flex flex-col-reverse gap-4">
