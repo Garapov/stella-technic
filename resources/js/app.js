@@ -7,6 +7,7 @@ import rangeSlider from 'range-slider-input';
 // import persist from '@alpinejs/persist';
 
 import dropdown from "./components/dropdown";
+import constructor from "./components/constructor";
 import mainSlider from "./components/main-slider";
 import clientsSlider from "./components/clients";
 
@@ -22,6 +23,7 @@ window.rangeSlider = rangeSlider;
 
 document.addEventListener("alpine:init", () => {
     Alpine.data("dropdown", dropdown);
+    Alpine.data("construct", constructor);
     Alpine.data("main_slider", mainSlider);
     Alpine.data("clients", clientsSlider);
 });

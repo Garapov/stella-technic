@@ -179,6 +179,9 @@ class AdminPanelProvider extends PanelProvider
                             })
                             ->add("Сотрудники", function () {
                                 return route("client.workers");
+                            })
+                            ->add("Конструктор стеллажей", function () {
+                                return route("client.constructor");
                             }),
                     ]),
                 FilamentSettingsHubPlugin::make()

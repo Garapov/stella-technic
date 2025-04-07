@@ -54,14 +54,18 @@
             @if ($variation->short_description)
                 @seo(['description' => $variation->short_description])
             @endif
-            @seo(['image' => Storage::disk(config('filesystems.default'))->url($variation->gallery[0])])
+            @if ($variation->gallery)
+                @seo(['image' => Storage::disk(config('filesystems.default'))->url($variation->gallery[0])])
+            @endif
         @endforelse
     @else
         @seo(['title' => $variation->name])
         @if ($variation->short_description)
             @seo(['description' => $variation->short_description])
         @endif
-        @seo(['image' => Storage::disk(config('filesystems.default'))->url($variation->gallery[0])])
+        @if ($variation->gallery)
+            @seo(['image' => Storage::disk(config('filesystems.default'))->url($variation->gallery[0])])
+        @endif
     @endif
 
     <div class="grid items-start grid-cols-1 lg:grid-cols-2 gap-8 max-lg:gap-12 max-sm:gap-8">

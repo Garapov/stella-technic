@@ -24,6 +24,7 @@
         "@glidejs/glide": "^3.6.2",
         "@splidejs/splide": "^4.1.4",
         "range-slider-input": "^2.4.4",
+        "three": "^0.175.0",
         "toastify-js": "^1.12.0"
     }
 }
