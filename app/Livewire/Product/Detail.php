@@ -42,10 +42,6 @@ class Detail extends Component
             })
             ->toArray();
 
-        \Illuminate\Support\Facades\Log::info("Текущие параметры", [
-            "variant_id" => $currentVariantId,
-            "params" => $currentParams,
-        ]);
 
         // Собираем все возможные параметры и их комбинации
         $availableCombinations = [];

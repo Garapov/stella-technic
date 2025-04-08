@@ -16,21 +16,15 @@ class WelcomeNotification extends Notification
     public function __construct(string $password)
     {
         $this->password = $password;
-        Log::info('WelcomeNotification created with password');
     }
 
     public function via(object $notifiable): array
     {
-        Log::info('WelcomeNotification via method called');
         return ['mail'];
     }
 
     public function toMail(object $notifiable): MailMessage
     {
-        Log::info('WelcomeNotification toMail method called', [
-            'user_email' => $notifiable->email,
-            'user_name' => $notifiable->name
-        ]);
 
         $message = (new MailMessage)
             ->subject('Спасибо за регистрацию')

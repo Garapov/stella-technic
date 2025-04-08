@@ -40,35 +40,14 @@ class ProductImporter extends Importer
                     ProductImporter $importer
                 ) {
                     // Проверяем, есть ли uuid у записи и совпадает ли он с импортируемым значением
-                    if (isset($record->uuid) && $record->uuid == $state) {
-                        // UUID совпадает с текущим, ничего не обновляем
-                        Log::debug(
-                            "UUID не обновлен, значение совпадает с текущим",
-                            [
-                                "product_id" => $record->id,
-                                "uuid" => $state,
-                            ]
-                        );
-                        return;
-                    }
+                    if (isset($record->uuid) && $record->uuid == $state) return;
 
                     // Проверяем, существует ли другая запись с таким UUID
                     $existingWithUuid = Product::where("uuid", $state)
                         ->where("id", "!=", $record->id)
                         ->exists();
 
-                    if ($existingWithUuid) {
-                        // Если существует другая запись с таким UUID, логируем и пропускаем
-                        Log::warning(
-                            "Пропуск обновления UUID из-за конфликта уникальности",
-                            [
-                                "product_id" => $record->id,
-                                "current_uuid" => $record->uuid,
-                                "imported_uuid" => $state,
-                            ]
-                        );
-                        return;
-                    }
+                    if ($existingWithUuid) return;
 
                     // Обновляем UUID только если он не существует у других записей
                     try {
@@ -79,10 +58,6 @@ class ProductImporter extends Importer
                         // Обновляем запись в памяти для поддержания согласованности
                         $record->uuid = $state;
 
-                        Log::debug("UUID успешно обновлен", [
-                            "product_id" => $record->id,
-                            "uuid" => $state,
-                        ]);
                     } catch (Exception $e) {
                         Log::error("Ошибка обновления UUID", [
                             "product_id" => $record->id,
@@ -126,17 +101,7 @@ class ProductImporter extends Importer
                     }
 
                     // Проверяем, есть ли slug у записи и совпадает ли он с импортируемым значением
-                    if (isset($record->slug) && $record->slug == $state) {
-                        // Slug совпадает с текущим, ничего не обновляем
-                        Log::debug(
-                            "Slug не обновлен, значение совпадает с текущим",
-                            [
-                                "product_id" => $record->id,
-                                "slug" => $state,
-                            ]
-                        );
-                        return;
-                    }
+                    if (isset($record->slug) && $record->slug == $state) return;
 
                     // Если slug не указан, генерируем его из названия
                     $slugValue = $state ?: Str::slug($record->name);
@@ -159,15 +124,6 @@ class ProductImporter extends Importer
                         ) {
                             $slugValue = $baseSlug . "-" . $counter++;
                         }
-
-                        Log::info(
-                            "Сгенерирован уникальный slug из-за конфликта",
-                            [
-                                "product_id" => $record->id,
-                                "original_slug" => $baseSlug,
-                                "generated_slug" => $slugValue,
-                            ]
-                        );
                     }
 
                     // Обновляем Slug только если он не существует у других записей
@@ -178,11 +134,6 @@ class ProductImporter extends Importer
 
                         // Обновляем запись в памяти для поддержания согласованности
                         $record->slug = $slugValue;
-
-                        Log::debug("Slug успешно обновлен", [
-                            "product_id" => $record->id,
-                            "slug" => $slugValue,
-                        ]);
                     } catch (Exception $e) {
                         Log::error("Ошибка обновления Slug", [
                             "product_id" => $record->id,
@@ -463,9 +414,6 @@ class ProductImporter extends Importer
                                     }
                                 }
                             }
-                            Log::info("Gallery images processed", [
-                                "images" => $galleryIds,
-                            ]);
                             // Данные для создания/обновления вариации
                             $variantData = [
                                 "product_id" => $record->id,
@@ -576,15 +524,6 @@ class ProductImporter extends Importer
                                 ->whereNotIn("slug", $existingVariantSlugs)
                                 ->delete();
                         }
-
-                        // Логирование результатов
-                        Log::info("Импорт вариаций", [
-                            "product_id" => $record->id,
-                            "success" => $results["success"],
-                            "created" => count($results["created"]),
-                            "updated" => count($results["updated"]),
-                            "errors" => $results["errors"],
-                        ]);
                     } catch (Exception $e) {
                         Log::error("Ошибка импорта вариаций", [
                             "product_id" => $record->id,
@@ -798,11 +737,7 @@ class ProductImporter extends Importer
                     "show_on_preview" => $param->show_on_preview ?? false,
                 ]
             );
-            Log::info("createProductParams values", ["data" => $param->values]);
             foreach ($param->values as $value) {
-                Log::info("createProductParams value", [
-                    "data" => $value->title,
-                ]);
                 // Создаем или находим значение параметра
                 $param_item = ProductParamItem::updateOrCreate(
                     [

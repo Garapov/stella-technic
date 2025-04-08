@@ -136,10 +136,6 @@ class Product extends Model implements Searchable
                     if (file_exists($fullPath)) {
                         try {
                             unlink($fullPath);
-                            Log::info("Файл изображения успешно удален", [
-                                "path" => $fullPath,
-                                "product_id" => $model->id,
-                            ]);
                         } catch (\Exception $e) {
                             Log::error(
                                 "Ошибка при удалении файла изображения",
@@ -203,17 +199,6 @@ class Product extends Model implements Searchable
                     "name" => $name,
                 ]
             );
-
-            Log::info("Product variant name", [
-                "links" => $links,
-            ]);
-            Log::info("Product variant created", [
-                "product_id" => $this->id,
-                "variant_id" => $findedVariant->id,
-                "variant_sku" => $findedVariant->sku,
-                "name" => $findedVariant->name,
-                "links" => $findedVariant->links,
-            ]);
 
             $createdVariationsIds[] = $findedVariant->id;
 

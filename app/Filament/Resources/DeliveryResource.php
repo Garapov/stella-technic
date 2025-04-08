@@ -86,7 +86,6 @@ class DeliveryResource extends Resource
                                 ];
                             }, $dadata->suggest("address", $search));
 
-                            Log::info($result);
 
                             return $result;
                         })

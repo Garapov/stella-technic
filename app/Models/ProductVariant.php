@@ -88,7 +88,6 @@ class ProductVariant extends Model
             if (!$variant->sku) {
                 $variant->sku = (string) Str::random(10);
             }
-            Log::info("Creating product variant", ["variant" => $variant]);
         });
 
         static::deleted(function ($model) {
@@ -99,10 +98,6 @@ class ProductVariant extends Model
                     if (file_exists($fullPath)) {
                         try {
                             unlink($fullPath);
-                            Log::info("Файл изображения успешно удален", [
-                                "path" => $fullPath,
-                                "product_id" => $model->id,
-                            ]);
                         } catch (\Exception $e) {
                             Log::error(
                                 "Ошибка при удалении файла изображения",

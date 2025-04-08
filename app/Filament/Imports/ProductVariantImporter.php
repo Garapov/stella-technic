@@ -141,12 +141,6 @@ class ProductVariantImporter extends Importer
                     $variationName = $record->product->name;
                     $variatinLinks = "";
 
-                    Log::info("param items", [
-                        "data" => $data,
-                        "state" => $state,
-                        '$importer->paramItemIds' => $importer->paramItemIds,
-                    ]);
-
                     foreach ($data as $paramItem) {
                         if (
                             empty($paramItem["param"]) ||

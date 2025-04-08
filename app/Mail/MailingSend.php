@@ -41,7 +41,6 @@ class MailingSend extends Mailable
      */
     public function content(): Content
     {
-        Log::info($this->data);
         return new Content(
             markdown: 'mail.forms.mailing',
             with: [
