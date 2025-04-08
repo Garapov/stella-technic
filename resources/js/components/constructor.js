@@ -56,7 +56,31 @@ export default () => {
         totalModels: modelsToLoad.length,
         progress: 0,
         error: null,
-        color: "#ff0000",
+        selectedColor: "red",
+        selectedSize: "small",
+        addedRows: [],
+        colors: [
+            'red',
+            'green',
+            'blue',
+            'yellow',
+            'gray'
+        ],
+
+        sizes: [
+            {
+                name: 'V1',
+                value: "small"
+            },
+            {
+                name: 'V2',
+                value: "medium"
+            },
+            {
+                name: 'V3',
+                value: "large"
+            },
+        ],
 
         init() {
             const container = this.$refs.scene;
@@ -65,7 +89,7 @@ export default () => {
             this.adjustSceneHeight();
 
             // Настройка сцены
-            three.scene.background = new THREE.Color(0xf0f0f0);
+            three.scene.background = null;
 
             // Настройка камеры
             three.camera = new THREE.PerspectiveCamera(
@@ -124,6 +148,7 @@ export default () => {
         // Функция для установки правильной высоты сцены
         adjustSceneHeight() {
             const container = this.$refs.scene;
+            const projection = this.$refs.projection;
             if (!container) return;
 
             const windowHeight = window.innerHeight;
@@ -133,6 +158,7 @@ export default () => {
 
             // Устанавливаем высоту для контейнера сцены
             container.style.height = `${sceneHeight}px`;
+            projection.style.height = `${sceneHeight}px`;
 
             console.log(
                 `Adjusting scene height: Window ${windowHeight}px, Header ${headerHeight}px, Scene ${sceneHeight}px`,
@@ -371,7 +397,7 @@ export default () => {
 
                 // Даем уникальное имя каждому клону
                 boxClone.name = `box_clone_size${i}_${Math.random().toString(36).substr(2, 9)}`;
-                boxClone.material.color.set(this.color);
+                boxClone.material.color.set(this.selectedColor);
                 // Добавляем клонированный box к rowClone
                 rowClone.add(boxClone);
             }
@@ -406,18 +432,34 @@ export default () => {
 
             return rowClone; // Возвращаем созданный клон для возможного использования
         },
+        addRow() {
+            this.addedRows.push({
+                size: this.selectedSize,
+                color: this.selectedColor
+            });
 
-        // Функции-обертки для удобства
-        addSmallBox() {
-            return this.addBox("box", 6, -0.106, 0.105);
+            console.log(this.addedRows);
+            switch(this.selectedSize) {
+                case('small'):
+                    return this.addBox("box", 6, -0.106, 0.105);
+                    break;
+                case('medium'):
+                    return this.addBox("box_medium", 4, -0.16, 0.14);
+                    break;
+                case('large'):
+                    return this.addBox("box_large", 3, -0.215, 0.165);
+                    break;
+                default:
+                    return this.addBox("box", 6, -0.106, 0.105);
+                    break;
+            }
         },
 
-        addMediumBox() {
-            return this.addBox("box_medium", 4, -0.16, 0.14);
+        selectColor(color) {
+            this.selectColor = color;
         },
-
-        addLargeBox() {
-            return this.addBox("box_large", 3, -0.215, 0.165);
+        selectSize(size) {
+            this.selectSize = size;
         },
 
         startRenderLoop() {
