@@ -116,6 +116,18 @@
         </div>
     </div>
     @endif
+    @push('scripts')
+        <script src="https://smartcaptcha.yandexcloud.net/captcha.js" defer></script>
+    @endpush
+    
+    <div
+        wire:ignore
+        class="smart-captcha w-full"
+        data-sitekey="{{ config('services.recaptcha.client_key') }}"
+    ></div>
+    @error('smart-token')
+        <span class="text-sm text-red-600 space-y-1">Подтвердите что вы человек</span>
+    @enderror
 
     <div class="flex items-center justify-end mt-4">
         <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}" wire:navigate>

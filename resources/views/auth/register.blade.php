@@ -6,4 +6,4 @@
 
         
     </section>
-</x-guest-layout>
+</x-auth-layout>
