@@ -101,10 +101,6 @@ class Detail extends Component
             }
         }
 
-        \Illuminate\Support\Facades\Log::info("Доступные комбинации", [
-            "combinations" => $availableCombinations,
-        ]);
-
         // Проверяем доступность значений
         foreach ($groupedParams as $paramName => &$paramGroup) {
             foreach ($paramGroup["values"] as &$value) {
@@ -146,28 +142,10 @@ class Detail extends Component
                             $value["is_available"] = true;
                             $value["variant_id"] = $combination["variant_id"];
 
-                            \Illuminate\Support\Facades\Log::info(
-                                "Параметр доступен",
-                                [
-                                    "param_name" => $paramName,
-                                    "param_value" => $value["title"],
-                                    "variant_id" => $combination["variant_id"],
-                                    "combination" => $combinationParams,
-                                ]
-                            );
-
                             break;
                         }
                     }
                 }
-
-                \Illuminate\Support\Facades\Log::info("Статус параметра", [
-                    "param_name" => $paramName,
-                    "param_value" => $value["title"],
-                    "is_current" => $value["is_current"],
-                    "is_available" => $value["is_available"],
-                    "variant_id" => $value["variant_id"],
-                ]);
             }
         }
 
