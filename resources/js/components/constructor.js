@@ -225,7 +225,7 @@ export default () => {
                                 if (child.isMesh) {
                                     child.castShadow = true;
                                     child.receiveShadow = true;
-                                    child.material.color.set('#ffffff');
+                                    child.material.color.set("#ffffff");
                                 }
                             });
 
@@ -423,6 +423,23 @@ export default () => {
                 let boxClone = originalBox.clone();
                 boxClone.visible = true;
 
+                // Создаем новые материалы для каждого клона вместо использования общего материала
+                if (boxClone.material) {
+                    // Если материал один
+                    if (!Array.isArray(boxClone.material)) {
+                        boxClone.material = boxClone.material.clone();
+                        boxClone.material.color.set(this.selectedColor);
+                    }
+                    // Если у объекта массив материалов
+                    else {
+                        boxClone.material = boxClone.material.map((mat) => {
+                            const newMat = mat.clone();
+                            newMat.color.set(this.selectedColor);
+                            return newMat;
+                        });
+                    }
+                }
+
                 // Устанавливаем смещение по оси X для каждого нового box
                 boxClone.position.set(
                     originalBox.position.x + i * offset,
@@ -432,7 +449,7 @@ export default () => {
 
                 // Даем уникальное имя каждому клону
                 boxClone.name = `box_clone_size${i}_${Math.random().toString(36).substr(2, 9)}`;
-                boxClone.material.color.set(this.selectedColor);
+
                 // Добавляем клонированный box к rowClone
                 rowClone.add(boxClone);
                 gsap.to(
@@ -441,21 +458,12 @@ export default () => {
                         y: 0,
                         duration: 0.5,
                         delay: i * 0.02, // Каждый следующий блок падает с небольшой задержкой
-                        ease: "bounce.out", // Используем эффект отскока для реалистичности
-                        onComplete: function () {
-                            // Опционально: можно добавить какое-то действие после завершения анимации
-                            console.log(
-                                `Box ${boxClone.name} animation completed`,
-                            );
-                        },
+                        ease: "bounce.out",
                     },
                 );
             }
 
-            // Устанавливаем позицию нового клона с смещением по Y
-            // Если это первый ряд, устанавливаем его в начальную позицию
-            // Иначе смещаем от последней позиции
-
+            // Установка позиции ряда - все остальное без изменений
             let yPosition = 0;
 
             if (three.lastRowPosition) {
@@ -553,6 +561,152 @@ export default () => {
             console.log("Window resized");
             // Используем функцию установки высоты сцены при изменении размера окна
             this.adjustSceneHeight();
+        },
+
+        removeRow(index) {
+            // Проверяем, существует ли строка с указанным индексом
+            if (index < 0 || index >= this.addedRows.length) {
+                console.warn(
+                    `Попытка удалить несуществующую строку с индексом ${index}`,
+                );
+                return;
+            }
+
+            console.log(
+                `Удаление строки с индексом ${index}, тип: ${this.addedRows[index].size}, цвет: ${this.addedRows[index].color}`,
+            );
+
+            // Находим и удаляем объект строки из сцены
+            const rowName = `row_${index}`;
+            const rowToRemove = three.scene.getObjectByName(rowName);
+
+            if (rowToRemove) {
+                // Анимация исчезновения перед удалением - используем смещение без opacity
+                gsap.to(rowToRemove.position, {
+                    x: rowToRemove.position.x + 2, // Сдвигаем в сторону
+                    duration: 0.3,
+                    onComplete: () => {
+                        // Удаляем объект из сцены
+                        three.scene.remove(rowToRemove);
+                        console.log(`Объект ${rowName} удален из сцены`);
+                        // Удаляем данные о строке из массива
+                        this.addedRows.splice(index, 1);
+                        console.log(
+                            `Данные о строке удалены из addedRows, осталось строк: ${this.addedRows.length}`,
+                        );
+
+                        // Сбрасываем последнюю позицию строки
+                        three.lastRowPosition = new THREE.Vector3(0, 0, 0);
+
+                        // Перестраиваем все строки модели после удаления
+                        this.rebuildRows();
+                        // Очищаем ресурсы
+                        rowToRemove.traverse((child) => {
+                            if (child.isMesh) {
+                                if (child.geometry) child.geometry.dispose();
+                                if (child.material) {
+                                    if (Array.isArray(child.material)) {
+                                        child.material.forEach((material) =>
+                                            material.dispose(),
+                                        );
+                                    } else {
+                                        child.material.dispose();
+                                    }
+                                }
+                            }
+                        });
+                    },
+                });
+            } else {
+                console.warn(`Объект с именем ${rowName} не найден на сцене`);
+            }
+        },
+
+        // Метод для перестройки всех строк модели с правильными позициями
+        rebuildRows() {
+            console.log("Начало перестройки модели...");
+
+            // Удаляем все существующие строки из сцены
+            let removedCount = 0;
+            for (let i = 0; i < this.addedRows.length + 10; i++) {
+                // +10 для уверенности, что очистим все
+                const rowName = `row_${i}`;
+                const existingRow = three.scene.getObjectByName(rowName);
+                if (existingRow) {
+                    three.scene.remove(existingRow);
+                    removedCount++;
+                }
+            }
+            console.log(
+                `Удалено ${removedCount} строк из сцены для перестройки`,
+            );
+
+            // Создаем массив для сохранения данных о строках
+            const rowsData = [...this.addedRows];
+            console.log(`Сохранено данных о ${rowsData.length} строках`);
+
+            // Очищаем массив строк для последующего добавления
+            const currentRows = [...this.addedRows]; // Сохраняем текущие строки
+            this.addedRows = []; // Сбрасываем массив
+
+            // Сбрасываем последнюю позицию строки
+            three.lastRowPosition = new THREE.Vector3(0, 0, 0);
+
+            // Добавляем строки заново в правильном порядке
+            rowsData.forEach((rowData, idx) => {
+                // Устанавливаем параметры для текущей строки
+                this.selectedSize = rowData.size;
+                this.selectedColor = rowData.color;
+
+                console.log(
+                    `Добавление строки ${idx}: размер=${rowData.size}, цвет=${rowData.color}`,
+                );
+
+                let newRow;
+                switch (rowData.size) {
+                    case "small":
+                        newRow = this.addBox("box", 6, -0.106, 0.105);
+                        break;
+                    case "medium":
+                        newRow = this.addBox("box_medium", 4, -0.16, 0.14);
+                        break;
+                    case "large":
+                        newRow = this.addBox("box_large", 3, -0.215, 0.165);
+                        break;
+                    default:
+                        newRow = this.addBox("box", 6, -0.106, 0.105);
+                        break;
+                }
+
+                // Обновляем имя строки, чтобы соответствовать ее новому индексу
+                if (newRow) {
+                    newRow.name = `row_${idx}`;
+                    console.log(`Строке присвоено имя ${newRow.name}`);
+
+                    // Добавляем строку в массив addedRows, если addBox не добавляет ее автоматически
+                    if (this.addedRows.length <= idx) {
+                        this.addedRows.push({
+                            size: rowData.size,
+                            color: rowData.color,
+                        });
+                    }
+                } else {
+                    console.warn(`Не удалось создать строку ${idx}`);
+                }
+            });
+
+            // Проверка: если строки не были добавлены в addedRows в процессе addBox,
+            // восстанавливаем их из сохраненного массива
+            if (this.addedRows.length === 0 && rowsData.length > 0) {
+                console.log(
+                    "Восстановление данных о строках из сохраненного массива",
+                );
+                this.addedRows = rowsData;
+            }
+
+            console.log(
+                `Модель успешно перестроена. Всего строк: ${this.addedRows.length}`,
+            );
         },
 
         cleanup() {
