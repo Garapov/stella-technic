@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
+import Toastify from "toastify-js";
+import { gsap } from "gsap";
 
 // Создаем фабрику для Three.js вне Alpine.js
 const createThreeObjects = () => {
@@ -59,26 +61,20 @@ export default () => {
         selectedColor: "red",
         selectedSize: "small",
         addedRows: [],
-        colors: [
-            'red',
-            'green',
-            'blue',
-            'yellow',
-            'gray'
-        ],
+        colors: ["red", "green", "blue", "yellow", "gray"],
 
         sizes: [
             {
-                name: 'V1',
-                value: "small"
+                name: "V1",
+                value: "small",
             },
             {
-                name: 'V2',
-                value: "medium"
+                name: "V2",
+                value: "medium",
             },
             {
-                name: 'V3',
-                value: "large"
+                name: "V3",
+                value: "large",
             },
         ],
 
@@ -98,7 +94,7 @@ export default () => {
                 0.1,
                 2000,
             );
-            three.camera.position.z = 100;
+            three.camera.position.z = 1;
 
             // Настройка рендерера
             three.renderer = new THREE.WebGLRenderer({
@@ -114,18 +110,44 @@ export default () => {
             three.renderer.shadowMap.enabled = true;
             container.appendChild(three.renderer.domElement);
 
-            // Освещение
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            // Базовый рассеянный свет (минимальной интенсивности)
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
             three.scene.add(ambientLight);
 
+            // Основной направленный свет для создания ярких бликов
             const mainLight = new THREE.DirectionalLight(0xffffff, 1.0);
-            mainLight.position.set(2, 4, 5);
+            mainLight.position.set(1, 4, 2);
             mainLight.castShadow = true;
+            mainLight.shadow.mapSize.width = 2048;
+            mainLight.shadow.mapSize.height = 2048;
             three.scene.add(mainLight);
 
-            const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
-            fillLight.position.set(-5, 2, 3);
+            // Дополнительный точечный свет для создания выраженных бликов
+            const spotLight = new THREE.SpotLight(
+                0xffffff,
+                0.8,
+                100,
+                Math.PI / 4,
+                0.5,
+                1,
+            );
+            spotLight.position.set(-2, 5, 4);
+            spotLight.castShadow = true;
+            three.scene.add(spotLight);
+
+            // Контровой свет для подсветки краев и выделения формы металла
+            const rimLight = new THREE.DirectionalLight(0xadd8e6, 0.6); // Слегка голубоватый для холодного металлического блеска
+            rimLight.position.set(-3, 1, -5);
+            three.scene.add(rimLight);
+
+            // Заполняющий свет для смягчения теней без потери контраста
+            const fillLight = new THREE.DirectionalLight(0xffffee, 0.4); // Слегка теплый тон
+            fillLight.position.set(3, 0, 3);
             three.scene.add(fillLight);
+
+            // Широкий мягкий источник для имитации окружающих отражений
+            const envLight = new THREE.HemisphereLight(0xffffff, 0xcccccc, 0.3);
+            three.scene.add(envLight);
 
             // Настройка управления
             three.controls = new OrbitControls(
@@ -203,15 +225,28 @@ export default () => {
                                 if (child.isMesh) {
                                     child.castShadow = true;
                                     child.receiveShadow = true;
+                                    child.material.color.set('#ffffff');
                                 }
                             });
 
                             // Применяем дополнительные настройки, если они указаны
                             this.applyModelOptions(object, model.options);
-
+                            console.log(model.name);
                             // Если это модель row, сохраняем её как оригинальную
                             if (model.name === "row") {
+                                object.getObjectByName("box", true).position.y =
+                                    0.3;
+                                object.getObjectByName(
+                                    "box_medium",
+                                    true,
+                                ).position.y = 0.3;
+                                object.getObjectByName(
+                                    "box_large",
+                                    true,
+                                ).position.y = 0.3;
+
                                 object.visible = false;
+
                                 object.getObjectByName("box", true).visible =
                                     false;
                                 object.getObjectByName(
@@ -400,6 +435,21 @@ export default () => {
                 boxClone.material.color.set(this.selectedColor);
                 // Добавляем клонированный box к rowClone
                 rowClone.add(boxClone);
+                gsap.to(
+                    rowClone.getObjectByName(boxClone.name, true).position,
+                    {
+                        y: 0,
+                        duration: 0.5,
+                        delay: i * 0.02, // Каждый следующий блок падает с небольшой задержкой
+                        ease: "bounce.out", // Используем эффект отскока для реалистичности
+                        onComplete: function () {
+                            // Опционально: можно добавить какое-то действие после завершения анимации
+                            console.log(
+                                `Box ${boxClone.name} animation completed`,
+                            );
+                        },
+                    },
+                );
             }
 
             // Устанавливаем позицию нового клона с смещением по Y
@@ -419,13 +469,13 @@ export default () => {
             );
 
             // Генерируем уникальное имя для нового клона row
-            const newRowName = `row_clone_size${Math.random().toString(36).substr(2, 9)}`;
+            const newRowName = `row_${this.addedRows.length - 1}`;
             rowClone.name = newRowName;
 
             // Добавляем на сцену клон row с добавленными клонами box
             three.scene.add(rowClone);
 
-            console.log(`Added new row clone at position y: ${yPosition}`);
+            console.log(three.scene);
 
             // Сохраняем позицию последнего добавленного ряда
             three.lastRowPosition = rowClone.position.clone();
@@ -433,20 +483,46 @@ export default () => {
             return rowClone; // Возвращаем созданный клон для возможного использования
         },
         addRow() {
+            if (this.addedRows.length) {
+                if (
+                    (this.addedRows[this.addedRows.length - 1].size ==
+                        "small" &&
+                        (this.selectedSize == "medium" ||
+                            this.selectedSize == "large")) ||
+                    (this.addedRows[this.addedRows.length - 1].size ==
+                        "medium" &&
+                        this.selectedSize == "large")
+                ) {
+                    Toastify({
+                        text: `Выберите ящик меньшего размера.`,
+                        duration: 3000,
+                        close: true,
+                        gravity: "bottom",
+                        position: "right",
+                        stopOnFocus: true,
+                        style: {
+                            background: "linear-gradient(to right, red, red)",
+                        },
+                        onClick: function () {},
+                    }).showToast();
+
+                    return;
+                }
+            }
+
             this.addedRows.push({
                 size: this.selectedSize,
-                color: this.selectedColor
+                color: this.selectedColor,
             });
 
-            console.log(this.addedRows);
-            switch(this.selectedSize) {
-                case('small'):
+            switch (this.selectedSize) {
+                case "small":
                     return this.addBox("box", 6, -0.106, 0.105);
                     break;
-                case('medium'):
+                case "medium":
                     return this.addBox("box_medium", 4, -0.16, 0.14);
                     break;
-                case('large'):
+                case "large":
                     return this.addBox("box_large", 3, -0.215, 0.165);
                     break;
                 default:

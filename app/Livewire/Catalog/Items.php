@@ -35,7 +35,7 @@ class Items extends Component
         $products = null,
         $display_filter = false
     ) {
-        $this->$display_filter = $display_filter;
+        $this->display_filter = $display_filter;
         if ($slug) {
             $this->category = ProductCategory::where("slug", $slug)->first();
             $this->product_ids = $this->category->products->pluck("id");
