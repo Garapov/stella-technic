@@ -3,11 +3,11 @@ import Glide from "@glidejs/glide";
 import Splide from "@splidejs/splide";
 import { Fancybox } from "@fancyapps/ui";
 import mask from "@alpinejs/mask";
-import rangeSlider from 'range-slider-input';
+import rangeSlider from "range-slider-input";
 // import persist from '@alpinejs/persist';
 
 import dropdown from "./components/dropdown";
-import constructor from "./components/constructor";
+import constructor from "./constructor/main";
 import mainSlider from "./components/main-slider";
 import clientsSlider from "./components/clients";
 
