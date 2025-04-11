@@ -23,8 +23,10 @@ export function canAddRow(size, remainingHeight) {
 }
 
 // Расчет позиции для ряда
-export function calculateRowPosition(rows, rowIndex) {
-    const basePosition = BASE_POSITIONS[rows[0]?.size || "small"];
+export function calculateRowPosition(three, rows, rowIndex) {
+    const basePosition = three.originalRow
+        ? three.originalRow.position.y
+        : BASE_POSITIONS[rows[0]?.size || "small"];
 
     // Для первого ряда используем базовую позицию
     if (rowIndex === 0) return basePosition;
@@ -121,7 +123,7 @@ export function addBoxToScene(
 
     // Определяем индекс и рассчитываем позицию
     const index = rowIndex !== null ? rowIndex : addedRows.length;
-    const yPosition = calculateRowPosition(addedRows, index);
+    const yPosition = calculateRowPosition(three, addedRows, index);
 
     // Устанавливаем позицию и имя
     rowClone.position.set(
@@ -130,7 +132,7 @@ export function addBoxToScene(
         three.originalRow.position.z,
     );
 
-    rowClone.name = `row_${addedRows.length - 1}`;
+    rowClone.name = `row_${addedRows.length}`;
 
     // Добавляем на сцену
     three.scene.add(rowClone);

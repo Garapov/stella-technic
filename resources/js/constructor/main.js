@@ -209,14 +209,13 @@ export default () => {
                 return;
             }
 
+            // Создаем ряд
+            const row = this.addBox();
             // Добавляем данные
             this.addedRows.push({
                 size: this.selectedSize,
                 color: this.selectedColor,
             });
-
-            // Создаем ряд
-            const row = this.addBox();
             this.updateHeightInfo();
 
             return row;
@@ -256,11 +255,11 @@ export default () => {
             this.addedRows = [];
 
             // Добавляем ряды заново
-            rowsData.forEach((data, idx) => {
+            rowsData.forEach((data) => {
                 this.selectedSize = data.size;
                 this.selectedColor = data.color;
+                this.addBox();
                 this.addedRows.push(data);
-                this.addBox(idx);
             });
 
             this.log(`Перестройка завершена (${this.addedRows.length} рядов)`);
