@@ -108,8 +108,6 @@ async function loadModel(three, model, logCallback, progressCallback) {
     // Настройка материалов
     object.traverse((child) => {
         if (child.isMesh) {
-            child.castShadow = false;
-            child.receiveShadow = true;
             child.material.color.set("#ffffff");
         }
     });

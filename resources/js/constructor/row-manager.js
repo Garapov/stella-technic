@@ -40,6 +40,46 @@ export function calculateRowPosition(three, rows, rowIndex) {
         );
 }
 
+export function animateBox({three, rowIndex, boxIndex}) {
+    console.log({three, rowIndex, boxIndex})
+    const row = three.scene.getObjectByName(`row_${rowIndex}`, true);
+    if (!row) return;
+    const box = row.getObjectByName(`box_${boxIndex}`, true);
+    if (!box) return;
+
+    let tl = gsap.timeline({repeat: 0});
+    if (box.position.z > 0 && box.rotation.x !== 0) {
+        tl.to(box.position, {
+            z: 0,
+            duration: 0.5,
+            ease: "power3.inOut",
+        });
+        tl.to(box.rotation, {
+            x: 0,
+            duration: 0.5,
+            ease: "power3.inOut",
+        });
+    } else {
+        tl.to(box.rotation, {
+            x: 0.1,
+            duration: 0.5,
+            ease: "power3.inOut",
+        });
+        tl.to(box.position, {
+            z: 0.15,
+            duration: 0.5,
+            ease: "power3.inOut",
+        });
+    }
+    tl = null;
+    // gsap.to(box.position, {
+    //     z: box.position.z > 0 ? 0 : 0.1,
+    //     duration: 0.15,
+    //     delay: 0.05,
+    //     ease: "power3.inOut",
+    // });
+}
+
 // Создание ящиков для ряда
 export function createBoxesForRow(
     rowClone,
@@ -76,7 +116,7 @@ export function createBoxesForRow(
             originalBox.position.z,
         );
 
-        const boxName = `box_${i}_${Math.random().toString(36).slice(2, 9)}`;
+        const boxName = `box_${i}`;
         boxClone.name = boxName;
 
         // Добавление и анимация

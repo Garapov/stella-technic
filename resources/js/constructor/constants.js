@@ -1,6 +1,6 @@
 // Константы размеров
-export const SHELF_HEIGHT = 1515; // мм
-export const ROW_HEIGHTS = { small: 110, medium: 156, large: 178 };
+export const SHELF_HEIGHT = 1450; // мм
+export const ROW_HEIGHTS = { small: 110, medium: 158, large: 178 };
 export const SCALE_FACTOR = 0.00101;
 export const BASE_POSITIONS = { small: 0.176, medium: 0.213, large: 0.23 };
 export const ROW_CONFIGS = {

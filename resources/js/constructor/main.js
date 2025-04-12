@@ -9,8 +9,7 @@ import {
 } from "./three-setup";
 import { loadModels } from "./model-loader";
 import {
-    mmToUnits,
-    canAddRow,
+    animateBox,
     addBoxToScene,
     validateRowAddition,
     removeRowFromScene,
@@ -28,9 +27,50 @@ export default () => {
         error: null,
         selectedColor: "red",
         selectedSize: "small",
-        addedRows: [],
+        addedRows: [
+            {
+                size: 'large',
+                color: 'red'
+            },
+            {
+                size: 'large',
+                color: 'green'
+            },
+            {
+                size: 'large',
+                color: 'blue'
+            },
+            {
+                size: 'medium',
+                color: 'yellow'
+            },
+            {
+                size: 'medium',
+                color: 'gray'
+            },
+            {
+                size: 'medium',
+                color: 'red'
+            },
+            {
+                size: 'small',
+                color: 'green'
+            },
+            {
+                size: 'small',
+                color: 'blue'
+            },
+            {
+                size: 'small',
+                color: 'yellow'
+            },
+            {
+                size: 'small',
+                color: 'gray'
+            }
+        ],
         colors: ["red", "green", "blue", "yellow", "gray"],
-        debugMode: true,
+        debugMode: false,
 
         // Инициализация debugInfo
         debugInfo: {
@@ -102,6 +142,7 @@ export default () => {
                 if (this.debugMode) {
                     setInterval(() => this.updateDebugInfo(), 1000);
                 }
+                this.rebuildRows();
             } catch (error) {
                 this.error = error.message;
                 console.error("Ошибка инициализации:", error);
@@ -174,6 +215,14 @@ export default () => {
                 this.debugMode,
                 this.addedRows,
             );
+        },
+
+        tookOutBox({rowIndex, boxIndex}) {
+            return animateBox({
+                three,
+                rowIndex,
+                boxIndex
+            })
         },
 
         // Логирование

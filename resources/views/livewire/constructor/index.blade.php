@@ -108,7 +108,7 @@
             <div class="absolute top-0 left-0 w-full h-full flex flex-col-reverse justify-start gap-1.5 p-4">
                 <template x-for="(row, index) in addedRows" :key="index">
                     <div class="w-full relative">
-                        <template x-if="row.size == 'small'">
+                        <template x-if="row.size == 'small'" >
                             <x-constructor-row />
                         </template>
                         <template x-if="row.size == 'medium'">
