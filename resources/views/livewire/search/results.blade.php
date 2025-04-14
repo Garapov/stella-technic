@@ -5,7 +5,7 @@
             <div class="grid gap-4 sm:grid-cols-1 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
                 @foreach($results['products'] as $product)
                     @livewire(
-                        'general.product',
+                        'general.product-variant',
                         [
                             'product' => $product,
                         ],

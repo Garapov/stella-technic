@@ -11,6 +11,9 @@ import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
  * @returns {Promise<boolean>} Статус загрузки
  */
 export async function loadModels(three, models, logCallback, progressCallback) {
+    const group = new THREE.Group();
+    group.name = "models";
+    three.scene.add(group);
     // Загрузка всех моделей параллельно
     await Promise.all(
         models.map((model, index) => {
@@ -40,7 +43,9 @@ export async function loadModels(three, models, logCallback, progressCallback) {
                         progressCallback(totalProgress);
                     }
                 },
-            );
+            ).then((object) => {
+                group.add(object);
+            });
         }),
     );
 
@@ -111,6 +116,7 @@ async function loadModel(three, model, logCallback, progressCallback) {
             child.material.color.set("#ffffff");
         }
     });
+    object.name = model.name;
 
     // Применение позиции
     if (model.position) {
@@ -118,10 +124,7 @@ async function loadModel(three, model, logCallback, progressCallback) {
         object.position.set(x, y, z);
     }
 
-    // Специальная обработка для row модели
-    if (model.name === "row") {
-        setupRowModel(three, object);
-    }
+    
 
     // Добавление на сцену
     three.scene.add(object);
@@ -136,18 +139,54 @@ async function loadModel(three, model, logCallback, progressCallback) {
 /**
  * Настраивает модель ряда
  * @param {Object} three Объект Three.js контейнера
- * @param {Object} object Объект модели ряда
  */
-export function setupRowModel(three, object) {
+export function setupRowModels(three) {
+    let models = three.scene.getObjectByName("models");
+    let clonedModels = three.scene.getObjectByName("clonedModels");
+
+    console.log(models, clonedModels);
+
+    if (!models || !clonedModels) {
+        return;
+    }
+
+    let row = models.getObjectByName("row", true);
+    let rowFromClone = clonedModels.getObjectByName("row", true);
+
+    if (!row || !rowFromClone) {
+        return;
+    }
+
     // Настройка видимости и позиции компонентов
     ["box", "box_medium", "box_large"].forEach((name) => {
-        const box = object.getObjectByName(name, true);
+        const box = row.getObjectByName(name, true);
+        const boxClone = rowFromClone.getObjectByName(name, true);
         if (box) {
             box.position.y = 0.3;
             box.visible = false;
         }
+        if (boxClone) {
+            boxClone.position.y = 0.3;
+            boxClone.visible = false;
+        }
     });
 
-    object.visible = false;
-    three.originalRow = object.clone();
+    three.originalRow = row.clone();
+    three.originalClonedRow = rowFromClone.clone();
+
+console.log(three.originalRow, three.originalClonedRow);
+
+
+
+    // Настройка видимости и позиции компонентов
+    // ["box", "box_medium", "box_large"].forEach((name) => {
+    //     const box = object.getObjectByName(name, true);
+    //     if (box) {
+    //         box.position.y = 0.3;
+    //         box.visible = false;
+    //     }
+    // });
+
+    // object.visible = false;
+    // three.originalRow = object.clone();
 }

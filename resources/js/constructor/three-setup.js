@@ -46,7 +46,7 @@ export function setupThreeEnvironment(container) {
 // Настройка освещения
 export function setupLights(scene) {
     // Базовый свет
-    scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+    scene.add(new THREE.AmbientLight(0xffffff, 1));
 
     // Направленный свет
     const mainLight = new THREE.DirectionalLight(0xffffff, 1.0);

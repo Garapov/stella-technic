@@ -1,4 +1,3 @@
-import * as THREE from "three";
 import { gsap } from "gsap";
 import Toastify from "toastify-js";
 import {
@@ -48,28 +47,38 @@ export function animateBox({three, rowIndex, boxIndex}) {
     if (!box) return;
 
     let tl = gsap.timeline({repeat: 0});
-    if (box.position.z > 0 && box.rotation.x !== 0) {
+    if (box.position.z > 0) {
+        tl.to(box.rotation, {
+            x: -0.1,
+            duration: 0.2,
+            ease: "power3.inOut",
+        });
         tl.to(box.position, {
             z: 0,
-            duration: 0.5,
+            duration: 0.2,
             ease: "power3.inOut",
         });
         tl.to(box.rotation, {
             x: 0,
-            duration: 0.5,
+            duration: 0.2,
             ease: "power3.inOut",
         });
     } else {
         tl.to(box.rotation, {
-            x: 0.1,
-            duration: 0.5,
+            x: -0.1,
+            duration: 0.2,
             ease: "power3.inOut",
         });
         tl.to(box.position, {
             z: 0.15,
-            duration: 0.5,
+            duration: 0.2,
             ease: "power3.inOut",
         });
+        tl.to(box.rotation, {
+            x: 0,
+            duration: 0.2,
+            ease: "power3.inOut",
+        }, 0.3)
     }
     tl = null;
     // gsap.to(box.position, {
@@ -149,17 +158,21 @@ export function addBoxToScene(
 
     // Клонирование ряда
     const rowClone = three.originalRow.clone();
+    const rowClonedClone = three.originalClonedRow.clone();
     rowClone.visible = true;
+    rowClonedClone.visible = true;
 
     // Получаем нужный тип бокса
     const originalBox = rowClone.getObjectByName(config.selector, true);
-    if (!originalBox) {
+    const originalClonedBox = rowClonedClone.getObjectByName(config.selector, true);
+    if (!originalBox || !originalClonedBox) {
         console.error(`Бокс ${config.selector} не найден в модели ряда`);
         return;
     }
 
     // Создаем боксы для ряда
     createBoxesForRow(rowClone, originalBox, config, selectedColor);
+    createBoxesForRow(rowClonedClone, originalClonedBox, config, selectedColor);
 
     // Определяем индекс и рассчитываем позицию
     const index = rowIndex !== null ? rowIndex : addedRows.length;
@@ -171,11 +184,18 @@ export function addBoxToScene(
         yPosition,
         three.originalRow.position.z,
     );
+    rowClonedClone.position.set(
+        three.originalClonedRow.position.x,
+        yPosition,
+        three.originalClonedRow.position.z,
+    );
 
     rowClone.name = `row_${addedRows.length}`;
+    rowClonedClone.name = `row_${addedRows.length}`;
 
     // Добавляем на сцену
-    three.scene.add(rowClone);
+    three.scene.getObjectByName("models").add(rowClone);
+    three.scene.getObjectByName("clonedModels").add(rowClonedClone);
     three.lastRowPosition = rowClone.position.clone();
 
     logCallback(`Добавлен ряд #${index} (${selectedSize})`);

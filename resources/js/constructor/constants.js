@@ -20,6 +20,6 @@ export const MODELS = [
         name: "row",
         obj: "/assets/models/row.obj",
         mtl: "/assets/models/row.mtl",
-        position: { x: 0, y: 0.05, z: -0.25 },
+        position: { x: 0, y: 0.08, z: -0.25 },
     },
 ];

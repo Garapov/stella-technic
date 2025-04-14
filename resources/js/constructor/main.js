@@ -7,6 +7,8 @@ import {
     fitCameraToObjects,
     startRenderLoop,
 } from "./three-setup";
+
+import { addDeskClone } from "./desk-manager";
 import { loadModels } from "./model-loader";
 import {
     animateBox,
@@ -27,47 +29,49 @@ export default () => {
         error: null,
         selectedColor: "red",
         selectedSize: "small",
+        deskTypes: ["Односторонняя", "Двусторонняя"],
+        selectedDeskType: "Односторонняя",
         addedRows: [
-            {
-                size: 'large',
-                color: 'red'
-            },
-            {
-                size: 'large',
-                color: 'green'
-            },
-            {
-                size: 'large',
-                color: 'blue'
-            },
-            {
-                size: 'medium',
-                color: 'yellow'
-            },
-            {
-                size: 'medium',
-                color: 'gray'
-            },
-            {
-                size: 'medium',
-                color: 'red'
-            },
-            {
-                size: 'small',
-                color: 'green'
-            },
-            {
-                size: 'small',
-                color: 'blue'
-            },
-            {
-                size: 'small',
-                color: 'yellow'
-            },
-            {
-                size: 'small',
-                color: 'gray'
-            }
+            // {
+            //     size: 'large',
+            //     color: 'red'
+            // },
+            // {
+            //     size: 'large',
+            //     color: 'green'
+            // },
+            // {
+            //     size: 'large',
+            //     color: 'blue'
+            // },
+            // {
+            //     size: 'medium',
+            //     color: 'yellow'
+            // },
+            // {
+            //     size: 'medium',
+            //     color: 'gray'
+            // },
+            // {
+            //     size: 'medium',
+            //     color: 'red'
+            // },
+            // {
+            //     size: 'small',
+            //     color: 'green'
+            // },
+            // {
+            //     size: 'small',
+            //     color: 'blue'
+            // },
+            // {
+            //     size: 'small',
+            //     color: 'yellow'
+            // },
+            // {
+            //     size: 'small',
+            //     color: 'gray'
+            // }
         ],
         colors: ["red", "green", "blue", "yellow", "gray"],
         debugMode: false,
@@ -143,10 +147,25 @@ export default () => {
                     setInterval(() => this.updateDebugInfo(), 1000);
                 }
                 this.rebuildRows();
+
+                this.addDeskClone();
+
+                
+
+                this.$watch('selectedDeskType', (newVal, oldVal) => {
+                    this.changeDeskType(newVal, oldVal);
+                });
             } catch (error) {
                 this.error = error.message;
                 console.error("Ошибка инициализации:", error);
             }
+        },
+
+        changeDeskType(newVal, oldVal) {
+            console.log(newVal, oldVal);
+        },
+        addDeskClone() {
+            addDeskClone(three);
         },
 
         updateProgress(value) {

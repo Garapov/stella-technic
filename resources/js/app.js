@@ -4,6 +4,7 @@ import Splide from "@splidejs/splide";
 import { Fancybox } from "@fancyapps/ui";
 import mask from "@alpinejs/mask";
 import rangeSlider from "range-slider-input";
+// import sort from '@alpinejs/sort'
 // import persist from '@alpinejs/persist';
 
 import dropdown from "./components/dropdown";
@@ -84,6 +85,6 @@ document.addEventListener("init-map", (data) => {
 });
 
 Alpine.plugin(mask);
-// Alpine.plugin(persist)
+// Alpine.plugin(sort)
 
 // Alpine.start();

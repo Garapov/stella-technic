@@ -1,5 +1,5 @@
-<div class="h-full grid grid-cols-8" x-data="construct">
-    <div class="bg-white dark:bg-gray-700 p-12 col-span-3 flex flex-col items-center relative z-10" x-ref="projection">
+<div class="h-full grid grid-cols-9" x-data="construct">
+    <div class="bg-white dark:bg-gray-700 p-12 col-span-3 flex flex-col items-center relative" x-ref="projection">
         <div class="absolute right-0 top-[50%] p-4 bg-gray-200 dark:bg-gray-700 translate-y-[-50%] flex flex-col items-center gap-2 rounded-l-lg">
             <template x-for="(color, index) in colors" :key="index">
                 <label
@@ -124,7 +124,16 @@
             <img src="{{ asset('assets/stand.svg') }}" class="max-h-full" alt="">
         </div>
     </div>
-    <div class="relative col-span-5 bg-gray-200 dark:bg-gray-700" x-ref="scene">
+    <div class="bg-white dark:bg-gray-700 py-12 px-4 col-span-2 flex flex-col gap-4 relative">
+        <div class="text-xl italic font-semibold text-gray-900 dark:text-white">1. Выберите тип стойки</div>
+        <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
+            <template x-for="(deskType, index) in deskTypes" :key="index">
+                <button type="button" class="px-5 py-2.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="deskType" @click="selectedDeskType = deskType" :class="{ 'opacity-50': selectedDeskType != deskType }"></button>
+            </template>
+        </div>
+        <div x-text="selectedDeskType"></div>
+    </div>
+    <div class="relative col-span-4 bg-gray-200 dark:bg-gray-700" x-ref="scene">
         <div class="absolute top-0 left-0 w-full h-full bg-gray-200 flex flex-col items-center justify-center gap-4 p-10" x-show="!isLoaded">
             <div class="text-lg text-gray-500">Загружаем 3D модели</div>
             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full flex justify-center">

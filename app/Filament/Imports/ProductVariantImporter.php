@@ -33,11 +33,12 @@ class ProductVariantImporter extends Importer
                 ->label("Родительский товар")
                 ->requiredMapping()
                 ->guess(["product_id", "product", "parent"])
-                ->fillRecordUsing(function (
+                ->castStateUsing(function (
                     $state,
                     ProductVariantImporter $importer,
                     $record
                 ) {
+                    
                     try {
                         $data = json_decode($state, true);
                     } catch (\Exception $e) {
@@ -45,9 +46,7 @@ class ProductVariantImporter extends Importer
                             $e->getMessage()
                         );
                     }
-
-                    // dump(['product_id data', $data]);
-                    // Log::info('$data', ['data' => $data]);
+                    
                     $requiredFields = ["name", "image", "categories"];
                     foreach ($requiredFields as $field) {
                         if (empty($data[$field])) {
@@ -57,15 +56,23 @@ class ProductVariantImporter extends Importer
                             break;
                         }
                     }
-                    $data["gallery"] = static::processImageStatic(
-                        $data["image"],
-                        "products",
-                        $importer
-                    );
+                    try {
+                        $data["gallery"] = static::processImageStatic(
+                            $data["image"],
+                            "products",
+                            $importer
+                        );
+                    } catch (\Exception $e) {
+                        Log::error($e->getMessage());
+                    }
+
+                    
 
                     $data["image"] = "/assets/placeholder.svg";
 
                     $product = Product::where("name", $data["name"])->first();
+
+                    
 
                     if (!$product) {
                         $product = Product::create($data);
@@ -73,6 +80,7 @@ class ProductVariantImporter extends Importer
                     } else {
                         // dump("Обновляется товар: " . $product->name);
                     }
+                    
 
                     if (
                         isset($data["categories"]) &&
@@ -95,9 +103,17 @@ class ProductVariantImporter extends Importer
                         }
                     }
                     sleep(0.3);
-                    $record->product_id = $product->id;
+
+                    
+                    return $product->id;
+                })->fillRecordUsing(function (
+                    $state,
+                    ProductVariantImporter $importer,
+                    $record
+                ) {
+                    Log::warning($state);
                 })
-                ->rules(["required", "json"]),
+                ->rules(["required"]),
             ImportColumn::make("name")
                 ->ignoreBlankState()
                 ->rules(["nullable"]),
@@ -137,8 +153,9 @@ class ProductVariantImporter extends Importer
                     $record
                 ): void {
                     $data = \json_decode($state, true);
+                    
 
-                    $variationName = $record->product->name;
+                    $variationName = Product::where('id', $importer->data['product_id'])->first()->name;
                     $variatinLinks = "";
 
                     foreach ($data as $paramItem) {
@@ -281,16 +298,30 @@ class ProductVariantImporter extends Importer
 
     public function resolveRecord(): ?ProductVariant
     {
-        $product = ProductVariant::firstOrNew([
-            // Update existing records, matching them by `$this->data['column_name']`
-            "sku" => $this->data["sku"],
-        ]);
+        
+        $product = ProductVariant::where("sku", $this->data['sku'])->first();
+        
+        // if ($product) {
+            Log::warning([gettype($this->data['sku']), $this->data['sku']]);
+        // }
         
         if (!$this->options["updateExisting"] && $product) {
             throw new RowImportFailedException(
                 "Найден товар с артикулом '{$product->sku}', но обновление товаров отключено."
             );
+        } else {
+            $product = new ProductVariant();
+            $product->product_id = $this->data['product_id'];
+            $product->sku = $this->data['sku'];
+            $product->price = 100000;
+            $product->name = 'Не задано';
+            $product->image = "/assets/placeholder.svg";
+            // $product->save();
         }
+        dump([$product->sku, $this->data['sku']]);
+
+        
+        
 
         $this->steps[] = 'resolveRecord';
 
@@ -384,25 +415,14 @@ class ProductVariantImporter extends Importer
 
     public function saveRecord(): void
     {
-        // Log::info('saveRecord start', [
-        //     'product_name' => $this->record->name,
-        //     'data' => $this->data
-        // ]);
-
         try {
             $this->record->save();
-            // Log::info('saveRecord: product saved successfully', ['id' => $this->record->id]);
             sleep(0.3);
             $this->import->update([
                 "processed_rows" => $this->import->processed_rows + 1,
                 "successful_rows" => $this->import->successful_rows + 1,
             ]);
         } catch (\Exception $e) {
-            Log::error("saveRecord error", [
-                "message" => $e->getMessage(),
-                "product_name" => $this->record->name,
-            ]);
-
             $this->import->update([
                 "processed_rows" => $this->import->processed_rows + 1,
                 "failed_rows" => $this->import->failed_rows + 1,
@@ -414,7 +434,7 @@ class ProductVariantImporter extends Importer
 
     public function beforeValidate(): void
     {
-        // Log::info('beforeValidate start', ['row_data' => $this->data]);
+        
         $this->import->update([
             "status" => "processing",
         ]);
@@ -423,19 +443,17 @@ class ProductVariantImporter extends Importer
 
     public function afterValidate(): void
     {
-        // Log::info('afterValidate', ['validation_passed' => true]);
         $this->steps[] = 'afterValidate';
     }
 
     public function beforeFill(): void
     {
-        // Log::info('beforeFill start');
+        
         $this->steps[] = 'beforeFill';
     }
 
     public function afterFill(): void
     {
-        // Log::info('afterFill complete', ['filled_data' => $this->data]);
         $this->steps[] = 'afterFill';
     }
 

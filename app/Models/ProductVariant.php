@@ -76,14 +76,7 @@ class ProductVariant extends Model
         parent::boot();
 
         static::creating(function ($variant) {
-            if (
-                !$variant->product
-                    ->variants()
-                    ->where("is_default", true)
-                    ->exists()
-            ) {
-                $variant->is_default = true;
-            }
+            $variant->is_default = false;
 
             if (!$variant->sku) {
                 $variant->sku = (string) Str::random(10);
