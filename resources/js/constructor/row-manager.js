@@ -269,23 +269,15 @@ export function removeRowFromScene(three, index, addedRows, logCallback) {
 
     // Находим объект ряда
     const rowName = `row_${index}`;
-    const rowToRemove = three.scene.getObjectByName(rowName);
-    console.log(rowToRemove);
+    const models = three.scene.getObjectByName('models');
+    const clonedModels = three.scene.getObjectByName('clonedModels');
+    const rowToRemove = models.getObjectByName(rowName);
+    const cloneRowToRemove = clonedModels.getObjectByName(rowName);
 
-    if (rowToRemove) {
-        three.scene.remove(rowToRemove);
-
-        // Очистка ресурсов
-        rowToRemove.traverse((child) => {
-            if (child.isMesh) {
-                child.geometry?.dispose();
-                if (Array.isArray(child.material)) {
-                    child.material.forEach((m) => m.dispose());
-                } else {
-                    child.material?.dispose();
-                }
-            }
-        });
+    if (rowToRemove && cloneRowToRemove) {
+        models.remove(rowToRemove);
+        clonedModels.remove(cloneRowToRemove);
+        console.log('rowToRemove, cloneRowToRemove', rowToRemove, cloneRowToRemove);
     }
 
     return true;

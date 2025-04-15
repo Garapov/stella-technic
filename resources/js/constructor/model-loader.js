@@ -114,6 +114,8 @@ async function loadModel(three, model, logCallback, progressCallback) {
     object.traverse((child) => {
         if (child.isMesh) {
             child.material.color.set("#ffffff");
+            child.castShadow = true;
+            child.receiveShadow = false;
         }
     });
     object.name = model.name;
@@ -123,8 +125,6 @@ async function loadModel(three, model, logCallback, progressCallback) {
         const { x = 0, y = 0, z = 0 } = model.position;
         object.position.set(x, y, z);
     }
-
-    
 
     // Добавление на сцену
     three.scene.add(object);
@@ -174,9 +174,7 @@ export function setupRowModels(three) {
     three.originalRow = row.clone();
     three.originalClonedRow = rowFromClone.clone();
 
-console.log(three.originalRow, three.originalClonedRow);
-
-
+    console.log(three.originalRow, three.originalClonedRow);
 
     // Настройка видимости и позиции компонентов
     // ["box", "box_medium", "box_large"].forEach((name) => {

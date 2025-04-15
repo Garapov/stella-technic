@@ -6,9 +6,10 @@ import {
     setupThreeEnvironment,
     fitCameraToObjects,
     startRenderLoop,
+    createFloor,
 } from "./three-setup";
 
-import { addDeskClone } from "./desk-manager";
+import { addDeskClone, changeDeskCloneVisibility } from "./desk-manager";
 import { loadModels } from "./model-loader";
 import {
     animateBox,
@@ -134,6 +135,7 @@ export default () => {
 
                 // Финальная настройка
                 fitCameraToObjects(three);
+                this.addFloorToScene(three);
                 startRenderLoop(three, this.debugMode); // Передаем флаг debugMode
                 this.updateHeightInfo();
 
@@ -146,14 +148,13 @@ export default () => {
                 if (this.debugMode) {
                     setInterval(() => this.updateDebugInfo(), 1000);
                 }
-                this.rebuildRows();
 
                 this.addDeskClone();
 
-                
+                this.rebuildRows();
 
-                this.$watch('selectedDeskType', (newVal, oldVal) => {
-                    this.changeDeskType(newVal, oldVal);
+                this.$watch("selectedDeskType", (newVal, oldVal) => {
+                    this.changeDeskCloneVisibility(newVal, oldVal);
                 });
             } catch (error) {
                 this.error = error.message;
@@ -161,8 +162,11 @@ export default () => {
             }
         },
 
-        changeDeskType(newVal, oldVal) {
-            console.log(newVal, oldVal);
+        changeDeskCloneVisibility(newVal, oldVal) {
+            if (newVal === "Односторонняя")
+                changeDeskCloneVisibility(three, false);
+            if (newVal === "Двусторонняя")
+                changeDeskCloneVisibility(three, true);
         },
         addDeskClone() {
             addDeskClone(three);
@@ -189,7 +193,12 @@ export default () => {
                 three.renderer.setSize(container.clientWidth, sceneHeight);
                 three.camera.aspect = container.clientWidth / sceneHeight;
                 three.camera.updateProjectionMatrix();
+                three.renderer.shadowMap.enabled = true;
             }
+        },
+
+        addFloorToScene(three) {
+            return createFloor(three);
         },
 
         // Обновление информации о высоте
@@ -236,12 +245,12 @@ export default () => {
             );
         },
 
-        tookOutBox({rowIndex, boxIndex}) {
+        tookOutBox({ rowIndex, boxIndex }) {
             return animateBox({
                 three,
                 rowIndex,
-                boxIndex
-            })
+                boxIndex,
+            });
         },
 
         // Логирование
@@ -315,8 +324,15 @@ export default () => {
 
             // Удаляем существующие ряды
             for (let i = 0; i < rowsData.length + 1; i++) {
-                const row = three.scene.getObjectByName(`row_${i}`);
-                if (row) three.scene.remove(row);
+                const models = three.scene.getObjectByName("models");
+                const clonedModels =
+                    three.scene.getObjectByName("clonedModels");
+                const row = models.getObjectByName(`row_${i}`);
+                const rowClone = clonedModels.getObjectByName(`row_${i}`);
+                if (row && rowClone) {
+                    models.remove(row);
+                    clonedModels.remove(rowClone);
+                }
             }
 
             // Очищаем и восстанавливаем

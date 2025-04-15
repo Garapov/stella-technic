@@ -37,6 +37,9 @@ export function setupThreeEnvironment(container) {
     three.controls.enableDamping = true;
     three.controls.dampingFactor = 0.05;
 
+    three.renderer.shadowMap.enabled = true;
+    three.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+
     // Настройка освещения
     setupLights(three.scene);
 
@@ -50,47 +53,57 @@ export function setupLights(scene) {
 
     // Направленный свет
     const mainLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    mainLight.position.set(1, 4, 2);
+    mainLight.castShadow = true;
+    mainLight.shadow.radius = 0.1;
+    mainLight.shadow.blurSamples = 1;
+    mainLight.position.set(1, 2, 2);
     scene.add(mainLight);
 
-    // Дополнительное освещение для металлического эффекта
-    [
-        {
-            type: "spot",
-            color: 0xffffff,
-            intensity: 0.8,
-            position: [-2, 5, 4],
-        },
-        {
-            type: "directional",
-            color: 0xadd8e6,
-            intensity: 0.6,
-            position: [-3, 1, -5],
-        },
-        {
-            type: "directional",
-            color: 0xffffee,
-            intensity: 0.4,
-            position: [3, 0, 3],
-        },
-    ].forEach((light) => {
-        const newLight =
-            light.type === "spot"
-                ? new THREE.SpotLight(
-                      light.color,
-                      light.intensity,
-                      100,
-                      Math.PI / 4,
-                      0.5,
-                  )
-                : new THREE.DirectionalLight(light.color, light.intensity);
+    // const pointLight = new THREE.PointLight(0xff0000, 1, 100);
+    // pointLight.position.set(50, 50, 50);
+    // pointLight.castShadow = true;
+    // pointLight.target = scene.getObjectByName("models");
+    // scene.add(pointLight);
 
-        newLight.position.set(...light.position);
-        scene.add(newLight);
-    });
+    // Дополнительное освещение для металлического эффекта
+    // [
+    //     {
+    //         type: "spot",
+    //         color: 0xffffff,
+    //         intensity: 0.8,
+    //         position: [-2, 5, 4],
+    //     },
+    //     {
+    //         type: "directional",
+    //         color: 0xadd8e6,
+    //         intensity: 0.6,
+    //         position: [-3, 1, -5],
+    //     },
+    //     {
+    //         type: "directional",
+    //         color: 0xffffee,
+    //         intensity: 0.4,
+    //         position: [3, 0, 3],
+    //     },
+    // ].forEach((light) => {
+    //     const newLight =
+    //         light.type === "spot"
+    //             ? new THREE.SpotLight(
+    //                   light.color,
+    //                   light.intensity,
+    //                   100,
+    //                   Math.PI / 4,
+    //                   0.5,
+    //               )
+    //             : new THREE.DirectionalLight(light.color, light.intensity);
+
+    //     newLight.position.set(...light.position);
+    //     newLight.castShadow = true;
+    //     scene.add(newLight);
+    // });
 
     // Полусферическое освещение
-    scene.add(new THREE.HemisphereLight(0xffffff, 0xcccccc, 0.3));
+    scene.add(new THREE.HemisphereLight(0xffffff, 0xcccccc, 1));
 }
 
 // Подгонка камеры к объектам
@@ -120,6 +133,23 @@ export function fitCameraToObjects(three) {
     three.camera.position.copy(center).add(direction.multiplyScalar(distance));
     three.camera.updateProjectionMatrix();
     three.controls.update();
+}
+
+export function createFloor(three) {
+    const floorGeometry = new THREE.PlaneGeometry(10, 10); // Width and height of the plane
+    const floorMaterial = new THREE.MeshStandardMaterial({
+        color: 0xfefefe,
+    }); // Color it gray for now
+    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+
+    // Rotate the floor to be horizontal (plane geometries are vertical by default)
+    floor.rotation.x = Math.PI / -2;
+
+    // Add shadow properties to the floor
+    floor.receiveShadow = true;
+    floor.name = "floor";
+
+    three.scene.add(floor);
 }
 
 // Запуск цикла рендеринга
