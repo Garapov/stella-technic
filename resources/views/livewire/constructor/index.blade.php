@@ -1,22 +1,5 @@
 <div class="h-full grid grid-cols-9" x-data="construct">
     <div class="bg-white dark:bg-gray-700 p-12 col-span-3 flex flex-col items-center relative" x-ref="projection">
-        <div class="absolute right-0 top-[50%] p-4 bg-gray-200 dark:bg-gray-700 translate-y-[-50%] flex flex-col items-center gap-2 rounded-l-lg">
-            <template x-for="(color, index) in colors" :key="index">
-                <label
-                    class="w-6 h-6 rounded-full cursor-pointer"
-                    :class="{ 'opacity-25': color != selectedColor }"
-                    :style="`background: ${color};`"
-                ><input type="radio" name="colors" :value="color" x-model="selectedColor" class="hidden"></label>
-            </template>
-            <template x-for="(size, index) in sizes" :key="index">
-                <label
-                    class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300 cursor-pointer"
-                    :class="{ 'opacity-25': size.value != selectedSize }"
-                ><span x-text="size.name"></span><input type="radio" name="sizes" :value="size.value" x-model="selectedSize" class="hidden"></label>
-            </template>
-
-            <button type="button" class="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" @click="addRow">+</button>
-        </div>
 
         <!-- Кнопка для включения режима отладки, когда режим выключен -->
         <button @click="toggleDebugMode" x-show="!debugMode" class="debug-toggle">
@@ -128,12 +111,43 @@
         <div class="text-xl italic font-semibold text-gray-900 dark:text-white">1. Выберите тип стойки</div>
         <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
             <template x-for="(deskType, index) in deskTypes" :key="index">
-                <button type="button" class="px-5 py-2.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="deskType" @click="selectedDeskType = deskType" :class="{ 'opacity-50': selectedDeskType != deskType }"></button>
+                <button type="button" class="grow px-5 py-2.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="deskType" @click="selectedDeskType = deskType" :class="{ 'opacity-50': selectedDeskType != deskType }"></button>
             </template>
         </div>
-        <div x-text="selectedDeskType"></div>
+        <div class="flex flex-col gap-2">
+            <div class="text-md italic font-semibold text-gray-900 dark:text-white">Размещение:</div>
+            <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
+                <template x-for="(position, index) in positions" :key="index">
+                    <button type="button" class="grow px-3 py-1.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="position.name" @click="selectedPosition = position.value" :class="{ 'opacity-50': position.value != selectedPosition }"></button>
+                </template>
+            </div>
+        </div>
+
+        <div class="text-xl italic font-semibold text-gray-900 dark:text-white">2. Выберите тип и цвет ящиков в одном ряду</div>
+        <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
+            <template x-for="(size, index) in sizes" :key="index">
+                <button type="button" class="grow px-5 py-2.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="size.name" @click="selectedSize = size.value" :class="{ 'opacity-50': size.value != selectedSize }"></button>
+            </template>
+        </div>
+        <div class="flex item-center justify-center gap-2 rounded-md shadow-xs" role="group">
+            <template x-for="(color, index) in colors" :key="index">
+                <label
+                    class="w-10 h-10 rounded-full cursor-pointer transition-all"
+                    :class="{ 'opacity-25 border-8 border-white': color != selectedColor }"
+                    :style="`background: ${color};`"
+                ><input type="radio" name="colors" :value="color" x-model="selectedColor" class="hidden"></label>
+            </template>
+        </div>
+        <div class="flex items-center justify-center">
+            <button type="button" class="text-white bg-green-500 hover:bg-green-500/80 focus:ring-4 focus:outline-none focus:ring-green-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-green-500/80 dark:focus:ring-green-500/40 me-2 mb-2"  @click="addRow">
+                <x-carbon-add-alt class="w-4 h-4 me-2 -ms-1" />
+                Добавить
+            </button>
+        </div>
+
+        
     </div>
-    <div class="relative col-span-4 bg-gray-200 dark:bg-gray-700" x-ref="scene">
+    <div class="relative col-span-4 bg-white dark:bg-gray-700" x-ref="scene">
         <div class="absolute top-0 left-0 w-full h-full bg-gray-200 flex flex-col items-center justify-center gap-4 p-10" x-show="!isLoaded">
             <div class="text-lg text-gray-500">Загружаем 3D модели</div>
             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full flex justify-center">

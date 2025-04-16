@@ -65,32 +65,34 @@ async function loadModel(three, model, logCallback, progressCallback) {
     logCallback(`Загрузка модели ${model.name}`);
 
     // Загрузка материалов
-    const materials = await new Promise((resolve, reject) => {
-        new MTLLoader().load(
-            model.mtl,
-            (materials) => resolve(materials),
-            // Прогресс загрузки материалов
-            (xhr) => {
-                if (xhr.lengthComputable) {
-                    const progress = (xhr.loaded / xhr.total) * 50; // Материалы - 50% общего прогресса
-                    if (progressCallback) progressCallback(progress);
-                }
-            },
-            (error) =>
-                reject(
-                    new Error(
-                        `Ошибка загрузки материалов для ${model.name}: ${error.message}`,
-                    ),
-                ),
-        );
+    // const materials = await new Promise((resolve, reject) => {
+    //     new MTLLoader().load(
+    //         model.mtl,
+    //         (materials) => resolve(materials),
+    //         // Прогресс загрузки материалов
+    //         (xhr) => {
+    //             if (xhr.lengthComputable) {
+    //                 const progress = (xhr.loaded / xhr.total) * 50; // Материалы - 50% общего прогресса
+    //                 if (progressCallback) progressCallback(progress);
+    //             }
+    //         },
+    //         (error) =>
+    //             reject(
+    //                 new Error(
+    //                     `Ошибка загрузки материалов для ${model.name}: ${error.message}`,
+    //                 ),
+    //             ),
+    //     );
+    // });
+
+    // materials.preload();
+    const material = new THREE.MeshStandardMaterial({
+        color: 0xfefefe,
     });
-
-    materials.preload();
-
     // Загрузка объекта
     const object = await new Promise((resolve, reject) => {
         const objLoader = new OBJLoader();
-        objLoader.setMaterials(materials);
+        // objLoader.setMaterials(materials);
         objLoader.load(
             model.obj,
             (object) => resolve(object),
@@ -113,8 +115,9 @@ async function loadModel(three, model, logCallback, progressCallback) {
     // Настройка материалов
     object.traverse((child) => {
         if (child.isMesh) {
+            child.material = material;
             child.material.color.set("#ffffff");
-            child.castShadow = true;
+            child.castShadow = false;
             child.receiveShadow = false;
         }
     });

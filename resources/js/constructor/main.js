@@ -9,7 +9,7 @@ import {
     createFloor,
 } from "./three-setup";
 
-import { addDeskClone, changeDeskCloneVisibility } from "./desk-manager";
+import { addDeskClone, changeDeskCloneVisibility, setPositionOnFloor, setPositionOnWall } from "./desk-manager";
 import { loadModels } from "./model-loader";
 import {
     animateBox,
@@ -29,9 +29,7 @@ export default () => {
         progress: 0,
         error: null,
         selectedColor: "red",
-        selectedSize: "small",
-        deskTypes: ["Односторонняя", "Двусторонняя"],
-        selectedDeskType: "Односторонняя",
+        
         addedRows: [
             // {
             //     size: 'large',
@@ -94,11 +92,19 @@ export default () => {
 
         // Размеры
         sizes: [
-            { name: "V1", value: "small" },
-            { name: "V2", value: "medium" },
-            { name: "V3", value: "large" },
+            { name: "Маленький", value: "small" },
+            { name: "Средний", value: "medium" },
+            { name: "Большой", value: "large" },
         ],
-
+        selectedSize: "small",
+        deskTypes: ["Односторонняя", "Двусторонняя"],
+        selectedDeskType: "Односторонняя",
+        positions: [
+            { name: "На полу", value: "on_floor" },
+            { name: "На стене", value: "on_wall" },
+            // { name: "На колесах", value: "on_wheels" },
+        ],
+        selectedPosition: "on_floor",
         // Информация о доступном пространстве
         usedHeightPercent: 0,
         remainingHeight: SHELF_HEIGHT,
@@ -156,17 +162,42 @@ export default () => {
                 this.$watch("selectedDeskType", (newVal, oldVal) => {
                     this.changeDeskCloneVisibility(newVal, oldVal);
                 });
+                this.$watch("selectedPosition", (newVal, oldVal) => {
+                    this.changeDescPosition(three, newVal, oldVal);
+                });
             } catch (error) {
                 this.error = error.message;
                 console.error("Ошибка инициализации:", error);
             }
         },
 
-        changeDeskCloneVisibility(newVal, oldVal) {
+        async changeDeskCloneVisibility(newVal, oldVal) {
             if (newVal === "Односторонняя")
                 changeDeskCloneVisibility(three, false);
-            if (newVal === "Двусторонняя")
-                changeDeskCloneVisibility(three, true);
+            if (newVal === "Двусторонняя") {
+                if (this.selectedPosition == 'on_wall') {
+                    setPositionOnFloor(three).then(result => {
+                        console.log(123123123123123);
+                        this.selectedPosition = this.positions[0].value ?? 'on_floor';
+                        changeDeskCloneVisibility(three, true);
+                    });
+                    
+                } else {
+                    changeDeskCloneVisibility(three, true);
+                }
+            }
+        },
+        changeDescPosition(three, newVal, oldVal) {
+            switch(newVal) {
+                case 'on_floor':
+                    setPositionOnFloor(three);
+                    break;
+                case 'on_wall':
+                    this.selectedDeskType = this.deskTypes[0],
+                    setPositionOnWall(three);
+                    break;
+                default: setPositionOnFloor(three);
+            }
         },
         addDeskClone() {
             addDeskClone(three);
