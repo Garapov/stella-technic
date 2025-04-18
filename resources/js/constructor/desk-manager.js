@@ -13,8 +13,6 @@ export function addDeskClone(three) {
     clonedShelf.position.x = 0.7295;
     three.scene.add(clonedShelf);
 
-    console.log(three.scene.children);
-
     // Специальная обработка для row модели
     setupRowModels(three);
 }

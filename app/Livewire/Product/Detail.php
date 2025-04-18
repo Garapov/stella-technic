@@ -37,6 +37,7 @@ class Detail extends Component
                         "id" => $param->id,
                         "title" => $param->title,
                         "value" => $param->value,
+                        "is_fixed" => $param->productParam->fixed
                     ],
                 ];
             })
@@ -57,6 +58,8 @@ class Detail extends Component
                             "id" => $param->id,
                             "title" => $param->title,
                             "value" => $param->value,
+                            "is_fixed" => $param->productParam->fixed
+                            
                         ],
                     ];
                 })
@@ -85,6 +88,7 @@ class Detail extends Component
                             "id" => $param["id"],
                             "title" => $param["title"],
                             "value" => $param["value"],
+                            "is_fixed" => $param["is_fixed"],
                             "variant_id" => $variant->id,
                             "is_current" =>
                                 isset($currentParams[$paramName]) &&

@@ -89,6 +89,7 @@ async function loadModel(three, model, logCallback, progressCallback) {
     // materials.preload();
     const material = new THREE.MeshPhongMaterial({
         color: 0xd0f0f0,
+        shininess: 100,
     });
     // Загрузка объекта
     const object = await new Promise((resolve, reject) => {

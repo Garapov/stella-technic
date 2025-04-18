@@ -39,47 +39,47 @@ export default () => {
 
         addedRows: [
             // {
-            //     size: 'large',
-            //     color: 'red'
+            //     size: "large",
+            //     color: "red",
             // },
             // {
-            //     size: 'large',
-            //     color: 'green'
+            //     size: "large",
+            //     color: "green",
             // },
             // {
-            //     size: 'large',
-            //     color: 'blue'
+            //     size: "large",
+            //     color: "blue",
             // },
             // {
-            //     size: 'medium',
-            //     color: 'yellow'
+            //     size: "medium",
+            //     color: "#ffeb00",
             // },
             // {
-            //     size: 'medium',
-            //     color: 'gray'
+            //     size: "medium",
+            //     color: "gray",
             // },
             // {
-            //     size: 'medium',
-            //     color: 'red'
+            //     size: "medium",
+            //     color: "red",
             // },
             // {
-            //     size: 'small',
-            //     color: 'green'
+            //     size: "small",
+            //     color: "green",
             // },
             // {
-            //     size: 'small',
-            //     color: 'blue'
+            //     size: "small",
+            //     color: "blue",
             // },
             // {
-            //     size: 'small',
-            //     color: 'yellow'
+            //     size: "small",
+            //     color: "#ffeb00",
             // },
             // {
-            //     size: 'small',
-            //     color: 'gray'
-            // }
+            //     size: "small",
+            //     color: "gray",
+            // },
         ],
-        colors: ["red", "green", "blue", "yellow", "gray"],
+        colors: ["red", "green", "blue", "#ffeb00", "gray"],
         debugMode: false,
 
         // Инициализация debugInfo
@@ -116,10 +116,12 @@ export default () => {
             {
                 name: "735 мм",
                 value: "slim",
+                number: 735,
             },
             {
                 name: "1150 мм",
                 value: "wide",
+                number: 1150,
             },
         ],
         selectedWidth: "slim",
@@ -127,10 +129,12 @@ export default () => {
             {
                 name: "1515 мм",
                 value: "low",
+                number: 1515,
             },
             {
                 name: "2020 мм",
                 value: "high",
+                number: 2020,
             },
         ],
         selectedHeight: "low",

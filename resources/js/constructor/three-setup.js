@@ -53,13 +53,13 @@ export function setupLights(scene) {
     scene.add(new THREE.AmbientLight(0xd3d3d3, 1));
 
     // Направленный свет
-    const mainLight = new THREE.DirectionalLight(0xffffb2, 1);
+    const mainLight = new THREE.DirectionalLight(0xffffff, 1);
     mainLight.castShadow = true;
     mainLight.shadow.mapSize.width = 2048; // Default is 512
     mainLight.shadow.mapSize.height = 2048; // Default is 512
     mainLight.shadow.radius = 0;
     mainLight.shadow.blurSamples = 0;
-    mainLight.position.set(1, 2, 1);
+    mainLight.position.set(0.1, 0.5, 0.5);
     scene.add(mainLight);
 
     // const mainLightHelper = new THREE.DirectionalLightHelper( mainLight, 5 );
@@ -166,7 +166,7 @@ export function createWall(
     const loader = new THREE.TextureLoader();
 
     const texture = loader.load(
-        "/assets/models/wood_seamless.jpg",
+        "/assets/models/concrete_bare_clean_seamless.jpg",
         function (texture) {
             texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
             texture.offset.set(0, 0);
@@ -232,10 +232,10 @@ export function createFloor(three) {
     floor.name = "floor";
 
     three.scene.add(floor);
-    createWall(three, [0.35, 1.1, -1.5], 3, 2.2, 0);
-    createWall(three, [0.35, 1.1, 1.5], 3, 2.2, Math.PI);
-    createWall(three, [-1.15, 1.1, 0], 3, 2.2, Math.PI / 2);
-    createWall(three, [1.85, 1.1, 0], 3, 2.2, Math.PI / -2);
+    createWall(three, [0.35, 1.5, -1.5], 3, 3, 0);
+    createWall(three, [0.35, 1.5, 1.5], 3, 3, Math.PI);
+    createWall(three, [-1.15, 1.5, 0], 3, 3, Math.PI / 2);
+    createWall(three, [1.85, 1.5, 0], 3, 3, Math.PI / -2);
 }
 
 // Запуск цикла рендеринга

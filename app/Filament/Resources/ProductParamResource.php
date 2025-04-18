@@ -50,6 +50,10 @@ class ProductParamResource extends Resource
                     ->label('Разрешить фильтрацию')
                     ->inline(false)
                     ->required(),
+                Forms\Components\Toggle::make('fixed')
+                    ->label('Зафиксирован')
+                    ->inline(false)
+                    ->required(),
                 Forms\Components\Toggle::make('show_on_preview')
                     ->label('Показывать в листинге')
                     ->inline(false)
@@ -79,6 +83,8 @@ class ProductParamResource extends Resource
                     ->label('Показывать в листинге'),
                 Tables\Columns\ToggleColumn::make('show_on_table')
                     ->label('Показывать в таблице'),
+                Tables\Columns\ToggleColumn::make('fixed')
+                    ->label('Зафиксирован'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Дата создания')
                     ->dateTime()

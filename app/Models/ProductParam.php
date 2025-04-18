@@ -17,6 +17,7 @@ class ProductParam extends Model
         'allow_filtering',
         'show_on_preview',
         'show_on_table',
+        'fixed',
         'icon'
     ];
 
