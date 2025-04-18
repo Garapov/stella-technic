@@ -9,7 +9,14 @@ import {
     createFloor,
 } from "./three-setup";
 
-import { addDeskClone, changeDeskCloneVisibility, setPositionOnFloor, setPositionOnWall } from "./desk-manager";
+import {
+    addDeskClone,
+    changeDeskCloneVisibility,
+    setPositionOnFloor,
+    setPositionOnWall,
+    changeDescHeight,
+    changeDescWidth,
+} from "./desk-manager";
 import { loadModels } from "./model-loader";
 import {
     animateBox,
@@ -29,7 +36,7 @@ export default () => {
         progress: 0,
         error: null,
         selectedColor: "red",
-        
+
         addedRows: [
             // {
             //     size: 'large',
@@ -105,6 +112,28 @@ export default () => {
             // { name: "На колесах", value: "on_wheels" },
         ],
         selectedPosition: "on_floor",
+        width: [
+            {
+                name: "735 мм",
+                value: "slim",
+            },
+            {
+                name: "1150 мм",
+                value: "wide",
+            },
+        ],
+        selectedWidth: "slim",
+        height: [
+            {
+                name: "1515 мм",
+                value: "low",
+            },
+            {
+                name: "2020 мм",
+                value: "high",
+            },
+        ],
+        selectedHeight: "low",
         // Информация о доступном пространстве
         usedHeightPercent: 0,
         remainingHeight: SHELF_HEIGHT,
@@ -165,38 +194,53 @@ export default () => {
                 this.$watch("selectedPosition", (newVal, oldVal) => {
                     this.changeDescPosition(three, newVal, oldVal);
                 });
+                this.$watch("selectedHeight", (newVal, oldVal) => {
+                    this.changeDescHeight(three, newVal, oldVal);
+                    this.rebuildRows();
+                });
+                this.$watch("selectedWidth", (newVal, oldVal) => {
+                    this.changeDescWidth(three, newVal, oldVal);
+                    this.rebuildRows();
+                });
             } catch (error) {
                 this.error = error.message;
                 console.error("Ошибка инициализации:", error);
             }
         },
 
+        changeDescHeight(three, newVal, oldVal) {
+            changeDescHeight(three, newVal);
+        },
+        changeDescWidth(three, newVal, oldVal) {
+            changeDescWidth(three, newVal);
+        },
+
         async changeDeskCloneVisibility(newVal, oldVal) {
             if (newVal === "Односторонняя")
                 changeDeskCloneVisibility(three, false);
             if (newVal === "Двусторонняя") {
-                if (this.selectedPosition == 'on_wall') {
-                    setPositionOnFloor(three).then(result => {
-                        console.log(123123123123123);
-                        this.selectedPosition = this.positions[0].value ?? 'on_floor';
+                if (this.selectedPosition == "on_wall") {
+                    setPositionOnFloor(three).then((result) => {
+                        this.selectedPosition =
+                            this.positions[0].value ?? "on_floor";
                         changeDeskCloneVisibility(three, true);
                     });
-                    
                 } else {
                     changeDeskCloneVisibility(three, true);
                 }
             }
         },
         changeDescPosition(three, newVal, oldVal) {
-            switch(newVal) {
-                case 'on_floor':
+            switch (newVal) {
+                case "on_floor":
                     setPositionOnFloor(three);
                     break;
-                case 'on_wall':
-                    this.selectedDeskType = this.deskTypes[0],
-                    setPositionOnWall(three);
+                case "on_wall":
+                    (this.selectedDeskType = this.deskTypes[0]),
+                        setPositionOnWall(three);
                     break;
-                default: setPositionOnFloor(three);
+                default:
+                    setPositionOnFloor(three);
             }
         },
         addDeskClone() {
@@ -294,6 +338,7 @@ export default () => {
             return addBoxToScene(
                 three,
                 this.selectedSize,
+                this.selectedWidth,
                 this.selectedColor,
                 this.addedRows,
                 rowIndex,

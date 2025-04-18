@@ -114,12 +114,31 @@
                 <button type="button" class="grow px-5 py-2.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="deskType" @click="selectedDeskType = deskType" :class="{ 'opacity-50': selectedDeskType != deskType }"></button>
             </template>
         </div>
-        <div class="flex flex-col gap-2">
-            <div class="text-md italic font-semibold text-gray-900 dark:text-white">Размещение:</div>
+        <div class="flex flex-col gap-1">
+            <div class="italic font-semibold text-gray-900 dark:text-white">Размещение:</div>
             <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
                 <template x-for="(position, index) in positions" :key="index">
                     <button type="button" class="grow px-3 py-1.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="position.name" @click="selectedPosition = position.value" :class="{ 'opacity-50': position.value != selectedPosition }"></button>
                 </template>
+            </div>
+        </div>
+
+        <div class="flex items-start gap-4">
+            <div class="grow flex flex-col gap-1">
+                <div class="italic font-semibold text-gray-900 dark:text-white">Ширина:</div>
+                <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
+                    <template x-for="(wdth, index) in width" :key="index">
+                        <button type="button" class="grow px-3 py-1.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="wdth.name" @click="selectedWidth = wdth.value" :class="{ 'opacity-50': wdth.value != selectedWidth }"></button>
+                    </template>
+                </div>
+            </div>
+            <div class="grow flex flex-col gap-1">
+                <div class="italic font-semibold text-gray-900 dark:text-white">Высота:</div>
+                <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
+                    <template x-for="(hght, index) in height" :key="index">
+                        <button type="button" class="grow px-3 py-1.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="hght.name" @click="selectedHeight = hght.value" :class="{ 'opacity-50': hght.value != selectedHeight }"></button>
+                    </template>
+                </div>
             </div>
         </div>
 
@@ -133,7 +152,7 @@
             <template x-for="(color, index) in colors" :key="index">
                 <label
                     class="w-10 h-10 rounded-full cursor-pointer transition-all"
-                    :class="{ 'opacity-25 border-8 border-white': color != selectedColor }"
+                    :class="{ 'border-8 border-white dark:border-gray-700': color != selectedColor }"
                     :style="`background: ${color};`"
                 ><input type="radio" name="colors" :value="color" x-model="selectedColor" class="hidden"></label>
             </template>
@@ -148,7 +167,7 @@
         
     </div>
     <div class="relative col-span-4 bg-white dark:bg-gray-700" x-ref="scene">
-        <div class="absolute top-0 left-0 w-full h-full bg-gray-200 flex flex-col items-center justify-center gap-4 p-10" x-show="!isLoaded">
+        <div class="absolute top-0 left-0 w-full h-full bg-white dark:bg-gray-700 flex flex-col items-center justify-center gap-4 p-10" x-show="!isLoaded">
             <div class="text-lg text-gray-500">Загружаем 3D модели</div>
             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full flex justify-center">
               <div class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full" :style="{width: progress + '%'}"> <span x-text="Math.floor(progress)"></span>%</div>

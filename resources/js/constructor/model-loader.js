@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
+import { rotate } from "three/src/nodes/TSL.js";
 
 /**
  * Загружает все 3D модели
@@ -86,8 +87,8 @@ async function loadModel(three, model, logCallback, progressCallback) {
     // });
 
     // materials.preload();
-    const material = new THREE.MeshStandardMaterial({
-        color: 0xfefefe,
+    const material = new THREE.MeshPhongMaterial({
+        color: 0xd0f0f0,
     });
     // Загрузка объекта
     const object = await new Promise((resolve, reject) => {
@@ -115,12 +116,11 @@ async function loadModel(three, model, logCallback, progressCallback) {
     // Настройка материалов
     object.traverse((child) => {
         if (child.isMesh) {
-            child.material = material;
-            child.material.color.set("#ffffff");
-            child.castShadow = false;
-            child.receiveShadow = false;
+            child.castShadow = true;
+            child.receiveShadow = true;
         }
     });
+    object.material = material;
     object.name = model.name;
 
     // Применение позиции
@@ -131,6 +131,7 @@ async function loadModel(three, model, logCallback, progressCallback) {
 
     // Добавление на сцену
     three.scene.add(object);
+    if (object.name == "shelf") setupRotationPointsForHooks(three, object);
     model.object = object;
 
     // Сообщаем о 100% прогрессе
@@ -139,10 +140,82 @@ async function loadModel(three, model, logCallback, progressCallback) {
     return object;
 }
 
-/**
- * Настраивает модель ряда
- * @param {Object} three Объект Three.js контейнера
- */
+export function setupRotationPointsForHooks(three, object) {
+    // Массив пар крюков и клипов
+    const hookPairs = [
+        {
+            hook: "hook_top_right",
+            clip: "clip_top_right",
+            group: "rotationRightTopGroup",
+        },
+        {
+            hook: "hook_top_left",
+            clip: "clip_top_left",
+            group: "rotationLeftTopGroup",
+        },
+        {
+            hook: "hook_bottom_right",
+            clip: "clip_bottom_right",
+            group: "rotationRightBottomGroup",
+        },
+        {
+            hook: "hook_bottom_left",
+            clip: "clip_bottom_left",
+            group: "rotationLeftBottomGroup",
+        },
+    ];
+
+    const material = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        specular: 0xffffff,
+        shininess: 10,
+    });
+
+    hookPairs.forEach((pair) => {
+        const hook = object.getObjectByName(pair.hook);
+        const clip = object.getObjectByName(pair.clip);
+
+        if (hook && clip) {
+            // Создаем группу вращения
+            const rotationGroup = new THREE.Mesh(
+                new THREE.PlaneGeometry(0, 0),
+                material,
+            );
+            rotationGroup.name = pair.group;
+
+            // Сохраняем мировые позиции объектов
+            const hookWorldPosition = new THREE.Vector3();
+            const clipWorldPosition = new THREE.Vector3();
+            hook.getWorldPosition(hookWorldPosition);
+            clip.getWorldPosition(clipWorldPosition);
+
+            // Устанавливаем позицию группы в центр клипа
+            const centerWorld = getGeometryCenterWorld(clip);
+            const centerLocal = object.worldToLocal(centerWorld.clone());
+            rotationGroup.position.copy(centerLocal);
+
+            // Добавляем группу на объект
+            object.add(rotationGroup);
+
+            // Пересчитываем локальные позиции относительно группы
+            const hookLocal = rotationGroup.worldToLocal(hookWorldPosition);
+            const clipLocal = rotationGroup.worldToLocal(clipWorldPosition);
+
+            hook.position.copy(hookLocal);
+            clip.position.copy(clipLocal);
+
+            // Добавляем крюк и клип в группу вращения
+            rotationGroup.add(clip);
+            rotationGroup.add(hook);
+        }
+    });
+}
+export function getGeometryCenterWorld(object) {
+    const box = new THREE.Box3().setFromObject(object);
+    const center = new THREE.Vector3();
+    box.getCenter(center);
+    return center;
+}
 export function setupRowModels(three) {
     let models = three.scene.getObjectByName("models");
     let clonedModels = three.scene.getObjectByName("clonedModels");
@@ -173,6 +246,8 @@ export function setupRowModels(three) {
             boxClone.visible = false;
         }
     });
+    row.visible = false;
+    rowFromClone.visible = false;
 
     three.originalRow = row.clone();
     three.originalClonedRow = rowFromClone.clone();

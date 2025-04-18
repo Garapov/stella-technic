@@ -4,9 +4,9 @@ export const ROW_HEIGHTS = { small: 110, medium: 158, large: 178 };
 export const SCALE_FACTOR = 0.00101;
 export const BASE_POSITIONS = { small: 0.176, medium: 0.213, large: 0.23 };
 export const ROW_CONFIGS = {
-    small: { selector: "box", count: 6, offset: -0.106 },
-    medium: { selector: "box_medium", count: 4, offset: -0.16 },
-    large: { selector: "box_large", count: 3, offset: -0.215 },
+    small: { selector: "box", slim: 6, wide: 8, offset: -0.106 },
+    medium: { selector: "box_medium", slim: 4, wide: 5, offset: -0.16 },
+    large: { selector: "box_large", slim: 3, wide: 4, offset: -0.215 },
 };
 
 // Конфигурация моделей

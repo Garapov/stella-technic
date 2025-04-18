@@ -39,14 +39,14 @@ export function calculateRowPosition(three, rows, rowIndex) {
         );
 }
 
-export function animateBox({three, rowIndex, boxIndex}) {
-    console.log({three, rowIndex, boxIndex})
+export function animateBox({ three, rowIndex, boxIndex }) {
+    console.log({ three, rowIndex, boxIndex });
     const row = three.scene.getObjectByName(`row_${rowIndex}`, true);
     if (!row) return;
     const box = row.getObjectByName(`box_${boxIndex}`, true);
     if (!box) return;
 
-    let tl = gsap.timeline({repeat: 0});
+    let tl = gsap.timeline({ repeat: 0 });
     if (box.position.z > 0) {
         tl.to(box.rotation, {
             x: -0.1,
@@ -74,11 +74,15 @@ export function animateBox({three, rowIndex, boxIndex}) {
             duration: 0.2,
             ease: "power3.inOut",
         });
-        tl.to(box.rotation, {
-            x: 0,
-            duration: 0.2,
-            ease: "power3.inOut",
-        }, 0.3)
+        tl.to(
+            box.rotation,
+            {
+                x: 0,
+                duration: 0.2,
+                ease: "power3.inOut",
+            },
+            0.3,
+        );
     }
     tl = null;
     // gsap.to(box.position, {
@@ -92,11 +96,15 @@ export function animateBox({three, rowIndex, boxIndex}) {
 // Создание ящиков для ряда
 export function createBoxesForRow(
     rowClone,
+    selectedWidth,
     originalBox,
     config,
     selectedColor,
 ) {
-    const { count, offset } = config;
+    const count = config[selectedWidth];
+    const offset = config["offset"];
+
+    originalBox.position.x = selectedWidth == "wide" ? 0.1 : 0;
 
     Array.from({ length: count }).forEach((_, i) => {
         // Клонирование бокса
@@ -127,6 +135,7 @@ export function createBoxesForRow(
 
         const boxName = `box_${i}`;
         boxClone.name = boxName;
+        boxClone.visible = true;
 
         // Добавление и анимация
         rowClone.add(boxClone);
@@ -143,6 +152,7 @@ export function createBoxesForRow(
 export function addBoxToScene(
     three,
     selectedSize,
+    selectedWidth,
     selectedColor,
     addedRows,
     rowIndex,
@@ -164,15 +174,30 @@ export function addBoxToScene(
 
     // Получаем нужный тип бокса
     const originalBox = rowClone.getObjectByName(config.selector, true);
-    const originalClonedBox = rowClonedClone.getObjectByName(config.selector, true);
+    const originalClonedBox = rowClonedClone.getObjectByName(
+        config.selector,
+        true,
+    );
     if (!originalBox || !originalClonedBox) {
         console.error(`Бокс ${config.selector} не найден в модели ряда`);
         return;
     }
 
     // Создаем боксы для ряда
-    createBoxesForRow(rowClone, originalBox, config, selectedColor);
-    createBoxesForRow(rowClonedClone, originalClonedBox, config, selectedColor);
+    createBoxesForRow(
+        rowClone,
+        selectedWidth,
+        originalBox,
+        config,
+        selectedColor,
+    );
+    createBoxesForRow(
+        rowClonedClone,
+        selectedWidth,
+        originalClonedBox,
+        config,
+        selectedColor,
+    );
 
     // Определяем индекс и рассчитываем позицию
     const index = rowIndex !== null ? rowIndex : addedRows.length;
@@ -269,15 +294,19 @@ export function removeRowFromScene(three, index, addedRows, logCallback) {
 
     // Находим объект ряда
     const rowName = `row_${index}`;
-    const models = three.scene.getObjectByName('models');
-    const clonedModels = three.scene.getObjectByName('clonedModels');
+    const models = three.scene.getObjectByName("models");
+    const clonedModels = three.scene.getObjectByName("clonedModels");
     const rowToRemove = models.getObjectByName(rowName);
     const cloneRowToRemove = clonedModels.getObjectByName(rowName);
 
     if (rowToRemove && cloneRowToRemove) {
         models.remove(rowToRemove);
         clonedModels.remove(cloneRowToRemove);
-        console.log('rowToRemove, cloneRowToRemove', rowToRemove, cloneRowToRemove);
+        console.log(
+            "rowToRemove, cloneRowToRemove",
+            rowToRemove,
+            cloneRowToRemove,
+        );
     }
 
     return true;
