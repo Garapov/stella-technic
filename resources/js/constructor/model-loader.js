@@ -3,6 +3,8 @@ import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
 import { rotate } from "three/src/nodes/TSL.js";
 
+import { HELPER_BOX_SELECTOR } from "./constants";
+
 /**
  * Загружает все 3D модели
  * @param {Object} three Объект Three.js контейнера
@@ -132,13 +134,305 @@ async function loadModel(three, model, logCallback, progressCallback) {
 
     // Добавление на сцену
     three.scene.add(object);
-    if (object.name == "shelf") setupRotationPointsForHooks(three, object);
+    if (object.name == "shelf") {
+        setupRotationPointsForHooks(three, object);
+        addBoxForHeightCalculation(three, object);
+    }
     model.object = object;
 
     // Сообщаем о 100% прогрессе
     if (progressCallback) progressCallback(100);
 
     return object;
+}
+
+export function addBoxForHeightCalculation(three, object) {
+    // Проверим, что бокса еще нет
+    let existingBox = three.scene.getObjectByName(HELPER_BOX_SELECTOR);
+
+    if (existingBox) {
+        console.log(
+            `Бокс ${HELPER_BOX_SELECTOR} уже существует, обновляем его размеры`,
+        );
+        return updateHeightCalculationBox(
+            three,
+            object,
+            HELPER_BOX_SELECTOR,
+            false,
+        );
+    }
+
+    // Находим объект "top" внутри текущего объекта
+    const topObject = object.getObjectByName("top", true);
+
+    // Находим объект "row" на сцене
+    const rowObject = three.scene.getObjectByName("row", true);
+
+    // Вычисляем ограничивающий бокс для всего объекта
+    const objectBox = new THREE.Box3().setFromObject(object);
+
+    // Получаем ширину и глубину основного объекта
+    const width = objectBox.max.x - objectBox.min.x;
+    const depth = objectBox.max.z - objectBox.min.z;
+
+    // Устанавливаем нижнюю границу бокса
+    let bottomY;
+    if (rowObject) {
+        // Если нашли объект "row", вычисляем его нижнюю границу
+        const rowBox = new THREE.Box3().setFromObject(rowObject);
+        bottomY = rowBox.min.y;
+    } else {
+        // Если объект "row" не найден, используем стандартное значение
+        bottomY = -0.25;
+    }
+
+    // Если объект "top" найден, устанавливаем верхнюю границу ниже него
+    let topY;
+    if (topObject) {
+        const topBox = new THREE.Box3().setFromObject(topObject);
+        // Берем позицию нижней части объекта "top" как верхнюю границу нашего бокса
+        topY = topBox.min.y;
+    } else {
+        // Если объект "top" не найден, используем высоту основного объекта
+        topY = objectBox.max.y;
+    }
+
+    // Проверка на корректность вычисленных границ
+    if (topY <= bottomY) {
+        // Исправляем, чтобы избежать ошибок с отрицательной или нулевой высотой
+        topY = bottomY + 0.1; // минимальная высота 0.1
+    }
+
+    // Вычисляем высоту нового бокса
+    const height = topY - bottomY;
+
+    // Создаем геометрию с нужными размерами
+    const boxGeometry = new THREE.BoxGeometry(width, height, depth);
+
+    // Создаем полупрозрачный материал
+    const boxMaterial = new THREE.MeshBasicMaterial({
+        color: 0x00ff00,
+        transparent: true,
+        opacity: 0.3,
+        wireframe: true,
+    });
+
+    // Создаем меш
+    const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
+
+    // Устанавливаем позицию центра бокса
+    boxMesh.position.x = (objectBox.max.x + objectBox.min.x) / 2;
+    boxMesh.position.y = bottomY + height / 2;
+    boxMesh.position.z = (objectBox.max.z + objectBox.min.z) / 2;
+
+    // Добавляем на сцену и даем имя для идентификации
+    boxMesh.name = HELPER_BOX_SELECTOR;
+    three.scene.add(boxMesh);
+
+    console.log(`Создан бокс для вычисления высоты:
+      - Ширина: ${width}
+      - Высота: ${height} (от ${bottomY} до ${topY})
+      - Глубина: ${depth}
+      - Позиция: (${boxMesh.position.x}, ${boxMesh.position.y}, ${boxMesh.position.z})`);
+
+    // Получаем мировую позицию
+    const worldPosition = new THREE.Vector3();
+    boxMesh.getWorldPosition(worldPosition);
+
+    // Возвращаем размеры и меш
+    return {
+        mesh: boxMesh,
+        dimensions: { width, height, depth },
+        range: { bottom: bottomY, top: topY },
+        position: boxMesh.position.clone(),
+        worldPosition: worldPosition,
+    };
+}
+
+export function updateHeightCalculationBox(
+    three,
+    object,
+    createIfNotExists = true,
+) {
+    console.group("Обновление бокса для вычисления высоты");
+    console.log("Исходный объект:", object);
+
+    // Используем переданное имя бокса
+    console.log("Ищем бокс с именем:", HELPER_BOX_SELECTOR);
+
+    // Ищем существующий бокс
+    let boxMesh = three.scene.getObjectByName(HELPER_BOX_SELECTOR);
+    console.log("Существующий бокс найден:", !!boxMesh);
+
+    // Если бокс не найден и createIfNotExists=true, создаем новый
+    if (!boxMesh && createIfNotExists) {
+        console.log("Создаем новый бокс, так как существующий не найден");
+        const result = addBoxForHeightCalculation(
+            three,
+            object,
+            HELPER_BOX_SELECTOR,
+        );
+        console.groupEnd();
+        return result;
+    } else if (!boxMesh) {
+        console.warn(
+            `Бокс с именем ${HELPER_BOX_SELECTOR} не найден и не будет создан`,
+        );
+        console.groupEnd();
+        return null;
+    }
+
+    // Находим объект "top" внутри текущего объекта
+    const topObject = object.getObjectByName("top", true);
+    console.log('Объект "top" найден:', !!topObject);
+
+    // Находим объект "row" на сцене
+    const rowObject = three.scene.getObjectByName("row", true);
+    console.log('Объект "row" найден:', !!rowObject);
+
+    // Вычисляем ограничивающий бокс для всего объекта
+    const objectBox = new THREE.Box3().setFromObject(object);
+
+    // Получаем ширину и глубину основного объекта
+    const width = objectBox.max.x - objectBox.min.x;
+    const depth = objectBox.max.z - objectBox.min.z;
+    console.log("Рассчитанные ширина и глубина:", { width, depth });
+
+    // Устанавливаем нижнюю границу бокса
+    let bottomY;
+    if (rowObject) {
+        // Если нашли объект "row", вычисляем его нижнюю границу
+        const rowBox = new THREE.Box3().setFromObject(rowObject);
+        bottomY = rowBox.min.y;
+        console.log('Нижняя граница из объекта "row":', bottomY);
+    } else {
+        // Если объект "row" не найден, используем стандартное значение
+        bottomY = -0.25;
+        console.log(
+            "Нижняя граница установлена на стандартное значение:",
+            bottomY,
+        );
+    }
+
+    // Если объект "top" найден, устанавливаем верхнюю границу ниже него
+    let topY;
+    if (topObject) {
+        const topBox = new THREE.Box3().setFromObject(topObject);
+        // Берем позицию нижней части объекта "top" как верхнюю границу нашего бокса
+        topY = topBox.min.y;
+        console.log('Верхняя граница из нижней части объекта "top":', topY);
+    } else {
+        // Если объект "top" не найден, используем высоту основного объекта
+        topY = objectBox.max.y;
+        console.log("Верхняя граница из основного объекта:", topY);
+    }
+
+    // Проверка на корректность вычисленных границ
+    if (topY <= bottomY) {
+        console.warn("ОШИБКА: Верхняя граница меньше или равна нижней!", {
+            bottomY,
+            topY,
+            разница: topY - bottomY,
+        });
+        // Исправляем, чтобы избежать ошибок с отрицательной или нулевой высотой
+        topY = bottomY + 0.1; // минимальная высота 0.1
+        console.log("Исправленная верхняя граница:", topY);
+    }
+
+    // Вычисляем высоту нового бокса
+    const height = topY - bottomY;
+    console.log("Рассчитанная высота бокса:", height);
+
+    // Удаляем старую геометрию чтобы избежать утечек памяти
+    boxMesh.geometry.dispose();
+
+    // Обновляем геометрию с новыми размерами
+    boxMesh.geometry = new THREE.BoxGeometry(width, height, depth);
+
+    // Вычисляем новую позицию бокса
+    const newPositionX = (objectBox.max.x + objectBox.min.x) / 2;
+    const newPositionY = bottomY + height / 2;
+    const newPositionZ = (objectBox.max.z + objectBox.min.z) / 2;
+
+    console.log("Новая рассчитанная позиция:", {
+        x: newPositionX,
+        y: newPositionY,
+        z: newPositionZ,
+    });
+
+    // Сохраняем старую позицию для проверки
+    const oldPosition = boxMesh.position.clone();
+
+    // Обновляем позицию
+    boxMesh.position.set(newPositionX, newPositionY, newPositionZ);
+
+    // Получаем мировую позицию после обновления
+    const worldPosition = new THREE.Vector3();
+    boxMesh.getWorldPosition(worldPosition);
+
+    // Проверяем разницу между локальной и мировой позицией
+    const positionDifference = new THREE.Vector3().subVectors(
+        worldPosition,
+        boxMesh.position,
+    );
+
+    // Если разница большая, пробуем решить проблему
+    if (positionDifference.length() > 1.0) {
+        console.warn(
+            "Большая разница между локальной и мировой позицией:",
+            positionDifference.length(),
+        );
+
+        // Перемещаем бокс в корень сцены
+        if (boxMesh.parent !== three.scene) {
+            const parentName = boxMesh.parent
+                ? boxMesh.parent.name || "безымянный"
+                : "нет";
+            console.log(
+                `Перемещаем бокс из родителя "${parentName}" в корень сцены`,
+            );
+
+            // Запоминаем мировую позицию
+            const worldPos = new THREE.Vector3();
+            boxMesh.getWorldPosition(worldPos);
+
+            // Удаляем из текущего родителя и добавляем в сцену
+            boxMesh.parent.remove(boxMesh);
+            three.scene.add(boxMesh);
+
+            // Устанавливаем мировую позицию как локальную для сцены
+            boxMesh.position.copy(worldPos);
+
+            // Проверяем новую позицию
+            const newWorldPos = new THREE.Vector3();
+            boxMesh.getWorldPosition(newWorldPos);
+            console.log("Позиция бокса после перемещения:", {
+                локальная: boxMesh.position.clone(),
+                мировая: newWorldPos,
+            });
+        }
+    }
+
+    console.log("Финальные размеры и позиция бокса:", {
+        ширина: width,
+        высота: height,
+        глубина: depth,
+        предыдущая_позиция: oldPosition,
+        новая_позиция: boxMesh.position.clone(),
+        мировая_позиция: worldPosition,
+    });
+
+    console.groupEnd();
+
+    // Возвращаем информацию о боксе
+    return {
+        mesh: boxMesh,
+        dimensions: { width, height, depth },
+        range: { bottom: bottomY, top: topY },
+        position: boxMesh.position.clone(),
+        worldPosition: worldPosition,
+        positionChanged: !oldPosition.equals(boxMesh.position),
+    };
 }
 
 export function setupRotationPointsForHooks(three, object) {

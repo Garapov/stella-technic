@@ -8,6 +8,9 @@ export const ROW_CONFIGS = {
     medium: { selector: "box_medium", slim: 4, wide: 7, offset: -0.16 },
     large: { selector: "box_large", slim: 3, wide: 5, offset: -0.215 },
 };
+export const START_ROW_POSITION = -0.25;
+
+export const HELPER_BOX_SELECTOR = "heightCalculationBox";
 
 // Конфигурация моделей
 export const MODELS = [
@@ -20,6 +23,6 @@ export const MODELS = [
         name: "row",
         obj: "/assets/models/row.obj",
         mtl: "/assets/models/row.mtl",
-        position: { x: 0, y: 0.08, z: -0.25 },
+        position: { x: 0, y: 0.08, z: START_ROW_POSITION },
     },
 ];

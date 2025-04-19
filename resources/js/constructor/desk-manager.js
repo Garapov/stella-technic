@@ -1,4 +1,5 @@
 import { setupRowModels } from "./model-loader";
+import { updateHeightCalculationBox } from "./model-loader";
 import gsap from "gsap";
 
 export function addDeskClone(three) {
@@ -50,6 +51,7 @@ export function setPositionOnFloor(three) {
                 ease: "power3.inOut",
                 onComplete: () => {
                     resolve(true);
+                    updateHeightCalculationBox(three, model);
                 },
             },
             0.2,
@@ -81,11 +83,15 @@ export function setPositionOnWall(three) {
                 z: 0.81,
                 duration: 1,
                 ease: "power3.inOut",
-                onComplete: resolve(true),
+                onComplete: () => {
+                    resolve(true);
+                    updateHeightCalculationBox(three, model);
+                },
             },
             0.2,
         );
     });
+    console.log("Объект object перемещен на сцене");
 }
 
 export function changeDescHeight(three, height) {

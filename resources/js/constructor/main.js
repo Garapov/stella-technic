@@ -17,7 +17,7 @@ import {
     changeDescHeight,
     changeDescWidth,
 } from "./desk-manager";
-import { loadModels } from "./model-loader";
+import { loadModels, updateHeightCalculationBox } from "./model-loader";
 import {
     animateBox,
     addBoxToScene,
@@ -80,7 +80,7 @@ export default () => {
             // },
         ],
         colors: ["red", "green", "blue", "#ffeb00", "gray"],
-        debugMode: false,
+        debugMode: true,
 
         // Инициализация debugInfo
         debugInfo: {
@@ -125,6 +125,7 @@ export default () => {
             },
         ],
         selectedWidth: "slim",
+        selectedWidthValue: 735,
         height: [
             {
                 name: "1515 мм",
@@ -138,15 +139,16 @@ export default () => {
             },
         ],
         selectedHeight: "low",
+        selectedHeightValue: 1515,
         // Информация о доступном пространстве
         usedHeightPercent: 0,
-        remainingHeight: SHELF_HEIGHT,
+        remainingHeight: 1515,
         usedHeight: 0,
 
         // Свойства для шаблона
-        maxSmallRowsToAdd: Math.floor(SHELF_HEIGHT / ROW_HEIGHTS.small),
-        maxMediumRowsToAdd: Math.floor(SHELF_HEIGHT / ROW_HEIGHTS.medium),
-        maxLargeRowsToAdd: Math.floor(SHELF_HEIGHT / ROW_HEIGHTS.large),
+        maxSmallRowsToAdd: Math.floor(1515 / ROW_HEIGHTS.small),
+        maxMediumRowsToAdd: Math.floor(1515 / ROW_HEIGHTS.medium),
+        maxLargeRowsToAdd: Math.floor(1515 / ROW_HEIGHTS.large),
         canAddSmallRow: true,
         canAddMediumRow: true,
         canAddLargeRow: true,
@@ -199,10 +201,12 @@ export default () => {
                     this.changeDescPosition(three, newVal, oldVal);
                 });
                 this.$watch("selectedHeight", (newVal, oldVal) => {
+                    this.changeSelectedHeightValue(newVal);
                     this.changeDescHeight(three, newVal, oldVal);
                     this.rebuildRows();
                 });
                 this.$watch("selectedWidth", (newVal, oldVal) => {
+                    this.changeSelectedWidthValue(newVal);
                     this.changeDescWidth(three, newVal, oldVal);
                     this.rebuildRows();
                 });
@@ -211,12 +215,34 @@ export default () => {
                 console.error("Ошибка инициализации:", error);
             }
         },
-
+        updateHeightCalculationBox(three) {
+            let models = three.scene.getObjectByName("models", true);
+            if (!models) {
+                console.error("Модели не найдены");
+                return;
+            }
+            updateHeightCalculationBox(three, models);
+        },
         changeDescHeight(three, newVal, oldVal) {
-            changeDescHeight(three, newVal);
+            changeDescHeight(three, newVal).then(() => {
+                this.updateHeightCalculationBox(three);
+            });
         },
         changeDescWidth(three, newVal, oldVal) {
-            changeDescWidth(three, newVal);
+            changeDescWidth(three, newVal).then(() => {
+                this.updateHeightCalculationBox(three);
+            });
+        },
+        changeSelectedHeightValue(newValue) {
+            this.selectedHeightValue = this.height.filter(
+                (height) => height.value === newValue,
+            )[0].number;
+            this.updateHeightInfo();
+        },
+        changeSelectedWidthValue(newValue) {
+            this.selectedWidthValue = this.width.filter(
+                (width) => width.value === newValue,
+            )[0].number;
         },
 
         async changeDeskCloneVisibility(newVal, oldVal) {
@@ -288,10 +314,10 @@ export default () => {
             );
 
             this.usedHeight = usedHeight;
-            this.remainingHeight = SHELF_HEIGHT - usedHeight;
+            this.remainingHeight = this.selectedHeightValue - usedHeight;
             this.usedHeightPercent = Math.min(
                 100,
-                Math.round((usedHeight / SHELF_HEIGHT) * 100),
+                Math.round((usedHeight / this.selectedHeightValue) * 100),
             );
 
             // Обновляем флаги доступности размеров
