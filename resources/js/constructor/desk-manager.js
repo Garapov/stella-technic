@@ -91,7 +91,6 @@ export function setPositionOnWall(three) {
             0.2,
         );
     });
-    console.log("Объект object перемещен на сцене");
 }
 
 export function changeDescHeight(three, height) {
@@ -112,11 +111,52 @@ export function changeDescHeight(three, height) {
         "rotationRightTopGroup",
         "rotationLeftTopGroup",
     ];
+    const objectsToAnimateSlight = [
+        "side_plane_left_top",
+        "side_plane_right_top",
+    ];
+    const objectsToAnimateSlightest = [
+        "side_plane_left_bottom",
+        "side_plane_right_bottom",
+    ];
 
     let tl = gsap.timeline({ repeat: 0 });
-
     // Анимация для обоих наборов моделей
     [models, clonedModels].forEach((modelSet) => {
+        objectsToAnimateSlight.forEach((objectName) => {
+            const object = modelSet.getObjectByName(objectName);
+            if (object) {
+                tl.to(
+                    object.position,
+                    {
+                        y:
+                            height === "high"
+                                ? object.position.y + 0.07
+                                : object.position.y - 0.07,
+                        duration: 0.2,
+                        ease: "power3.inOut",
+                    },
+                    0,
+                );
+            }
+        });
+        objectsToAnimateSlightest.forEach((objectName) => {
+            const object = modelSet.getObjectByName(objectName);
+            if (object) {
+                tl.to(
+                    object.position,
+                    {
+                        y:
+                            height === "high"
+                                ? object.position.y + 0.03
+                                : object.position.y - 0.03,
+                        duration: 0.2,
+                        ease: "power3.inOut",
+                    },
+                    0,
+                );
+            }
+        });
         objectsToAnimate.forEach((objectName) => {
             const object = modelSet.getObjectByName(objectName);
             if (object) {
@@ -125,8 +165,8 @@ export function changeDescHeight(three, height) {
                     {
                         y:
                             height === "high"
-                                ? object.position.y + 0.423
-                                : object.position.y - 0.423,
+                                ? object.position.y + 0.47
+                                : object.position.y - 0.47,
                         duration: 0.2,
                         ease: "power3.inOut",
                     },

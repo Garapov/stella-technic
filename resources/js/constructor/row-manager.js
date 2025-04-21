@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { gsap } from "gsap";
 import Toastify from "toastify-js";
-import { SCALE_FACTOR, ROW_HEIGHTS, ROW_CONFIGS } from "./constants";
+import { SCALE_FACTOR, ROW_CONFIGS, HELPER_BOX_SELECTOR } from "./constants";
 import { select } from "three/tsl";
 
 // Конвертация размеров
@@ -15,12 +15,23 @@ export function unitsToMm(units) {
 
 // Проверка возможности добавления ряда
 export function canAddRow(size, remainingHeight) {
-    return remainingHeight >= ROW_HEIGHTS[size];
+    console.log("Checking row addition", remainingHeight);
+    return remainingHeight >= ROW_CONFIGS[size].height;
 }
 
 // Расчет позиции для ряда
-export function calculateRowPosition(three, rows, rowIndex) {
-    const basePosition = three.originalRow.position.y;
+export function calculateRowPosition(three, rows, rowIndex, selectedSize) {
+    let basePosition = 0.15;
+
+    const helper_box = three.scene.getObjectByName(HELPER_BOX_SELECTOR, true);
+
+    if (!helper_box) {
+        basePosition = three.originalRow.position.y;
+    } else {
+        const boundingBox = new THREE.Box3().setFromObject(helper_box);
+        basePosition =
+            boundingBox.max.y - mmToUnits(ROW_CONFIGS[selectedSize].height);
+    }
 
     // Для первого ряда используем базовую позицию
     if (rowIndex === 0) return basePosition;
@@ -29,13 +40,12 @@ export function calculateRowPosition(three, rows, rowIndex) {
     return rows
         .slice(0, rowIndex)
         .reduce(
-            (pos, row) => pos + mmToUnits(ROW_HEIGHTS[row.size]),
+            (pos, row) => pos - mmToUnits(ROW_CONFIGS[row.size].height),
             basePosition,
         );
 }
 
 export function animateBox({ three, rowIndex, boxIndex }) {
-    console.log({ three, rowIndex, boxIndex });
     const row = three.scene.getObjectByName(`row_${rowIndex}`, true);
     if (!row) return;
     const box = row.getObjectByName(`box_${boxIndex}`, true);
@@ -175,11 +185,13 @@ export function addBoxToScene(
     three,
     selectedSize,
     selectedWidth,
+    selectedHeight,
     selectedColor,
     addedRows,
     rowIndex,
     logCallback,
 ) {
+    console.log(selectedSize);
     if (!three.originalRow) {
         console.error("Оригинальная модель ряда не найдена");
         return;
@@ -191,6 +203,7 @@ export function addBoxToScene(
     // Клонирование ряда
     const rowClone = three.originalRow.clone();
     const rowClonedClone = three.originalClonedRow.clone();
+
     rowClone.visible = true;
     rowClonedClone.visible = true;
 
@@ -223,7 +236,12 @@ export function addBoxToScene(
 
     // Определяем индекс и рассчитываем позицию
     const index = rowIndex !== null ? rowIndex : addedRows.length;
-    const yPosition = calculateRowPosition(three, addedRows, index);
+    const yPosition = calculateRowPosition(
+        three,
+        addedRows,
+        index,
+        selectedSize,
+    );
 
     // Устанавливаем позицию и имя
     rowClone.position.set(
@@ -254,7 +272,6 @@ export function addBoxToScene(
     three.lastRowPosition = rowClone.position.clone();
 
     logCallback(`Добавлен ряд #${index} (${selectedSize})`);
-    console.log("Scene", three.scene.children);
 
     return rowClone;
 }
@@ -288,11 +305,11 @@ export function validateRowAddition(
         const lastSize = addedRows[addedRows.length - 1].size;
 
         if (
-            (lastSize === "small" &&
-                ["medium", "large"].includes(selectedSize)) ||
-            (lastSize === "medium" && selectedSize === "large")
+            (lastSize === "large" &&
+                ["medium", "small"].includes(selectedSize)) ||
+            (lastSize === "medium" && selectedSize === "small")
         ) {
-            const message = "Выберите ящик меньшего размера.";
+            const message = "Выберите ящик большего размера.";
             logCallback("Неверный размер", { warning: message });
 
             Toastify({
@@ -332,11 +349,6 @@ export function removeRowFromScene(three, index, addedRows, logCallback) {
     if (rowToRemove && cloneRowToRemove) {
         models.remove(rowToRemove);
         clonedModels.remove(cloneRowToRemove);
-        console.log(
-            "rowToRemove, cloneRowToRemove",
-            rowToRemove,
-            cloneRowToRemove,
-        );
     }
 
     return true;

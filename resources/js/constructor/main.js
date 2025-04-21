@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 // Импорт модулей
-import { ROW_HEIGHTS, MODELS, HELPER_BOX_SELECTOR } from "./constants";
+import { ROW_CONFIGS, MODELS, HELPER_BOX_SELECTOR } from "./constants";
 import {
     setupThreeEnvironment,
     fitCameraToObjects,
@@ -81,7 +81,7 @@ export default () => {
             // },
         ],
         colors: ["red", "green", "blue", "#ffeb00", "gray"],
-        debugMode: true,
+        debugMode: false,
 
         // Инициализация debugInfo
         debugInfo: {
@@ -147,9 +147,9 @@ export default () => {
         usedHeight: 0,
 
         // Свойства для шаблона
-        maxSmallRowsToAdd: Math.floor(1515 / ROW_HEIGHTS.small),
-        maxMediumRowsToAdd: Math.floor(1515 / ROW_HEIGHTS.medium),
-        maxLargeRowsToAdd: Math.floor(1515 / ROW_HEIGHTS.large),
+        maxSmallRowsToAdd: Math.floor(1515 / ROW_CONFIGS.small.height),
+        maxMediumRowsToAdd: Math.floor(1515 / ROW_CONFIGS.medium.height),
+        maxLargeRowsToAdd: Math.floor(1515 / ROW_CONFIGS.large.height),
         canAddSmallRow: true,
         canAddMediumRow: true,
         canAddLargeRow: true,
@@ -208,7 +208,6 @@ export default () => {
                 this.$watch("selectedWidth", (newVal, oldVal) => {
                     this.changeSelectedWidthValue(newVal);
                     this.changeDescWidth(three, newVal, oldVal);
-                    this.rebuildRows();
                 });
             } catch (error) {
                 this.error = error.message;
@@ -221,13 +220,14 @@ export default () => {
                 console.error("Модели не найдены");
                 return;
             }
-            updateHeightCalculationBox(three, models);
+            updateHeightCalculationBox(three, models).then(() => {
+                this.updateHeightInfo();
+                this.rebuildRows();
+            });
         },
         changeDescHeight(three, newVal, oldVal) {
             changeDescHeight(three, newVal).then(() => {
                 this.updateHeightCalculationBox(three);
-                this.updateHeightInfo();
-                this.rebuildRows();
             });
         },
         changeDescWidth(three, newVal, oldVal) {
@@ -337,7 +337,7 @@ export default () => {
             }
 
             const usedHeight = this.addedRows.reduce(
-                (sum, row) => sum + ROW_HEIGHTS[row.size],
+                (sum, row) => sum + ROW_CONFIGS[row.size].height,
                 0,
             );
 
@@ -349,19 +349,22 @@ export default () => {
             );
 
             // Обновляем флаги доступности размеров
-            this.canAddSmallRow = this.remainingHeight >= ROW_HEIGHTS.small;
-            this.canAddMediumRow = this.remainingHeight >= ROW_HEIGHTS.medium;
-            this.canAddLargeRow = this.remainingHeight >= ROW_HEIGHTS.large;
+            this.canAddSmallRow =
+                this.remainingHeight >= ROW_CONFIGS.small.height;
+            this.canAddMediumRow =
+                this.remainingHeight >= ROW_CONFIGS.medium.height;
+            this.canAddLargeRow =
+                this.remainingHeight >= ROW_CONFIGS.large.height;
 
             // Обновляем максимальное количество рядов
             this.maxSmallRowsToAdd = Math.floor(
-                this.remainingHeight / ROW_HEIGHTS.small,
+                this.remainingHeight / ROW_CONFIGS.small.height,
             );
             this.maxMediumRowsToAdd = Math.floor(
-                this.remainingHeight / ROW_HEIGHTS.medium,
+                this.remainingHeight / ROW_CONFIGS.medium.height,
             );
             this.maxLargeRowsToAdd = Math.floor(
-                this.remainingHeight / ROW_HEIGHTS.large,
+                this.remainingHeight / ROW_CONFIGS.large.height,
             );
 
             if (this.debugMode) this.updateDebugInfo();
@@ -397,6 +400,7 @@ export default () => {
                 three,
                 this.selectedSize,
                 this.selectedWidth,
+                this.selectedHeight,
                 this.selectedColor,
                 this.addedRows,
                 rowIndex,
@@ -406,6 +410,7 @@ export default () => {
 
         // Добавление нового ряда пользователем
         addRow() {
+            this.updateHeightInfo();
             // Проверка на возможность добавления
             if (
                 !validateRowAddition(

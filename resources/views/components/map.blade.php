@@ -13,7 +13,6 @@
         [this.address, this.coordinates] = this.data.split('|');
         this.coordinates = JSON.parse(JSON.stringify([55.50779,37.755933]));
         
-        console.log(this.address, this.coordinates);
 
         ymaps.ready(() => {
             this.map = new ymaps.Map('delivery-map-{{ $string }}', {
