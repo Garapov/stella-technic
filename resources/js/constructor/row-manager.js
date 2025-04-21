@@ -1,11 +1,8 @@
+import * as THREE from "three";
 import { gsap } from "gsap";
 import Toastify from "toastify-js";
-import {
-    SCALE_FACTOR,
-    ROW_HEIGHTS,
-    BASE_POSITIONS,
-    ROW_CONFIGS,
-} from "./constants";
+import { SCALE_FACTOR, ROW_HEIGHTS, ROW_CONFIGS } from "./constants";
+import { select } from "three/tsl";
 
 // Конвертация размеров
 export function mmToUnits(mm) {
@@ -23,9 +20,7 @@ export function canAddRow(size, remainingHeight) {
 
 // Расчет позиции для ряда
 export function calculateRowPosition(three, rows, rowIndex) {
-    const basePosition = three.originalRow
-        ? three.originalRow.position.y
-        : BASE_POSITIONS[rows[0]?.size || "small"];
+    const basePosition = three.originalRow.position.y;
 
     // Для первого ряда используем базовую позицию
     if (rowIndex === 0) return basePosition;
@@ -102,50 +97,77 @@ export function createBoxesForRow(
     selectedColor,
 ) {
     const count = config[selectedWidth];
-    const offset = config["offset"];
+    const offset = config["offset"][selectedWidth];
 
-    originalBox.position.x = selectedWidth == "wide" ? 0.1 : 0;
+    try {
+        // Получаем геометрию оригинального бокса
+        const geometry = originalBox.geometry.clone();
 
-    Array.from({ length: count }).forEach((_, i) => {
-        // Клонирование бокса
-        const boxClone = originalBox.clone();
-        boxClone.visible = true;
+        // Создаем новый материал
+        const material = new THREE.MeshPhongMaterial({
+            color: selectedColor,
+            shininess: 100,
+        });
 
-        // Настройка материала
-        if (boxClone.material) {
-            boxClone.material = Array.isArray(boxClone.material)
-                ? boxClone.material.map((m) => {
-                      const clone = m.clone();
-                      clone.color.set(selectedColor);
-                      return clone;
-                  })
-                : (() => {
-                      const clone = boxClone.material.clone();
-                      clone.color.set(selectedColor);
-                      return clone;
-                  })();
+        // Создаем InstancedMesh
+        const instances = new THREE.InstancedMesh(geometry, material, count);
+        instances.name = "boxes_group";
+
+        // Устанавливаем позиции для каждого экземпляра
+        const matrix = new THREE.Matrix4();
+        for (let i = 0; i < count; i++) {
+            const boxName = `box_${i}`;
+
+            // Создаем матрицу трансформации
+            matrix.makeTranslation(
+                originalBox.position.x + i * offset,
+                originalBox.position.y,
+                originalBox.position.z,
+            );
+
+            // Применяем матрицу к экземпляру
+            instances.setMatrixAt(i, matrix);
         }
 
-        // Позиция и имя
-        boxClone.position.set(
-            originalBox.position.x + i * offset,
-            originalBox.position.y,
-            originalBox.position.z,
-        );
+        // Обновляем матрицы
+        instances.instanceMatrix.needsUpdate = true;
 
-        const boxName = `box_${i}`;
-        boxClone.name = boxName;
-        boxClone.visible = true;
+        // Добавляем на сцену
+        rowClone.add(instances);
+    } catch (error) {
+        console.error("Error creating InstancedMesh:", error);
 
-        // Добавление и анимация
-        rowClone.add(boxClone);
-        gsap.to(rowClone.getObjectByName(boxName).position, {
-            y: 0,
-            duration: 0.15,
-            delay: i * 0.05,
-            ease: "power3.inOut",
+        // Альтернативный метод с клонированием
+        Array.from({ length: count }).forEach((_, i) => {
+            const boxClone = originalBox.clone();
+            boxClone.visible = true;
+
+            if (boxClone.material) {
+                boxClone.material = Array.isArray(boxClone.material)
+                    ? boxClone.material.map((m) => {
+                          const clone = m.clone();
+                          clone.color.set(selectedColor);
+                          return clone;
+                      })
+                    : (() => {
+                          const clone = boxClone.material.clone();
+                          clone.color.set(selectedColor);
+                          return clone;
+                      })();
+            }
+
+            boxClone.position.set(
+                originalBox.position.x + i * offset,
+                originalBox.position.y,
+                originalBox.position.z,
+            );
+
+            boxClone.name = `box_${i}`;
+            boxClone.visible = true;
+
+            rowClone.add(boxClone);
         });
-    });
+    }
 }
 
 // Добавление ящика
@@ -205,18 +227,26 @@ export function addBoxToScene(
 
     // Устанавливаем позицию и имя
     rowClone.position.set(
-        three.originalRow.position.x,
+        selectedWidth == "wide"
+            ? three.originalRow.position.x + 0.215
+            : three.originalRow.position.x,
         yPosition,
         three.originalRow.position.z,
     );
     rowClonedClone.position.set(
-        three.originalClonedRow.position.x,
+        selectedWidth == "wide"
+            ? three.originalRow.position.x + 0.215
+            : three.originalRow.position.x,
         yPosition,
-        three.originalClonedRow.position.z,
+        three.originalRow.position.z,
     );
 
     rowClone.name = `row_${addedRows.length}`;
     rowClonedClone.name = `row_${addedRows.length}`;
+
+    rowClone.getObjectByName("lineClone").visible = selectedWidth == "wide";
+    rowClonedClone.getObjectByName("lineClone").visible =
+        selectedWidth == "wide";
 
     // Добавляем на сцену
     three.scene.getObjectByName("models").add(rowClone);
@@ -238,7 +268,7 @@ export function validateRowAddition(
 ) {
     // Проверка на доступное пространство
     if (!canAddRow(selectedSize, remainingHeight)) {
-        const message = `Недостаточно места для добавления ящика размера ${selectedSize}. Осталось ${remainingHeight}мм.`;
+        const message = `Недостаточно места для добавления ящика.`;
         logCallback("Нехватка места", { warning: message });
 
         Toastify({

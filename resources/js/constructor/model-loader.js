@@ -146,6 +146,17 @@ async function loadModel(three, model, logCallback, progressCallback) {
     return object;
 }
 
+export function makeLineClone(three, object) {
+    let line = object.getObjectByName("line");
+    if (line) {
+        let clone = line.clone();
+        clone.name = "lineClone";
+        clone.position.x = -0.43;
+        clone.visible = false;
+        object.add(clone);
+    }
+}
+
 export function addBoxForHeightCalculation(three, object) {
     // Проверим, что бокса еще нет
     let existingBox = three.scene.getObjectByName(HELPER_BOX_SELECTOR);
@@ -213,7 +224,7 @@ export function addBoxForHeightCalculation(three, object) {
     const boxMaterial = new THREE.MeshBasicMaterial({
         color: 0x00ff00,
         transparent: true,
-        opacity: 0.3,
+        opacity: 0,
         wireframe: true,
     });
 
@@ -533,11 +544,11 @@ export function setupRowModels(three) {
         const box = row.getObjectByName(name, true);
         const boxClone = rowFromClone.getObjectByName(name, true);
         if (box) {
-            box.position.y = 0.3;
+            // box.scale.set(0, 0, 0);
             box.visible = false;
         }
         if (boxClone) {
-            boxClone.position.y = 0.3;
+            // box.scale.set(0, 0, 0);
             boxClone.visible = false;
         }
     });
@@ -546,6 +557,9 @@ export function setupRowModels(three) {
 
     three.originalRow = row.clone();
     three.originalClonedRow = rowFromClone.clone();
+
+    makeLineClone(three, three.originalRow);
+    makeLineClone(three, three.originalClonedRow);
 
     console.log(three.originalRow, three.originalClonedRow);
 

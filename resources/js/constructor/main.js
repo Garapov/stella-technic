@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 // Импорт модулей
-import { SHELF_HEIGHT, ROW_HEIGHTS, MODELS } from "./constants";
+import { ROW_HEIGHTS, MODELS, HELPER_BOX_SELECTOR } from "./constants";
 import {
     setupThreeEnvironment,
     fitCameraToObjects,
@@ -23,6 +23,7 @@ import {
     addBoxToScene,
     validateRowAddition,
     removeRowFromScene,
+    unitsToMm,
 } from "./row-manager";
 import { updateDebugInfo, log } from "./debug-utils";
 
@@ -203,7 +204,6 @@ export default () => {
                 this.$watch("selectedHeight", (newVal, oldVal) => {
                     this.changeSelectedHeightValue(newVal);
                     this.changeDescHeight(three, newVal, oldVal);
-                    this.rebuildRows();
                 });
                 this.$watch("selectedWidth", (newVal, oldVal) => {
                     this.changeSelectedWidthValue(newVal);
@@ -226,6 +226,8 @@ export default () => {
         changeDescHeight(three, newVal, oldVal) {
             changeDescHeight(three, newVal).then(() => {
                 this.updateHeightCalculationBox(three);
+                this.updateHeightInfo();
+                this.rebuildRows();
             });
         },
         changeDescWidth(three, newVal, oldVal) {
@@ -308,16 +310,42 @@ export default () => {
 
         // Обновление информации о высоте
         updateHeightInfo() {
+            // Находим HELPER_BOX_SELECTOR на сцене и получаем его высоту
+            const helperBox = three.scene.getObjectByName(
+                HELPER_BOX_SELECTOR,
+                true,
+            );
+            let helperBoxHeight = this.selectedHeightValue; // Используем значение по умолчанию
+
+            if (helperBox) {
+                // Получаем размеры из бокса
+                const box = new THREE.Box3().setFromObject(helperBox);
+                const size = new THREE.Vector3();
+                box.getSize(size);
+                helperBoxHeight = size.y * 1000; // Конвертируем в мм
+                console.log(
+                    "helperBoxHeight",
+                    size,
+                    unitsToMm(size.y),
+                    helperBoxHeight,
+                );
+            } else {
+                this.log(
+                    "Предупреждение: HELPER_BOX_SELECTOR не найден на сцене, используется значение по умолчанию",
+                    { selectedHeightValue: this.selectedHeightValue },
+                );
+            }
+
             const usedHeight = this.addedRows.reduce(
                 (sum, row) => sum + ROW_HEIGHTS[row.size],
                 0,
             );
 
             this.usedHeight = usedHeight;
-            this.remainingHeight = this.selectedHeightValue - usedHeight;
+            this.remainingHeight = Math.round(helperBoxHeight - usedHeight);
             this.usedHeightPercent = Math.min(
                 100,
-                Math.round((usedHeight / this.selectedHeightValue) * 100),
+                Math.round((usedHeight / helperBoxHeight) * 100),
             );
 
             // Обновляем флаги доступности размеров
@@ -378,8 +406,6 @@ export default () => {
 
         // Добавление нового ряда пользователем
         addRow() {
-            this.updateHeightInfo();
-
             // Проверка на возможность добавления
             if (
                 !validateRowAddition(
@@ -448,8 +474,8 @@ export default () => {
             rowsData.forEach((data) => {
                 this.selectedSize = data.size;
                 this.selectedColor = data.color;
-                this.addBox();
-                this.addedRows.push(data);
+                this.addRow();
+                // this.addedRows.push(data);
             });
 
             this.log(`Перестройка завершена (${this.addedRows.length} рядов)`);

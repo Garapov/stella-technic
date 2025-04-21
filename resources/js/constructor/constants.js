@@ -1,12 +1,27 @@
 // Константы размеров
 export const SHELF_HEIGHT = 1450; // мм
-export const ROW_HEIGHTS = { small: 110, medium: 158, large: 178 };
-export const SCALE_FACTOR = 0.00101;
+export const ROW_HEIGHTS = { small: 107.68, medium: 155.55, large: 175 };
+export const SCALE_FACTOR = 0.001;
 export const BASE_POSITIONS = { small: 0.176, medium: 0.213, large: 0.23 };
 export const ROW_CONFIGS = {
-    small: { selector: "box", slim: 6, wide: 10, offset: -0.106 },
-    medium: { selector: "box_medium", slim: 4, wide: 7, offset: -0.16 },
-    large: { selector: "box_large", slim: 3, wide: 5, offset: -0.215 },
+    small: {
+        selector: "box",
+        slim: 6,
+        wide: 10,
+        offset: { slim: -0.106, wide: -0.106 },
+    },
+    medium: {
+        selector: "box_medium",
+        slim: 4,
+        wide: 7,
+        offset: { slim: -0.16, wide: -0.15 },
+    },
+    large: {
+        selector: "box_large",
+        slim: 3,
+        wide: 5,
+        offset: { slim: -0.215, wide: -0.215 },
+    },
 };
 export const START_ROW_POSITION = -0.25;
 

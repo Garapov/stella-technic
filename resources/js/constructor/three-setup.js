@@ -36,7 +36,7 @@ export function setupThreeEnvironment(container) {
     three.controls = new OrbitControls(three.camera, three.renderer.domElement);
     three.controls.enableDamping = true;
     three.controls.dampingFactor = 0.05;
-    three.controls.enablePan = false;
+    three.controls.enablePan = true;
 
     three.renderer.shadowMap.enabled = true;
     three.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap

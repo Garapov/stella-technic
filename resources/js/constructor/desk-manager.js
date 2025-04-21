@@ -125,8 +125,8 @@ export function changeDescHeight(three, height) {
                     {
                         y:
                             height === "high"
-                                ? object.position.y + 0.2
-                                : object.position.y - 0.2,
+                                ? object.position.y + 0.423
+                                : object.position.y - 0.423,
                         duration: 0.2,
                         ease: "power3.inOut",
                     },
@@ -201,7 +201,7 @@ export function changeDescWidth(three, width) {
                 tl.to(
                     object.position,
                     {
-                        x: width === "wide" ? -0.13 : 0,
+                        x: width === "wide" ? -0.215 : 0,
                         duration: 0.2,
                         ease: "power3.inOut",
                     },
@@ -217,7 +217,7 @@ export function changeDescWidth(three, width) {
                 tl.to(
                     object.position,
                     {
-                        x: width === "wide" ? 0.13 : 0,
+                        x: width === "wide" ? 0.215 : 0,
                         duration: 0.2,
                         ease: "power3.inOut",
                     },
@@ -234,8 +234,8 @@ export function changeDescWidth(three, width) {
                     {
                         y:
                             width === "wide"
-                                ? object.position.y + 0.08
-                                : object.position.y - 0.08,
+                                ? object.position.y + 0.165
+                                : object.position.y - 0.165,
                         duration: 0.2,
                         ease: "power3.inOut",
                     },
@@ -252,8 +252,8 @@ export function changeDescWidth(three, width) {
                     {
                         y:
                             width === "wide"
-                                ? object.position.y - 0.08
-                                : object.position.y + 0.08,
+                                ? object.position.y - 0.165
+                                : object.position.y + 0.165,
                         duration: 0.2,
                         ease: "power3.inOut",
                     },
@@ -266,19 +266,19 @@ export function changeDescWidth(three, width) {
         const rotationGroups = [
             {
                 name: "rotationRightTopGroup",
-                angle: width === "wide" ? Math.PI / -14 : 0,
+                angle: width === "wide" ? Math.PI / -8 : 0,
             },
             {
                 name: "rotationLeftTopGroup",
-                angle: width === "wide" ? Math.PI / 14 : 0,
+                angle: width === "wide" ? Math.PI / 8 : 0,
             },
             {
                 name: "rotationLeftBottomGroup",
-                angle: width === "wide" ? Math.PI / -14 : 0,
+                angle: width === "wide" ? Math.PI / -8 : 0,
             },
             {
                 name: "rotationRightBottomGroup",
-                angle: width === "wide" ? Math.PI / 14 : 0,
+                angle: width === "wide" ? Math.PI / 8 : 0,
             },
         ];
 
