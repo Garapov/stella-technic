@@ -16,7 +16,6 @@ class CheckAllowedHostNames
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Log::info([$request->getHttpHost(), $request->getHost(), $request->all()]);
         return $next($request);
     }
 }

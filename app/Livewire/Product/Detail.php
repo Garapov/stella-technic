@@ -59,7 +59,7 @@ class Detail extends Component
                             "title" => $param->title,
                             "value" => $param->value,
                             "is_fixed" => $param->productParam->fixed
-                            
+
                         ],
                     ];
                 })
@@ -71,6 +71,8 @@ class Detail extends Component
                     "params" => $variantParams,
                 ];
 
+
+
                 foreach ($variantParams as $paramName => $param) {
                     if (!isset($groupedParams[$paramName])) {
                         $groupedParams[$paramName] = [
@@ -78,6 +80,7 @@ class Detail extends Component
                             "values" => [],
                         ];
                     }
+
 
                     $existingValue = collect(
                         $groupedParams[$paramName]["values"]
@@ -96,10 +99,13 @@ class Detail extends Component
                                     $param["title"],
                             "is_available" => false,
                         ];
+
                     }
                 }
             }
         }
+
+        dd($groupedParams);
 
         // Проверяем доступность значений
         foreach ($groupedParams as $paramName => &$paramGroup) {
