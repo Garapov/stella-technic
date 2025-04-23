@@ -7,6 +7,7 @@ import {
     fitCameraToObjects,
     startRenderLoop,
     createFloor,
+    updateProjectionCamera,
 } from "./three-setup";
 
 import {
@@ -158,10 +159,14 @@ export default () => {
         async init() {
             try {
                 const container = this.$refs.scene;
+                const projection = this.$refs.projection;
                 this.adjustSceneHeight();
 
                 // Настройка сцены и Three.js
-                Object.assign(three, setupThreeEnvironment(container));
+                Object.assign(
+                    three,
+                    setupThreeEnvironment(container, projection),
+                );
 
                 // Загрузка моделей
                 await loadModels(
@@ -178,7 +183,7 @@ export default () => {
                 // Финальная настройка
                 fitCameraToObjects(three);
                 this.addFloorToScene(three);
-                startRenderLoop(three, this.debugMode); // Передаем флаг debugMode
+                startRenderLoop(this.debugMode); // Передаем флаг debugMode
                 this.updateHeightInfo();
 
                 // Обработчики событий
@@ -287,7 +292,7 @@ export default () => {
         adjustSceneHeight() {
             const container = this.$refs.scene;
             const projection = this.$refs.projection;
-            if (!container) return;
+            if (!container || !projection) return;
 
             const sceneHeight =
                 window.innerHeight -
@@ -297,10 +302,21 @@ export default () => {
             projection.style.height = `${sceneHeight}px`;
 
             if (three.renderer && three.camera) {
+                // Обновляем основной рендерер и камеру
                 three.renderer.setSize(container.clientWidth, sceneHeight);
                 three.camera.aspect = container.clientWidth / sceneHeight;
                 three.camera.updateProjectionMatrix();
                 three.renderer.shadowMap.enabled = true;
+            }
+
+            // Обновляем проекционный рендерер и камеру
+            if (three.renderer_for_projection && three.cameraRTTProjection) {
+                three.renderer_for_projection.setSize(
+                    projection.clientWidth,
+                    projection.clientHeight,
+                );
+
+                updateProjectionCamera(three);
             }
         },
 
@@ -396,6 +412,7 @@ export default () => {
 
         // Добавление ящика
         addBox(rowIndex = null) {
+            console.log("addBox", this.colors);
             return addBoxToScene(
                 three,
                 this.selectedSize,
@@ -404,6 +421,7 @@ export default () => {
                 this.selectedColor,
                 this.addedRows,
                 rowIndex,
+                this.colors,
                 (message, data) => this.log(message, data),
             );
         },

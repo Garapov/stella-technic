@@ -218,11 +218,13 @@ export function addBoxForHeightCalculation(three, object) {
     const boxGeometry = new THREE.BoxGeometry(width, height, depth);
 
     // Создаем полупрозрачный материал
-    const boxMaterial = new THREE.MeshBasicMaterial({
+    const boxMaterial = new THREE.MeshLambertMaterial({
         color: 0x00ff00,
+        alphaTest: 0,
         transparent: true,
         opacity: 0,
         wireframe: true,
+        wireframeLinewidth: 0,
     });
 
     // Создаем меш
@@ -235,6 +237,7 @@ export function addBoxForHeightCalculation(three, object) {
 
     // Добавляем на сцену и даем имя для идентификации
     boxMesh.name = HELPER_BOX_SELECTOR;
+    boxMesh.visible = false;
     three.scene.add(boxMesh);
 
     // Получаем мировую позицию

@@ -1,5 +1,5 @@
 <div class="h-full grid grid-cols-9" x-data="construct">
-    <div class="bg-white dark:bg-gray-700 p-12 col-span-3 flex flex-col items-center relative" x-ref="projection">
+    <div class="bg-white dark:bg-gray-700 col-span-3 flex flex-col items-center relative" x-ref="projection">
 
         <!-- Кнопка для включения режима отладки, когда режим выключен -->
         <button @click="toggleDebugMode" x-show="!debugMode" class="debug-toggle">
@@ -87,8 +87,8 @@
 
 
         </div>
-        <div class="relative h-full">
-            <div class="absolute top-0 left-0 w-full h-full flex flex-col-reverse justify-start gap-1.5 p-4">
+        <div class="relative h-full w-full" x-ref="projection">
+            <!-- <div class="absolute top-0 left-0 w-full h-full flex flex-col-reverse justify-start gap-1.5 p-4">
                 <template x-for="(row, index) in addedRows" :key="index">
                     <div class="w-full relative">
                         <template x-if="row.size == 'small'" >
@@ -104,10 +104,10 @@
                     </div>
                 </template>
             </div>
-            <img src="{{ asset('assets/stand.svg') }}" class="max-h-full" alt="">
+            <img src="{{ asset('assets/stand.svg') }}" class="max-h-full" alt=""> -->
         </div>
     </div>
-    <div class="bg-white dark:bg-gray-700 py-12 px-4 col-span-2 flex flex-col gap-4 relative">
+    <div class="bg-white dark:bg-gray-700 py-12 px-4 col-span-2 flex flex-col gap-4 relative" x-ref="settings">
         <div class="text-xl italic font-semibold text-gray-900 dark:text-white">1. Выберите тип стойки</div>
         <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
             <template x-for="(deskType, index) in deskTypes" :key="index">
@@ -164,7 +164,7 @@
             </button>
         </div>
 
-        
+
     </div>
     <div class="relative col-span-4 bg-gray-700 dark:bg-gray-700" x-ref="scene">
         <div class="absolute top-0 left-0 w-full h-full bg-gray-700 dark:bg-gray-700 flex flex-col items-center justify-center gap-4 p-10" x-show="!isLoaded">

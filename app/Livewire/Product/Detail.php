@@ -37,12 +37,11 @@ class Detail extends Component
                         "id" => $param->id,
                         "title" => $param->title,
                         "value" => $param->value,
-                        "is_fixed" => $param->productParam->fixed
+                        "is_fixed" => $param->productParam->fixed,
                     ],
                 ];
             })
             ->toArray();
-
 
         // Собираем все возможные параметры и их комбинации
         $availableCombinations = [];
@@ -58,8 +57,7 @@ class Detail extends Component
                             "id" => $param->id,
                             "title" => $param->title,
                             "value" => $param->value,
-                            "is_fixed" => $param->productParam->fixed
-
+                            "is_fixed" => $param->productParam->fixed,
                         ],
                     ];
                 })
@@ -71,8 +69,6 @@ class Detail extends Component
                     "params" => $variantParams,
                 ];
 
-
-
                 foreach ($variantParams as $paramName => $param) {
                     if (!isset($groupedParams[$paramName])) {
                         $groupedParams[$paramName] = [
@@ -80,7 +76,6 @@ class Detail extends Component
                             "values" => [],
                         ];
                     }
-
 
                     $existingValue = collect(
                         $groupedParams[$paramName]["values"]
@@ -99,17 +94,23 @@ class Detail extends Component
                                     $param["title"],
                             "is_available" => false,
                         ];
-
                     }
                 }
             }
         }
 
-        dd($groupedParams);
+        // Удалите отладочный вызов dd()
+        // dd($groupedParams);
 
         // Проверяем доступность значений
         foreach ($groupedParams as $paramName => &$paramGroup) {
             foreach ($paramGroup["values"] as &$value) {
+                // Если параметр fixed, то он всегда доступен и не влияет на доступность других опций
+                if ($value["is_fixed"]) {
+                    $value["is_available"] = true;
+                    continue;
+                }
+
                 if ($value["is_current"]) {
                     $value["is_available"] = true;
                     continue;
@@ -126,11 +127,15 @@ class Detail extends Component
                         $isCompatible = true;
 
                         // Проверяем только те параметры, которые есть в текущей комбинации
+                        // Игнорируем fixed параметры при проверке совместимости
                         foreach (
                             $combinationParams
                             as $checkParamName => $checkParam
                         ) {
-                            if ($checkParamName === $paramName) {
+                            if (
+                                $checkParamName === $paramName ||
+                                $checkParam["is_fixed"]
+                            ) {
                                 continue;
                             }
 
@@ -147,7 +152,6 @@ class Detail extends Component
                         if ($isCompatible) {
                             $value["is_available"] = true;
                             $value["variant_id"] = $combination["variant_id"];
-
                             break;
                         }
                     }

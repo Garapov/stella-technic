@@ -1,18 +1,72 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { updateFPS } from "./debug-utils";
+import ThreeMeshUI from "three-mesh-ui";
+import { updateRaycasting } from "./ui-manager.js";
+
+let three = {};
 
 // Инициализация Three.js
-export function setupThreeEnvironment(container) {
+export function setupThreeEnvironment(container, projection, settings) {
     // Контейнер для Three.js объектов
-    const three = {
+    three = {
         scene: new THREE.Scene(),
+        container: container,
+        projection: projection,
         camera: null,
+        cameraRTTProjection: null,
         renderer: null,
+        renderer_for_projection: null,
         controls: null,
+        controlsRTT: null,
         originalRow: null,
         lastRowPosition: new THREE.Vector3(0, 0, 0),
+        settings: settings,
+        raycaster: new THREE.Raycaster(),
+        raycasterProjection: new THREE.Raycaster(), // Второй raycaster для проекционной камеры
+        mouse: new THREE.Vector2(),
+        mouseProjection: new THREE.Vector2(), // Координаты мыши для проекционного окна
+        mouseClick: false,
+        mouseClickProjection: false, // Клик в проекционном окне
+        selectedObject: null,
+        objectsToTest: [],
+        isInteractingWithUI: false, // Флаг для отслеживания взаимодействия с UI
+        mouseDownPosition: { x: 0, y: 0, view: null }, // Позиция при mousedown
     };
+    // Обработчик событий мыши для основного окна
+    window.addEventListener("mousemove", (event) => {
+        // Определяем, над каким canvas находится мышь
+        const rectMain = container.getBoundingClientRect();
+        const rectProj = projection.getBoundingClientRect();
+
+        // Проверяем, находится ли мышь над основным окном
+        if (
+            event.clientX >= rectMain.left &&
+            event.clientX <= rectMain.right &&
+            event.clientY >= rectMain.top &&
+            event.clientY <= rectMain.bottom
+        ) {
+            // Рассчитываем координаты для основного окна
+            three.mouse.x =
+                ((event.clientX - rectMain.left) / rectMain.width) * 2 - 1;
+            three.mouse.y =
+                -((event.clientY - rectMain.top) / rectMain.height) * 2 + 1;
+        }
+
+        // Проверяем, находится ли мышь над проекционным окном
+        if (
+            event.clientX >= rectProj.left &&
+            event.clientX <= rectProj.right &&
+            event.clientY >= rectProj.top &&
+            event.clientY <= rectProj.bottom
+        ) {
+            // Рассчитываем координаты для проекционного окна
+            three.mouseProjection.x =
+                ((event.clientX - rectProj.left) / rectProj.width) * 2 - 1;
+            three.mouseProjection.y =
+                -((event.clientY - rectProj.top) / rectProj.height) * 2 + 1;
+        }
+    });
 
     // Настройка камеры
     three.camera = new THREE.PerspectiveCamera(
@@ -23,28 +77,215 @@ export function setupThreeEnvironment(container) {
     );
     three.camera.position.z = 1;
 
-    // Настройка рендерера
+    // Настройка ортографической камеры для проекции (вид спереди)
+    three.cameraRTTProjection = new THREE.OrthographicCamera(
+        projection.clientWidth / -2,
+        projection.clientWidth / 2,
+        projection.clientHeight / 2,
+        projection.clientHeight / -2,
+        -10000,
+        10000,
+    );
+
+    // Позиционируем проекционную камеру для вида спереди
+    three.cameraRTTProjection.position.set(0, 0, 5);
+    three.cameraRTTProjection.lookAt(0, 0, 0);
+
+    // Настройка рендереров - сначала инициализируем рендереры
     three.renderer = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true,
     });
     three.renderer.setSize(container.clientWidth, container.clientHeight);
     three.renderer.setPixelRatio(window.devicePixelRatio);
+
+    // Обработчики событий для основного view
+    container.addEventListener("mousedown", (event) => {
+        setMouseClocked(three, "container", true);
+    });
+
+    container.addEventListener("mouseup", (event) => {
+        setMouseClocked(three, "container", false);
+    });
+
     container.appendChild(three.renderer.domElement);
 
-    // Управление камерой
+    three.renderer_for_projection = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+    });
+    three.renderer_for_projection.setSize(
+        projection.clientWidth,
+        projection.clientHeight,
+    );
+    three.renderer_for_projection.setPixelRatio(window.devicePixelRatio);
+
+    // Обработчики событий для проекционного view
+    projection.addEventListener("mousedown", (event) => {
+        setMouseClocked(three, "projections", true);
+    });
+
+    projection.addEventListener("mouseup", (event) => {
+        setMouseClocked(three, "projections", false);
+    });
+
+    projection.appendChild(three.renderer_for_projection.domElement);
+
+    // Теперь, когда рендереры готовы, настроим контроллеры
     three.controls = new OrbitControls(three.camera, three.renderer.domElement);
     three.controls.enableDamping = true;
     three.controls.dampingFactor = 0.05;
-    three.controls.enablePan = true;
+    three.controls.enablePan = false;
 
+    three.controlsRTT = new OrbitControls(
+        three.cameraRTTProjection,
+        three.renderer_for_projection.domElement,
+    );
+    three.controlsRTT.enableRotate = false;
+    three.controlsRTT.enableZoom = true;
+    three.controlsRTT.enablePan = true;
+    three.controlsRTT.enableDamping = true;
+    three.controlsRTT.dampingFactor = 0.05;
+
+    // Настройки рендерера
     three.renderer.shadowMap.enabled = true;
-    three.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+    three.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    // Создаем визуализацию лучей для обеих камер
+    // Луч для основной камеры
+    const rayLineMaterial = new THREE.LineBasicMaterial({
+        color: 0xff0000,
+        transparent: true,
+        opacity: 0.75,
+    });
+
+    const rayLineGeometry = new THREE.BufferGeometry();
+    const points = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0)];
+    rayLineGeometry.setFromPoints(points);
+
+    const rayLine = new THREE.Line(rayLineGeometry, rayLineMaterial);
+    rayLine.visible = false;
+    three.scene.add(rayLine);
+    three.rayLine = rayLine;
+
+    // Луч для проекционной камеры
+    const rayLineProjMaterial = new THREE.LineBasicMaterial({
+        color: 0x00ffff, // Другой цвет для различия
+        transparent: true,
+        opacity: 0.75,
+    });
+
+    const rayLineProjGeometry = new THREE.BufferGeometry();
+    rayLineProjGeometry.setFromPoints(points);
+
+    const rayLineProj = new THREE.Line(
+        rayLineProjGeometry,
+        rayLineProjMaterial,
+    );
+    rayLineProj.visible = false;
+    three.scene.add(rayLineProj);
+    three.rayLineProj = rayLineProj;
+
+    // Сфера для визуализации точки пересечения основного луча
+    const intersectionSphere = new THREE.Mesh(
+        new THREE.SphereGeometry(0.02, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0xff0000 }),
+    );
+    intersectionSphere.visible = false;
+    three.scene.add(intersectionSphere);
+    three.intersectionSphere = intersectionSphere;
+
+    // Сфера для визуализации точки пересечения проекционного луча
+    const intersectionSphereProj = new THREE.Mesh(
+        new THREE.SphereGeometry(0.02, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0x00ffff }),
+    );
+    intersectionSphereProj.visible = false;
+    three.scene.add(intersectionSphereProj);
+    three.intersectionSphereProj = intersectionSphereProj;
+
+    // Добавляем обработчик клавиш для переключения видимости лучей
+    window.addEventListener("keydown", (event) => {
+        if (event.key === "r" || event.key === "R") {
+            three.rayLine.visible = !three.rayLine.visible;
+            three.rayLineProj.visible = !three.rayLineProj.visible;
+
+            if (!three.rayLine.visible) {
+                three.intersectionSphere.visible = false;
+                three.intersectionSphereProj.visible = false;
+            }
+        }
+    });
 
     // Настройка освещения
     setupLights(three.scene);
 
     return three;
+}
+
+export function setMouseClocked(three, type, state) {
+    if (type == "container") three.mouseClick = state;
+    if (type == "projections") three.mouseClickProjection = state;
+}
+
+export function updateProjectionCamera(three) {
+    // Проверяем, инициализированы ли необходимые компоненты
+    if (!three.cameraRTTProjection || !three.controlsRTT) {
+        console.warn(
+            "Projection camera or controls not initialized yet. Skipping update.",
+        );
+        return;
+    }
+
+    // Находим объект 'models' на сцене
+    const modelsObject = three.scene.getObjectByName("shelf", true);
+
+    if (modelsObject) {
+        // Создаем bounding box для объекта shelf
+        const box = new THREE.Box3().setFromObject(modelsObject);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+
+        // Устанавливаем центр проекции на центр объекта
+        three.controlsRTT.target.copy(center);
+
+        // Получаем соотношение сторон контейнера проекции
+        const containerAspect =
+            three.projection.clientWidth / three.projection.clientHeight;
+
+        // Получаем соотношение сторон объекта (ширина/высота)
+        const objectAspect = size.x / size.y;
+
+        let width, height;
+
+        // Определяем, какая сторона ограничивает отображение
+        if (objectAspect > containerAspect) {
+            // Объект шире относительно контейнера - ограничиваем по ширине
+            width = size.x * 1.1; // Добавляем небольшой отступ (10%)
+            height = width / containerAspect;
+        } else {
+            // Объект выше относительно контейнера - ограничиваем по высоте
+            height = size.y * 1.1; // Добавляем небольшой отступ (10%)
+            width = height * containerAspect;
+        }
+
+        // Обновляем параметры ортографической камеры
+        three.cameraRTTProjection.left = -width / 2;
+        three.cameraRTTProjection.right = width / 2;
+        three.cameraRTTProjection.top = height / 2;
+        three.cameraRTTProjection.bottom = -height / 2;
+
+        // Устанавливаем позицию камеры перед объектом
+        const distance = Math.max(size.z * 0.5, 1); // минимальное расстояние не меньше 1
+        three.cameraRTTProjection.position.z = center.z + distance;
+        three.cameraRTTProjection.position.x = center.x;
+        three.cameraRTTProjection.position.y = center.y;
+        three.cameraRTTProjection.lookAt(center);
+
+        // Обновляем проекционную матрицу камеры
+        three.cameraRTTProjection.updateProjectionMatrix();
+        three.controlsRTT.update();
+    }
 }
 
 // Настройка освещения
@@ -129,6 +370,12 @@ export function setupLights(scene) {
 
 // Подгонка камеры к объектам
 export function fitCameraToObjects(three) {
+    // Проверяем, инициализированы ли controls
+    if (!three.controls) {
+        console.warn("Controls not initialized yet. Skipping camera fit.");
+        return;
+    }
+
     const box = new THREE.Box3();
 
     // Расширяем бокс всеми объектами сцены
@@ -152,6 +399,10 @@ export function fitCameraToObjects(three) {
         three.camera.quaternion,
     );
     three.camera.position.copy(center).add(direction.multiplyScalar(distance));
+
+    // Обновляем также проекционную камеру
+    updateProjectionCamera(three);
+
     three.camera.updateProjectionMatrix();
     three.controls.update();
 }
@@ -232,25 +483,54 @@ export function createFloor(three) {
     floor.name = "floor";
 
     three.scene.add(floor);
-    createWall(three, [0.35, 1.5, -1.5], 3, 3, 0);
-    createWall(three, [0.35, 1.5, 1.5], 3, 3, Math.PI);
-    createWall(three, [-1.15, 1.5, 0], 3, 3, Math.PI / 2);
-    createWall(three, [1.85, 1.5, 0], 3, 3, Math.PI / -2);
+    createWall(three, [0.35, 0, -1.5], 9, 9, 0);
+    createWall(three, [0.35, 0, 1.5], 9, 9, Math.PI);
+    createWall(three, [-1.15, 0, 0], 9, 9, Math.PI / 2);
+    createWall(three, [1.85, 0, 0], 9, 9, Math.PI / -2);
 }
 
 // Запуск цикла рендеринга
-export function startRenderLoop(three, debugMode) {
+export function startRenderLoop(debugMode) {
     const animate = () => {
         requestAnimationFrame(animate);
 
-        // Вызываем обновление FPS в каждом кадре, если включен режим отладки
-        if (debugMode) {
-            updateFPS();
-        }
+        try {
+            // Обновляем рейкастинг и UI
+            updateRaycasting(three);
 
-        if (three.controls) three.controls.update();
-        if (three.renderer && three.scene && three.camera) {
-            three.renderer.render(three.scene, three.camera);
+            // Вызываем обновление FPS в каждом кадре, если включен режим отладки
+            if (debugMode) {
+                updateFPS();
+            }
+
+            // Обновляем проекцию при каждом кадре (если controls инициализированы)
+            if (three.controlsRTT) {
+                try {
+                    updateProjectionCamera(three);
+                } catch (error) {
+                    console.error("Error updating projection camera:", error);
+                }
+            }
+
+            // Обновляем контролы и рендерим сцену с проверками
+            if (three.controls) three.controls.update();
+
+            if (three.renderer && three.scene && three.camera) {
+                three.renderer.render(three.scene, three.camera);
+            }
+
+            if (
+                three.renderer_for_projection &&
+                three.scene &&
+                three.cameraRTTProjection
+            ) {
+                three.renderer_for_projection.render(
+                    three.scene,
+                    three.cameraRTTProjection,
+                );
+            }
+        } catch (error) {
+            console.error("Error in animation loop:", error);
         }
     };
 

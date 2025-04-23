@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { gsap } from "gsap";
 import Toastify from "toastify-js";
 import { SCALE_FACTOR, ROW_CONFIGS, HELPER_BOX_SELECTOR } from "./constants";
-import { select } from "three/tsl";
+import { createRowUI } from "./ui-manager";
 
 // Конвертация размеров
 export function mmToUnits(mm) {
@@ -189,9 +189,10 @@ export function addBoxToScene(
     selectedColor,
     addedRows,
     rowIndex,
+    availableColors,
     logCallback,
 ) {
-    console.log(selectedSize);
+    console.log("addBoxToScene", availableColors);
     if (!three.originalRow) {
         console.error("Оригинальная модель ряда не найдена");
         return;
@@ -265,6 +266,8 @@ export function addBoxToScene(
     rowClone.getObjectByName("lineClone").visible = selectedWidth == "wide";
     rowClonedClone.getObjectByName("lineClone").visible =
         selectedWidth == "wide";
+
+    createRowUI(three, rowClone, availableColors);
 
     // Добавляем на сцену
     three.scene.getObjectByName("models").add(rowClone);

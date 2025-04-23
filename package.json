@@ -27,6 +27,7 @@
         "gsap": "^3.12.7",
         "range-slider-input": "^2.4.4",
         "three": "^0.175.0",
+        "three-mesh-ui": "^6.5.4",
         "toastify-js": "^1.12.0"
     }
 }
