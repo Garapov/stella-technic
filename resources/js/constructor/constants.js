@@ -1,6 +1,7 @@
 // Константы размеров
 export const SHELF_HEIGHT = 1450; // мм
 export const SCALE_FACTOR = 0.001;
+export const ADDED_ROWS = [];
 export const ROW_CONFIGS = {
     small: {
         height: 107.68,

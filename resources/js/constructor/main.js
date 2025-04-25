@@ -1,7 +1,13 @@
 import * as THREE from "three";
 
 // Импорт модулей
-import { ROW_CONFIGS, MODELS, HELPER_BOX_SELECTOR } from "./constants";
+import {
+    ROW_CONFIGS,
+    MODELS,
+    HELPER_BOX_SELECTOR,
+    ADDED_ROWS,
+} from "./constants";
+import { createRowUI } from "./ui-manager";
 import {
     setupThreeEnvironment,
     fitCameraToObjects,
@@ -27,6 +33,7 @@ import {
     unitsToMm,
 } from "./row-manager";
 import { updateDebugInfo, log } from "./debug-utils";
+import { thickness } from "three/tsl";
 
 export default () => {
     // Three.js контейнер
@@ -39,48 +46,7 @@ export default () => {
         error: null,
         selectedColor: "red",
 
-        addedRows: [
-            // {
-            //     size: "large",
-            //     color: "red",
-            // },
-            // {
-            //     size: "large",
-            //     color: "green",
-            // },
-            // {
-            //     size: "large",
-            //     color: "blue",
-            // },
-            // {
-            //     size: "medium",
-            //     color: "#ffeb00",
-            // },
-            // {
-            //     size: "medium",
-            //     color: "gray",
-            // },
-            // {
-            //     size: "medium",
-            //     color: "red",
-            // },
-            // {
-            //     size: "small",
-            //     color: "green",
-            // },
-            // {
-            //     size: "small",
-            //     color: "blue",
-            // },
-            // {
-            //     size: "small",
-            //     color: "#ffeb00",
-            // },
-            // {
-            //     size: "small",
-            //     color: "gray",
-            // },
-        ],
+        addedRows: ADDED_ROWS,
         colors: ["red", "green", "blue", "#ffeb00", "gray"],
         debugMode: false,
 
@@ -270,14 +236,20 @@ export default () => {
         changeDescPosition(three, newVal, oldVal) {
             switch (newVal) {
                 case "on_floor":
-                    setPositionOnFloor(three);
+                    setPositionOnFloor(three).then(() => {
+                        this.rebuildRows();
+                    });
                     break;
                 case "on_wall":
                     (this.selectedDeskType = this.deskTypes[0]),
-                        setPositionOnWall(three);
+                        setPositionOnWall(three).then(() => {
+                            this.rebuildRows();
+                        });
                     break;
                 default:
-                    setPositionOnFloor(three);
+                    setPositionOnFloor(three).then(() => {
+                        this.rebuildRows();
+                    });
             }
         },
         addDeskClone() {
@@ -339,12 +311,6 @@ export default () => {
                 const size = new THREE.Vector3();
                 box.getSize(size);
                 helperBoxHeight = size.y * 1000; // Конвертируем в мм
-                console.log(
-                    "helperBoxHeight",
-                    size,
-                    unitsToMm(size.y),
-                    helperBoxHeight,
-                );
             } else {
                 this.log(
                     "Предупреждение: HELPER_BOX_SELECTOR не найден на сцене, используется значение по умолчанию",
@@ -412,8 +378,7 @@ export default () => {
 
         // Добавление ящика
         addBox(rowIndex = null) {
-            console.log("addBox", this.colors);
-            return addBoxToScene(
+            let row = addBoxToScene(
                 three,
                 this.selectedSize,
                 this.selectedWidth,
@@ -424,6 +389,34 @@ export default () => {
                 this.colors,
                 (message, data) => this.log(message, data),
             );
+            createRowUI(three, row, this.colors, () => {
+                this.removeRow(rowIndex);
+            }, (row, color) => {
+                this.changeRowColor(row, color);
+            }).then((container) => {
+                row.add(container);
+
+                const rowBoundingBox = new THREE.Box3().setFromObject(row);
+                const containerBoundingBox = new THREE.Box3().setFromObject(container);
+
+                // Устанавливаем позицию контейнера
+                container.position.set((rowBoundingBox.max.x - rowBoundingBox.min.x) - ((containerBoundingBox.max.x - containerBoundingBox.min.x) * 2), (rowBoundingBox.max.y - rowBoundingBox.min.y) - (containerBoundingBox.max.y - containerBoundingBox.min.y), (rowBoundingBox.max.z - rowBoundingBox.min.z) - (containerBoundingBox.max.z - containerBoundingBox.min.z));
+            });
+            return row;
+        },
+
+        changeRowColor(row, color) {
+            console.log(row, color);
+
+            let rowByName = three.scene.getObjectByName(row.name);
+            if (!rowByName) return;
+            rowByName.traverse(function (child) {
+                if (child.name.includes("box")) {
+                    child.material.color = new THREE.Color(color);
+                }
+            });
+
+            this.addedRows[rowByName.indexOnAddedRows].color = color;
         },
 
         // Добавление нового ряда пользователем
@@ -443,11 +436,17 @@ export default () => {
 
             // Создаем ряд
             const row = this.addBox();
+
+            const boundingBox = new THREE.Box3().setFromObject(row);
+
+            console.log('boundingBox.max.y', boundingBox.max.y - boundingBox.min.y);
+
             // Добавляем данные
             this.addedRows.push({
                 size: this.selectedSize,
                 color: this.selectedColor,
             });
+            row.indexOnAddedRows = this.addedRows.length - 1;
             this.updateHeightInfo();
 
             return row;

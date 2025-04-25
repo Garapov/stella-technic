@@ -222,7 +222,7 @@ export function addBoxForHeightCalculation(three, object) {
         color: 0x00ff00,
         alphaTest: 0,
         transparent: true,
-        opacity: 0,
+        opacity: 1,
         wireframe: true,
         wireframeLinewidth: 0,
     });

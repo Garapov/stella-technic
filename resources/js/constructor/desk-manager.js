@@ -71,7 +71,7 @@ export function setPositionOnWall(three) {
 
         tl.to(model.position, {
             z: -1.2,
-            y: 0.15,
+            y: 0,
             duration: 1,
             ease: "power3.inOut",
         });
@@ -79,7 +79,7 @@ export function setPositionOnWall(three) {
             three.camera.position,
             {
                 x: 0.365,
-                y: 0.6,
+                y: 0.8,
                 z: 0.81,
                 duration: 1,
                 ease: "power3.inOut",

@@ -2,7 +2,6 @@ import * as THREE from "three";
 import { gsap } from "gsap";
 import Toastify from "toastify-js";
 import { SCALE_FACTOR, ROW_CONFIGS, HELPER_BOX_SELECTOR } from "./constants";
-import { createRowUI } from "./ui-manager";
 
 // Конвертация размеров
 export function mmToUnits(mm) {
@@ -15,34 +14,25 @@ export function unitsToMm(units) {
 
 // Проверка возможности добавления ряда
 export function canAddRow(size, remainingHeight) {
-    console.log("Checking row addition", remainingHeight);
     return remainingHeight >= ROW_CONFIGS[size].height;
 }
 
 // Расчет позиции для ряда
-export function calculateRowPosition(three, rows, rowIndex, selectedSize) {
-    let basePosition = 0.15;
+export function calculateRowPosition(three, rows, rowClone, selectedSize) {
+    let basePosition = 0;
 
     const helper_box = three.scene.getObjectByName(HELPER_BOX_SELECTOR, true);
 
-    if (!helper_box) {
-        basePosition = three.originalRow.position.y;
-    } else {
-        const boundingBox = new THREE.Box3().setFromObject(helper_box);
-        basePosition =
-            boundingBox.max.y - mmToUnits(ROW_CONFIGS[selectedSize].height);
-    }
+    const boundingBox = new THREE.Box3().setFromObject(helper_box);
+    const rowBoundingBox = new THREE.Box3().setFromObject(rowClone);
+    basePosition = boundingBox.max.y - (rowBoundingBox.max.y - rowBoundingBox.min.y);
 
-    // Для первого ряда используем базовую позицию
-    if (rowIndex === 0) return basePosition;
+    console.log('basePosition', basePosition, (rowBoundingBox.max.y - rowBoundingBox.min.y), boundingBox.max.y);
 
-    // Для последующих добавляем высоту предыдущих
-    return rows
-        .slice(0, rowIndex)
-        .reduce(
-            (pos, row) => pos - mmToUnits(ROW_CONFIGS[row.size].height),
-            basePosition,
-        );
+    rows.forEach((item, index) => {
+        basePosition -= ROW_CONFIGS[item.size].height / 1000;
+    })
+    return basePosition;
 }
 
 export function animateBox({ three, rowIndex, boxIndex }) {
@@ -192,7 +182,6 @@ export function addBoxToScene(
     availableColors,
     logCallback,
 ) {
-    console.log("addBoxToScene", availableColors);
     if (!three.originalRow) {
         console.error("Оригинальная модель ряда не найдена");
         return;
@@ -207,6 +196,32 @@ export function addBoxToScene(
 
     rowClone.visible = true;
     rowClonedClone.visible = true;
+
+    if (selectedSize == 'small') {
+        rowClone.remove(rowClone.getObjectByName('box_large'))
+        rowClone.remove(rowClone.getObjectByName('box_medium'))
+    }
+    if (selectedSize == 'medium') {
+        rowClone.remove(rowClone.getObjectByName('box'))
+        rowClone.remove(rowClone.getObjectByName('box_large'))
+    }
+    if (selectedSize == 'large') {
+        rowClone.remove(rowClone.getObjectByName('box'))
+        rowClone.remove(rowClone.getObjectByName('box_medium'))
+    }
+
+    if (selectedSize == 'small') {
+        rowClonedClone.remove(rowClonedClone.getObjectByName('box_large'))
+        rowClonedClone.remove(rowClonedClone.getObjectByName('box_medium'))
+    }
+    if (selectedSize == 'medium') {
+        rowClonedClone.remove(rowClonedClone.getObjectByName('box'))
+        rowClonedClone.remove(rowClonedClone.getObjectByName('box_large'))
+    }
+    if (selectedSize == 'large') {
+        rowClonedClone.remove(rowClonedClone.getObjectByName('box'))
+        rowClonedClone.remove(rowClonedClone.getObjectByName('box_medium'))
+    }
 
     // Получаем нужный тип бокса
     const originalBox = rowClone.getObjectByName(config.selector, true);
@@ -235,12 +250,10 @@ export function addBoxToScene(
         selectedColor,
     );
 
-    // Определяем индекс и рассчитываем позицию
-    const index = rowIndex !== null ? rowIndex : addedRows.length;
     const yPosition = calculateRowPosition(
         three,
         addedRows,
-        index,
+        rowClone,
         selectedSize,
     );
 
@@ -260,6 +273,8 @@ export function addBoxToScene(
         three.originalRow.position.z,
     );
 
+    
+
     rowClone.name = `row_${addedRows.length}`;
     rowClonedClone.name = `row_${addedRows.length}`;
 
@@ -267,14 +282,11 @@ export function addBoxToScene(
     rowClonedClone.getObjectByName("lineClone").visible =
         selectedWidth == "wide";
 
-    createRowUI(three, rowClone, availableColors);
-
     // Добавляем на сцену
     three.scene.getObjectByName("models").add(rowClone);
     three.scene.getObjectByName("clonedModels").add(rowClonedClone);
     three.lastRowPosition = rowClone.position.clone();
 
-    logCallback(`Добавлен ряд #${index} (${selectedSize})`);
 
     return rowClone;
 }
