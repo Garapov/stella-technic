@@ -6,11 +6,29 @@ let selectedObject = null;
 
 const TRASH_ICON =
     '<svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 24 24" fill="none"><path d="M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M14 10V17M10 10V17" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
+const SETTINGS_ICON =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path fill="#ffffff" d="M27.92,18.46l-1.14-.92a.86.86,0,0,1-.31-.65V15.2a.83.83,0,0,1,.31-.65l1.11-.89A2.86,2.86,0,0,0,28.54,10L27.42,8.12A2.76,2.76,0,0,0,24.21,6.9l-1.82.58a.73.73,0,0,1-.64-.09l-1.23-.81A.8.8,0,0,1,20.16,6L19.92,4.4A2.77,2.77,0,0,0,17.18,2H14.93a2.79,2.79,0,0,0-2.77,2.51L12,6a.8.8,0,0,1-.41.63L10,7.48a.79.79,0,0,1-.67,0L8.08,7A2.75,2.75,0,0,0,4.62,8.1L3.48,10a2.84,2.84,0,0,0,.57,3.64L5.4,14.75a.87.87,0,0,1,.29.62l0,1.27a.87.87,0,0,1-.28.65L4,18.61a2.85,2.85,0,0,0-.57,3.52l1,1.84a2.77,2.77,0,0,0,3.42,1.22l1.62-.63a.73.73,0,0,1,.66.05l1.4.84a.76.76,0,0,1,.38.55l.32,1.66A2.81,2.81,0,0,0,15,29.94h2.15a2.79,2.79,0,0,0,2.75-2.39l.26-1.65a.85.85,0,0,1,.4-.6l1.3-.74a.78.78,0,0,1,.65,0l1.64.63a2.76,2.76,0,0,0,3.37-1.2l1.08-1.83A2.86,2.86,0,0,0,27.92,18.46ZM26.85,21.1l-1.08,1.83a.78.78,0,0,1-.94.34l-1.64-.63a2.77,2.77,0,0,0-2.35.19l-1.3.74a2.81,2.81,0,0,0-1.39,2l-.26,1.66a.78.78,0,0,1-.77.69H15a.79.79,0,0,1-.77-.66l-.32-1.66a2.81,2.81,0,0,0-1.33-1.89l-1.4-.84a2.73,2.73,0,0,0-1.41-.39,2.91,2.91,0,0,0-1,.19l-1.62.64a.77.77,0,0,1-1-.35l-1-1.84a.84.84,0,0,1,.16-1l1.48-1.32a2.87,2.87,0,0,0,.94-2.17l0-1.27a2.9,2.9,0,0,0-1-2.11L5.36,12.08A.85.85,0,0,1,5.19,11L6.33,9.14a.76.76,0,0,1,1-.32l1.25.53A2.72,2.72,0,0,0,11,9.23l1.61-.89A2.81,2.81,0,0,0,14,6.17l.16-1.46A.79.79,0,0,1,14.93,4h2.24a.79.79,0,0,1,.78.7l.23,1.61a2.85,2.85,0,0,0,1.24,2l1.23.8A2.72,2.72,0,0,0,23,9.38l1.82-.57a.76.76,0,0,1,.89.34L26.83,11a.86.86,0,0,1-.19,1.09L25.53,13a2.84,2.84,0,0,0-1.06,2.22v1.69a2.81,2.81,0,0,0,1.05,2.2l1.14.92A.86.86,0,0,1,26.85,21.1Z"/><path fill="#ffffff" d="M16,11a5,5,0,1,0,5,5A5,5,0,0,0,16,11Zm0,8a3,3,0,1,1,3-3A3,3,0,0,1,16,19.07Z"/></svg>';
 // Функция для создания UI для строки
-export async function createRowUI(three, row, colors, deleteFunction, changeRowColorFunction) {
+export async function createRowUI(
+    three,
+    row,
+    colors,
+    deleteFunction,
+    changeRowColorFunction,
+) {
     // Создаем текстуру для кнопки удаления
-    const deleteTexture = await createSVGTexture(TRASH_ICON, 64, 64);
+    const deleteTexture = await createSVGTexture(
+        TRASH_ICON,
+        64,
+        64,
+        "rgba(255, 0, 0, 0)",
+    );
+    const settingsTexture = await createSVGTexture(
+        SETTINGS_ICON,
+        64,
+        64,
+        "rgba(255, 255, 255, 0)",
+    );
 
     // Создание основного контейнера
     const container = new ThreeMeshUI.Block({
@@ -25,11 +43,20 @@ export async function createRowUI(three, row, colors, deleteFunction, changeRowC
         backgroundOpacity: 0.8,
         borderRadius: 0.01,
     });
-    container.name = `settings_${row.name}`;
 
-    
-
-    
+    const settings = new ThreeMeshUI.Block({
+        width: 0,
+        height: 0,
+        contentDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        fontFamily: "/assets/models/Roboto-msdf.json",
+        fontTexture: "/assets/models/Roboto-msdf.png",
+        backgroundColor: new THREE.Color(0x222222),
+        backgroundOpacity: 0,
+        borderRadius: 0,
+    });
+    settings.name = `settings_${row.name}`;
 
     // Убедимся, что массив для интерактивных объектов существует
     if (!three.objectsToTest) {
@@ -49,13 +76,12 @@ export async function createRowUI(three, row, colors, deleteFunction, changeRowC
             borderRadius: 0.01,
         });
 
-        // Настройка состояний кнопки (как в официальном примере)
+        // Настройка состояний кнопки
         button.setupState({
             state: "idle",
             attributes: {
                 backgroundColor: new THREE.Color(color),
-                backgroundOpacity: 0.8,
-                offset: 0.01,
+                backgroundOpacity: 1,
             },
         });
 
@@ -63,25 +89,20 @@ export async function createRowUI(three, row, colors, deleteFunction, changeRowC
             state: "hovered",
             attributes: {
                 backgroundColor: new THREE.Color(color),
-                backgroundOpacity: 1,
-                offset: 0.02,
-            },
-            onSet: () => {
-                console.log(`Button ${color} hovered!`);
+                backgroundOpacity: 0.7,
             },
         });
 
         button.setupState({
             state: "selected",
             attributes: {
-                backgroundColor: new THREE.Color(color).multiplyScalar(1.2),
+                backgroundColor: new THREE.Color(color),
                 backgroundOpacity: 1,
-                offset: 0.01,
             },
             onSet: () => {
-                console.log(color);
+                console.log(`Changing color to: ${color}`);
                 changeRowColorFunction(row, color);
-            }
+            },
         });
 
         // ВАЖНО: помечаем как UI элемент для распознавания
@@ -92,7 +113,7 @@ export async function createRowUI(three, row, colors, deleteFunction, changeRowC
         three.objectsToTest.push(button);
 
         // Добавляем кнопку в контейнер
-        container.add(button);
+        settings.add(button);
     });
 
     // Создание кнопки удаления
@@ -113,39 +134,32 @@ export async function createRowUI(three, row, colors, deleteFunction, changeRowC
         state: "idle",
         attributes: {
             backgroundColor: new THREE.Color(0xff0000),
-            backgroundOpacity: 0.8,
-            offset: 0.01,
+            backgroundOpacity: 1,
         },
     });
 
     deleteButton.setupState({
         state: "hovered",
         attributes: {
-            backgroundColor: new THREE.Color(0xff0000),
+            backgroundColor: new THREE.Color(0xff5555),
             backgroundOpacity: 1,
-            offset: 0.02,
-        },
-        onSet: () => {
-            console.log(`Delete button hovered!`);
         },
     });
 
     deleteButton.setupState({
         state: "selected",
         attributes: {
-            backgroundColor: new THREE.Color(0x990000),
+            backgroundColor: new THREE.Color(0xff0000),
             backgroundOpacity: 1,
-            offset: 0.01,
         },
         onSet: function () {
-            console.log(row.name);
+            console.log(`Deleting row: ${row.name}`);
             deleteFunction();
             three.objectsToTest = [];
-            // three.scene.delete(row);
         },
     });
 
-    // ВАЖНО: помечаем как UI элемент для распознавания
+    // Помечаем как UI элемент для распознавания
     deleteButton.isUI = true;
     deleteButton.isInteractive = true;
 
@@ -153,7 +167,69 @@ export async function createRowUI(three, row, colors, deleteFunction, changeRowC
     three.objectsToTest.push(deleteButton);
 
     // Добавляем кнопку удаления в контейнер
-    container.add(deleteButton);
+    settings.add(deleteButton);
+
+    // Создание кнопки настроек
+    // const settingsButton = new ThreeMeshUI.Block({
+    //     height: 0.05,
+    //     width: 0.05,
+    //     margin: 0.005,
+    //     justifyContent: "center",
+    //     alignItems: "center",
+    //     backgroundTexture: settingsTexture,
+    //     backgroundOpacity: 1,
+    //     backgroundColor: new THREE.Color(0xffffff),
+    //     borderRadius: 0.01,
+    // });
+
+    // // Настройка состояний кнопки настроек
+    // settingsButton.setupState({
+    //     state: "idle",
+    //     attributes: {
+    //         backgroundColor: new THREE.Color(0xffffff),
+    //         backgroundOpacity: 1,
+    //     },
+    // });
+
+    // settingsButton.setupState({
+    //     state: "hovered",
+    //     attributes: {
+    //         backgroundColor: new THREE.Color(0xcccccc),
+    //         backgroundOpacity: 1,
+    //     },
+    // });
+
+    // settingsButton.setupState({
+    //     state: "selected",
+    //     attributes: {
+    //         backgroundColor: new THREE.Color(0xffffff),
+    //         backgroundOpacity: 1,
+    //     },
+    //     onSet: function () {
+    //         settings.visible = !settings.visible;
+
+    //         if (settings.visible) {
+    //             settings.width = 0.2;
+    //             settings.height = 0.2;
+    //         } else {
+    //             settings.width = 0;
+    //             settings.height = 0;
+    //         }
+    //         ThreeMeshUI.update();
+    //     },
+    // });
+
+    // // Помечаем как UI элемент для распознавания
+    // settingsButton.isUI = true;
+    // settingsButton.isInteractive = true;
+
+    // // Добавляем в список объектов для тестирования
+    // three.objectsToTest.push(settingsButton);
+
+    // // Добавляем кнопку настроек в контейнер
+    // container.add(settingsButton);
+
+    container.add(settings);
 
     // Обновляем ThreeMeshUI после создания всех элементов
     ThreeMeshUI.update();
@@ -161,7 +237,12 @@ export async function createRowUI(three, row, colors, deleteFunction, changeRowC
     return container;
 }
 
-function createSVGTexture(svgContent, width, height) {
+function createSVGTexture(
+    svgContent,
+    width,
+    height,
+    color = "rgba(255, 0, 0, 0.0)",
+) {
     // Создаем временный DOM-элемент для SVG
     const svgBlob = new Blob([svgContent], { type: "image/svg+xml" });
     const url = URL.createObjectURL(svgBlob);
@@ -181,7 +262,7 @@ function createSVGTexture(svgContent, width, height) {
         img.onload = () => {
             // Рисуем SVG на canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(255, 0, 0, 0.0)"; // Прозрачный фон
+            ctx.fillStyle = color; // Прозрачный фон
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
@@ -203,10 +284,11 @@ export function updateRaycasting(three) {
         return;
     }
 
+    // Обновляем ThreeMeshUI
     ThreeMeshUI.update();
 
     // Обработка основного луча
-    updateSingleRaycaster(
+    const mainHit = updateSingleRaycaster(
         three.raycaster,
         three.mouse,
         three.camera,
@@ -218,7 +300,7 @@ export function updateRaycasting(three) {
     );
 
     // Обработка проекционного луча
-    updateSingleRaycaster(
+    const projHit = updateSingleRaycaster(
         three.raycasterProjection,
         three.mouseProjection,
         three.cameraRTTProjection,
@@ -229,9 +311,50 @@ export function updateRaycasting(three) {
         0x00ff00, // Зеленый для луча при пересечении
     );
 
-    // Обработка кликов, если есть выбранный объект
+    // Получаем текущий хит - или от основного, или от проекционного луча
+    const currentHit = mainHit || projHit;
+
+    // Если есть новый объект под курсором, и это не текущий выбранный объект
+    if (currentHit && currentHit !== selectedObject) {
+        // Если был выбран другой объект, сбрасываем его состояние
+        if (selectedObject) {
+            try {
+                selectedObject.setState("idle");
+            } catch (e) {
+                console.error("Error setting idle state:", e);
+            }
+        }
+
+        // Устанавливаем новый выбранный объект
+        selectedObject = currentHit;
+
+        // И устанавливаем ему состояние "hovered"
+        try {
+            selectedObject.setState("hovered");
+        } catch (e) {
+            console.error("Error setting hovered state:", e);
+        }
+    }
+    // Если нет нового объекта, но есть выбранный - сбрасываем его
+    else if (!currentHit && selectedObject) {
+        try {
+            selectedObject.setState("idle");
+        } catch (e) {
+            console.error("Error setting idle state:", e);
+        }
+        selectedObject = null;
+    }
+
+    // Обработка клика
     if (selectedObject && (three.mouseClick || three.mouseClickProjection)) {
-        selectedObject.setState("selected");
+        try {
+            selectedObject.setState("selected");
+            console.log("Selected object:", selectedObject.name || "unnamed");
+        } catch (e) {
+            console.error("Error setting selected state:", e);
+        }
+
+        // Сбрасываем флаги клика
         three.mouseClick = false;
         three.mouseClickProjection = false;
     }
@@ -248,38 +371,29 @@ function updateSingleRaycaster(
     defaultColor,
     hitColor,
 ) {
-    if (!rayLine) return;
+    if (!rayLine) return null;
 
     // Начальная точка луча - позиция камеры
     const startPoint = camera.position.clone();
 
     // Проверяем, что координаты мыши валидны
     if (Math.abs(mouseCoords.x) > 1 || Math.abs(mouseCoords.y) > 1) {
-        return;
+        return null;
     }
 
     // Обновляем рейкастер
     raycaster.setFromCamera(mouseCoords, camera);
 
-    // Проверяем пересечения со всеми объектами и их потомками
-    const allObjects = [];
-
-    // Собираем все объекты и их потомков
-    three.objectsToTest.forEach((obj) => {
-        allObjects.push(obj);
-        obj.traverse((child) => {
-            if (child !== obj) {
-                allObjects.push(child);
-            }
-        });
-    });
+    // Проверяем пересечения со всеми UI объектами
+    const uiObjects = three.objectsToTest.filter((obj) => obj.isUI);
 
     // Проверяем пересечения
-    const intersects = raycaster.intersectObjects(allObjects, false);
+    const intersects = raycaster.intersectObjects(uiObjects, true);
 
     // Переменные для отрисовки луча
     let endPoint;
     let currentColor = defaultColor;
+    let hitObject = null;
 
     if (intersects.length > 0) {
         // Получаем точку пересечения
@@ -293,55 +407,26 @@ function updateSingleRaycaster(
             sphere.material.color.set(hitColor);
         }
 
-        // Ищем объект UI среди пересечений
-        let objectHit = intersects[0].object;
-        let uiParent = null;
+        // Перебираем все пересечения и ищем UI-объект
+        for (let i = 0; i < intersects.length; i++) {
+            let obj = intersects[i].object;
 
-        // Находим ближайший родительский UI объект
-        while (objectHit) {
-            if (objectHit.isUI || (objectHit.parent && objectHit.parent.isUI)) {
-                // Проверяем есть ли метод setState у объекта
-                if (objectHit.setState) {
-                    uiParent = objectHit;
-                    break;
-                }
-                // Проверяем метод setState у родителя
-                else if (objectHit.parent && objectHit.parent.setState) {
-                    uiParent = objectHit.parent;
-                    break;
-                }
+            // Находим родительский UI-компонент
+            while (obj && !obj.isUI && obj.parent) {
+                obj = obj.parent;
             }
 
-            objectHit = objectHit.parent;
-        }
-
-        if (uiParent) {
-            // Если ранее был выбран другой объект, сбрасываем его состояние
-            if (selectedObject && selectedObject !== uiParent) {
-                try {
-                    selectedObject.setState("idle");
-                } catch (e) {
-                    console.error("Error setting idle state:", e);
-                }
-            }
-
-            // Устанавливаем новый выбранный объект
-            selectedObject = uiParent;
-
-            // Устанавливаем состояние "hovered"
-            try {
-                selectedObject.setState("hovered");
-            } catch (e) {
-                console.error("Error setting hovered state:", e);
+            // Если нашли UI-компонент с возможностью смены состояния
+            if (obj && obj.isUI && typeof obj.setState === "function") {
+                hitObject = obj;
+                break;
             }
         }
-
-        console.log('intersects', selectedObject);
     } else {
         // Если нет пересечений, рисуем луч по направлению
         const direction = raycaster.ray.direction.clone().normalize();
         endPoint = startPoint.clone().add(direction.multiplyScalar(100));
-        console.log('not intersects', selectedObject);
+
         // Скрываем сферу
         if (sphere) {
             sphere.visible = false;
@@ -349,10 +434,13 @@ function updateSingleRaycaster(
     }
 
     // Обновляем геометрию луча
-    rayLine.geometry.dispose();
+    if (rayLine.geometry) rayLine.geometry.dispose();
     rayLine.geometry = new THREE.BufferGeometry().setFromPoints([
         startPoint,
         endPoint,
     ]);
     rayLine.material.color.set(currentColor);
+
+    // Возвращаем найденный объект
+    return hitObject;
 }

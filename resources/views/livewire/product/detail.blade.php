@@ -116,8 +116,8 @@
                             @php
                                 $activeParamName = collect(array_filter($paramGroup['values'], fn ($paramValue) => $paramValue['is_current']));
                             @endphp
-                            <h3 class="text-lg sm:text-sm font-semibold text-slate-900">{{ $paramGroup['name'] }} @if ($activeParamName->first())({{$activeParamName->first()['title']}})@endif</h3>
-                            <div class="flex flex-wrap gap-4 mt-2">
+                            <h3 class="text-lg sm:text-sm font-semibold text-slate-900 @if (count($activeParamName) < 1) hidden @endif">{{ $paramGroup['name'] }} @if ($activeParamName->first())({{$activeParamName->first()['title']}})@endif</h3>
+                            <div class="flex flex-wrap gap-4 mt-2 @if (count($activeParamName) < 1) hidden @endif">
                                 @foreach($paramGroup['values'] as $value)
                                     @if($paramGroup['name'] === 'Цвет')
                                         <a href="{{ route('client.product_detail', $variation->product->variants->where('id', $value['variant_id'])->first()->slug) }}" wire:navigate

@@ -1,4 +1,4 @@
-<div class="h-full grid grid-cols-9" x-data="construct">
+<div class="h-full grid grid-cols-9" x-data="construct({ selectedColor: 'blue' })" >
     <div class="bg-white dark:bg-gray-700 col-span-3 flex flex-col items-center relative" x-ref="projection">
 
         <!-- Кнопка для включения режима отладки, когда режим выключен -->
@@ -87,25 +87,7 @@
 
 
         </div>
-        <div class="relative h-full w-full" x-ref="projection">
-            <!-- <div class="absolute top-0 left-0 w-full h-full flex flex-col-reverse justify-start gap-1.5 p-4">
-                <template x-for="(row, index) in addedRows" :key="index">
-                    <div class="w-full relative">
-                        <template x-if="row.size == 'small'" >
-                            <x-constructor-row />
-                        </template>
-                        <template x-if="row.size == 'medium'">
-                            <x-constructor-row_medium />
-                        </template>
-                        <template x-if="row.size == 'large'">
-                            <x-constructor-row_large />
-                        </template>
-                        <button type="button" class="absolute left-full top-[50%] px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" @click="removeRow(index)">x</button>
-                    </div>
-                </template>
-            </div>
-            <img src="{{ asset('assets/stand.svg') }}" class="max-h-full" alt=""> -->
-        </div>
+        <div class="relative h-full w-full" x-ref="projection"></div>
     </div>
     <div class="bg-white dark:bg-gray-700 py-12 px-4 col-span-2 flex flex-col gap-4 relative" x-ref="settings">
         <div class="text-xl italic font-semibold text-gray-900 dark:text-white">1. Выберите тип стойки</div>

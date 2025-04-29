@@ -35,7 +35,9 @@ import {
 import { updateDebugInfo, log } from "./debug-utils";
 import { thickness } from "three/tsl";
 
-export default () => {
+export default ({
+    selectedColor = "red",
+}) => {
     // Three.js контейнер
     const three = { scene: new THREE.Scene() };
 
@@ -44,7 +46,7 @@ export default () => {
         isLoaded: false,
         progress: 0,
         error: null,
-        selectedColor: "red",
+        selectedColor: selectedColor,
 
         addedRows: ADDED_ROWS,
         colors: ["red", "green", "blue", "#ffeb00", "gray"],

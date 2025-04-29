@@ -25,13 +25,19 @@ export function calculateRowPosition(three, rows, rowClone, selectedSize) {
 
     const boundingBox = new THREE.Box3().setFromObject(helper_box);
     const rowBoundingBox = new THREE.Box3().setFromObject(rowClone);
-    basePosition = boundingBox.max.y - (rowBoundingBox.max.y - rowBoundingBox.min.y);
+    basePosition =
+        boundingBox.max.y - (rowBoundingBox.max.y - rowBoundingBox.min.y);
 
-    console.log('basePosition', basePosition, (rowBoundingBox.max.y - rowBoundingBox.min.y), boundingBox.max.y);
+    console.log(
+        "basePosition",
+        basePosition,
+        rowBoundingBox.max.y - rowBoundingBox.min.y,
+        boundingBox.max.y,
+    );
 
     rows.forEach((item, index) => {
         basePosition -= ROW_CONFIGS[item.size].height / 1000;
-    })
+    });
     return basePosition;
 }
 
@@ -197,30 +203,30 @@ export function addBoxToScene(
     rowClone.visible = true;
     rowClonedClone.visible = true;
 
-    if (selectedSize == 'small') {
-        rowClone.remove(rowClone.getObjectByName('box_large'))
-        rowClone.remove(rowClone.getObjectByName('box_medium'))
+    if (selectedSize == "small") {
+        rowClone.remove(rowClone.getObjectByName("box_large"));
+        rowClone.remove(rowClone.getObjectByName("box_medium"));
     }
-    if (selectedSize == 'medium') {
-        rowClone.remove(rowClone.getObjectByName('box'))
-        rowClone.remove(rowClone.getObjectByName('box_large'))
+    if (selectedSize == "medium") {
+        rowClone.remove(rowClone.getObjectByName("box"));
+        rowClone.remove(rowClone.getObjectByName("box_large"));
     }
-    if (selectedSize == 'large') {
-        rowClone.remove(rowClone.getObjectByName('box'))
-        rowClone.remove(rowClone.getObjectByName('box_medium'))
+    if (selectedSize == "large") {
+        rowClone.remove(rowClone.getObjectByName("box"));
+        rowClone.remove(rowClone.getObjectByName("box_medium"));
     }
 
-    if (selectedSize == 'small') {
-        rowClonedClone.remove(rowClonedClone.getObjectByName('box_large'))
-        rowClonedClone.remove(rowClonedClone.getObjectByName('box_medium'))
+    if (selectedSize == "small") {
+        rowClonedClone.remove(rowClonedClone.getObjectByName("box_large"));
+        rowClonedClone.remove(rowClonedClone.getObjectByName("box_medium"));
     }
-    if (selectedSize == 'medium') {
-        rowClonedClone.remove(rowClonedClone.getObjectByName('box'))
-        rowClonedClone.remove(rowClonedClone.getObjectByName('box_large'))
+    if (selectedSize == "medium") {
+        rowClonedClone.remove(rowClonedClone.getObjectByName("box"));
+        rowClonedClone.remove(rowClonedClone.getObjectByName("box_large"));
     }
-    if (selectedSize == 'large') {
-        rowClonedClone.remove(rowClonedClone.getObjectByName('box'))
-        rowClonedClone.remove(rowClonedClone.getObjectByName('box_medium'))
+    if (selectedSize == "large") {
+        rowClonedClone.remove(rowClonedClone.getObjectByName("box"));
+        rowClonedClone.remove(rowClonedClone.getObjectByName("box_medium"));
     }
 
     // Получаем нужный тип бокса
@@ -273,8 +279,6 @@ export function addBoxToScene(
         three.originalRow.position.z,
     );
 
-    
-
     rowClone.name = `row_${addedRows.length}`;
     rowClonedClone.name = `row_${addedRows.length}`;
 
@@ -286,7 +290,6 @@ export function addBoxToScene(
     three.scene.getObjectByName("models").add(rowClone);
     three.scene.getObjectByName("clonedModels").add(rowClonedClone);
     three.lastRowPosition = rowClone.position.clone();
-
 
     return rowClone;
 }
@@ -303,6 +306,7 @@ export function validateRowAddition(
         const message = `Недостаточно места для добавления ящика.`;
         logCallback("Нехватка места", { warning: message });
 
+        // if (!("Notification" in window)) {
         Toastify({
             text: message,
             duration: 3000,
@@ -311,6 +315,14 @@ export function validateRowAddition(
             position: "right",
             style: { background: "red" },
         }).showToast();
+        // } else {
+        //     Notification.requestPermission((permission) => {
+        //         let notification = new Notification("Добавление ряда ящиков", {
+        //             body: message, // content for the alert
+        //             icon: "https://pusher.com/static_logos/320x320.png", // optional image url
+        //         });
+        //     });
+        // }
 
         return false;
     }
