@@ -37,6 +37,9 @@ import { thickness } from "three/tsl";
 
 export default ({
     selectedColor = "red",
+    debugMode = false,
+    desks = [],
+    boxes = [],
 }) => {
     // Three.js контейнер
     const three = { scene: new THREE.Scene() };
@@ -50,7 +53,9 @@ export default ({
 
         addedRows: ADDED_ROWS,
         colors: ["red", "green", "blue", "#ffeb00", "gray"],
-        debugMode: false,
+        desks: desks,
+        boxes: boxes,
+        debugMode: debugMode,
 
         // Инициализация debugInfo
         debugInfo: {
@@ -177,15 +182,69 @@ export default ({
                 this.$watch("selectedHeight", (newVal, oldVal) => {
                     this.changeSelectedHeightValue(newVal);
                     this.changeDescHeight(three, newVal, oldVal);
+                    console.log("selectedProduct", this.selectedProduct);
                 });
                 this.$watch("selectedWidth", (newVal, oldVal) => {
                     this.changeSelectedWidthValue(newVal);
                     this.changeDescWidth(three, newVal, oldVal);
+                    console.log("selectedProduct", this.selectedProduct);
                 });
             } catch (error) {
                 this.error = error.message;
                 console.error("Ошибка инициализации:", error);
             }
+        },
+        get selectedDesk() {
+            let selector = this.selectedHeight + "_" + this.selectedWidth;
+            return this.desks[selector];
+        },
+        get selectedBox() {
+            let selector = "box_" + this.selectedSize;
+            return this.boxes[selector];
+        },
+        get calculatedPrice() {
+            let price = 0;
+            price += this.selectedDesk.price;
+
+            this.addedRows.forEach((box) => {
+                price += this.boxes["box_" + box.size].price;
+            });
+            return new Intl.NumberFormat("ru-RU", {
+                style: "currency",
+                currency: "RUB",
+            }).format(price);
+        },
+        addToCart() {
+            Alpine.store("cart").addVariationToCart({
+                count: 1,
+                variationId: this.selectedDesk.id,
+                name: `${this.selectedDesk.name}`,
+            });
+            console.log("this.addedRows", this.addedRows);
+            this.addedRows.forEach((box) => {
+                Alpine.store("cart").addVariationToCart({
+                    count: ROW_CONFIGS[box.size][this.selectedWidth],
+                    variationId: this.boxes["box_" + box.size].id,
+                    name: `${this.boxes["box_" + box.size].name}`,
+                });
+            });
+            this.clearAll();
+        },
+        clearAll() {
+            const models = three.scene.getObjectByName("models");
+            const clonedModels = three.scene.getObjectByName("clonedModels");
+
+            for (let i = 0; i < this.addedRows.length + 1; i++) {
+                const row = models.getObjectByName(`row_${i}`);
+                const rowClone = clonedModels.getObjectByName(`row_${i}`);
+                if (row && rowClone) {
+                    models.remove(row);
+                    clonedModels.remove(rowClone);
+                }
+            }
+            this.addedRows = [];
+
+            this.rebuildRows();
         },
         updateHeightCalculationBox(three) {
             let models = three.scene.getObjectByName("models", true);
@@ -391,18 +450,40 @@ export default ({
                 this.colors,
                 (message, data) => this.log(message, data),
             );
-            createRowUI(three, row, this.colors, () => {
-                this.removeRow(rowIndex);
-            }, (row, color) => {
-                this.changeRowColor(row, color);
-            }).then((container) => {
+            createRowUI(
+                three,
+                row,
+                this.colors,
+                () => {
+                    this.removeRow(rowIndex);
+                },
+                (row, color) => {
+                    this.changeRowColor(row, color);
+                },
+            ).then((container) => {
                 row.add(container);
 
                 const rowBoundingBox = new THREE.Box3().setFromObject(row);
-                const containerBoundingBox = new THREE.Box3().setFromObject(container);
+                const containerBoundingBox = new THREE.Box3().setFromObject(
+                    container,
+                );
 
                 // Устанавливаем позицию контейнера
-                container.position.set((rowBoundingBox.max.x - rowBoundingBox.min.x) - ((containerBoundingBox.max.x - containerBoundingBox.min.x) * 2), (rowBoundingBox.max.y - rowBoundingBox.min.y) - (containerBoundingBox.max.y - containerBoundingBox.min.y), (rowBoundingBox.max.z - rowBoundingBox.min.z) - (containerBoundingBox.max.z - containerBoundingBox.min.z));
+                container.position.set(
+                    rowBoundingBox.max.x -
+                        rowBoundingBox.min.x -
+                        (containerBoundingBox.max.x -
+                            containerBoundingBox.min.x) *
+                            2,
+                    rowBoundingBox.max.y -
+                        rowBoundingBox.min.y -
+                        (containerBoundingBox.max.y -
+                            containerBoundingBox.min.y),
+                    rowBoundingBox.max.z -
+                        rowBoundingBox.min.z -
+                        (containerBoundingBox.max.z -
+                            containerBoundingBox.min.z),
+                );
             });
             return row;
         },
@@ -437,11 +518,14 @@ export default ({
             }
 
             // Создаем ряд
-            const row = this.addBox();
+            const row = this.addBox(this.addedRows.length);
 
             const boundingBox = new THREE.Box3().setFromObject(row);
 
-            console.log('boundingBox.max.y', boundingBox.max.y - boundingBox.min.y);
+            console.log(
+                "boundingBox.max.y",
+                boundingBox.max.y - boundingBox.min.y,
+            );
 
             // Добавляем данные
             this.addedRows.push({
@@ -456,6 +540,7 @@ export default ({
 
         // Удаление ряда
         removeRow(index) {
+            console.log("removeRow", index);
             if (
                 removeRowFromScene(
                     three,
@@ -478,6 +563,8 @@ export default ({
             // Сохраняем данные
             const rowsData = [...this.addedRows];
 
+            console.log(rowsData);
+
             // Удаляем существующие ряды
             for (let i = 0; i < rowsData.length + 1; i++) {
                 const models = three.scene.getObjectByName("models");
@@ -490,6 +577,8 @@ export default ({
                     clonedModels.remove(rowClone);
                 }
             }
+
+            // three.objectsToTest = [];
 
             // Очищаем и восстанавливаем
             this.addedRows = [];

@@ -33,7 +33,8 @@ class RigConstructorSettings extends SiteSettings
                                     "id"
                                 )
                             )
-                            ->searchable(),
+                            ->searchable()
+                            ->required(),
                         Select::make("deck_high_slim")
                             ->label("Стойка 735x2020")
                             ->options(
@@ -42,7 +43,8 @@ class RigConstructorSettings extends SiteSettings
                                     "id"
                                 )
                             )
-                            ->searchable(),
+                            ->searchable()
+                            ->required(),
                         Select::make("deck_low_wide")
                             ->label("Стойка 1150x1515")
                             ->options(
@@ -51,7 +53,8 @@ class RigConstructorSettings extends SiteSettings
                                     "id"
                                 )
                             )
-                            ->searchable(),
+                            ->searchable()
+                            ->required(),
                         Select::make("deck_high_wide")
                             ->label("Стойка 1150x2020")
                             ->options(
@@ -60,7 +63,40 @@ class RigConstructorSettings extends SiteSettings
                                     "id"
                                 )
                             )
-                            ->searchable(),
+                            ->searchable()
+                            ->required(),
+                    ]),
+                    Tabs\Tab::make("Ящики")->schema([
+                        Select::make("box_small")
+                            ->label("Ящик V1")
+                            ->options(
+                                fn() => ProductVariant::all()->pluck(
+                                    "name",
+                                    "id"
+                                )
+                            )
+                            ->searchable()
+                            ->required(),
+                        Select::make("box_medium")
+                            ->label("Ящик V2")
+                            ->options(
+                                fn() => ProductVariant::all()->pluck(
+                                    "name",
+                                    "id"
+                                )
+                            )
+                            ->searchable()
+                            ->required(),
+                        Select::make("box_large")
+                            ->label("Ящик V3")
+                            ->options(
+                                fn() => ProductVariant::all()->pluck(
+                                    "name",
+                                    "id"
+                                )
+                            )
+                            ->searchable()
+                            ->required(),
                     ]),
                 ])
                 ->columnSpanFull(),

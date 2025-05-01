@@ -29,7 +29,7 @@
         <div class="mb-4">
             <div class="mb-4 flex items-center justify-between gap-2">
                 @if($variant->new_price)
-                    <span class="me-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300 dark:text-white">
+                    <span class="me-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-white">
                         Скидка {{ round(100 - ($variant->new_price * 100 / $variant->getActualPrice())) }}%
                     </span>
                 @endif
@@ -63,11 +63,11 @@
             </ul>
         @endif
 
-        
+
 
         <div class="flex items-end justify-between gap-4 mt-4 relative">
             <div class="flex flex-col gap-2">
-                
+
                 <div class="flex items-center gap-4">
                     <span class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
                         {{ $variant->new_price ?? $variant->getActualPrice() }} ₽
@@ -76,7 +76,7 @@
                         <span class="text-lg line-through leading-tight text-gray-600 dark:text-white">
                             {{ $variant->getActualPrice() }} ₽
                         </span>
-                    @endif                
+                    @endif
                 </div>
                 @if (!auth()->user() && $variant->auth_price)
                     <div class="flex items-center gap-2 text-green-800 dark:text-green-300 bg-green-100 text-md font-medium me-2 px-2.5 py-0.5 rounded-md dark:bg-green-900" x-data="{
@@ -95,7 +95,7 @@
                         </div>
                     </div>
                 @endif
-                
+
             </div>
 
             <div class="flex items-center gap-3">

@@ -377,6 +377,12 @@ export function removeRowFromScene(three, index, addedRows, logCallback) {
         models.remove(rowToRemove);
         clonedModels.remove(cloneRowToRemove);
     }
+    three.objectsToTest.forEach((obj) => {
+        console.log("obj.name", obj.name, rowName);
+        if (obj.name.includes(rowName)) {
+            three.objectsToTest.splice(three.objectsToTest.indexOf(obj), 1);
+        }
+    });
 
     return true;
 }
