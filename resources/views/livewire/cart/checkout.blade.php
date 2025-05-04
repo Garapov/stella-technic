@@ -5,6 +5,9 @@
   userAuthenticated: @js(auth()->user() ? true : false),
   init() {
     this.loadProducts();
+    this.loadConstructs();
+
+    console.log('constructs', this.constructs);
   },
   loadProducts() {
     $wire.loadProducts($store.cart.list).then((products) => {
@@ -15,11 +18,28 @@
       console.log('products loaded', this.products);
     });
   },
+  loadConstructs() {
+    $wire.loadConstructs($store.cart.constructor).then((constructs) => {
+      this.constructs = constructs;
+      this.isLoading = false;
+      this.isReloading = false;
+
+      console.log('constructs loaded', this.constructs);
+    });
+  },
   removeCartItem(id) {
     console.log('cart item removed', id);
     this.isReloading = true;
     $store.cart.removeFromCart(id);
     this.loadProducts();
+    this.loadConstructs();
+  },
+  removeConstruct(id) {
+    console.log('construct removed', id);
+    this.isReloading = true;
+    $store.cart.removeConstructFromCart(id);
+    this.loadProducts();
+    this.loadConstructs();
   },
   increaseQuantity(id) {
     $store.cart.increase(id);
@@ -32,6 +52,11 @@
     this.products.forEach(product => {
       total += (this.userAuthenticated & product.auth_price ? product.auth_price : product.price) * +$store.cart.list[product.id];
     });
+
+    Object.keys(this.constructs).forEach(productId => {
+      total += this.constructs[productId].price;
+    });
+
     return total;
   },
   getDiscountedPrice() {
@@ -39,6 +64,9 @@
     this.products.forEach(product => {
         let price = product.new_price ?? (this.userAuthenticated & product.auth_price ? product.auth_price : product.price);
         total += price * +$store.cart.list[product.id];
+    });
+    Object.keys(this.constructs).forEach(productId => {
+      total += this.constructs[productId].price;
     });
     return total;
   },

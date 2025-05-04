@@ -1,10 +1,15 @@
 <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16" x-data="{
   products: [],
+  constructs: [],
   isLoading: true,
   isReloading: false,
   userAuthenticated: @js(auth()->user() ? true : false),
+  default_image: '@php echo asset('/assets/placeholder.svg') @endphp',
   init() {
     this.loadProducts();
+    this.loadConstructs();
+
+    console.log('constructs', this.constructs);
   },
   loadProducts() {
     $wire.loadProducts($store.cart.list).then((products) => {
@@ -15,11 +20,28 @@
       console.log('products loaded', this.products);
     });
   },
+  loadConstructs() {
+    $wire.loadConstructs($store.cart.constructor).then((constructs) => {
+      this.constructs = constructs;
+      this.isLoading = false;
+      this.isReloading = false;
+
+      console.log('constructs loaded', this.constructs);
+    });
+  },
   removeCartItem(id) {
     console.log('cart item removed', id);
     this.isReloading = true;
     $store.cart.removeFromCart(id);
     this.loadProducts();
+    this.loadConstructs();
+  },
+  removeConstruct(id) {
+    console.log('construct removed', id);
+    this.isReloading = true;
+    $store.cart.removeConstructFromCart(id);
+    this.loadProducts();
+    this.loadConstructs();
   },
   increaseQuantity(id) {
     $store.cart.increase(id);
@@ -32,6 +54,11 @@
     this.products.forEach(product => {
       total += (this.userAuthenticated & product.auth_price ? product.auth_price : product.price) * +$store.cart.list[product.id];
     });
+
+    Object.keys(this.constructs).forEach(productId => {
+      total += this.constructs[productId].price;
+    });
+
     return total;
   },
   getDiscountedPrice() {
@@ -39,6 +66,9 @@
     this.products.forEach(product => {
         let price = product.new_price ?? (this.userAuthenticated & product.auth_price ? product.auth_price : product.price);
         total += price * +$store.cart.list[product.id];
+    });
+    Object.keys(this.constructs).forEach(productId => {
+      total += this.constructs[productId].price;
     });
     return total;
   }
@@ -66,7 +96,7 @@
     </div>
 
     <template x-if="!isLoading">
-      <div x-show="products.length > 0">
+      <div x-show="products.length > 0 || Object.keys(constructs).length > 0">
         <div class="mt-6 sm:mt-8 md:gap-6 lg:flex xl:gap-6">
           <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-5xl">
               <template x-if="isReloading">
@@ -77,15 +107,17 @@
                     </div>
                 </div>
               </template>
-              <template x-if="!isReloading && products.length > 0">
+              <template x-if="!isReloading && (products.length > 0 || Object.keys(constructs).length > 0)">
                 <div class="flex flex-col gap-6" x-show="!isReloading">
                     <template x-for="cart_item in products" :key="cart_item.id">
                         <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
                             <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-                                <a href="#" class="shrink-0">
-                                    <img class="h-20 w-20" :src="`https://s3.stella-technic.ru/${cart_item.gallery[0]}`" alt="imac image" />
-                                </a>
-                                <a href="#" class="text-base font-medium text-gray-900 hover:underline dark:text-white" x-text="cart_item.name"></a>
+                                <div class="flex items-center gap-4">
+                                  <a href="#" class="shrink-0">
+                                      <img class="h-40 w-40" :src="`https://s3.stella-technic.ru/${cart_item.gallery[0]}`" alt="imac image" />
+                                  </a>
+                                  <a href="#" class="text-base font-medium text-gray-900 hover:underline dark:text-white" x-text="cart_item.name"></a>
+                                </div>
                                 <div class="relative flex items-center">
                                     <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"  @click="decreaseQuantity(cart_item.id)">
                                         <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
@@ -114,6 +146,57 @@
                                         </button>
 
                                         <button type="button" class="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500" @click.prevent="removeCartItem(cart_item.id)">
+                                            <svg class="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </template>
+
+
+
+                    <template x-for="construct in constructs" :key="construct.id">
+                        <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
+                            <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+                              <div class="flex items-center gap-4">
+                                  <a href="#" class="shrink-0">
+                                      <img class="h-40 w-40" :src="construct.product.gallery.length ? `https://s3.stella-technic.ru/${construct.product.gallery[0]}` : default_image" alt="imac image" />
+                                  </a>
+                                  <div class="flex flex-col gap-4">
+                                    <a href="#" class="text-base font-medium text-gray-900 hover:underline dark:text-white" x-text="construct.product.name"></a>
+                                    <div class="flex items-center gap-4">
+                                      <template x-if="construct.boxes.small.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.small.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.small.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-medium text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.small.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.medium.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.medium.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.medium.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-medium text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.medium.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.large.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.large.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.large.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-large text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.large.count"></span>
+                                        </div>
+                                      </template>
+                                    </div>
+                                  </div>
+                              </div>
+                                <div class="flex items-center justify-between md:justify-end gap-4">
+                                    <div class="text-end">
+                                        <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(construct.price)"></p>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <button type="button" class="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500" @click.prevent="removeConstruct(construct.product.id)">
                                             <svg class="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
                                             </svg>
@@ -159,22 +242,12 @@
 
                 <a href="{{ route('client.checkout') }}" class="flex w-full items-center justify-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800" wire:navigate>Перейти к оформлению</a>
               </div>
-
-              <!-- <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
-                <form class="space-y-4">
-                  <div>
-                    <label for="voucher" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> У вас есть промокод? </label>
-                    <input type="text" id="voucher" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="" required />
-                  </div>
-                  <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800">Применить</button>
-                </form>
-              </div> -->
           </div>
         </div>
       </div>
     </template>
 
-    <template x-if="!isLoading && products.length === 0">
+    <template x-if="!isLoading && products.length === 0 && Object.keys(constructs).length === 0">
       <div class="mt-6 text-center">
         <p class="text-lg text-gray-600">Ваша корзина пуста</p>
         <a href="{{ route('client.catalog.all') }}" class="mt-4 inline-block px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-500">

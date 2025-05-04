@@ -207,7 +207,7 @@ export default ({
             price += this.selectedDesk.price;
 
             this.addedRows.forEach((box) => {
-                price += this.boxes["box_" + box.size].price;
+                price += this.boxes["box_" + box.size].price * ROW_CONFIGS[box.size][this.selectedWidth];
             });
             return new Intl.NumberFormat("ru-RU", {
                 style: "currency",
@@ -215,20 +215,57 @@ export default ({
             }).format(price);
         },
         addToCart() {
-            Alpine.store("cart").addVariationToCart({
-                count: 1,
-                variationId: this.selectedDesk.id,
-                name: `${this.selectedDesk.name}`,
+
+            let constructor_product = {
+                id: this.selectedDesk.id,
+                name: this.selectedDesk.name,
+                boxes: {
+                    small: {
+                        id: this.boxes.box_small.id,
+                        count: 0
+                    },
+                    medium:  {
+                        id: this.boxes.box_medium.id,
+                        count: 0
+                    },
+                    large:  {
+                        id: this.boxes.box_large.id,
+                        count: 0
+                    },
+                }
+            }
+            
+            // Alpine.store("cart").addConstructionToCart({
+            //     count: 1,
+            //     variationId: this.selectedDesk.id,
+            //     name: `${this.selectedDesk.name}`,
+            // });
+            // console.log("this.addedRows", this.addedRows);
+            this.addedRows.forEach((row) => {
+                switch (row.size) {
+                    case 'small':
+                        constructor_product.boxes.small.count += ROW_CONFIGS[row.size][this.selectedWidth];
+                        break;
+                    case 'medium':
+                        constructor_product.boxes.medium.count += ROW_CONFIGS[row.size][this.selectedWidth];
+                        break;
+                    case 'large':
+                        constructor_product.boxes.large.count += ROW_CONFIGS[row.size][this.selectedWidth];
+                        break;
+                
+                    default:
+                        break;
+                }
+                // Alpine.store("cart").addVariationToCart({
+                //     count: ROW_CONFIGS[box.size][this.selectedWidth],
+                //     variationId: this.boxes["box_" + box.size].id,
+                //     name: `${this.boxes["box_" + box.size].name}`,
+                // });
             });
-            console.log("this.addedRows", this.addedRows);
-            this.addedRows.forEach((box) => {
-                Alpine.store("cart").addVariationToCart({
-                    count: ROW_CONFIGS[box.size][this.selectedWidth],
-                    variationId: this.boxes["box_" + box.size].id,
-                    name: `${this.boxes["box_" + box.size].name}`,
-                });
+
+            Alpine.store("cart").addConstructionToCart(constructor_product).then(res => {
+                this.clearAll();
             });
-            this.clearAll();
         },
         clearAll() {
             const models = three.scene.getObjectByName("models");

@@ -46,6 +46,7 @@ class Checkout extends Component
     public $file;
     public $type = "natural";
     public $products = [];
+    public $constructs = [];
     public $kpp;
     public $legal_address;
     public $message;
@@ -83,6 +84,7 @@ class Checkout extends Component
     public function mount()
     {
         $this->products = [];
+        $this->constructs = [];
         $this->name = Auth::user() ? Auth::user()->name : "";
         $this->type = Auth::user() ? Auth::user()->type : "natural";
         $this->email = Auth::user() ? Auth::user()->email : "";
@@ -155,6 +157,38 @@ class Checkout extends Component
         $this->products = ProductVariant::whereIn("id", $productIds)->get();
 
         return $this->products;
+    }
+
+    public function loadConstructs($constructItems = [])
+    {
+        $this->constructs = collect([]);
+        if (empty($constructItems)) {
+            return $this->constructs;
+        }
+        foreach($constructItems as $item ) {
+            if ($item == null) continue;
+            $product = ProductVariant::where("id", $item['id'])->first();
+            $small_box = ProductVariant::where("id", $item['boxes']['small']['id'])->first();
+            $medium_box = ProductVariant::where("id", $item['boxes']['medium']['id'])->first();
+            $large_box = ProductVariant::where("id", $item['boxes']['large']['id'])->first();
+
+            
+            if (!$product || !$small_box || !$medium_box || !$large_box) continue;
+
+            $item['product'] = $product;
+            $item['boxes']['small']['product'] = $small_box;
+            $item['boxes']['medium']['product'] = $medium_box;
+            $item['boxes']['large']['product'] = $large_box;
+
+            $price = $product->price + ($small_box->price * $item['boxes']['small']['count']) + ($medium_box->price * $item['boxes']['medium']['count']) + ($large_box->price * $item['boxes']['large']['count']);
+
+            $item['price'] = $price;
+
+            
+            $this->constructs->put($item['id'], $item);
+        }
+
+        return $this->constructs;
     }
 
     public function placeOrder($products)

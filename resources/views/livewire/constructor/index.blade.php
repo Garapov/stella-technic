@@ -13,7 +13,7 @@
         'box_large' => \App\Models\ProductVariant::where('id', setting('box_large'))->first(),
     )),
 })" >
-    <x-constructor.buttons />
     <x-constructor.projection />
+    <x-constructor.buttons />
     <x-constructor.scene />
 </div>

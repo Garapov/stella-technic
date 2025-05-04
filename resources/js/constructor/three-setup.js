@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { updateFPS } from "./debug-utils";
-import ThreeMeshUI from "three-mesh-ui";
 import { updateRaycasting } from "./ui-manager.js";
 
 let three = {};
@@ -136,16 +135,17 @@ export function setupThreeEnvironment(container, projection, settings) {
     three.controls.enableDamping = true;
     three.controls.dampingFactor = 0.05;
     three.controls.enablePan = false;
+    three.controls.enableZoom = false;
 
     three.controlsRTT = new OrbitControls(
         three.cameraRTTProjection,
         three.renderer_for_projection.domElement,
     );
     three.controlsRTT.enableRotate = false;
-    three.controlsRTT.enableZoom = true;
-    three.controlsRTT.enablePan = true;
-    three.controlsRTT.enableDamping = true;
-    three.controlsRTT.dampingFactor = 0.05;
+    three.controlsRTT.enableZoom = false;
+    three.controlsRTT.enablePan = false;
+    three.controlsRTT.enableDamping = false;
+    // three.controlsRTT.dampingFactor = 0.05;
 
     // Настройки рендерера
     three.renderer.shadowMap.enabled = true;
