@@ -498,7 +498,7 @@ export default ({
                     this.changeRowColor(row, color);
                 },
             ).then((container) => {
-                row.add(container);
+                
 
                 const rowBoundingBox = new THREE.Box3().setFromObject(row);
                 const containerBoundingBox = new THREE.Box3().setFromObject(
@@ -507,20 +507,11 @@ export default ({
 
                 // Устанавливаем позицию контейнера
                 container.position.set(
-                    rowBoundingBox.max.x -
-                        rowBoundingBox.min.x -
-                        (containerBoundingBox.max.x -
-                            containerBoundingBox.min.x) *
-                            2,
-                    rowBoundingBox.max.y -
-                        rowBoundingBox.min.y -
-                        (containerBoundingBox.max.y -
-                            containerBoundingBox.min.y),
-                    rowBoundingBox.max.z -
-                        rowBoundingBox.min.z -
-                        (containerBoundingBox.max.z -
-                            containerBoundingBox.min.z),
+                    (rowBoundingBox.max.x - rowBoundingBox.min.x) / 2,
+                    (rowBoundingBox.max.y - rowBoundingBox.min.y) / 2 + (containerBoundingBox.max.y - containerBoundingBox.min.y) / 4,
+                    rowBoundingBox.max.z - rowBoundingBox.min.z,
                 );
+                row.add(container);
             });
             return row;
         },
@@ -528,9 +519,22 @@ export default ({
         changeRowColor(row, color) {
             console.log(row, color);
 
-            let rowByName = three.scene.getObjectByName(row.name);
-            if (!rowByName) return;
+            let models = three.scene.getObjectByName('models');
+            let clonedModels = three.scene.getObjectByName('clonedModels');
+
+            console.log(three.scene);
+
+            if (!models || !clonedModels) return;
+
+            let rowByName = models.getObjectByName(row.name);
+            let rowByNameClone = clonedModels.getObjectByName(row.name);
+            if (!rowByName || !rowByNameClone) return;
             rowByName.traverse(function (child) {
+                if (child.name.includes("box")) {
+                    child.material.color = new THREE.Color(color);
+                }
+            });
+            rowByNameClone.traverse(function (child) {
                 if (child.name.includes("box")) {
                     child.material.color = new THREE.Color(color);
                 }

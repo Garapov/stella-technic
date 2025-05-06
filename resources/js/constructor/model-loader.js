@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { rotate } from "three/src/nodes/TSL.js";
 
 import { HELPER_BOX_SELECTOR } from "./constants";
@@ -51,9 +52,32 @@ export async function loadModels(three, models, logCallback, progressCallback) {
             });
         }),
     );
-
+    loadDoor(three);
+    loadWorkbench(three);
     logCallback("Все модели загружены");
+    
     return true;
+}
+
+export function loadDoor(three) {
+    var loader = new GLTFLoader();
+    loader.load( '/assets/models/door.glb', function ( gltf )
+    {
+        let door = gltf.scene;  // door 3D object is loaded
+        door.position.set(2.2, 0, -1.5);
+        three.scene.add(door);
+    } );  
+}
+
+export function loadWorkbench(three) {
+    var loader = new GLTFLoader();
+    loader.load( '/assets/models/workbench.glb', function ( gltf )
+    {
+        let workbench = gltf.scene;  // workbench 3D object is loaded
+        workbench.position.set(-2.7, 0, 0);
+        console.log(workbench);
+        three.scene.add(workbench);
+    } );  
 }
 
 /**
