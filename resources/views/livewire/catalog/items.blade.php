@@ -11,6 +11,10 @@
                     <span class="text-gray-700 dark:text-gray-300">Загрузка...</span>
                 </div>
             </div>
+            @php
+                $all_products = $products->get();
+                $paginated_products = $products->paginate(12);
+            @endphp
             <!-- Heading & Filters -->
             @if ($category)
                 @if ($category->seo)
@@ -37,9 +41,14 @@
                 <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">
                     <div>
                         @livewire('general.breadcrumbs')
-                        <h2 class="mt-3 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">{{ $category->name }}</h2>
+                        <h2 class="mt-3 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl flex items-center"><span>{{ $category->title }}</span> <span class="bg-blue-100 text-blue-800 text-xs font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300">
+                            @php
+                                $count = $all_products->count();
+                            @endphp
+                            {{ $count . ' ' . ($count % 10 === 1 && $count % 100 !== 11 ? 'товар' : ($count % 10 >= 2 && $count % 10 <= 4 && ($count % 100 < 10 || $count % 100 >= 20) ? 'товара' : 'товаров')) }}
+                        </span></h2>
                     </div>
-
+                    
                     <div class="flex items-center space-x-4">
                         <!-- Display Mode Toggle -->
                         <div class="inline-flex rounded-md shadow-xs" role="group">
@@ -89,12 +98,29 @@
                         </div>
                     </div>
                 </div>
+                @if ($category->categories)
+                    <div class="grid grid-cols-8 gap-4 mb-4">
+                        @foreach ($category->categories->where('is_tag', false) as $subcategory)
+                            @if ($subcategory->products->count() == 0)
+                                @continue
+                            @endif
+                            <x-catalog.category.big :category="$subcategory" />
+                        @endforeach
+                    </div>
+                    <div class="flex items-center gap-4 mb-4 overflow-auto">
+                        @foreach ($category->categories->where('is_tag', true) as $subcategory)
+                            @if ($subcategory->products->count() == 0)
+                                @continue
+                            @endif
+                            <x-catalog.category.small :category="$subcategory" />
+                        @endforeach
+                    </div>
+                @endif
             @endif
 
-            @php
-                $all_products = $products->get();
-                $paginated_products = $products->paginate(12);
-            @endphp
+            
+
+            
 
             <div class="grid grid-cols-6 gap-4">
                 @if ($display_filter)

@@ -115,6 +115,8 @@ class ProductCategoryResource extends Resource
                 Tables\Columns\TextColumn::make("title")
                     ->label("Название")
                     ->searchable(),
+                Tables\Columns\ToggleColumn::make('is_tag')
+                    ->label('Категория "тег"'),
             ])
             ->filters([
                 //
