@@ -2,7 +2,7 @@
     @foreach ($menu->menuItems as $menuItem)
         <li>
             @if (count($menuItem->children) > 0)
-                <span class="relative z-30" x-data="{ open: false }" @mouseover="open = true" @mouseleave="open = false">
+                <span class="relative z-30" x-data="{ open: false }" @mouseover="open = true" @mouseleave="open = false" x-cloak>
                     <span
                     class="block py-2 pr-4 pl-3 text-sm text-primary-700 bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white cursor-pointer flex items-center gap-1"
                     aria-current="page">{{ $menuItem->title }} <x-fas-arrow-turn-down class="w-2 h-2" x-show="!open" /><x-fas-arrow-turn-up class="w-2 h-2" x-show="open" /></span>

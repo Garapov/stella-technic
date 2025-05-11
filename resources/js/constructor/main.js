@@ -40,6 +40,7 @@ export default ({
     debugMode = false,
     desks = [],
     boxes = [],
+    addedRows = []
 }) => {
     // Three.js контейнер
     const three = { scene: new THREE.Scene() };
@@ -51,7 +52,7 @@ export default ({
         error: null,
         selectedColor: selectedColor,
 
-        addedRows: ADDED_ROWS,
+        addedRows: addedRows,
         colors: ["red", "green", "blue", "#ffeb00", "gray"],
         desks: desks,
         boxes: boxes,

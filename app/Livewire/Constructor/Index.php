@@ -8,15 +8,19 @@ class Index extends Component
 {
     public $addedRows = [
         [
-            "size" => "large",
+            "size" => "small",
             "color" => "red",
         ],
         [
-            "size" => "large",
+            "size" => "small",
+            "color" => "red",
+        ],
+        [
+            "size" => "small",
             "color" => "green",
         ],
         [
-            "size" => "large",
+            "size" => "small",
             "color" => "blue",
         ],
         [
@@ -32,20 +36,16 @@ class Index extends Component
             "color" => "red",
         ],
         [
-            "size" => "small",
+            "size" => "large",
             "color" => "green",
         ],
         [
-            "size" => "small",
+            "size" => "large",
             "color" => "blue",
         ],
         [
-            "size" => "small",
+            "size" => "large",
             "color" => "yellow",
-        ],
-        [
-            "size" => "small",
-            "color" => "gray",
         ],
     ];
     public ?int $deck_low_slim;
@@ -66,6 +66,7 @@ class Index extends Component
             'deck_high_slim' => $this->deck_high_slim,
             'deck_low_wide' => $this->deck_low_wide,
             'deck_high_wide' => $this->deck_high_wide,
+            'added_rows' => $this->addedRows,
         ]);
     }
 }
