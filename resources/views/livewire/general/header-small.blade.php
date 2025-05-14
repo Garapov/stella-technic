@@ -8,18 +8,18 @@
                         alt="Stella-tech Logo" />
                 </a>
             @endif
-            @livewire('general.header.menu')
+            {{-- @livewire('general.header.menu') --}}
             <div class="flex gap-4 items-stretch">
                 @if (setting('site_phone'))
                     <div class="flex flex-col items-end">
-                        <a href="tel:88005514694" class="text-lg font-bold text-right text-gray-900 dark:text-white">{{ setting('site_phone') }}</a>
+                        <a href="tel:88005514694" class="text-lg font-bold text-right text-slate-500 dark:text-white">{{ setting('site_phone') }}</a>
                         <div class="text-xs text-blue-600">Заказать звонок</div>
                     </div>
-                    <div class="border border-gray-900"></div>
+                    <div class="border border-slate-500"></div>
                 @endif
                 @if (setting('site_secondphone') && setting('site_worktime'))
                     <div class="flex flex-col">
-                        <a href="tel:{{ setting('site_secondphone') }}" class="text-lg font-bold text-gray-900 dark:text-white">{{ setting('site_secondphone') }}</a>
+                        <a href="tel:{{ setting('site_secondphone') }}" class="text-lg font-bold text-slate-500 dark:text-white">{{ setting('site_secondphone') }}</a>
                         <div class="text-xs text-gray-400">{{ setting('site_worktime') }}</div>
                     </div>
                 @endif

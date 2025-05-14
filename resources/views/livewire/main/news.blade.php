@@ -1,6 +1,6 @@
 <div>
     @if (count($news))
-        <section class="py-10 bg-slate-50 dark:bg-gray-800 glide" x-data="{
+        <section class="py-10 dark:bg-gray-800 glide" x-data="{
             slider: new window.glide($refs.slider, {
                 autoplay: 5000,
                 perView: 3,
@@ -33,17 +33,15 @@
                         </a>
                     </div>
                 </div>
-                <div class="md:mb-8">
-                    <div class="glide__track" data-glide-el="track">
-                        <ul class="glide__slides">
-                            @foreach ($news as $item)    
-                                @livewire('general.post', [
-                                    'post' => $item,
-                                ], key($item->id))
-                            @endforeach
-                            
-                        </ul>
-                    </div>
+                <div class="glide__track" data-glide-el="track">
+                    <ul class="glide__slides">
+                        @foreach ($news as $item)    
+                            @livewire('general.post', [
+                                'post' => $item,
+                            ], key($item->id))
+                        @endforeach
+                        
+                    </ul>
                 </div>
             </div>
         </section>

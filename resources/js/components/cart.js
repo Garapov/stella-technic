@@ -43,7 +43,7 @@ export default (() => {
                         stopOnFocus: true,
                         style: {
                             background:
-                                "linear-gradient(to right, #00b09b, #96c93d)",
+                                "linear-gradient(to right, #00b09b,rgb(94, 35, 117))",
                         },
                         onClick: function () {},
                     }).showToast();

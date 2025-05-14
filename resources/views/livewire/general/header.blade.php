@@ -9,17 +9,17 @@
                 @endif
             </div>
 
-            <div class="flex mt-4 sm:justify-center sm:mt-0">
-                <a href="mailto:{{ setting("site_email") }}" class="flex items-center gap-2 me-10">
-                    <x-fas-mail-bulk class="w-4 h-4 text-xs text-gray-800 dark:text-white" />
-                    <span class="text-xs text-gray-800 dark:text-white">{{ setting("site_email") }}</span>
+            <div class="flex mt-4 sm:justify-center items-center sm:mt-0">
+                <a href="mailto:{{ setting("site_email") }}" class="flex items-center gap-2 me-10  text-blue-500">
+                    <x-eva-email-outline class="w-6 h-6 text-xs dark:text-white" />
+                    <span class="text-md font-bold dark:text-white">{{ setting("site_email") }}</span>
                 </a>
                 @if (setting("site_social"))
                     @foreach(setting("site_social") as $social)
                         <a href="{{ $social['link'] }}" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5" target="_blank">
-                            <div class="w-4 h-4">
+                            <span class="block w-6 h-6">
                                 @svg($social['icon'])
-                            </div>
+                            </span>
                         </a>
                     @endforeach
                 @endif
@@ -40,14 +40,14 @@
             <div class="flex gap-4 items-stretch">
                 @if (setting('site_phone'))
                     <div class="flex flex-col items-end">
-                        <a href="tel:88005514694" class="text-lg font-bold text-right text-gray-900 dark:text-white">{{ setting('site_phone') }}</a>
+                        <a href="tel:88005514694" class="text-lg font-bold text-right text-slate-700 dark:text-white">{{ setting('site_phone') }}</a>
                         <div class="text-xs text-blue-600">Заказать звонок</div>
                     </div>
-                    <div class="border border-gray-900"></div>
+                    <div class="border border-slate-700"></div>
                 @endif
                 @if (setting('site_secondphone') && setting('site_worktime'))
                     <div class="flex flex-col">
-                        <a href="tel:{{ setting('site_secondphone') }}" class="text-lg font-bold text-gray-900 dark:text-white">{{ setting('site_secondphone') }}</a>
+                        <a href="tel:{{ setting('site_secondphone') }}" class="text-lg font-bold text-slate-700 dark:text-white">{{ setting('site_secondphone') }}</a>
                         <div class="text-xs text-gray-400">{{ setting('site_worktime') }}</div>
                     </div>
                 @endif
@@ -80,7 +80,8 @@
                 <a href="{{ route('client.cart') }}"
                     class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800"
                     wire:navigate>
-                    <x-fas-cart-arrow-down class="w-4 h-4" />
+                    <x-fas-cart-arrow-down class="w-4 h-4 mr-2" />
+                    Корзина
                     <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-gray-200 rounded-full -top-2 -end-2 dark:border-gray-700"
                         x-text="$store.cart.cartCount()"></div>
                 </a>

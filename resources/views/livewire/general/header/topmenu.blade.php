@@ -5,7 +5,7 @@
                 <span class="relative z-30" x-data="{ open: false }" @mouseover="open = true" @mouseleave="open = false" x-cloak>
                     <span
                     class="block py-2 pr-4 pl-3 text-sm text-slate-500 hover:text-blue-500 lg:p-0 dark:text-white cursor-pointer flex items-center gap-1"
-                    aria-current="page">{{ $menuItem->title }} <x-fas-arrow-turn-down class="w-2 h-2" x-show="!open" /><x-fas-arrow-turn-up class="w-2 h-2" x-show="open" /></span>
+                    aria-current="page">{{ $menuItem->title }} <x-eva-arrow-ios-downward class="w-3 h-3" x-show="!open" /><x-eva-arrow-ios-upward class="w-3 h-3" x-show="open" /></span>
                     <ul class="absolute top-full left-0 flex flex-col font-medium p-4 bg-white border border-blue-500 dark:bg-gray-700 dark:border-gray-600 rounded gap-1 z-60" x-show="open">
                         @foreach ($menuItem->children as $child)
 
