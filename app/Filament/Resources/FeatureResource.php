@@ -28,9 +28,13 @@ class FeatureResource extends Resource
     {
         return $form
             ->schema([
-                IconPicker::make('icon')
-                    ->label('Иконка')
-                    ->required(),
+                Forms\Components\FileUpload::make("icon")
+                    ->required()
+                    ->image()
+                    ->label("Иконка")
+                    ->directory("features")
+                    ->visibility("public")
+                    ->preserveFilenames(),
                 Forms\Components\TextInput::make('text')
                     ->label('Текст')
                     ->required(),
@@ -41,7 +45,7 @@ class FeatureResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('icon')
+                Tables\Columns\ImageColumn::make("icon")
                     ->label('Иконка'),
                 Tables\Columns\TextColumn::make('text')
                     ->label('Текст')

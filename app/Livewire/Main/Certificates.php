@@ -10,7 +10,7 @@ class Certificates extends Component
     public function render()
     {
         return view('livewire.main.certificates', [
-            'certificates' => Sertificate::all(),
+            'certificates' => Sertificate::where('show_on_main', true)->get(),
         ]);
     }
 }

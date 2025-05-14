@@ -1,5 +1,5 @@
 <header>
-    <div class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+    <div class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 relative z-30">
         <div class="flex flex-wrap justify-between items-center mx-auto container">
             <div class="hidden justify-between items-center w-full lg:flex lg:w-auto">
                 @if ($topmenu && $topmenu->menuItems)
@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <div class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+    <div class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 relative z-20">
         <div class="flex flex-wrap gap-8 justify-between items-center mx-auto container">
             @if (setting('site_logo'))
                 <a href="/" class="flex items-center" wire:navigate>
@@ -35,12 +35,8 @@
                         alt="Stella-tech Logo" />
                 </a>
             @endif
-            <div class="grow">
-                <div class="flex rounded-lg border border-gray-300">
-                    @livewire('general.header.popular')
-                    @livewire('general.header.search')
-                </div>
-            </div>
+            @livewire('general.header.search')
+                {{-- @livewire('general.header.popular') --}}
             <div class="flex gap-4 items-stretch">
                 @if (setting('site_phone'))
                     <div class="flex flex-col items-end">
@@ -60,7 +56,7 @@
         </div>
     </div>
 
-    <div class="bg-gray-100 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-700 relative">
+    <div class="bg-slate-50 px-4 lg:px-6 py-2.5 dark:bg-gray-700 relative z-10">
         <div class="flex flex-wrap justify-between items-center mx-auto container">
 
             @if (count($categories) > 0)

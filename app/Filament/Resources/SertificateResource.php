@@ -39,6 +39,9 @@ class SertificateResource extends Resource
                 ->imageEditor()
                 ->preserveFilenames()
                 ->imageEditorMode(2),
+            Forms\Components\Toggle::make("show_on_main")
+                ->label("Отображать на главной")
+                ->inline(false),
         ]);
     }
 
@@ -50,6 +53,7 @@ class SertificateResource extends Resource
                 Tables\Columns\TextColumn::make("name")
                     ->label("Название")
                     ->searchable(),
+                Tables\Columns\ToggleColumn::make("show_on_main")->label("Отображать на главной"),
                 Tables\Columns\TextColumn::make("created_at")
                     ->dateTime()
                     ->sortable()

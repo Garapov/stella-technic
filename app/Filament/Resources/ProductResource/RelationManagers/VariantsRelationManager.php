@@ -96,7 +96,6 @@ class VariantsRelationManager extends RelationManager
                                     "underline",
                                     "undo",
                                 ])
-                                ->required()
                                 ->label("Описание")
                                 ->columnSpanFull(),
                         ])

@@ -1,9 +1,9 @@
 <div>
     @if (count($clients))
-        <section class="bg-gray-900" x-data="clients" id="clients-slider">
+        <section class="bg-slate-50" x-data="clients" id="clients-slider">
             <div class="container py-10 mx-auto">
                 <div class="flex items-center justify-between mb-10">
-                    <p class="text-4xl text-white">Наши клиенты</p>
+                    <p class="text-4xl text-slate-600 dark:text-white font-semibold">Наши клиенты</p>
                     <div class="flex items-center gap-8">
                         <div class="flex items-center gap-2" data-glide-el="controls">
                             @foreach ($clients as $key=>$client)

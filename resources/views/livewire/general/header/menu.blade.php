@@ -1,6 +1,6 @@
 <div class="hidden justify-between items-center w-full lg:flex lg:w-auto">
 @if ($menu && count($menu->menuItems) > 0) 
-        <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+        <ul class="flex items-center gap-4 mt-4 font-medium lg:mt-0">
             @foreach ($menu->menuItems as $item)
                 @php
                     $hasLinkable = $item->linkable ?? null;
@@ -8,9 +8,12 @@
                 @endphp
                 <li>
                     <a href="{{ $url }}"
-                        class="block py-2 pr-4 pl-3 text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                        class="block py-2 pr-4 pl-3 text-slate-500 rounded lg:p-0 dark:text-white hover:text-blue-500"
                         aria-current="page" wire:navigate>{{ $item->title }}</a>
                 </li>
+                @if (!$loop->last)
+                    <li class="text-slate-500">|</li>
+                @endif
             @endforeach
         </ul>
     @endIf

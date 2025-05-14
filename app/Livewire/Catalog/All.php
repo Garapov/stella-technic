@@ -1,17 +1,15 @@
 <?php
 
-namespace App\Livewire\Main;
+namespace App\Livewire\Catalog;
 
-use App\Models\Feature;
 use App\Models\ProductCategory;
 use Livewire\Component;
 
-class Features extends Component
+class All extends Component
 {
     public function render()
     {
-        return view('livewire.main.features', [
-            'features' => Feature::all(),
+        return view('livewire.catalog.all', [
             'categories' => ProductCategory::where('parent_id', -1)->get(),
         ]);
     }

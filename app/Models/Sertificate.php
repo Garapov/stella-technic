@@ -14,6 +14,7 @@ class Sertificate extends Model
     protected $fillable = [
         'name',
         'image',
+        'show_on_main'
     ];
 
     public function image(): BelongsTo

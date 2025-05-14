@@ -1,6 +1,6 @@
 <div>
     @if (count($slides) > 0)
-        <div class="py-12  bg-white dark:bg-gray-700" x-data="{
+        <div class="py-10  bg-white dark:bg-gray-700" x-data="{
             slider: new window.glide($refs.slider, {
                 autoplay: 5000,
             }).mount(),

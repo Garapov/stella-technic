@@ -12,11 +12,12 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Montserrat', ...defaultTheme.fontFamily.sans],
             },
             transitionProperty: {
                 'width': 'width',
-            }
+            },
+            filter: ['hover', 'focus']
         },
         screens: {
             'sm': '640px',
@@ -33,7 +34,10 @@ export default {
       
             '2xl': '1536px',
             // => @media (min-width: 1536px) { ... }
-          }
+        },
+        // colors: {
+        //     stellaGray: '#172b4d'
+        // }
     },
 
     plugins: [forms],

@@ -1,48 +1,32 @@
 <div>
     @if (count($features) > 0)
-        <section class="text-gray-600 body-font bg-gray-200 dark:bg-gray-700">
-            <div class="container py-24 mx-auto">
+        <section class="text-gray-600 body-font bg-slate-50 dark:bg-gray-700">
+            <div class="container py-10 mx-auto">
                 <div class="text-center mb-10">
-                    <h1 class="md:text-4xl text-3xl font-medium text-center title-font text-gray-900 dark:text-gray-200 mb-2">
-                        Более 30 лет</h1>
-                    <p class="text-base dark:text-gray-400 leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto">На рынке оборудования и
-                        хранения для складов</p>
+                    <h1 class="md:text-4xl text-3xl font-bold text-center title-font mb-2"><span class="text-blue-500">Более 30 лет</span> <span class="text-slate-500">на рынке оборудования и
+                        хранения для складов</span></h1>
                 </div>
-                <div class="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2">
+                <div class="grid grid-cols-5 gap-4">
                     @foreach ($features as $feature)
-                        <div class="p-2 sm:w-1/2 w-full">
-                            <div class="bg-gray-100 rounded flex p-4 h-full items-center">
-                                {{-- {{$feature->icon}} --}}
-                                <div class="w-8 h-8 text-indigo-500 mr-4">
-                                    {{ svg($feature->icon) }}
-                                </div>
-                                <span class="title-font font-medium">{{ $feature->text }}</span>
+                        <div class="bg-slate-100 rounded flex p-4 h-full items-center">
+                            <div class="min-w-12 min-h-12 w-12 h-12 text-indigo-500 mr-4">
+                                <img src="{{ Storage::disk(config("filesystems.default"))->url($feature->icon) }}" alt="">
                             </div>
+                            <span class="title-font font-medium">{{ $feature->text }}</span>
                         </div>
                     @endforeach
                 </div>
 
 
 
-                <div class="grid grid-cols-4 gap-4 mt-20">
+                <div class="grid grid-cols-4 gap-4 mt-10">
                     @foreach ($categories as $category)
-                        <div class="grid grid-cols-4 gap-4 p-4 bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
-                            <img class="w-full rounded" src="{{ asset('storage/' . $category->image) }}" alt="Large avatar">
-                            <div class="flex flex-col gap-3 col-span-3">
-                                <a href="#" class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                                    {{ $category->name }}
-                                    <x-fas-arrow-right class="w-4 h-4 ms-2 rtl:rotate-180" />
-                                </a>
-
-                                @if ($category->categories)
-                                    <ul>
-                                        @foreach ($category->categories as $subcategory)
-                                            <li><a href="#" class="text-xs text-gray-600 dark:text-gray-500 hover:underline">{{ $subcategory->name }}</a></li>
-                                        @endforeach
-                                    </ul>
-                                @endif
-                            </div>
-                        </div>
+                        @if ($category->variationsCount() < 1)
+                            @continue
+                        @endif
+                        @livewire('general.category', [
+                            'category' => $category,
+                        ], key($category->id))
                     @endforeach
                     
                 </div>

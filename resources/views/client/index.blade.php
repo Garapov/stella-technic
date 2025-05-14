@@ -15,9 +15,10 @@
 
 
     @livewire('main.slider')
-    @livewire('main.brands')
-    @livewire('main.categories-in-block')
     @livewire('main.features')
+    @livewire('main.brands')
+    {{-- @livewire('catalog.all') --}}
+    {{-- @livewire('main.categories-in-block') --}}
     @livewire('main.popular')
     @livewire('main.certificates')
     @livewire('main.articles')

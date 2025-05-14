@@ -16,7 +16,7 @@
         }">
             <div class="container mx-auto glide" x-ref="slider">
                 <div class="flex items-center justify-between mb-10">
-                    <p class="text-4xl text-gray-900 dark:text-white">Популярные категории</p>
+                    <p class="text-4xl text-slate-600 dark:text-white font-semibold">Популярные категории</p>
                     <div class="flex items-center gap-6">
                         <div class="flex items-center gap-2" data-glide-el="controls">
                             @foreach ($categories as $key=>$category)

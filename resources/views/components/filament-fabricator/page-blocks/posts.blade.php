@@ -1,7 +1,7 @@
 @aware(['page'])
 <div>
     @if (count($news))
-        <section class="py-10 bg-gray-200 dark:bg-gray-800 glide" x-data="{
+        <section class="py-10 bg-slate-50 dark:bg-gray-800 glide" x-data="{
             slider: new window.glide($refs.slider, {
                 autoplay: 5000,
                 perView: 3,
@@ -17,7 +17,7 @@
         }" x-ref="slider">
             <div class="container mx-auto">
                 <div class="flex items-center justify-between mb-10">
-                    <p class="text-4xl text-gray-900 dark:text-white">{{ $title }}</p>
+                    <p class="text-4xl text-slate-600 dark:text-white font-semibold">{{ $title }}</p>
                     <div class="flex items-center gap-8">
                         <div class="flex items-center gap-2" data-glide-el="controls[nav]">
                             @foreach ($news as $key=>$item)

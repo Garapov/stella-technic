@@ -2,7 +2,7 @@
 <div class="px-4 py-4 md:py-8 bg-gray-200 dark:bg-gray-800">
     <div class="container mx-auto">
         @if ($title && $type !== 'slider')
-            <div class="text-4xl text-gray-900 dark:text-white mb-4">
+            <div class="text-4xl text-slate-600 dark:text-white font-semibold mb-4">
                 {{ $title }}
             </div>
         @endif
