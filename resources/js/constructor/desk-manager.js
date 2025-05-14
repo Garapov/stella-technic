@@ -35,9 +35,9 @@ export function setPositionOnFloor(three) {
         let tl = gsap.timeline({ repeat: 0 });
 
         tl.to(three.camera.position, {
-            x: 0.359,
-            y: 1.548,
-            z: 5.374,
+            x: 0.332,
+            y: 1.990,
+            z: 2.887,
             duration: 1,
             ease: "power3.inOut",
         });
@@ -78,9 +78,9 @@ export function setPositionOnWall(three) {
         tl.to(
             three.camera.position,
             {
-                x: 0.306,
-                y: 1.472,
-                z: 3.386,
+                x: 0.366,
+                y: 0.525,
+                z: 1.432,
                 duration: 1,
                 ease: "power3.inOut",
                 onComplete: () => {

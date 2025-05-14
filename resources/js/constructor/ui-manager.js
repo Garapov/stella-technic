@@ -117,7 +117,6 @@ export async function createRowUI(
                 backgroundOpacity: 1,
             },
             onSet: () => {
-                console.log(`Changing color to: ${color} for row ${rowName}`);
                 changeRowColorFunction(row, color);
 
                 // После изменения цвета сворачиваем панель
@@ -174,7 +173,6 @@ export async function createRowUI(
             backgroundOpacity: 1,
         },
         onSet: function () {
-            console.log("rowName", rowName);
             // Находим все элементы UI, связанные с этим рядом
             const rowUIElements = three.objectsToTest.filter(
                 (obj) => obj.name && obj.name.includes(rowName),
@@ -191,10 +189,6 @@ export async function createRowUI(
             ) {
                 selectedObject = null;
             }
-
-            console.log(
-                `Removed ${rowUIElements.length} UI elements for row ${rowName}`,
-            );
         },
     });
 
@@ -273,9 +267,6 @@ export async function createRowUI(
 
         // Обновляем интерфейс
         ThreeMeshUI.update();
-        console.log(
-            `Settings panel for ${rowName} ${show ? "shown" : "hidden"}`,
-        );
     }
 
     // Обновляем ThreeMeshUI после создания всех элементов
@@ -345,26 +336,32 @@ export function updateRaycasting(three) {
         0xff0000, // Красный для обычного луча
         0xff6600, // Оранжевый для луча при пересечении
     );
+    let currentHit = null;
+
+    if (three.cameraRTTProjection) {
 
     // Обработка проекционного луча
-    const projHit = updateSingleRaycaster(
-        three.raycasterProjection,
-        three.mouseProjection,
-        three.cameraRTTProjection,
-        three.rayLineProj,
-        three.intersectionSphereProj,
-        three,
-        0x00ffff, // Голубой для обычного луча
-        0x00ff00, // Зеленый для луча при пересечении
-    );
+        const projHit = updateSingleRaycaster(
+            three.raycasterProjection,
+            three.mouseProjection,
+            three.cameraRTTProjection,
+            three.rayLineProj,
+            three.intersectionSphereProj,
+            three,
+            0x00ffff, // Голубой для обычного луча
+            0x00ff00, // Зеленый для луча при пересечении
+        );
+    
 
-    // Получаем текущий хит - или от основного, или от проекционного луча
-    const currentHit = mainHit || projHit;
+        // Получаем текущий хит - или от основного, или от проекционного луча
+        currentHit = mainHit || projHit;
+    } else {
+        currentHit = mainHit;
+    }
 
     // Проверяем, существует ли выбранный объект в списке объектов для тестирования
     if (selectedObject && three.objectsToTest.indexOf(selectedObject) === -1) {
         // Если объект был удален, сбрасываем выбранный объект
-        console.log("Selected object was removed, resetting selection");
         selectedObject = null;
     }
 
@@ -405,7 +402,6 @@ export function updateRaycasting(three) {
     // Обработка клика
     if (selectedObject && (three.mouseClick || three.mouseClickProjection)) {
         // Проверяем, что объект все еще существует и имеет метод setState
-        console.log("selectedObject", selectedObject);
         if (typeof selectedObject.setState === "function") {
             try {
                 selectedObject.setState("selected");

@@ -10,6 +10,7 @@ Route::prefix("/")
     ->group(function () {
         Route::view("/", "client.index")->name("index");
         Route::view("/constructor", "client.constructor")->name("constructor");
+        Route::view("/constructor/embeded", "client.constructor_embeded")->name("constructor_embeded");
         Route::view("/catalog", "client.catalog.all")->name("catalog.all");
         Route::view("/catalog/brands", "client.brands.index")->name(
             "brands.index"

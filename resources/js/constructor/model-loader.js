@@ -75,7 +75,6 @@ export function loadWorkbench(three) {
     {
         let workbench = gltf.scene;  // workbench 3D object is loaded
         workbench.position.set(-2.7, 0, 0);
-        console.log(workbench);
         three.scene.add(workbench);
     } );  
 }

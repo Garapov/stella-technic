@@ -28,12 +28,6 @@ export function calculateRowPosition(three, rows, rowClone, selectedSize) {
     basePosition =
         boundingBox.max.y - (rowBoundingBox.max.y - rowBoundingBox.min.y);
 
-    console.log(
-        "basePosition",
-        basePosition,
-        rowBoundingBox.max.y - rowBoundingBox.min.y,
-        boundingBox.max.y,
-    );
 
     rows.forEach((item, index) => {
         basePosition -= ROW_CONFIGS[item.size].height / 1000;
@@ -378,7 +372,6 @@ export function removeRowFromScene(three, index, addedRows, logCallback) {
         clonedModels.remove(cloneRowToRemove);
     }
     three.objectsToTest.forEach((obj) => {
-        console.log("obj.name", obj.name, rowName);
         if (obj.name.includes(rowName)) {
             three.objectsToTest.splice(three.objectsToTest.indexOf(obj), 1);
         }

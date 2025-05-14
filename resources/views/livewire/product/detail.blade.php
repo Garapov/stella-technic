@@ -78,6 +78,11 @@
                                 @foreach ($variation->gallery as $image)
                                     <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
                                 @endforeach
+                                @if ($variation->is_constructable && $variation->rows)
+                                    <li class="splide__slide">
+                                        <img src="{{ asset('assets/3dicon.png') }}" alt="3dicon" class="w-full  aspect-[1/1] object-cover"  />
+                                    </li>
+                                @endif
                             </ul>
                         </div>
                     </section>
@@ -87,6 +92,11 @@
                                 @foreach ($variation->gallery as $image)
                                     <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
                                 @endforeach
+                                @if ($variation->is_constructable && $variation->rows)
+                                    <li class="splide__slide">
+                                        <iframe name="constructor" src="{{ route('client.constructor_embeded', ['variation_id' => $variation->id]) }}" frameborder="no" border="0" scrolling="no" width="100%" height="100%"></iframe>
+                                    </li>
+                                @endif
                             </ul>
                         </div>
                     </section>
@@ -164,9 +174,12 @@
 
                 <div class="mt-6 flex flex-wrap gap-4">
                     <button type="button"
-                        class="px-4 py-3 w-[45%] border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-900 text-sm font-medium">Добавить в избранное</button>
+                        class="px-4 py-3 flex-1 border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-900 text-sm font-medium">Добавить в избранное</button>
                     <button type="button"
-                        class="px-4 py-3 w-[45%] border border-blue-600 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium" @click="addVariationToCart()">В корзину</button>
+                        class="px-4 py-3 flex-1 border border-blue-600 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium" @click="addVariationToCart()">В корзину</button>
+                    @if ($variation->is_constructable)
+                        <a href="{{ route('client.constructor', ['variation_id' => $variation->id]) }}" class="text-center px-4 py-3 flex-1 border border-blue-600 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium">Редактировать в конструкторе</a>
+                    @endif
                 </div>
             </div>
 

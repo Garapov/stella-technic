@@ -36,7 +36,10 @@ export function setupThreeEnvironment(container, projection, settings) {
     window.addEventListener("mousemove", (event) => {
         // Определяем, над каким canvas находится мышь
         const rectMain = container.getBoundingClientRect();
-        const rectProj = projection.getBoundingClientRect();
+        let rectProj = null;
+        if (projection) {
+            rectProj = projection.getBoundingClientRect();
+        }
 
         // Проверяем, находится ли мышь над основным окном
         if (
@@ -51,19 +54,20 @@ export function setupThreeEnvironment(container, projection, settings) {
             three.mouse.y =
                 -((event.clientY - rectMain.top) / rectMain.height) * 2 + 1;
         }
-
-        // Проверяем, находится ли мышь над проекционным окном
-        if (
-            event.clientX >= rectProj.left &&
-            event.clientX <= rectProj.right &&
-            event.clientY >= rectProj.top &&
-            event.clientY <= rectProj.bottom
-        ) {
-            // Рассчитываем координаты для проекционного окна
-            three.mouseProjection.x =
-                ((event.clientX - rectProj.left) / rectProj.width) * 2 - 1;
-            three.mouseProjection.y =
-                -((event.clientY - rectProj.top) / rectProj.height) * 2 + 1;
+        if (projection) {
+            // Проверяем, находится ли мышь над проекционным окном
+            if (
+                event.clientX >= rectProj.left &&
+                event.clientX <= rectProj.right &&
+                event.clientY >= rectProj.top &&
+                event.clientY <= rectProj.bottom
+            ) {
+                // Рассчитываем координаты для проекционного окна
+                three.mouseProjection.x =
+                    ((event.clientX - rectProj.left) / rectProj.width) * 2 - 1;
+                three.mouseProjection.y =
+                    -((event.clientY - rectProj.top) / rectProj.height) * 2 + 1;
+            }
         }
     });
 
@@ -76,19 +80,22 @@ export function setupThreeEnvironment(container, projection, settings) {
     );
     three.camera.position.z = 1;
 
-    // Настройка ортографической камеры для проекции (вид спереди)
-    three.cameraRTTProjection = new THREE.OrthographicCamera(
-        projection.clientWidth / -2,
-        projection.clientWidth / 2,
-        projection.clientHeight / 2,
-        projection.clientHeight / -2,
-        -10000,
-        10000,
-    );
+    if (projection) {
 
-    // Позиционируем проекционную камеру для вида спереди
-    three.cameraRTTProjection.position.set(0, 0, 5);
-    three.cameraRTTProjection.lookAt(0, 0, 0);
+        // Настройка ортографической камеры для проекции (вид спереди)
+        three.cameraRTTProjection = new THREE.OrthographicCamera(
+            projection.clientWidth / -2,
+            projection.clientWidth / 2,
+            projection.clientHeight / 2,
+            projection.clientHeight / -2,
+            -10000,
+            10000,
+        );
+
+        // Позиционируем проекционную камеру для вида спереди
+        three.cameraRTTProjection.position.set(0, 0, 5);
+        three.cameraRTTProjection.lookAt(0, 0, 0);
+    }
 
     // Настройка рендереров - сначала инициализируем рендереры
     three.renderer = new THREE.WebGLRenderer({
@@ -108,43 +115,44 @@ export function setupThreeEnvironment(container, projection, settings) {
     });
 
     container.appendChild(three.renderer.domElement);
+    if (projection) {
+        three.renderer_for_projection = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true,
+        });
+        three.renderer_for_projection.setSize(
+            projection.clientWidth,
+            projection.clientHeight,
+        );
+        three.renderer_for_projection.setPixelRatio(window.devicePixelRatio);
 
-    three.renderer_for_projection = new THREE.WebGLRenderer({
-        antialias: true,
-        alpha: true,
-    });
-    three.renderer_for_projection.setSize(
-        projection.clientWidth,
-        projection.clientHeight,
-    );
-    three.renderer_for_projection.setPixelRatio(window.devicePixelRatio);
+        // Обработчики событий для проекционного view
+        projection.addEventListener("mousedown", (event) => {
+            setMouseClocked(three, "projections", true);
+        });
 
-    // Обработчики событий для проекционного view
-    projection.addEventListener("mousedown", (event) => {
-        setMouseClocked(three, "projections", true);
-    });
+        projection.addEventListener("mouseup", (event) => {
+            setMouseClocked(three, "projections", false);
+        });
 
-    projection.addEventListener("mouseup", (event) => {
-        setMouseClocked(three, "projections", false);
-    });
-
-    projection.appendChild(three.renderer_for_projection.domElement);
-
+        projection.appendChild(three.renderer_for_projection.domElement);
+    }
     // Теперь, когда рендереры готовы, настроим контроллеры
     three.controls = new OrbitControls(three.camera, three.renderer.domElement);
     three.controls.enableDamping = true;
     three.controls.dampingFactor = 0.05;
     three.controls.enablePan = false;
     three.controls.enableZoom = true;
-
-    three.controlsRTT = new OrbitControls(
-        three.cameraRTTProjection,
-        three.renderer_for_projection.domElement,
-    );
-    three.controlsRTT.enableRotate = false;
-    three.controlsRTT.enableZoom = false;
-    three.controlsRTT.enablePan = false;
-    three.controlsRTT.enableDamping = false;
+    if (projection) {
+        three.controlsRTT = new OrbitControls(
+            three.cameraRTTProjection,
+            three.renderer_for_projection.domElement,
+        );
+        three.controlsRTT.enableRotate = false;
+        three.controlsRTT.enableZoom = false;
+        three.controlsRTT.enablePan = false;
+        three.controlsRTT.enableDamping = false;
+    }
     // three.controlsRTT.dampingFactor = 0.05;
 
     // Настройки рендерера
@@ -390,9 +398,13 @@ export function fitCameraToObjects(three) {
 
     // Установка целевой точки и позиции камеры
     three.controls.target.copy(center);
-    center.y += 0.8;
-    center.z += 1.8;
-    console.log('center', center);
+    // center.x += 0.332;
+    // center.y += 1.290;
+    // center.z += 2.887;
+
+    center.x -= 0.027;
+    center.y += 1.242;
+    center.z -= 0.687;
 
     const maxDim = Math.max(size.x, size.y, size.z);
     const fov = three.camera.fov * (Math.PI / 180);

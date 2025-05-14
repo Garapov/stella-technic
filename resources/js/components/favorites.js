@@ -5,7 +5,6 @@ export default (() => {
         Alpine.store("favorites", {
             list: Alpine.$persist([]).as("favorites"),
             getCount() {
-                console.log("$store.favorites.list before counting", this.list);
                 return this.list.filter((item) => item).length;
             },
             toggleProduct(id) {

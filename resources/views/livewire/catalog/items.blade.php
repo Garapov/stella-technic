@@ -403,7 +403,6 @@
             setTimeout(() => {
                 const url = new URL(window.location.href);
                 const path = url.pathname;
-                console.log(path);
 
                 window.history.pushState({}, '', path);
             }, 0);

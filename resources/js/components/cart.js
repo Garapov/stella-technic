@@ -25,7 +25,6 @@ export default (() => {
             },
 
             addVariationToCart({ variationId, count = 0, name }) {
-                console.log("Adding variation to cart:", variationId, count);
 
                 try {
                     // Ensure the product exists in the cart

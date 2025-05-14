@@ -15,6 +15,8 @@ use App\Tables\Columns\ImageByIdColumn;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Get;
 use Livewire\Attributes\On;
 
 class VariantsRelationManager extends RelationManager
@@ -61,6 +63,10 @@ class VariantsRelationManager extends RelationManager
                                 ->label("Артикул"),
                             Forms\Components\Toggle::make("is_popular")
                                 ->label("Популярный")
+                                ->inline(false),
+                            Forms\Components\Toggle::make("is_constructable")
+                                ->label("Конструктор")
+                                ->live()
                                 ->inline(false),
                         ])
                         ->columns([
@@ -149,7 +155,7 @@ class VariantsRelationManager extends RelationManager
                             ->relationship("batch", "name")
                             ->preload(),
                     ]),
-                    Tabs\Tab::make('SEO')
+                    Tab::make('SEO')
                             ->schema([
                                 Builder::make('seo')
                                     ->label('SEO данные')
@@ -182,6 +188,49 @@ class VariantsRelationManager extends RelationManager
                                             ])->maxItems(1)
                                     ])
                             ]),
+                            Tab::make('Конструктор')
+                                ->schema([
+                                    Forms\Components\Select::make("constructor_type")
+                                        ->label("Тип конструктора")
+                                        ->live()
+                                        ->options([
+                                            'deck' => "Стойки"
+                                        ])
+                                        ->columnSpanFull(),
+                                    
+                                    Repeater::make('rows')
+                                        ->label("Ряды ящиков")
+                                        ->schema([
+                                            Forms\Components\Select::make('size')
+                                                ->label("Размер")
+                                                ->options([
+                                                    'small' => 'V1',
+                                                    'medium' => 'V2',
+                                                    'large' => 'V3',
+                                                ])
+                                                ->required(),
+                                            Forms\Components\Select::make('color')
+                                                ->label("Цвет")
+                                                ->options([
+                                                    'red' => 'Красный',
+                                                    'green' => 'Зеленый',
+                                                    'blue' => 'Синий',
+                                                    'yellow' => 'Желтый',
+                                                    'gray' => 'Серый',
+                                                ])
+                                                ->required(),
+                                        ])
+                                        ->visible(
+                                            fn(Get $get) => $get("constructor_type") == 'deck'
+                                        )
+                                        ->columns(2)
+                                        ->cloneable()
+                                        ->reorderable(false)
+                                        ->addActionLabel('Добавить ряд ящиков')
+                                ])
+                                ->visible(
+                                    fn(Get $get) => $get("is_constructable")
+                                )
                 ])
                 ->columnSpan("full"),
         ]);

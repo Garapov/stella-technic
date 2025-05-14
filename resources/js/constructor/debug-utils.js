@@ -128,7 +128,5 @@ export function log(message, data, debugMode, debugInfo) {
         if (updatedInfo.warnings.length > 10) updatedInfo.warnings.shift();
     }
 
-    console.log(`[DEBUG] ${message}`, data);
-
     return updatedInfo;
 }

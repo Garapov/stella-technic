@@ -8,16 +8,12 @@
   init() {
     this.loadProducts();
     this.loadConstructs();
-
-    console.log('constructs', this.constructs);
   },
   loadProducts() {
     $wire.loadProducts($store.cart.list).then((products) => {
       this.products = products;
       this.isLoading = false;
       this.isReloading = false;
-
-      console.log('products loaded', this.products);
     });
   },
   loadConstructs() {
@@ -25,19 +21,15 @@
       this.constructs = constructs;
       this.isLoading = false;
       this.isReloading = false;
-
-      console.log('constructs loaded', this.constructs);
     });
   },
   removeCartItem(id) {
-    console.log('cart item removed', id);
     this.isReloading = true;
     $store.cart.removeFromCart(id);
     this.loadProducts();
     this.loadConstructs();
   },
   removeConstruct(id) {
-    console.log('construct removed', id);
     this.isReloading = true;
     $store.cart.removeConstructFromCart(id);
     this.loadProducts();

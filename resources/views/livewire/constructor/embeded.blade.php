@@ -1,6 +1,6 @@
 <div class="h-full grid grid-cols-9" x-data="construct({
     selectedColor: 'blue',
-    debugMode: true,
+    debugMode: false,
     desks: @js(array(
         'low_slim' => \App\Models\ProductVariant::where('id', setting('deck_low_slim'))->first(),
         'high_slim' => \App\Models\ProductVariant::where('id', setting('deck_high_slim'))->first(),
@@ -15,7 +15,5 @@
     addedRows: @js($added_rows),
     embeded: @js($embeded)
 })" >
-    <x-constructor.projection />
-    <x-constructor.buttons :products="$products" :param_items="$param_items" :selected_params="$selected_params" />
-    <x-constructor.scene />    
+    <x-constructor.scene_embeded />    
 </div>

@@ -12,9 +12,7 @@
             });
             ymaps.ready(this.initMap);
         },
-        destroy() {
-            console.log('destroy');
-        },
+        destroy() {},
         initMap() {
             this.map = new ymaps.Map($refs.map, {
                 center: [55.76, 37.64],
@@ -34,11 +32,6 @@
                 addPointToMap(e.get('coords'));
             });
 
-            {{-- ymaps.geocode('Варшавское шоссе', {
-                results: 10
-            }).then(function (res) {
-                console.log('firstGeoObject',res.geoObjects.getAll());
-            }); --}}
 
             var searchControl = new ymaps.control.SearchControl({
                 options: {
@@ -47,9 +40,7 @@
                 }
             });
 
-            searchControl.search('Варшавское шоссе').then(function (res) {
-                console.log(res);
-            });
+            searchControl.search('Варшавское шоссе').then(function (res) {});
 
             searchControl.events.add('resultselect', function(e) {
                 var index = e.get('index');

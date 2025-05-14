@@ -40,14 +40,18 @@ class ProductVariant extends Model
         "gallery",
         "links",
         "auth_price",
-        "seo"
+        "seo",
+        "is_constructable",
+        "constructor_type",
+        'rows'
     ];
 
     protected $casts = [
         "gallery" => "array",
         "is_default" => "boolean",
         "is_popular" => "boolean",
-        "seo" => "array"
+        "seo" => "array",
+        "rows" => "array"
     ];
 
     protected $dates = ["deleted_at"];

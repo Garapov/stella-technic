@@ -54,10 +54,8 @@ document.addEventListener("articles_slider", (data) => {
 });
 
 document.addEventListener("init-map", (data) => {
-    console.log("data", data);
 
     if (data.detail.delivery && data.detail.delivery.points) {
-        console.log(`delivery-map-${data.detail.delivery.id}`);
         ymaps.ready(() => {
             setTimeout(() => {
                 let map, point, coordinates, address;
