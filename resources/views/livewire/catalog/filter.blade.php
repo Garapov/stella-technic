@@ -1,4 +1,4 @@
-<div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900 flex flex-col gap-4" x-data="{
+<div class="rounded-lg bg-slate-50 p-6 shadow-sm flex flex-col gap-4" x-data="{
     rangeSlider: window.rangeSlider($refs.range, {
         min: @js($products->min('price')),
         max: @js($products->max('price')),
@@ -21,7 +21,7 @@
     }
 }">
     <div class="flex flex-col gap-4">
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Фильтры</h3>
         </div>
 
@@ -46,13 +46,13 @@
                     {{ $paramName }}
                 </h6>
                 {{--@if ($params->first()['type'] == 'color')--}}
-                @if (false)
+                @if ($params->first()['type'] == 'color')
                     <ul class="flex flex-wrap gap-2" aria-labelledby="dropdownDefault">
                         @foreach($params as $colorItemId => $color)
                             @php
                                 $colors = explode('|', $color['value']);
                             @endphp
-                            <label class="relative w-5 h-5 rounded-full border @if(in_array($colorItemId, $selectedParams)) border-blue-800 border-4 @else border-gray-300 @endif overflow-hidden">
+                            <label class="relative w-8 h-8 rounded-full border @if(in_array($colorItemId, $selectedParams)) border-blue-800 border-4 @else border-gray-300 @endif overflow-hidden">
                                 <input type="checkbox" id="param_{{ $colorItemId }}" wire:model.live="selectedParams" value="{{ $colorItemId }}" class="hidden" />
                                 @if(count($colors) > 1)
                                     <div class="absolute inset-0">
@@ -70,7 +70,7 @@
                         @foreach($params as $paramItemId => $paramData)
                             <li class="flex items-center">
                                 <input type="checkbox" id="param_{{ $paramItemId }}" wire:model.live="selectedParams" value="{{ $paramItemId }}"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+                                class="w-5 h-5 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
 
                                 <label for="param_{{ $paramItemId }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                                 {{ $paramData['title'] }}
@@ -93,7 +93,7 @@
                                 id="brand_{{ $brand->id }}"
                                 wire:model.live="selectedBrands"
                                 value="{{ $brand->id }}"
-                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+                            class="w-5 h-5 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
 
                             <label for="brand_{{ $brand->id }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                             {{ $brand->name }}
@@ -116,7 +116,7 @@
                                 id="batch_{{ $batch->id }}"
                                 wire:model.live="selectedBatches"
                                 value="{{ $batch->id }}"
-                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+                            class="w-5 h-5 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
 
                             <label for="batch_{{ $batch->id }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                             {{ $batch->name }}
@@ -128,7 +128,7 @@
         @endif
     </div>
     @if (!empty($filters))
-        <button type="button" class="px-4 py-2.5 text-sm font-medium text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" @click="resetFilters">
+        <button type="button" class="px-4 py-2.5 text-sm font-medium text-white inline-flex items-center bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-300" @click="resetFilters">
             <x-carbon-close-outline class="w-4 h-4 text-white me-2" />
             Сбросить фильтры
         </button>

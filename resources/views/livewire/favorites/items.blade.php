@@ -1,4 +1,4 @@
-<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased"
+<section class="py-8 bg-white md:py-10 dark:bg-gray-900 antialiased"
     x-data="{
         init() {
             $wire.loadFavorites($store.favorites.list);

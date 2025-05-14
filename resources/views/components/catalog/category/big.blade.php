@@ -1,4 +1,4 @@
-<a href="{{ route('client.catalog', $category->slug) }}" wire:navigate class="w-full bg-gray-100 dark:bg-gray-900 dark:text-gray-100 border dark:border-0 relative rounded-md hover:shadow-xl cursor-pointer duration-200 p-2 flex flex-col gap-2">
+<a href="{{ route('client.catalog', $category->slug) }}" wire:navigate class="w-full bg-slate-50 dark:bg-gray-900 dark:text-gray-100 border border-blue-500 dark:border-0 relative rounded-md hover:shadow-xl cursor-pointer duration-200 p-2 flex flex-col gap-2">
   <span class="bg-blue-600 text-white px-2 py-1 absolute top-0 right-0 text-xs  md:tex t-sm rounded-bl-md">
     @php
         $count = $category->variationsCount();

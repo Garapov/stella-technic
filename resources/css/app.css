@@ -10,6 +10,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* width */
+::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgb(37 99 235 / var(--tw-bg-opacity, 1));
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(37 99 235 / var(--tw-bg-opacity, 1));
+}
+
 .debug-panel {
     position: fixed;
     top: 10px;

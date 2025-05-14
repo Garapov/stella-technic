@@ -3,7 +3,7 @@
         $categories = \App\Models\ProductCategory::where('parent_id', -1)->get();
     @endphp
 
-    <section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
+    <section class="py-8 bg-white md:py-10 dark:bg-gray-900 antialiased">
         <div class="mx-auto container">
             <!-- Heading & Filters -->
     
