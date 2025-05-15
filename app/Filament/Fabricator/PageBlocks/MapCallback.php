@@ -3,17 +3,15 @@
 namespace App\Filament\Fabricator\PageBlocks;
 
 use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\TextInput;
 use Z3d0X\FilamentFabricator\PageBlocks\PageBlock;
 
-class Contacts extends PageBlock
+class MapCallback extends PageBlock
 {
     public static function getBlockSchema(): Block
     {
-        return Block::make('contacts')
-            ->icon('heroicon-o-rectangle-stack')
-            ->label('Контакты')
+        return Block::make('map-callback')
+            ->icon("heroicon-o-rectangle-stack")
+            ->label("Карта с формой")
             ->schema([
                 //
             ]);

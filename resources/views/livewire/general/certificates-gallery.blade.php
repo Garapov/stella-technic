@@ -22,7 +22,7 @@
             }" x-ref="slider">
                 <div class="container mx-auto">
                     <div class="flex items-center justify-between mb-10">
-                        <p class="text-4xl text-slate-600 dark:text-white font-semibold">{{ $title }}</p>
+                        <p class="text-4xl text-slate-900 dark:text-white font-semibold">{{ $title }}</p>
                         <a href="{{ route('client.posts.index') }}"
                             class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:navigate>
                             Смотреть все

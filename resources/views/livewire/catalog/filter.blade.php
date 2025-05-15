@@ -66,9 +66,14 @@
                         @endforeach
                     </ul>
                 @else
-                    <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
+                    <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault" x-data="{
+                        showAll: false,
+                    }">
+                        @php
+                            $counter = 0;
+                        @endphp
                         @foreach($params as $paramItemId => $paramData)
-                            <li class="flex items-center">
+                            <li class="flex items-center" @if($counter > 4 && !in_array($paramItemId, $selectedParams)) x-show="showAll" @endif>
                                 <input type="checkbox" id="param_{{ $paramItemId }}" wire:model.live="selectedParams" value="{{ $paramItemId }}"
                                 class="w-5 h-5 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
 
@@ -76,7 +81,18 @@
                                 {{ $paramData['title'] }}
                                 </label>
                             </li>
+                            @php
+                                $counter++;
+                            @endphp
                         @endforeach
+                        @if (count($params) > 5)
+                            <li @click="showAll = !showAll" class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                                Показать <template x-if="!showAll"><span>больше</span></template><template x-if="showAll"><span>меньше</span></template>
+                            </li>
+                        @endif
+                        @php
+                            $counter = 0;
+                        @endphp
                     </ul>
                 @endif
             </div>

@@ -21,5 +21,6 @@ class MainSlider extends Model
         "background",
         "background_image",
         "show_on_main",
+        "sort"
     ];
 }

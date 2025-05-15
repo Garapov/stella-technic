@@ -3,7 +3,7 @@
         <section class="text-gray-600 body-font bg-slate-50 dark:bg-gray-700">
             <div class="container py-10 mx-auto">
                 <div class="text-center mb-10">
-                    <h1 class="md:text-4xl text-3xl font-bold text-center title-font mb-2"><span class="text-blue-500">Более 30 лет</span> <span class="text-slate-500">на рынке оборудования и
+                    <h1 class="md:text-4xl text-3xl font-bold text-center title-font mb-2"><span class="text-blue-500">Более 30 лет</span> <span class="text-slate-700">на рынке оборудования и
                         хранения для складов</span></h1>
                 </div>
                 <div class="grid grid-cols-5 gap-4">

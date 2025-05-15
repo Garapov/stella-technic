@@ -28,8 +28,8 @@
                                 </div>
                                 {{ $category->title }}
                             </div>
-                            @if ($category->categories)
-                                <x-heroicon-o-arrow-long-right class="min-w-4 max-w-4" />
+                            @if (count($category->categories))
+                                <x-eva-arrow-ios-forward-outline class="min-w-4 max-w-4" x-show="selectedCategory == {{ $category->id }}" />
                             @endif
                         </a>
                     </li>
@@ -48,6 +48,9 @@
                                 @endif
                                 @livewire('general.category', [
                                     'category' => $subcategory,
+                                    'show_counts' => true,
+                                    'show_price' => true,
+                                    'transparent' => true
                                 ], key($subcategory->id))
                             @endforeach
                         </ul>

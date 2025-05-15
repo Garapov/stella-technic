@@ -24,4 +24,5 @@
     @livewire('main.articles')
     @livewire('main.customers')
     @livewire('main.news')
+    @livewire('general.contacts')
 </x-guest-layout>

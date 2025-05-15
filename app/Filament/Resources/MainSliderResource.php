@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use App\Tables\Columns\ImageByIdColumn;
+use Filament\Tables\Columns\TextInputColumn;
 
 class MainSliderResource extends Resource
 {
@@ -84,6 +85,7 @@ class MainSliderResource extends Resource
                     ->label("Ссылка")
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextInputColumn::make('sort')->label("Сортировка"),
                 Tables\Columns\TextColumn::make("created_at")
                     ->label("Дата создания")
                     ->dateTime()

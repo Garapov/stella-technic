@@ -3,7 +3,7 @@
         <section class="py-10 dark:bg-dark overflow-hidden">
             <div class="container mx-auto">
                 <div class="flex items-center justify-between mb-10">
-                    <p class="text-4xl text-slate-600 dark:text-white font-semibold">Категории товаров</p>
+                    <p class="text-4xl text-slate-900 dark:text-white font-semibold">Категории товаров</p>
                 </div>
                 
                 <!-- ====== Categories Section Start -->
