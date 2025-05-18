@@ -85,3 +85,7 @@
     cursor: pointer;
     z-index: 1000;
 }
+
+.vertical-carousel-height-fix {
+    height: 100% !important;
+}
