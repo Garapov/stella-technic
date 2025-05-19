@@ -1,4 +1,4 @@
-<form action="{{ route('client.search') }}" class="relative flex items-center grow" x-data="{ isOpen: false }">
+<form action="{{ route('client.search') }}" class="relative items-center grow lg:flex hidden" x-data="{ isOpen: false }">
     <div class="rounded-lg bg-blue-500 flex items-center relative w-full z-20">
         <input type="search" id="search-dropdown"
         class="rounded-lg bg-white block p-2.5 w-full text-sm text-gray-900 dark:placeholder-gray-400 dark:text-white border border-blue-500"

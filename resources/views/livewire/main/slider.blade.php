@@ -1,8 +1,9 @@
 <div>
     @if (count($slides) > 0)
-        <div class="py-10  bg-white dark:bg-gray-700" x-data="{
+        <div class="lg:py-10  bg-white dark:bg-gray-700" x-data="{
             slider: new window.glide($refs.slider, {
                 autoplay: 5000,
+                gap: 0,
             }).mount(),
             index: 0,
             init() {
@@ -11,9 +12,9 @@
                 })
             },
         }">
-            <div class="m-auto container">
+            <div class="m-auto lg:container">
                 <div class="glide relative" x-ref="slider">
-                    <div class="glide__track rounded-xl overflow-hidden" data-glide-el="track">
+                    <div class="glide__track lg:rounded-xl overflow-hidden" data-glide-el="track">
                         <div class="glide__slides">
                             @foreach ($slides as $slide)
                                 <div class="whitespace-normal @if (!$slide->background_image) p-10 @endif" style="background-color: {{ $slide->background }};">

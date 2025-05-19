@@ -23,7 +23,7 @@
     <body class="font-sans text-gray-900 antialiased">
         @livewire('general.header')
         <div class="bg-white dark:bg-gray-800">
-                {{ $slot }}
+            {{ $slot }}
         </div>
 
         @livewire('general.footer')

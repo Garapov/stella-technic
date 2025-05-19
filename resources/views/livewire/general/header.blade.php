@@ -1,6 +1,6 @@
 <header>
-    <div class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 relative z-30">
-        <div class="flex flex-wrap justify-between items-center mx-auto container">
+    <div class="lg:bg-white bg-slate-50 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 relative z-30 lg:block hidden">
+        <div class="flex flex-wrap justify-between items-center lg:mx-auto lg:container">
             <div class="hidden justify-between items-center w-full lg:flex lg:w-auto">
                 @if ($topmenu && $topmenu->menuItems)
                     @livewire('general.header.topmenu', [
@@ -27,17 +27,26 @@
         </div>
     </div>
 
-    <div class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 relative z-20">
-        <div class="flex flex-wrap gap-8 justify-between items-center mx-auto container">
+    <div class="lg:bg-white bg-slate-50 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 relative z-20">
+        <div class="flex flex-wrap gap-8 justify-between items-center lg:mx-auto lg:container">
+            <button type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800 lg:hidden block">
+                <x-fas-list-ul class="w-3.5 h-3.5"/>
+            </button>
             @if (setting('site_logo'))
                 <a href="/" class="flex items-center" wire:navigate>
                     <img src="{{ Storage::disk(config('filesystems.default'))->url(setting('site_logo')) }}" class="mr-3 h-8 block"
                         alt="Stella-tech Logo" />
                 </a>
             @endif
+            <button type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800 lg:hidden block">
+                <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+            </svg>
+            </button>
             @livewire('general.header.search')
                 {{-- @livewire('general.header.popular') --}}
-            <div class="flex gap-4 items-stretch">
+            <div class="gap-4 items-stretch lg:flex hidden">
                 @if (setting('site_phone'))
                     <div class="flex flex-col items-end">
                         <a href="tel:{{ setting('site_phone') }}" class="text-lg font-bold text-right text-slate-700 dark:text-white">{{ setting('site_phone') }}</a>
@@ -56,8 +65,8 @@
         </div>
     </div>
 
-    <div class="bg-slate-50 px-4 lg:px-6 py-2.5 dark:bg-gray-700 relative z-10">
-        <div class="flex flex-wrap justify-between items-center mx-auto container">
+    <div class="bg-slate-50 px-4 lg:px-6 py-2.5 dark:bg-gray-700 relative z-10 lg:flex hidden">
+        <div class="flex flex-wrap justify-between items-center lg:mx-auto lg:container">
 
             @if (count($categories) > 0)
                 @livewire('general.header.catalog', [
