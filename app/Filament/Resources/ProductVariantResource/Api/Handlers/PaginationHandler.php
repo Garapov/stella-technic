@@ -1,15 +1,15 @@
 <?php
-namespace App\Filament\Resources\ProductResource\Api\Handlers;
+namespace App\Filament\Resources\ProductVariantResource\Api\Handlers;
 
 use Illuminate\Http\Request;
 use Rupadana\ApiService\Http\Handlers;
 use Spatie\QueryBuilder\QueryBuilder;
-use App\Filament\Resources\ProductResource;
-use App\Filament\Resources\ProductResource\Api\Transformers\ProductTransformer;
+use App\Filament\Resources\ProductVariantResource;
+use App\Filament\Resources\ProductVariantResource\Api\Transformers\ProductVariantTransformer;
 
 class PaginationHandler extends Handlers {
     public static string | null $uri = '/';
-    public static string | null $resource = ProductResource::class;
+    public static string | null $resource = ProductVariantResource::class;
 
 
     /**
@@ -30,6 +30,6 @@ class PaginationHandler extends Handlers {
         ->paginate(request()->query('per_page'))
         ->appends(request()->query());
 
-        return ProductTransformer::collection($query);
+        return ProductVariantTransformer::collection($query);
     }
 }

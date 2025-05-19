@@ -3,28 +3,18 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductVariantResource\Pages;
-use App\Filament\Resources\ProductVariantResource\RelationManagers;
 use App\Models\ProductVariant;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProductVariantResource extends Resource
 {
     protected static ?string $model = ProductVariant::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = "Варианты";
-    protected static ?string $modelLabel = "Вариант";
-    protected static ?string $pluralModelLabel = "Варианты";
-    protected static ?string $navigationGroup = "Магазин";
-    protected static ?string $recordTitleAttribute = "name";
-    
-    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {

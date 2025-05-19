@@ -247,6 +247,7 @@ class VariantsRelationManager extends RelationManager
                     ->stacked()
                     ->limit(1)
                     ->limitedRemainingText(),
+                Tables\Columns\TextColumn::make("id")->label(" ID"),
                 Tables\Columns\TextColumn::make("name")->label("Название"),
                 Tables\Columns\TextColumn::make("sku")->label("Артикул"),
                 Tables\Columns\TextColumn::make("price")

@@ -1,14 +1,14 @@
 <?php
-namespace App\Filament\Resources\ProductResource\Api\Handlers;
+namespace App\Filament\Resources\ProductVariantResource\Api\Handlers;
 
 use Illuminate\Http\Request;
 use Rupadana\ApiService\Http\Handlers;
-use App\Filament\Resources\ProductResource;
-use App\Filament\Resources\ProductResource\Api\Requests\UpdateProductRequest;
+use App\Filament\Resources\ProductVariantResource;
+use App\Filament\Resources\ProductVariantResource\Api\Requests\UpdateProductVariantRequest;
 
 class UpdateHandler extends Handlers {
     public static string | null $uri = '/{id}';
-    public static string | null $resource = ProductResource::class;
+    public static string | null $resource = ProductVariantResource::class;
 
     public static function getMethod()
     {
@@ -23,10 +23,10 @@ class UpdateHandler extends Handlers {
     /**
      * Update Product
      *
-     * @param UpdateProductRequest $request
+     * @param UpdateProductVariantRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function handler(UpdateProductRequest $request)
+    public function handler(UpdateProductVariantRequest $request)
     {
         $id = $request->route('id');
 

@@ -1,5 +1,5 @@
 <?php
-namespace App\Filament\Resources\ProductResource\Api\Transformers;
+namespace App\Filament\Resources\ProductVariantResource\Api\Transformers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\Product;
@@ -7,7 +7,7 @@ use App\Models\Product;
 /**
  * @property Product $resource
  */
-class ProductTransformer extends JsonResource
+class ProductVariantTransformer extends JsonResource
 {
 
     /**

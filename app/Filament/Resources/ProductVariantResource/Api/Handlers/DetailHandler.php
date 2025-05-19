@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Filament\Resources\ProductResource\Api\Handlers;
+namespace App\Filament\Resources\ProductVariantResource\Api\Handlers;
 
 use App\Filament\Resources\SettingResource;
-use App\Filament\Resources\ProductResource;
+use App\Filament\Resources\ProductVariantResource;
 use Rupadana\ApiService\Http\Handlers;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Http\Request;
-use App\Filament\Resources\ProductResource\Api\Transformers\ProductTransformer;
+use App\Filament\Resources\ProductVariantResource\Api\Transformers\ProductVariantTransformer;
 
 class DetailHandler extends Handlers
 {
     public static string | null $uri = '/{id}';
-    public static string | null $resource = ProductResource::class;
+    public static string | null $resource = ProductVariantResource::class;
 
 
     /**
@@ -34,6 +34,6 @@ class DetailHandler extends Handlers
 
         if (!$query) return static::sendNotFoundResponse();
 
-        return new ProductTransformer($query);
+        return new ProductVariantTransformer($query);
     }
 }

@@ -1,14 +1,14 @@
 <?php
-namespace App\Filament\Resources\ProductResource\Api\Handlers;
+namespace App\Filament\Resources\ProductVariantResource\Api\Handlers;
 
 use Illuminate\Http\Request;
 use Rupadana\ApiService\Http\Handlers;
-use App\Filament\Resources\ProductResource;
-use App\Filament\Resources\ProductResource\Api\Requests\CreateProductRequest;
+use App\Filament\Resources\ProductVariantResource;
+use App\Filament\Resources\ProductVariantResource\Api\Requests\CreateProductVariantRequest;
 
 class CreateHandler extends Handlers {
     public static string | null $uri = '/';
-    public static string | null $resource = ProductResource::class;
+    public static string | null $resource = ProductVariantResource::class;
 
     public static function getMethod()
     {
@@ -22,10 +22,10 @@ class CreateHandler extends Handlers {
     /**
      * Create Product
      *
-     * @param CreateProductRequest $request
+     * @param CreateProductVariantRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function handler(CreateProductRequest $request)
+    public function handler(CreateProductVariantRequest $request)
     {
         $model = new (static::getModel());
 
