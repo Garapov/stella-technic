@@ -3,10 +3,10 @@
 @endphp
 <div>
     @if (count($articles) > 0)
-        <section class="py-10 dark:bg-dark glide article_slider">
-            <div class="container mx-auto">
+        <section class="px-4 py-10 dark:bg-dark glide article_slider">
+            <div class="lg:container lg:mx-auto">
                 <div class="flex items-center justify-between mb-10">
-                    <p class="text-4xl text-slate-900 dark:text-white font-semibold">{{ $title ?? 'Популярные статьи' }}</p>
+                    <p class="lg:text-4xl text-xl text-slate-900 dark:text-white font-semibold">{{ $title ?? 'Популярные статьи' }}</p>
                     <div class="flex items-center gap-8">
                         <div class="flex items-center gap-2">
                             @if (count($articles) > 1)

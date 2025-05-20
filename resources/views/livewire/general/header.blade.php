@@ -34,7 +34,7 @@
             </button>
             @if (setting('site_logo'))
                 <a href="/" class="flex items-center" wire:navigate>
-                    <img src="{{ Storage::disk(config('filesystems.default'))->url(setting('site_logo')) }}" class="mr-3 h-8 block"
+                    <img src="{{ Storage::disk(config('filesystems.default'))->url(setting('site_logo')) }}" class="mr-3 lg:h-8 h-4 block"
                         alt="Stella-tech Logo" />
                 </a>
             @endif

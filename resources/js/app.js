@@ -14,6 +14,10 @@ import clientsSlider from "./components/clients";
 
 import cart from "./components/cart";
 import favorites from "./components/favorites";
+import application from "./components/application";
+
+
+
 
 window.glide = Glide;
 window.splide = Splide;
@@ -37,7 +41,10 @@ document.addEventListener("livewire:init", () => {
     window.Livewire.on("favorites-cleared", (event) => {
         Alpine.store("favorites").list = [];
     });
+
 });
+
+
 
 document.addEventListener("articles_slider", (data) => {
     if (document.querySelector(".article_slider.glide .glide__slide")) {
@@ -48,6 +55,14 @@ document.addEventListener("articles_slider", (data) => {
                     autoplay: 5000,
                     perView: 3,
                     bound: true,
+                    breakpoints: {
+                        1024: {
+                            perView: 2
+                        },
+                        800: {
+                            perView: 1
+                        }
+                    }
                 }).mount();
             });
     }

@@ -1,11 +1,19 @@
 <div>
     @if (count($news))
-        <section class="py-10 dark:bg-gray-800 glide" x-data="{
+        <section class="px-4 py-10 dark:bg-gray-800 glide" x-data="{
             slider: new window.glide($refs.slider, {
                 autoplay: 5000,
                 perView: 3,
                 gap: 20,
-                bound: true
+                bound: true,
+                breakpoints: {
+                    1024: {
+                        perView: 2
+                    },
+                    800: {
+                        perView: 1
+                    }
+                }
             }).mount(),
             index: 0,
             init() {
@@ -14,9 +22,9 @@
                 })
             },
         }" x-ref="slider">
-            <div class="container mx-auto">
+            <div class="lg:container lg:mx-auto">
                 <div class="flex items-center justify-between mb-10">
-                    <p class="text-4xl text-slate-900 dark:text-white font-semibold">Новости</p>
+                    <p class="lg:text-4xl text-xl text-slate-900 dark:text-white font-semibold">Новости</p>
                     <div class="flex items-center gap-8">
                         <div class="flex items-center gap-2" data-glide-el="controls[nav]">
                             @foreach ($news as $key=>$item)

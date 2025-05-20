@@ -4,7 +4,18 @@ export default () => ({
     slider: document.getElementById('clients-slider') ? new Glide('#clients-slider', {
         autoplay: 5000,
         perView: 6,
-        bound: true
+        bound: true,
+        breakpoints: {
+            1280: {
+                perView: 4
+            },
+            1024: {
+                perView: 2
+            },
+            800: {
+                perView: 1
+            }
+        }
     }).mount() : null,
     index: 0,
     init() {

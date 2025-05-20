@@ -1,7 +1,7 @@
 <footer>
     <div class="bg-slate-100 border-gray-200 px-4 lg:px-6 dark:bg-slate-700">
-        <div class="py-8 flex flex-wrap gap-8 justify-between items-center mx-auto container border-b-2 border-slate-200">
-            <div class="flex flex-col gap-2">
+        <div class="py-8 flex flex-wrap flex-col lg:flex-row gap-8 justify-between items-center lg:mx-auto lg:container border-b-2 border-slate-200">
+            <div class="flex flex-col gap-2 lg:items-start items-center">
                 <a href="/" class="flex items-center" wire:navigate>
                     <img src="{{ asset('assets/logo.svg') }}" class="mr-3 h-6 sm:h-9 block dark:hidden"
                         alt="Stella-tech Logo" />
@@ -14,7 +14,7 @@
 
             @livewire('general.footer.subscription')
             @if ($menu && count($menu->menuItems) > 0)
-                <div class="flex items-start gap-20">
+                <div class="lg:flex items-start gap-20 hidden">
                     @foreach ($menu->menuItems as $manuItem)
                         @php
                             $hasLinkable = $manuItem->linkable ?? null;
@@ -43,8 +43,8 @@
             @endif
         </div>
     </div>
-    <div class="bg-slate-100 border-gray-200 px-4 lg:px-6 dark:bg-slate-700">
-        <div class="py-8 flex gap-12 justify-between items-center mx-auto container">
+    <div class="bg-slate-100 border-gray-200 px-4 lg:px-6 dark:bg-slate-700 lg:block hidden">
+        <div class="py-8 lg:flex gap-12 justify-between items-center mx-auto container">
             <div class="flex items-center gap-4">
                 <x-fas-phone class="w-4 h-4 text-gray-900 dark:text-gray-300" />
                 <div class="flex flex-col gap-2">
@@ -100,9 +100,9 @@
         </div>
     </div>
     <div class="bg-slate-50 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-slate-800">
-        <div class="flex flex-wrap justify-between items-center mx-auto container">
+        <div class="flex flex-wrap lg:flex-row flex-col justify-between items-center mx-auto container lg:text-start text-center">
             <span class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white">© 1991-2025 Все права защищены</span>
-            <div class="flex items-center gap-4">
+            <div class="flex lg:items-center gap-4 lg:flex-row flex-col">
                 <a href="#" class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Политика конфиденциальности</a>
                 <a href="#" class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Использование cookie</a>
                 <a href="#" class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Карта сайта</a>

@@ -4,12 +4,23 @@
 <div>
     @if (count($certificates))
         @if ($type == 'slider')
-            <section class="py-10 bg-slate-50 dark:bg-gray-800 glide" x-data="{
+            <section class="px-4 py-10 bg-slate-50 dark:bg-gray-800 glide" x-data="{
                 slider: new window.glide($refs.slider, {
                     autoplay: 5000,
                     perView: 6,
                     gap: 20,
                     bound: true,
+                    breakpoints: {
+                        1024: {
+                            perView: 3
+                        },
+                        800: {
+                            perView: 2
+                        },
+                        560: {
+                            perView: 1
+                        }
+                    }
                 }).mount(),
                 selector: `[data-fancybox='{{ $lightbox_selector }}']`,
                 index: 0,
@@ -20,9 +31,9 @@
                     window.fancybox.bind(this.selector);
                 },
             }" x-ref="slider">
-                <div class="container mx-auto">
+                <div class="lg:container lg:mx-auto">
                     <div class="flex items-center justify-between mb-10">
-                        <p class="text-4xl text-slate-900 dark:text-white font-semibold">{{ $title }}</p>
+                        <p class="lg:text-4xl text-xl text-slate-900 dark:text-white font-semibold">{{ $title }}</p>
                         <a href="{{ route('client.posts.index') }}"
                             class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:navigate>
                             Смотреть все
