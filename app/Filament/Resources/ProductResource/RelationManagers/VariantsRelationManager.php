@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Tables\Columns\ImageByIdColumn;
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Repeater;
@@ -187,6 +188,26 @@ class VariantsRelationManager extends RelationManager
                                             ])->maxItems(1)
                                     ])
                             ]),
+                            Tabs\Tab::make('Файлы')
+                            ->schema([
+                                Toggle::make("show_category_files")
+                                    ->label("Показывать файлы из категорий")
+                                    ->inline(false),
+                                Repeater::make('files')
+                                    ->label('Список файлов')
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->label('Название')
+                                            ->required(),
+                                        FileUpload::make("file")
+                                            ->required()
+                                            ->label("Файл")
+                                            ->directory("product_files")
+                                            ->visibility("public")
+                                            ->preserveFilenames(),
+                                    ])
+                                    ->columns(2)
+                                ]),
                             Tab::make('Конструктор')
                                 ->schema([
                                     Forms\Components\Select::make("constructor_type")

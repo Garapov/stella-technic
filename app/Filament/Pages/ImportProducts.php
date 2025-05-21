@@ -41,9 +41,9 @@ class ImportProducts extends Page implements HasTable
         return [
             ImportAction::make()
                 ->importer(ProductVariantImporter::class)
-                ->chunkSize(100)
+                ->chunkSize(200)
                 ->color("primary")
-                ->maxRows(100)
+                ->maxRows(200)
                 ->label("Импортировать товары")
                 ->icon("heroicon-o-arrow-up-tray"),
         ];

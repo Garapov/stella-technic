@@ -6,6 +6,8 @@ use App\Models\Delivery;
 use App\Models\Product;
 use App\Models\Image;
 use App\Models\ProductVariant;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 
 class Detail extends Component
@@ -13,12 +15,29 @@ class Detail extends Component
     public $product;
     public $variation;
     public $groupedParams;
+    public $files = [];
 
     public function mount($slug)
     {
         $this->variation = ProductVariant::where("slug", $slug)->first();
         $this->product = $this->variation->product;
         $this->groupedParams = $this->getGroupedParams();
+
+        if ($this->variation->show_category_files) {
+        
+            foreach($this->product->categories as $category) {
+                if (!$category->files) continue;
+                foreach($category->files as $file) {
+                    $this->files[] = $file;
+                }
+            }
+        }
+
+        if (!empty($this->variation->files)) {
+            foreach($this->variation->files as $file) {
+                $this->files[] = $file;
+            }
+        }
     }
 
     protected function getGroupedParams()
@@ -163,6 +182,29 @@ class Detail extends Component
         return $groupedParams;
     }
 
+    public function downloadFile($index) {
+        if (Storage::disk(config('filesystems.default'))->exists($this->files[$index]['file'])) {
+            $size = Storage::disk(config('filesystems.default'))->size($this->files[$index]['file']);
+            $tempFileUrl = Storage::disk(config('filesystems.default'))->temporaryUrl($this->files[$index]['file'], now()->addMinutes(3));
+            $filename = File::basename(Storage::disk(config('filesystems.default'))->url($this->files[$index]['file']));
+            $headers = [
+                'Content-Length' => $size,
+            ];
+            return response()->streamDownload(function () use ($tempFileUrl, $filename, $size) {
+                if (! ($stream = fopen($tempFileUrl, 'r'))) {
+                    throw new \Exception("'Could not open stream for reading file: ['.$filename.']'");
+                }
+
+                while (! feof($stream)) {
+                    echo fread($stream, 1024);
+                }
+
+                fclose($stream);
+            }, $filename, $headers);
+        }
+        // $this->variation->downloadAsset($this->files[$index]['file']);
+    }
+
     public function render()
     {
         return view("livewire.product.detail", [
@@ -170,6 +212,7 @@ class Detail extends Component
             "variation" => $this->variation,
             "groupedParams" => $this->groupedParams,
             "deliveries" => Delivery::where('is_active', true)->get(),
+            "files" => $this->files
         ]);
     }
 }

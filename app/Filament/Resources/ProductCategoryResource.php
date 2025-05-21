@@ -19,6 +19,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use App\Models\ProductParamItem;
+use Filament\Forms\Components\Repeater;
 
 class ProductCategoryResource extends Resource
 {
@@ -99,6 +100,23 @@ class ProductCategoryResource extends Resource
                                             ])->maxItems(1)
                                     ])
                             ]),
+                        Tabs\Tab::make('Файлы')
+                            ->schema([
+                                Repeater::make('files')
+                                    ->label('Список файлов')
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->label('Название')
+                                            ->required(),
+                                        FileUpload::make("file")
+                                            ->required()
+                                            ->label("Файл")
+                                            ->directory("product_files")
+                                            ->visibility("public")
+                                            ->preserveFilenames(),
+                                    ])
+                                    ->columns(2)
+                            ])
                     ]),                    
                 Section::make([
                     Toggle::make("is_visible")->inline(false)->label("Видимость"),

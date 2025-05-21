@@ -14,7 +14,9 @@ use Spatie\Sluggable\SlugOptions;
 use Illuminate\Support\Facades\Log;
 use Abbasudo\Purity\Traits\Filterable;
 use Abbasudo\Purity\Traits\Sortable;
+use Filament\Support\Assets\Asset;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProductVariant extends Model
 {
@@ -43,7 +45,9 @@ class ProductVariant extends Model
         "seo",
         "is_constructable",
         "constructor_type",
-        'rows'
+        'rows',
+        'files',
+        'show_category_files'
     ];
 
     protected $casts = [
@@ -51,7 +55,8 @@ class ProductVariant extends Model
         "is_default" => "boolean",
         "is_popular" => "boolean",
         "seo" => "array",
-        "rows" => "array"
+        "rows" => "array",
+        "files" => "array"
     ];
 
     protected $dates = ["deleted_at"];
@@ -144,6 +149,17 @@ class ProductVariant extends Model
     public function batch(): BelongsTo
     {
         return $this->belongsTo(Batch::class);
+    }
+
+    /**
+     * @param int $bytes Number of bytes (eg. 25907)
+     * @param int $precision [optional] Number of digits after the decimal point (eg. 1)
+     * @return string Value converted with unit (eg. 25.3KB)
+     */
+    public function formatBytes($bytes, $precision = 2) {
+        $unit = ["b", "kb", "mb", "gb"];
+        $exp = floor(log($bytes, 1024)) | 0;
+        return round($bytes / (pow(1024, $exp)), $precision).$unit[$exp];
     }
 
 }

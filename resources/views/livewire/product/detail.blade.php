@@ -335,7 +335,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" :class="{'-rotate-180': !isOpened, 'rotate-0': isOpened}"><g data-name="arrow-ios-downward"><path d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15 1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16z"></path></g></svg>
                         </span>
                     </button>
-                    <div class="px-5 py-4" x-show="isOpened">
+                    <div class="px-5 pb-4" x-show="isOpened">
                         <dl class="grid grid-cols-1 gap-4 md:grid-cols-2">
                             @foreach($variation->paramItems as $paramItem)
                                 <li class="flex items-center justify-between text-sm gap-2">
@@ -357,7 +357,7 @@
 
 
 
-                <div class="dark:border-neutral-600 dark:bg-body-dark" x-data="{
+                <div class="dark:border-neutral-600 dark:bg-body-dark @if (!empty($files)) border-b border-slate-200 @endif" x-data="{
                     isOpened: true
                 }">
                     <button class="group relative flex w-full items-center rounded-t-lg border-0 px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-body-dark dark:text-white font-bold" type="button"  @click="isOpened = !isOpened">
@@ -366,10 +366,41 @@
                             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" :class="{'-rotate-180': !isOpened, 'rotate-0': isOpened}"><g data-name="arrow-ios-downward"><path d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15 1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16z"></path></g></svg>
                         </span>
                     </button>
-                    <div class="px-5 py-4" x-show="isOpened">
+                    <div class="px-5 pb-4" x-show="isOpened">
                         {!! str($variation->description)->sanitizeHtml() !!}
                     </div>
                 </div>
+                @if (!empty($files))
+                    <div class="dark:border-neutral-600 dark:bg-body-dark" x-data="{
+                        isOpened: false
+                    }">
+                        <button class="group relative flex w-full items-center rounded-t-lg border-0 px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-body-dark dark:text-white font-bold" type="button"  @click="isOpened = !isOpened">
+                            Файлы
+                            <span class="-me-1 ms-auto h-5 w-5 shrink-0 rotate-[-180deg] transition-transform duration-200 ease-in-out group-data-[twe-collapse-collapsed]:me-0 group-data-[twe-collapse-collapsed]:rotate-0 motion-reduce:transition-none [&>svg]:h-6 [&>svg]:w-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" :class="{'-rotate-180': !isOpened, 'rotate-0': isOpened}"><g data-name="arrow-ios-downward"><path d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15 1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16z"></path></g></svg>
+                            </span>
+                        </button>
+                        <div class="px-5 pb-4" x-show="isOpened">
+                            <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
+                                @foreach($files as $key=>$file)
+                                    <li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm/6">
+                                        <div class="flex w-0 flex-1 items-center">
+                                            <x-fas-file-import class="size-5 shrink-0 text-gray-400" />
+                                            <div class="ml-4 flex min-w-0 flex-1 gap-2">
+                                                <span class="truncate font-bold">{{ $file['name'] }}</span>
+                                                <span class="truncate font-medium">{{ File::basename(Storage::disk(config('filesystems.default'))->url($file['file'])) }}</span>
+                                                <span class="shrink-0 text-gray-400">{{ $variation->formatBytes(Storage::disk(config('filesystems.default'))->size($file['file'])) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="ml-4 shrink-0">
+                                            <div class="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer" wire:click="downloadFile({{ $key }})">Скачать</div>
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
             </div>
 
             
