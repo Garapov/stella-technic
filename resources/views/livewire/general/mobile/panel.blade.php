@@ -1,5 +1,5 @@
-<div class="fixed bottom-4 left-4 right-4 z-40 block lg:hidden">
-    <div class="px-7 bg-slate-50 shadow-lg rounded-2xl">
+<div class="fixed bottom-0 left-0 right-0 z-40 block lg:hidden">
+    <div class="px-7 bg-slate-50 shadow-lg rounded-t-xl">
         <div class="flex items-end gap-2 pt-4 px-4">
             <div class="flex-1 group">
                 <a href="{{ route('client.index') }}" wire:navigate class="flex items-center flex-col gap-2 text-center w-full group-hover:text-blue-500  @if(request()->routeIs('client.index')) text-blue-500 @else text-gray-400 @endif">
@@ -34,7 +34,7 @@
                 <div class="flex-1 group">
                     <a href="{{ route('profile.edit') }}" wire:navigate class="flex items-center flex-col gap-2 text-center w-full group-hover:text-blue-500  @if(request()->routeIs('profile.edit')) text-blue-500 @else text-gray-400 @endif">
                         <x-fas-user class="w-5 h-5" />
-                        <span class="block text-xs">{{ auth()->user()->name }}</span>
+                        <span class="block text-xs">Кабинет</span>
                         <span class="block w-full mx-auto h-1 group-hover:bg-blue-500 rounded-t-lg @if(request()->routeIs('profile.edit')) bg-blue-500 @endif"></span>
                     </a>
                 </div>

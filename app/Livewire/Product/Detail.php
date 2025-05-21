@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Product;
 
+use App\Models\Delivery;
 use App\Models\Product;
 use App\Models\Image;
 use App\Models\ProductVariant;
@@ -168,6 +169,7 @@ class Detail extends Component
             "product" => $this->product,
             "variation" => $this->variation,
             "groupedParams" => $this->groupedParams,
+            "deliveries" => Delivery::where('is_active', true)->get(),
         ]);
     }
 }

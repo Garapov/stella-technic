@@ -122,4 +122,5 @@
     </div>
     <div class="lg:hidden block h-20 bg-slate-50"></div>
     @livewire('general.mobile.panel')
+    @livewire('general.cookie')
 </footer>

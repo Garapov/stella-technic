@@ -19,7 +19,7 @@
 
 
 
-                <div class="grid lg:grid-cols-4 grid-cols-2 gap-4 mt-10">
+                <div class="grid lg:grid-cols-4 grid-cols-1 gap-4 mt-10">
                     @foreach ($categories as $category)
                         @if ($category->variationsCount() < 1)
                             @continue

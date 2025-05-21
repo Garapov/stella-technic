@@ -13,7 +13,7 @@
             },
         }">
             <div class="m-auto lg:container">
-                <div class="glide relative" x-ref="slider">
+                <div class="glide relative group" x-ref="slider">
                     <div class="glide__track lg:rounded-xl overflow-hidden" data-glide-el="track">
                         <div class="glide__slides">
                             @foreach ($slides as $slide)
@@ -44,7 +44,7 @@
                         </div>
                     </div>
                     @if (count($slides) > 1)
-                        <div class="flex items-center justify-between gap-4 pt-2 ps-3 absolute right-0 bottom-0 bg-white dark:bg-gray-700 rounded-tl-lg">
+                        <div class="group-hover:opacity-70 opacity-0 flex items-center justify-between gap-4 p-2 absolute right-0 bottom-0 bg-white dark:bg-gray-700 rounded-tl-lg">
                             <div class="flex items-center gap-2" data-glide-el="controls[nav]">
                                 @foreach ($slides as $key=>$slide)
                                     <div class="h-2.5 rounded-full transition-width" :class="{'w-6 bg-blue-400': index == {{ $key }}, 'w-2.5 bg-gray-400': index != {{ $key }} }" data-glide-dir="={{ $key }}"></div>
@@ -52,11 +52,11 @@
                             </div>
                             <div class="flex items-center gap-2" data-glide-el="controls">
                                 <button type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800" data-glide-dir="<">
-                                    <x-fas-arrow-left-long class="w-4 h-4" />
+                                    <x-eva-arrow-ios-back class="w-4 h-4" />
                                     <span class="sr-only">Предыдущий слайд</span>
                                 </button>
                                 <button type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800" data-glide-dir=">">
-                                    <x-fas-arrow-right-long class="w-4 h-4" />
+                                    <x-eva-arrow-ios-forward class="w-4 h-4" />
                                     <span class="sr-only">Следующий слайд</span>
                                 </button>
                             </div>
