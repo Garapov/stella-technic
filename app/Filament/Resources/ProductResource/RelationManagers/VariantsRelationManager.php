@@ -208,6 +208,21 @@ class VariantsRelationManager extends RelationManager
                                     ])
                                     ->columns(2)
                                 ]),
+                            Tabs\Tab::make(' Перекрестные продажи')
+                            ->schema([
+                                    Forms\Components\Select::make("crossSells")
+                                        ->label("Похожие товары")
+                                        ->placeholder("Выберите вариации")
+                                        ->multiple()
+                                        ->relationship("crossSells", "name")
+                                        ->preload(),
+                                    Forms\Components\Select::make("upSells")
+                                        ->label("С этим товаром покупают")
+                                        ->placeholder("Выберите вариации")
+                                        ->multiple()
+                                        ->relationship("upSells", "name")
+                                        ->preload(),
+                                ]),
                             Tab::make('Конструктор')
                                 ->schema([
                                     Forms\Components\Select::make("constructor_type")

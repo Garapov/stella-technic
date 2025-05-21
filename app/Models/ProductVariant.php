@@ -151,6 +151,28 @@ class ProductVariant extends Model
         return $this->belongsTo(Batch::class);
     }
 
+    // Cross-sells
+    public function crossSells(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            ProductVariant::class,
+            'cross_sells',
+            'product_variant_id',
+            'related_variant_id'
+        );
+    }
+
+    // Upsells
+    public function upSells(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            ProductVariant::class,
+            'up_sells',
+            'product_variant_id',
+            'related_variant_id'
+        );
+    }
+
     /**
      * @param int $bytes Number of bytes (eg. 25907)
      * @param int $precision [optional] Number of digits after the decimal point (eg. 1)

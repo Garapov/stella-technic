@@ -406,4 +406,12 @@
             
         </div>
     </div>
+
+    @if (!empty($variation->crossSells))
+        @livewire('product.components.crossails', ['title' => 'Похожие товары', 'variations' => $variation->crossSells], key($variation->id))
+    @endif
+
+    @if (!empty($variation->upSells))
+        @livewire('product.components.crossails', ['title' => 'С этим товаром покупают', 'variations' => $variation->upSells], key($variation->id))
+    @endif
 </div>
