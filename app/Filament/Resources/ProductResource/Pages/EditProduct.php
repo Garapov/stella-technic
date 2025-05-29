@@ -4,6 +4,8 @@ namespace App\Filament\Resources\ProductResource\Pages;
 
 use App\Filament\Resources\ProductResource;
 use App\Models\ProductVariant;
+use Filament\Actions\ExportAction;
+use App\Filament\Exports\ProductVariantExporter;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use GuzzleHttp\Psr7\Request;
@@ -19,6 +21,8 @@ class EditProduct extends EditRecord
             Actions\DeleteAction::make(),
             Actions\ForceDeleteAction::make(),
             Actions\RestoreAction::make(),
+            ExportAction::make()
+                ->exporter(ProductVariantExporter::class)
         ];
     }
 

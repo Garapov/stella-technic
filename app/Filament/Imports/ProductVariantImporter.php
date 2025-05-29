@@ -38,7 +38,8 @@ class ProductVariantImporter extends Importer
                     ProductVariantImporter $importer,
                     $record
                 ) {
-                    
+                    Log::info(['data', json_decode($state), $state]);
+
                     try {
                         $data = json_decode($state, true);
                     } catch (\Exception $e) {
@@ -46,8 +47,11 @@ class ProductVariantImporter extends Importer
                             $e->getMessage()
                         );
                     }
+
+                    
                     
                     $requiredFields = ["name", "image", "categories"];
+
                     foreach ($requiredFields as $field) {
                         if (empty($data[$field])) {
                             throw new RowImportFailedException(
@@ -89,6 +93,7 @@ class ProductVariantImporter extends Importer
                         try {
                             $product->categories()->sync([]);
                             sleep(0.3);
+                            Log::info(['cats', $data["categories"]]);
                             foreach ($data["categories"] as $category) {
                                 static::createCategoriesTreeStatic(
                                     $category,
@@ -113,7 +118,7 @@ class ProductVariantImporter extends Importer
                 ) {
                     Log::warning($state);
                 })
-                ->rules(["required"]),
+                ->rules(["required", "json"]),
             ImportColumn::make("name")
                 ->ignoreBlankState()
                 ->rules(["nullable"]),
@@ -141,7 +146,7 @@ class ProductVariantImporter extends Importer
             ImportColumn::make("is_popular")
                 ->requiredMapping()
                 ->boolean()
-                ->rules(["required", "boolean"]),
+                ->rules(["boolean"]),
             ImportColumn::make("count")
                 ->requiredMapping()
                 ->numeric()
@@ -301,23 +306,38 @@ class ProductVariantImporter extends Importer
         
         $product = ProductVariant::where("sku", $this->data['sku'])->first();
         
-        // if ($product) {
-            Log::warning([gettype($this->data['sku']), $this->data['sku']]);
-        // }
-        
-        if (!$this->options["updateExisting"] && $product) {
-            throw new RowImportFailedException(
-                "Найден товар с артикулом '{$product->sku}', но обновление товаров отключено."
-            );
-        } else {
+        Log::warning($product);
+
+        if (!$this->options["updateExisting"] && !$product) {
             $product = new ProductVariant();
             $product->product_id = $this->data['product_id'];
             $product->sku = $this->data['sku'];
             $product->price = 100000;
             $product->name = 'Не задано';
             $product->image = "/assets/placeholder.svg";
-            // $product->save();
         }
+        if (!$this->options["updateExisting"] && $product) {
+            throw new RowImportFailedException(
+                "Найден товар с артикулом '{$product->sku}', но обновление товаров отключено."
+            );
+        }
+        // if ($product) {
+        // }
+
+        
+        // if (!$this->options["updateExisting"] && $product) {
+        //     throw new RowImportFailedException(
+        //         "Найден товар с артикулом '{$product->sku}', но обновление товаров отключено."
+        //     );
+        // } else {
+        //     $product = new ProductVariant();
+        //     $product->product_id = $this->data['product_id'];
+        //     $product->sku = $this->data['sku'];
+        //     $product->price = 100000;
+        //     $product->name = 'Не задано';
+        //     $product->image = "/assets/placeholder.svg";
+        //     // $product->save();
+        // }
         dump([$product->sku, $this->data['sku']]);
 
         
@@ -468,32 +488,42 @@ class ProductVariantImporter extends Importer
         ProductVariantImporter $importer,
         ?Product $record
     ): ?ProductCategory {
-        $category_model = ProductCategory::updateOrCreate(
-            [
-                "title" => $category["name"],
-            ],
-            [
-                "icon" => "fas-box-archive",
-                "image" => $category["image"]
-                    ? static::processImageStatic(
-                        $category["image"],
-                        "categories",
-                        $importer
-                    )
-                    : null,
-                "is_visible" => true,
-                "parent_id" => $category["parent"]
-                    ? $importer->createCategoriesTree(
-                        $category["parent"],
-                        $importer,
-                        $record
-                    )->id
-                    : -1,
-            ]
-        );
+        Log::info($category);
 
-        $record->categories()->attach($category_model->id);
+        $category_model = null;
 
+        try {
+        
+            $category_model = ProductCategory::updateOrCreate(
+                [
+                    "title" => $category["name"],
+                ],
+                [
+                    "icon" => "fas-box-archive",
+                    "image" => $category["image"]
+                        ? static::processImageStatic(
+                            $category["image"],
+                            "categories",
+                            $importer
+                        )
+                        : null,
+                    "is_visible" => true,
+                    "parent_id" => $category["parent"]
+                        ? $importer->createCategoriesTree(
+                            $category["parent"],
+                            $importer,
+                            $record
+                        )->id
+                        : -1,
+                ]
+            );
+
+            $record->categories()->attach($category_model->id);
+        } catch (\Exception $e) {
+            throw new RowImportFailedException(
+                $e->getMessage()
+            );
+        }
         return $category_model;
     }
 

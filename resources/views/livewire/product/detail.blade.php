@@ -50,6 +50,11 @@
     },
     validateQuantity() {
         if (this.cart_quantity <= 1) this.cart_quantity = 1;
+    },
+    downloadFile(key) {
+        $wire.downloadFile(key).then(result => {
+            console.log(result);
+        })
     }
 }">
 
@@ -85,7 +90,7 @@
 
     <div class="grid items-start grid-cols-1 lg:grid-cols-5 gap-8 max-lg:gap-12 max-sm:gap-8">
         <div class="w-full lg:sticky top-10 col-span-2">
-            <div class="flex flex-col-reverse gap-4">
+            <div class="flex flex-col-reverse gap-4" x-ignore>
                 @if ($variation->gallery)
                     <div class="grid grid-cols-8 gap-2">
                         <section class="splide gallery-thumbnails" aria-label="Splide Basic HTML Example" ref="gallerySlider">
@@ -393,7 +398,8 @@
                                             </div>
                                         </div>
                                         <div class="ml-4 shrink-0">
-                                            <div class="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer" wire:click="downloadFile({{ $key }})">Скачать</div>
+                                            {{-- <a href="{{ Storage::disk(config('filesystems.default'))->url($file['file']) }}" class="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer" download="{{ File::basename(Storage::disk(config('filesystems.default'))->url($file['file'])) }}">Скачать</a> --}}
+                                            <div class="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer" @click="downloadFile({{ $key }})">Скачать</div>
                                         </div>
                                     </li>
                                 @endforeach
@@ -402,16 +408,16 @@
                     </div>
                 @endif
             </div>
-
-            
         </div>
     </div>
-
-    @if (!empty($variation->crossSells))
-        @livewire('product.components.crossails', ['title' => 'Похожие товары', 'variations' => $variation->crossSells], key($variation->id))
-    @endif
 
     @if (!empty($variation->upSells))
         @livewire('product.components.crossails', ['title' => 'С этим товаром покупают', 'variations' => $variation->upSells], key($variation->id))
     @endif
+
+    @if (!empty($variation->crossSells))
+        @livewire('product.components.crossails', ['title' => 'Похожие товары', 'variations' => $variation->crossSells], key($variation->id + rand(1,100)))
+    @endif
+
+    
 </div>

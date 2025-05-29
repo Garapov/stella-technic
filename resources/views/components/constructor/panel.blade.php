@@ -18,7 +18,7 @@
                 <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Связи параметров:</label>
                 @foreach($selected_params as $key=>$selected_param)
                     {{ $selected_params[$key] }}
-                @foreach
+                @endforeach
             </div>
         </form>
         <!-- Live as if you were to die tomorrow. Learn as if you were to live forever. - Mahatma Gandhi -->

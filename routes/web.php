@@ -89,10 +89,10 @@ Route::middleware("auth")->group(function () {
         "profile.destroy"
     );
 
-    Route::get(
-        "/admin/import-products/{import}/failed-rows/download",
-        DownloadImportFailureCsv::class
-    )->name("filament.imports.failed-rows.download");
+    // Route::get(
+    //     "/admin/import-products/{import}/failed-rows/download",
+    //     DownloadImportFailureCsv::class
+    // )->name("filament.imports.failed-rows.download");
 });
 
 Route::middleware("auth")->group(function () {

@@ -6,6 +6,7 @@ use App\Models\Delivery;
 use App\Models\Product;
 use App\Models\Image;
 use App\Models\ProductVariant;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -19,7 +20,12 @@ class Detail extends Component
 
     public function mount($slug)
     {
-        $this->variation = ProductVariant::where("slug", $slug)->first();
+        // $this->variation = ProductVariant::where("slug", $slug)->first();
+
+        $this->variation = Cache::get($slug, ProductVariant::where("slug", $slug)->first());
+
+        // dd($this->variation);
+
         $this->product = $this->variation->product;
         $this->groupedParams = $this->getGroupedParams();
 

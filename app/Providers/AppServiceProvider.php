@@ -13,6 +13,8 @@ use Illuminate\Support\ServiceProvider;
 use TomatoPHP\FilamentSettingsHub\Facades\FilamentSettingsHub;
 use TomatoPHP\FilamentSettingsHub\Services\Contracts\SettingHold;
 use Z3d0X\FilamentFabricator\Resources\PageResource;
+use CmsMulti\FilamentClearCache\Facades\FilamentClearCache;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -28,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        FilamentClearCache::addCommand('responsecache:clear');
+        
         Gate::before(function ($user, $ability) {
             return $user->hasTokenPermission($ability, $user) ?: null;
         });
@@ -51,5 +55,7 @@ class AppServiceProvider extends ServiceProvider
                 ->page(RigConstructorSettings::class)
                 ->group("Конструкторы"),
         ]);
+
+        
     }
 }
