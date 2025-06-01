@@ -27,6 +27,7 @@
         </div>
 
         @livewire('general.footer')
+        @livewire('general.forms.callback')
         @livewireScripts
     </body>
 </html>

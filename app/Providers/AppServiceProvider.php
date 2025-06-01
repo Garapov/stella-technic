@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Filament\Pages\FormsSettings;
 use App\Filament\Pages\RigConstructorSettings;
 use App\Models\User;
 use Filament\Actions\Imports\Models\Import;
@@ -54,6 +55,12 @@ class AppServiceProvider extends ServiceProvider
                 ->icon("heroicon-o-cog")
                 ->page(RigConstructorSettings::class)
                 ->group("Конструкторы"),
+            SettingHold::make()
+                ->order(3)
+                ->label("Настройки форм")
+                ->icon("carbon-data-format")
+                ->page(FormsSettings::class)
+                ->group("Настройки страниц"),
         ]);
 
         

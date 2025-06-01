@@ -50,7 +50,9 @@
                 @if (setting('site_phone'))
                     <div class="flex flex-col items-end">
                         <a href="tel:{{ setting('site_phone') }}" class="text-lg font-bold text-right text-slate-700 dark:text-white">{{ setting('site_phone') }}</a>
-                        <div class="text-xs text-blue-600">Заказать звонок</div>
+                        @if (setting('callback'))
+                            <div class="text-xs text-blue-600 cursor-pointer" @click="$store.application.forms.callback = true">Заказать звонок</div>
+                        @endif
                     </div>
                     <div class="border border-slate-700"></div>
                 @endif

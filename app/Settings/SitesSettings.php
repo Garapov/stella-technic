@@ -28,6 +28,9 @@ class SitesSettings extends Settings
 
     public ?array $site_social = [];
 
+
+    public ?array $forms_callback = null;
+
     public static function group(): string
     {
         return 'sites';

@@ -20,7 +20,6 @@ class ProductVariantExporter extends Exporter
                 ->label('id'),
             ExportColumn::make('product_id')
                 ->state(function ($record): string {
-                    // Log::info($record);
                     $categories = null;
                     $data = array(
                         'name' => $record->product->name,
