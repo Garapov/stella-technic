@@ -22,27 +22,16 @@ use Illuminate\Support\Collection;
 class Checkout extends Component
 {
     use WithFileUploads;
-    #[Validate("required|string|max:255")]
     public $name;
-    #[Validate("required|email|max:255")]
     public $email;
-    #[Validate("required|string|max:20")]
     public $phone;
-    #[Validate("nullable|string")]
     public $comment;
-    #[Validate("required|string|max:255")]
     public $company_name;
-    #[Validate("required|string|max:255")]
     public $inn;
-    #[Validate("required|string|max:255")]
     public $bik;
-    #[Validate("required|string|max:255")]
     public $correspondent_account;
-    #[Validate("required|string|max:255")]
     public $bank_account;
-    #[Validate("required|string|max:255")]
     public $yur_address;
-    #[Validate("nullable|file|mimes:pdf,doc,docx,xls,xlsx,csv|max:2048")]
     public $file;
     public $type = "natural";
     public $products = [];
@@ -74,6 +63,30 @@ class Checkout extends Component
         "file.mimes" => "Разрешенные типы файлов (pdf,doc,docx,xls,xlsx,csv)",
         "file.max" => "Максимальный размер файла 2 МБ",
     ];
+
+    public function rules()
+    {
+        $rules["natural"] = [
+            "name" => "required|string|max:255",
+            "email" => "required|email|max:255",
+            "phone" => "required|string|max:20",
+        ];
+
+        $rules["legal"] = [
+            "name" => "required|string|max:255",
+            "email" => "required|email|max:255",
+            "phone" => "required|string|max:20",
+            "company_name" => "required|string|max:255",
+            "inn" => "required|string|max:255",
+            "bik" => "required|string|max:255",
+            "correspondent_account" => "required|string|max:255",
+            "bank_account" => "required|string|max:255",
+            "yur_address" => "required|string|max:255",
+            "file" => "nullable|file|mimes:pdf,doc,docx,xls,xlsx,csv|max:2048",
+        ];
+
+        return $rules[$this->type];
+    }
 
     public function updatedSelectedDelivery()
     {
@@ -165,27 +178,42 @@ class Checkout extends Component
         if (empty($constructItems)) {
             return $this->constructs;
         }
-        foreach($constructItems as $item ) {
-            if ($item == null) continue;
-            $product = ProductVariant::where("id", $item['id'])->first();
-            $small_box = ProductVariant::where("id", $item['boxes']['small']['id'])->first();
-            $medium_box = ProductVariant::where("id", $item['boxes']['medium']['id'])->first();
-            $large_box = ProductVariant::where("id", $item['boxes']['large']['id'])->first();
+        foreach ($constructItems as $item) {
+            if ($item == null) {
+                continue;
+            }
+            $product = ProductVariant::where("id", $item["id"])->first();
+            $small_box = ProductVariant::where(
+                "id",
+                $item["boxes"]["small"]["id"]
+            )->first();
+            $medium_box = ProductVariant::where(
+                "id",
+                $item["boxes"]["medium"]["id"]
+            )->first();
+            $large_box = ProductVariant::where(
+                "id",
+                $item["boxes"]["large"]["id"]
+            )->first();
 
-            
-            if (!$product || !$small_box || !$medium_box || !$large_box) continue;
+            if (!$product || !$small_box || !$medium_box || !$large_box) {
+                continue;
+            }
 
-            $item['product'] = $product;
-            $item['boxes']['small']['product'] = $small_box;
-            $item['boxes']['medium']['product'] = $medium_box;
-            $item['boxes']['large']['product'] = $large_box;
+            $item["product"] = $product;
+            $item["boxes"]["small"]["product"] = $small_box;
+            $item["boxes"]["medium"]["product"] = $medium_box;
+            $item["boxes"]["large"]["product"] = $large_box;
 
-            $price = $product->price + ($small_box->price * $item['boxes']['small']['count']) + ($medium_box->price * $item['boxes']['medium']['count']) + ($large_box->price * $item['boxes']['large']['count']);
+            $price =
+                $product->price +
+                $small_box->price * $item["boxes"]["small"]["count"] +
+                $medium_box->price * $item["boxes"]["medium"]["count"] +
+                $large_box->price * $item["boxes"]["large"]["count"];
 
-            $item['price'] = $price;
+            $item["price"] = $price;
 
-            
-            $this->constructs->put($item['id'], $item);
+            $this->constructs->put($item["id"], $item);
         }
 
         return $this->constructs;

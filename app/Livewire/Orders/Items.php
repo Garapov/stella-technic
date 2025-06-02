@@ -3,6 +3,7 @@
 namespace App\Livewire\Orders;
 
 use App\Models\Order;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
 class Items extends Component
@@ -10,11 +11,11 @@ class Items extends Component
     public function translateStatus($status)
     {
         $statuses = [
-            'pending' => 'В обработке',
-            'confirmed' => 'Подтвержден',
-            'shipped' => 'Отправлен',
-            'delivered' => 'Доставлен',
-            'cancelled' => 'Отменен'
+            "pending" => "В обработке",
+            "confirmed" => "Подтвержден",
+            "shipped" => "Отправлен",
+            "delivered" => "Доставлен",
+            "cancelled" => "Отменен",
         ];
 
         return $statuses[$status] ?? $status;
@@ -22,13 +23,14 @@ class Items extends Component
 
     public function render()
     {
-        $orders = Order::where('user_id', auth()->id())
-            ->with('user')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        return view("livewire.orders.items");
+    }
 
-        return view('livewire.orders.items', [
-            'orders' => $orders
-        ]);
+    public function loadOrders(): Collection
+    {
+        return Order::where("user_id", auth()->id())
+            ->with("user")
+            ->orderBy("created_at", "desc")
+            ->get();
     }
 }
