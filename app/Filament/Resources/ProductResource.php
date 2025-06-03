@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Get;
 use App\Models\Batch;
+use Livewire\Attributes\On;
 
 class ProductResource extends Resource
 {
@@ -177,6 +178,7 @@ class ProductResource extends Resource
                                 ->collapsible()
                                 ->collapsed()
                                 ->reorderable(false)
+                                ->live()
                                 ->itemLabel(function (
                                     array $state,
                                     Get $get

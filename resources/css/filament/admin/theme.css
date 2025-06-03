@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* resources/css/filament.css */
+@media (min-width: 1024px) {
+    .filepond--root[data-style-panel-layout="grid"] .filepond--item {
+        width: calc(
+            100% / 4 - 0.5rem
+        ); /* Adjust the width to fit 6 files in a row */
+    }
+}
+
 @layer base {
     :root.dark {
         color-scheme: dark;

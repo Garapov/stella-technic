@@ -23,7 +23,6 @@ class ProductVariant extends Model
     /** @use HasFactory<\Database\Factories\ProductVariantFactory> */
     use HasFactory, SoftDeletes, HasSlug, Filterable, Sortable;
 
-
     protected $fillable = [
         "product_id",
         "product_param_item_id",
@@ -45,9 +44,9 @@ class ProductVariant extends Model
         "seo",
         "is_constructable",
         "constructor_type",
-        'rows',
-        'files',
-        'show_category_files'
+        "rows",
+        "files",
+        "show_category_files",
     ];
 
     protected $casts = [
@@ -56,7 +55,7 @@ class ProductVariant extends Model
         "is_popular" => "boolean",
         "seo" => "array",
         "rows" => "array",
-        "files" => "array"
+        "files" => "array",
     ];
 
     protected $dates = ["deleted_at"];
@@ -93,25 +92,27 @@ class ProductVariant extends Model
         });
 
         static::deleted(function ($model) {
-            // Удаление файлов изображений из галереи
-            if (!empty($model->gallery) && is_array($model->gallery)) {
-                foreach ($model->gallery as $imagePath) {
-                    $fullPath = public_path($imagePath);
-                    if (file_exists($fullPath)) {
-                        try {
-                            unlink($fullPath);
-                        } catch (\Exception $e) {
-                            Log::error(
-                                "Ошибка при удалении файла изображения",
-                                [
-                                    "path" => $fullPath,
-                                    "error" => $e->getMessage(),
-                                    "product_id" => $model->id,
-                                ]
-                            );
-                        }
-                    }
+            // Collect the ids of $model->paramItems
+            $paramItemIds = $model->paramItems->pluck("id")->toArray();
+
+            // Find the $model->product->links object with a 'row' array of ids equal to the ids of $model->paramItems
+            if ($product = $model->product) {
+                // Ensure links is an array
+                if (!is_array($product->links)) {
+                    $product->links = [];
                 }
+
+                // Remove the 'row' that matches the paramItemIds
+                $product->links = array_filter($product->links, function (
+                    $link
+                ) use ($paramItemIds) {
+                    return !isset($link["row"]) ||
+                        array_intersect($paramItemIds, $link["row"]) !==
+                            $paramItemIds;
+                });
+
+                // Save the remaining data
+                $product->save();
             }
         });
     }
@@ -136,7 +137,9 @@ class ProductVariant extends Model
     {
         $price = $this->price;
 
-        if (Auth::id() && $this->auth_price) $price = $this->auth_price;
+        if (Auth::id() && $this->auth_price) {
+            $price = $this->auth_price;
+        }
 
         return $price;
     }
@@ -156,9 +159,9 @@ class ProductVariant extends Model
     {
         return $this->belongsToMany(
             ProductVariant::class,
-            'cross_sells',
-            'product_variant_id',
-            'related_variant_id'
+            "cross_sells",
+            "product_variant_id",
+            "related_variant_id"
         );
     }
 
@@ -167,9 +170,9 @@ class ProductVariant extends Model
     {
         return $this->belongsToMany(
             ProductVariant::class,
-            'up_sells',
-            'product_variant_id',
-            'related_variant_id'
+            "up_sells",
+            "product_variant_id",
+            "related_variant_id"
         );
     }
 
@@ -178,10 +181,10 @@ class ProductVariant extends Model
      * @param int $precision [optional] Number of digits after the decimal point (eg. 1)
      * @return string Value converted with unit (eg. 25.3KB)
      */
-    public function formatBytes($bytes, $precision = 2) {
+    public function formatBytes($bytes, $precision = 2)
+    {
         $unit = ["b", "kb", "mb", "gb"];
         $exp = floor(log($bytes, 1024)) | 0;
-        return round($bytes / (pow(1024, $exp)), $precision).$unit[$exp];
+        return round($bytes / pow(1024, $exp), $precision) . $unit[$exp];
     }
-
 }

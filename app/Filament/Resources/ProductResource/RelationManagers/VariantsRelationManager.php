@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ProductResource\RelationManagers;
 
 use App\Filament\Exports\ProductVariantExporter;
 use App\Models\ProductParamItem;
+use App\Models\ProductVariant;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -21,6 +22,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Get;
 use Filament\Tables\Actions\ExportAction;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
 class VariantsRelationManager extends RelationManager
 {
@@ -157,117 +159,124 @@ class VariantsRelationManager extends RelationManager
                             ->relationship("batch", "name")
                             ->preload(),
                     ]),
-                    Tab::make('SEO')
-                            ->schema([
-                                Builder::make('seo')
-                                    ->label('SEO данные')
-                                    ->addActionLabel('Добавить данные')
-                                    ->blockNumbers(false)
-                                    ->blocks([
-                                        Builder\Block::make('title')
-                                            ->label("Заголовок")
-                                            ->schema([
-                                                TextInput::make("title")->label("Заголовок")->required(),
-                                            ])->maxItems(1),
-                                        Builder\Block::make('description')
-                                            ->label("Описание")
-                                            ->schema([
-                                                Forms\Components\Textarea::make("description")->label("Описание")->required(),
-                                            ])->maxItems(1),
-                                        Builder\Block::make('image')
-                                            ->label("Картинка")
-                                            ->schema([
-                                                Forms\Components\FileUpload::make("image")
-                                                    ->required()
-                                                    ->image()
-                                                    ->label("Картинка")
-                                                    ->directory("categories/seo")
-                                                    ->visibility("public")
-                                                    ->imageEditor()
-                                                    ->preserveFilenames()
-                                                    ->imageCropAspectRatio("1:1")
-                                                    ->imageEditorMode(2),
-                                            ])->maxItems(1)
-                                    ])
-                            ]),
-                            Tabs\Tab::make('Файлы')
-                            ->schema([
-                                Toggle::make("show_category_files")
-                                    ->label("Показывать файлы из категорий")
-                                    ->inline(false),
-                                Repeater::make('files')
-                                    ->label('Список файлов')
+                    Tab::make("SEO")->schema([
+                        Builder::make("seo")
+                            ->label("SEO данные")
+                            ->addActionLabel("Добавить данные")
+                            ->blockNumbers(false)
+                            ->blocks([
+                                Builder\Block::make("title")
+                                    ->label("Заголовок")
                                     ->schema([
-                                        TextInput::make('name')
-                                            ->label('Название')
+                                        TextInput::make("title")
+                                            ->label("Заголовок")
                                             ->required(),
-                                        FileUpload::make("file")
-                                            ->required()
-                                            ->label("Файл")
-                                            ->directory("product_files")
-                                            ->visibility("public")
-                                            ->preserveFilenames(),
                                     ])
-                                    ->columns(2)
-                                ]),
-                            Tabs\Tab::make(' Перекрестные продажи')
-                            ->schema([
-                                    Forms\Components\Select::make("crossSells")
-                                        ->label("Похожие товары")
-                                        ->placeholder("Выберите вариации")
-                                        ->multiple()
-                                        ->relationship("crossSells", "name")
-                                        ->preload(),
-                                    Forms\Components\Select::make("upSells")
-                                        ->label("С этим товаром покупают")
-                                        ->placeholder("Выберите вариации")
-                                        ->multiple()
-                                        ->relationship("upSells", "name")
-                                        ->preload(),
-                                ]),
-                            Tab::make('Конструктор')
-                                ->schema([
-                                    Forms\Components\Select::make("constructor_type")
-                                        ->label("Тип конструктора")
-                                        ->live()
-                                        ->options([
-                                            'deck' => "Стойки"
-                                        ])
-                                        ->columnSpanFull(),
-                                    
-                                    Repeater::make('rows')
-                                        ->label("Ряды ящиков")
-                                        ->schema([
-                                            Forms\Components\Select::make('size')
-                                                ->label("Размер")
-                                                ->options([
-                                                    'small' => 'V1',
-                                                    'medium' => 'V2',
-                                                    'large' => 'V3',
-                                                ])
-                                                ->required(),
-                                            Forms\Components\Select::make('color')
-                                                ->label("Цвет")
-                                                ->options([
-                                                    'red' => 'Красный',
-                                                    'green' => 'Зеленый',
-                                                    'blue' => 'Синий',
-                                                    'yellow' => 'Желтый',
-                                                    'gray' => 'Серый',
-                                                ])
-                                                ->required(),
-                                        ])
-                                        ->visible(
-                                            fn(Get $get) => $get("constructor_type") == 'deck'
+                                    ->maxItems(1),
+                                Builder\Block::make("description")
+                                    ->label("Описание")
+                                    ->schema([
+                                        Forms\Components\Textarea::make(
+                                            "description"
                                         )
-                                        ->columns(2)
-                                        ->cloneable()
-                                        ->reorderable(false)
-                                        ->addActionLabel('Добавить ряд ящиков')
+                                            ->label("Описание")
+                                            ->required(),
+                                    ])
+                                    ->maxItems(1),
+                                Builder\Block::make("image")
+                                    ->label("Картинка")
+                                    ->schema([
+                                        Forms\Components\FileUpload::make(
+                                            "image"
+                                        )
+                                            ->required()
+                                            ->image()
+                                            ->label("Картинка")
+                                            ->directory("categories/seo")
+                                            ->visibility("public")
+                                            ->imageEditor()
+                                            ->preserveFilenames()
+                                            ->imageCropAspectRatio("1:1")
+                                            ->imageEditorMode(2),
+                                    ])
+                                    ->maxItems(1),
+                            ]),
+                    ]),
+                    Tabs\Tab::make("Файлы")->schema([
+                        Toggle::make("show_category_files")
+                            ->label("Показывать файлы из категорий")
+                            ->inline(false),
+                        Repeater::make("files")
+                            ->label("Список файлов")
+                            ->schema([
+                                TextInput::make("name")
+                                    ->label("Название")
+                                    ->required(),
+                                FileUpload::make("file")
+                                    ->required()
+                                    ->label("Файл")
+                                    ->directory("product_files")
+                                    ->visibility("public")
+                                    ->preserveFilenames(),
+                            ])
+                            ->columns(2),
+                    ]),
+                    Tabs\Tab::make(" Перекрестные продажи")->schema([
+                        Forms\Components\Select::make("crossSells")
+                            ->label("Похожие товары")
+                            ->placeholder("Выберите вариации")
+                            ->multiple()
+                            ->relationship("crossSells", "name")
+                            ->preload(),
+                        Forms\Components\Select::make("upSells")
+                            ->label("С этим товаром покупают")
+                            ->placeholder("Выберите вариации")
+                            ->multiple()
+                            ->relationship("upSells", "name")
+                            ->preload(),
+                    ]),
+                    Tab::make("Конструктор")
+                        ->schema([
+                            Forms\Components\Select::make("constructor_type")
+                                ->label("Тип конструктора")
+                                ->live()
+                                ->options([
+                                    "deck" => "Стойки",
+                                ])
+                                ->columnSpanFull(),
+
+                            Repeater::make("rows")
+                                ->label("Ряды ящиков")
+                                ->schema([
+                                    Forms\Components\Select::make("size")
+                                        ->label("Размер")
+                                        ->options([
+                                            "small" => "V1",
+                                            "medium" => "V2",
+                                            "large" => "V3",
+                                        ])
+                                        ->required(),
+                                    Forms\Components\Select::make("color")
+                                        ->label("Цвет")
+                                        ->options([
+                                            "red" => "Красный",
+                                            "green" => "Зеленый",
+                                            "blue" => "Синий",
+                                            "yellow" => "Желтый",
+                                            "gray" => "Серый",
+                                        ])
+                                        ->required(),
                                 ])
                                 ->visible(
-                                    fn(Get $get) => $get("is_constructable")
+                                    fn(Get $get) => $get("constructor_type") ==
+                                        "deck"
                                 )
+                                ->columns(2)
+                                ->cloneable()
+                                ->reorderable(false)
+                                ->addActionLabel("Добавить ряд ящиков"),
+                        ])
+                        ->visible(fn(Get $get) => $get("is_constructable")),
                 ])
                 ->columnSpan("full"),
         ]);
@@ -285,8 +294,10 @@ class VariantsRelationManager extends RelationManager
                     ->stacked()
                     ->limit(1)
                     ->limitedRemainingText(),
-                Tables\Columns\TextColumn::make("id")->label(" ID"),
-                Tables\Columns\TextColumn::make("name")->label("Название"),
+                // Tables\Columns\TextColumn::make("id")->label(" ID"),
+                Tables\Columns\TextColumn::make("name")
+                    ->label("Название")
+                    ->wrap(),
                 Tables\Columns\TextColumn::make("sku")->label("Артикул"),
                 Tables\Columns\TextColumn::make("price")
                     ->money("RUB", locale: "ru")
@@ -317,8 +328,14 @@ class VariantsRelationManager extends RelationManager
                 // Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->modalWidth("7xl"),
-                // Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->modalWidth("7xl")
+                    ->iconButton(),
+                Tables\Actions\DeleteAction::make()
+                    ->iconButton()
+                    ->after(function ($record) {
+                        redirect(request()->header("Referer"));
+                    }),
             ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([
@@ -326,4 +343,6 @@ class VariantsRelationManager extends RelationManager
                 // ]),
             ]);
     }
+
+    public function dispatchEventOnDelete() {}
 }
