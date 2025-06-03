@@ -42,10 +42,9 @@
 
         @foreach($parameters as $paramName => $params)
             <div>
-                <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
+                <h6 class="text-md font-medium mb-3 dark:text-white">
                     {{ $paramName }}
                 </h6>
-                {{--@if ($params->first()['type'] == 'color')--}}
                 @if ($params->first()['type'] == 'color')
                     <ul class="flex flex-wrap gap-2" aria-labelledby="dropdownDefault">
                         @foreach($params as $colorItemId => $color)

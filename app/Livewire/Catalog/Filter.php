@@ -49,12 +49,12 @@ class Filter extends Component
 
         if (
             empty($this->selectedBatches) &&
-            isset($this->filters['batch_id'])
+            isset($this->filters["batch_id"])
         ) {
-            unset($this->filters['batch_id']);
+            unset($this->filters["batch_id"]);
         } else {
             $this->filters = array_merge($this->filters, [
-                'batch_id' => [
+                "batch_id" => [
                     '$in' => $this->selectedBatches,
                 ],
             ]);
@@ -66,10 +66,10 @@ class Filter extends Component
     {
         // dd($this->selectedBrands);
         if (
-             empty($this->selectedBrands) &&
-             isset($this->filters['$hasbrand'])
+            empty($this->selectedBrands) &&
+            isset($this->filters['$hasbrand'])
         ) {
-             unset($this->filters['$hasbrand']);
+            unset($this->filters['$hasbrand']);
         } else {
             $this->filters = array_merge($this->filters, [
                 '$hasbrand' => $this->selectedBrands,
@@ -117,7 +117,6 @@ class Filter extends Component
         ];
     }
 
-
     protected function initializeBrands()
     {
         $this->brands = $this->products
@@ -126,7 +125,7 @@ class Filter extends Component
                 return $product->product->brand ?? null;
             })
             ->filter() // Удаляем null значения
-            ->unique('id') // Оставляем только уникальные бренды по id
+            ->unique("id") // Оставляем только уникальные бренды по id
             ->values() // Переиндексируем коллекцию
             ->all(); // Преобразуем в массив
     }
@@ -139,7 +138,7 @@ class Filter extends Component
                 return $product->batch ?? null;
             })
             ->filter() // Удаляем null значения
-            ->unique('id') // Оставляем только уникальные бренды по id
+            ->unique("id") // Оставляем только уникальные бренды по id
             ->values() // Переиндексируем коллекцию
             ->all(); // Преобразуем в массив
     }
@@ -148,7 +147,10 @@ class Filter extends Component
     {
         $this->parameters = $this->products
             ->flatMap(function ($product) {
-                return $product->paramItems ?? collect();
+                // Объединяем paramItems и parameters в одну коллекцию
+                return collect($product->paramItems ?? [])->merge(
+                    $product->parameters ?? []
+                );
             })
             ->filter(function ($paramItem) {
                 // Сначала проверяем существование productParam

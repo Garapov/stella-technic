@@ -66,6 +66,7 @@ class Checkout extends Component
 
     public function rules()
     {
+        $rules = [];
         $rules["natural"] = [
             "name" => "required|string|max:255",
             "email" => "required|email|max:255",
