@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProductResource\RelationManagers;
 
 use App\Filament\Exports\ProductVariantExporter;
+use App\Models\Product;
 use App\Models\ProductParamItem;
 use App\Models\ProductVariant;
 use Filament\Forms;
@@ -335,6 +336,90 @@ class VariantsRelationManager extends RelationManager
                     ->iconButton()
                     ->after(function ($record) {
                         redirect(request()->header("Referer"));
+                    }),
+                Tables\Actions\Action::make("Перенести")
+                    ->form([
+                        Forms\Components\Select::make("parent_product")
+                            ->label("Новый родитель для вариации")
+                            ->options(
+                                fn() => Product::all()->pluck("name", "id")
+                            )
+                            ->required()
+                            ->searchable(),
+                    ])
+                    ->action(function (array $data, $record) {
+                        // Collect the ids of $model->paramItems
+                        $paramItemIds = $record->paramItems
+                            ->pluck("id")
+                            ->toArray();
+
+                        if (
+                            $parent_product = Product::where(
+                                "id",
+                                $data["parent_product"]
+                            )->first()
+                        ) {
+                            // Ensure links is an array
+                            if (!is_array($parent_product->links)) {
+                                $parent_product->links = [];
+                            }
+
+                            // Add the new link
+                            $newLink = [
+                                "row" => $paramItemIds,
+                            ];
+
+                            // Check if the link already exists
+                            $linkExists = false;
+
+                            // dd($parent_product->links);
+                            foreach ($parent_product->links as $link) {
+                                if (
+                                    isset($link["row"]) &&
+                                    $link["row"] === $paramItemIds
+                                ) {
+                                    $linkExists = true;
+                                    break;
+                                }
+                            }
+
+                            if (!$linkExists) {
+                                $links = $parent_product->links;
+                                $links[] = $newLink;
+
+                                $parent_product->links = $links;
+                                // dd($parent_product->links);
+                                $parent_product->save();
+                            }
+                        }
+
+                        // Find the $record->product->links object with a 'row' array of ids equal to the ids of $record->paramItems
+                        // if ($product = $record->product) {
+                        // Ensure links is an array
+                        if (!is_array($record->product->links)) {
+                            $record->product->links = [];
+                        }
+
+                        // Remove the 'row' that matches the paramItemIds
+                        $record->product->links = array_filter(
+                            $record->product->links,
+                            function ($link) use ($paramItemIds) {
+                                return !isset($link["row"]) ||
+                                    array_intersect(
+                                        $paramItemIds,
+                                        $link["row"]
+                                    ) !== $paramItemIds;
+                            }
+                        );
+
+                        // Save the remaining data
+                        $record->product->save();
+
+                        $record->product_id = $data["parent_product"];
+                        $record->save();
+
+                        redirect(request()->header("Referer"));
+                        // }
                     }),
             ])
             ->bulkActions([
