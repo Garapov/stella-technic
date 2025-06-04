@@ -2,7 +2,7 @@
 <section class="py-8 bg-white md:py-10 dark:bg-gray-900 antialiased">
     @if ($category || $product_ids)
     <div class="mx-auto container relative">
-            
+
             <!-- Loading Overlay -->
             <div wire:loading.class.remove="hidden"
                 class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm hidden">
@@ -20,14 +20,14 @@
                 @if ($category->seo)
                     @forelse($category->seo as $seo_tag)
                         @foreach($seo_tag['data'] as $key => $tag)
-                            
+
                             @if ($key == 'image')
                                 @seo(['image' => Storage::disk(config('filesystems.default'))->url($tag)])
                             @else
                                 @seo([$key => $tag])
                             @endif
                         @endforeach
-                        
+
                     @empty
                         @seo(['title' => $category->title])
                         @seo(['description' => $category->description])
@@ -63,9 +63,9 @@
                 @endif
             @endif
 
-            
 
-            
+
+
 
             <div class="grid grid-cols-9 gap-4">
                 @if ($display_filter)
@@ -77,68 +77,72 @@
                     </div>
                 @endif
                 <div class="flex flex-col gap-4 @if ($display_filter) col-span-7 @else col-span-full @endif">
-                    <div class="items-end justify-between flex">
-                        <div>
-                            
-                            <h1 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl flex items-center">
-                                <span>{{ $category->title }}</span> <span class="bg-blue-100 text-blue-800 text-xs font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300">
-                                    @php
-                                        $count = $all_products->count();
-                                    @endphp
-                                    {{ $count . ' ' . ($count % 10 === 1 && $count % 100 !== 11 ? 'товар' : ($count % 10 >= 2 && $count % 10 <= 4 && ($count % 100 < 10 || $count % 100 >= 20) ? 'товара' : 'товаров')) }}
-                                </span>
-                            </h1>
-                        </div>
-                        
-                        <div class="flex items-center space-x-4">
-                            <!-- Display Mode Toggle -->
-                            <div class="inline-flex rounded-md shadow-xs" role="group">
-                                <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-s-lg @if ($mode === 'list') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
-                                    wire:click="changeDisplayMode('list')">
-                                    <x-carbon-horizontal-view class="w-4 h-4" />
-                                </div>
-                                <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-e-lg @if ($mode === 'block') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
-                                    wire:click="changeDisplayMode('block')" >
-                                    <x-carbon-vertical-view class="w-4 h-4" />
-                                </div>
+                    @if ($category && $category->title)
+                        <div class="items-end justify-between flex">
+                            <div>
+
+                                <h1 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl flex items-center">
+
+                                        <span>{{ $category->title }}</span> <span class="bg-blue-100 text-blue-800 text-xs font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300">
+                                            @php
+                                                $count = $all_products->count();
+                                            @endphp
+                                            {{ $count . ' ' . ($count % 10 === 1 && $count % 100 !== 11 ? 'товар' : ($count % 10 >= 2 && $count % 10 <= 4 && ($count % 100 < 10 || $count % 100 >= 20) ? 'товара' : 'товаров')) }}
+                                        </span>
+
+                                </h1>
                             </div>
 
-                            <!-- Sort Dropdown -->
-                            <div class="relative" x-data="{sortingOpened: false}">
-                                <button type="button" class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
-                                    @click="sortingOpened = true;">
-                                    <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $this->getSortOptions()[$sort]['icon'] }}" />
-                                    </svg>
-                                    {{ $this->getSortOptions()[$sort]['label'] }}
-                                </button>
+                            <div class="flex items-center space-x-4">
+                                <!-- Display Mode Toggle -->
+                                <div class="inline-flex rounded-md shadow-xs" role="group">
+                                    <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-s-lg @if ($mode === 'list') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
+                                        wire:click="changeDisplayMode('list')">
+                                        <x-carbon-horizontal-view class="w-4 h-4" />
+                                    </div>
+                                    <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-e-lg @if ($mode === 'block') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
+                                        wire:click="changeDisplayMode('block')" >
+                                        <x-carbon-vertical-view class="w-4 h-4" />
+                                    </div>
+                                </div>
 
-                                <!-- Sort Options Dropdown -->
-                                <div class="absolute right-0 top-[calc(100%+10px)] z-50 w-48 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
-                                    @click.outside="sortingOpened = false"
-                                    x-show="sortingOpened"
-                                    style="display: none;">
-                                    <ul class="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400">
-                                        @foreach ($this->getSortOptions() as $value => $option)
-                                            <li>
-                                                <button type="button" @click="$wire.updateSort('{{ $value }}'); sortingOpened = false"
-                                                    @class([
-                                                        'inline-flex w-full items-center px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-lg',
-                                                        'text-blue-600 dark:text-blue-500' => $sort === $value,
-                                                        'text-gray-500 dark:text-gray-400' => $sort !== $value,
-                                                    ])>
-                                                    <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $option['icon'] }}" />
-                                                    </svg>
-                                                    {{ $option['label'] }}
-                                                </button>
-                                            </li>
-                                        @endforeach
-                                    </ul>
+                                <!-- Sort Dropdown -->
+                                <div class="relative" x-data="{sortingOpened: false}">
+                                    <button type="button" class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
+                                        @click="sortingOpened = true;">
+                                        <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $this->getSortOptions()[$sort]['icon'] }}" />
+                                        </svg>
+                                        {{ $this->getSortOptions()[$sort]['label'] }}
+                                    </button>
+
+                                    <!-- Sort Options Dropdown -->
+                                    <div class="absolute right-0 top-[calc(100%+10px)] z-50 w-48 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
+                                        @click.outside="sortingOpened = false"
+                                        x-show="sortingOpened"
+                                        style="display: none;">
+                                        <ul class="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400">
+                                            @foreach ($this->getSortOptions() as $value => $option)
+                                                <li>
+                                                    <button type="button" @click="$wire.updateSort('{{ $value }}'); sortingOpened = false"
+                                                        @class([
+                                                            'inline-flex w-full items-center px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white rounded-lg',
+                                                            'text-blue-600 dark:text-blue-500' => $sort === $value,
+                                                            'text-gray-500 dark:text-gray-400' => $sort !== $value,
+                                                        ])>
+                                                        <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $option['icon'] }}" />
+                                                        </svg>
+                                                        {{ $option['label'] }}
+                                                    </button>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                     @if($paginated_products->isEmpty())
                         <div class="flex flex-col items-center justify-center p-8 text-center">
                             <div class="mb-4">
@@ -225,7 +229,7 @@
                                                                 Артикул
                                                             </th>
 
-                                                    
+
 
                                                             <!-- Заголовки параметров -->
                                                             @foreach ($uniqueParamNames as $paramName)
@@ -252,7 +256,7 @@
                                                                     </a>
                                                                 </th>
                                                                 @foreach ($uniqueParamNames as $paramName)
-                                                                    
+
                                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                                         @php
                                                                             $paramValue = '';
@@ -268,13 +272,13 @@
                                                                                     }
                                                                                 }
                                                                             }
-                                                                            
+
                                                                             // Проверка parameters если значение еще не найдено
                                                                             if ($paramValue === '' && $item->parametrs) {
-                                                                                
+
                                                                                 foreach ($item->parametrs as $parameter) {
                                                                                     if ($parameter->productParam->name === $paramName['name'] && $parameter->productParam->show_on_table) {
-                                                                                        
+
                                                                                         $paramValue = $parameter->title ?? '';
                                                                                         break;
                                                                                     }
@@ -286,7 +290,7 @@
                                                                 @endforeach
                                                                 <td class="px-6 py-4">
                                                                     <div class="flex flex-col gap-1 relative whitespace-nowrap">
-                                                                        
+
                                                                         <div class="flex items-center gap-4">
                                                                             <span class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white">
                                                                                 {{ $item->new_price ?? $item->getActualPrice() }} ₽
@@ -304,7 +308,7 @@
                                                                                         @endif
                                                                                     </div>
                                                                                 </div>
-                                                                            @endif                
+                                                                            @endif
                                                                         </div>
                                                                         @if (!auth()->user() && $item->auth_price)
                                                                             <div class="flex items-center self-start gap-2 bg-blue-600 text-white text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-white" x-data="{
@@ -370,7 +374,7 @@
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
-    
+
                                                 </table>
                                             </div>
                                         </div>

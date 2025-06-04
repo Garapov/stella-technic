@@ -5,7 +5,7 @@
         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
             {{ $form->name }}
         </h3>
-        
+
         <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="default-modal" @click="$store.application.forms.{{ $form_name }} = false">
             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
@@ -29,19 +29,18 @@
             <form class="flex flex-col gap-4" wire:submit.prevent="save">
                 @foreach ($fields as $field)
                     <label class="w-full">
-                        <div class="leading-7 text-sm text-gray-600 dark:text-gray-200">{{ $field['label'] }}</div>
                         @php
                             $modelName = 'fields.'.$field['name'].'.value';
-                            
                         @endphp
+                        <div class="leading-7 text-sm @error($modelName) text-red-500 @else text-gray-600 dark:text-gray-200 @enderror">{{ $field['label'] }}</div>
                         @switch($field['type'])
                             @case('text')
-                                <input type="text" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" wire:model="{{ $modelName }}" @if($field['mask_enabled']) x-mask="{{ $field['mask'] }}" @endif wire:loading.attr="disabled" wire:target="save">
+                                <input type="text" class="w-full bg-white rounded focus:bg-white focus:ring-2 text-base outline-none py-1 px-3 leading-8 transition-colors duration-200 ease-in-out @error($modelName) bg-red-50 border border-red-500 text-red-900 placeholder-red-700 @else border border-gray-300 focus:border-indigo-500 focus:ring-indigo-200 text-gray-700 @enderror" wire:model="{{ $modelName }}" @if($field['mask_enabled']) x-mask="{{ $field['mask'] }}" @endif wire:loading.attr="disabled" wire:target="save">
                                 @break
                             @case('email')
                                 <input type="email" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" wire:model="{{ $modelName }}" wire:loading.attr="disabled" wire:target="save">
                                 @break
-                        
+
                             @case('textarea')
                                 <textarea class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out" wire:model="{{$modelName}}" wire:loading.attr="disabled" wire:target="save"></textarea>
                                 @break
@@ -53,31 +52,53 @@
 
                                 <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" wire:model="{{$modelName}}" wire:loading.attr="disabled" wire:target="save">
                                     <option value="Ничего не выбрано">Ничего не выбрано</option>
-                                    @foreach ($options as $option) 
+                                    @foreach ($options as $option)
                                         <option value="{{ $option }}">{{ $option }}</option>
                                     @endforeach
                                 </select>
-                                
+
                                 @break
-                        
+
                             @default
                                 <input type="text" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" wire:model="{{$modelName}}" wire:loading.attr="disabled" wire:target="save">
                         @endswitch
-                        
-                        @error($modelName)
-                            <div class="leading-7 text-sm text-red-600">{{ $message }}</div>
-                        @enderror
                     </label>
                 @endforeach
 
                 @if ($captcha)
-                    <div wire:ignore>
+                    <div  x-data="{
+                        init() {
+                            this.smartCaptchaInit();
+                        },
+                        smartCaptchaInit() {
+                            if (!window.smartCaptcha) return;
+
+                            window.smartCaptcha.render($refs.smartCaptcha, {
+                                sitekey: '{{ config('services.recaptcha.client_key') }}',
+                                callback: (token) => {
+                                    console.log(token);
+                                    $wire.set('captcha_token', token);
+                                }
+                            });
+                        }
+                    }" class="w-full">
                         <div
-                            class="smart-captcha w-full"
-                            data-sitekey="{{ config('services.recaptcha.client_key') }}"
-                        ></div>
+                            x-ref="smartCaptcha"
+                            wire:ignore
+                        >
+                        </div>
+                        @error('captcha_token')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">Вы не прошли проверку SmartCaptcha.</p>
+                        @enderror
                     </div>
                 @endif
+
+                <div class="flex items-center">
+                    <input checked id="checked-checkbox" type="checkbox" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" wire:model="confirmation"
+                    >
+                    <label for="checked-checkbox" class="ms-2 text-sm font-medium @error('confirmation') text-red-500 @else text-gray-900 dark:text-gray-300  @enderror">Я согласен на обработку моих <a href="#" class="text-blue-600">персональных данных</a></label>
+                </div>
+
                 <button type="submit" class="flex items-center gap-4 mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg" wire:loading.attr="disabled" wire:target="save">
                     <svg aria-hidden="true" role="status" class="inline w-4 h-4 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg" wire:loading wire:target="save">
                         <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/>
