@@ -88,7 +88,7 @@
                         >
                         </div>
                         @error('captcha_token')
-                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">Вы не прошли проверку SmartCaptcha.</p>
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
                 @endif

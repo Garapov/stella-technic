@@ -40,6 +40,13 @@ class Modalformblock extends Component
         return view("livewire.general.modalformblock");
     }
 
+    public function messages()
+    {
+        return [
+            "captcha_token.required" => "Вы не прошли проверку SmartCaptcha.",
+        ];
+    }
+
     public function rules()
     {
         $rules = [];
