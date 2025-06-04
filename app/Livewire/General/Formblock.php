@@ -38,6 +38,13 @@ class Formblock extends Component
         return view("livewire.general.formblock");
     }
 
+    public function messages()
+    {
+        return [
+            "captcha_token.required" => "Вы не прошли проверку SmartCaptcha.",
+        ];
+    }
+
     public function rules()
     {
         $rules = [];

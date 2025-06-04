@@ -60,8 +60,8 @@
 
                             window.smartCaptcha.render($refs.smartCaptcha, {
                                 sitekey: '{{ config('services.recaptcha.client_key') }}',
+                                hl: 'ru',
                                 callback: (token) => {
-                                    console.log(token);
                                     $wire.set('captcha_token', token);
                                 }
                             });
@@ -73,7 +73,7 @@
                         >
                         </div>
                         @error('captcha_token')
-                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">Вы не прошли проверку SmartCaptcha.</p>
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
                 @endif

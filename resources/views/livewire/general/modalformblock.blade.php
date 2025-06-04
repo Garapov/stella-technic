@@ -75,8 +75,8 @@
 
                             window.smartCaptcha.render($refs.smartCaptcha, {
                                 sitekey: '{{ config('services.recaptcha.client_key') }}',
+                                hl: 'ru',
                                 callback: (token) => {
-                                    console.log(token);
                                     $wire.set('captcha_token', token);
                                 }
                             });
