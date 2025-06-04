@@ -338,6 +338,8 @@ class VariantsRelationManager extends RelationManager
                         redirect(request()->header("Referer"));
                     }),
                 Tables\Actions\Action::make("Перенести")
+                    ->icon("carbon-port-definition")
+                    ->iconButton()
                     ->form([
                         Forms\Components\Select::make("parent_product")
                             ->label("Новый родитель для вариации")
