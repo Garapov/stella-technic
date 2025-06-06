@@ -2,9 +2,11 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Page;
 use App\Settings\SitesSettings;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -46,7 +48,7 @@ class GeneralSettings extends SiteSettings
                                     ? 'setting("site_description")'
                                     : null
                             ),
-                        TextArea::make("site_keywords")
+                        Textarea::make("site_keywords")
                             ->label(
                                 trans(
                                     "filament-settings-hub::messages.settings.site.form.site_keywords"
@@ -125,6 +127,18 @@ class GeneralSettings extends SiteSettings
                                     ? 'setting("site_email")'
                                     : null
                             ),
+                    ]),
+                    Tabs\Tab::make("Важные страницы")->schema([
+                        Select::make("politics")
+                            ->label(
+                                "Страница политики обработки персональных данных"
+                            )
+                            ->options(fn() => Page::all()->pluck("title", "id"))
+                            ->searchable(),
+                        Select::make("cookies")
+                            ->label("Страница политики обработки файлов cookie")
+                            ->options(fn() => Page::all()->pluck("title", "id"))
+                            ->searchable(),
                     ]),
                 ])
                 ->columnSpanFull(),

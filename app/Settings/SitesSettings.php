@@ -23,16 +23,17 @@ class SitesSettings extends Settings
     public ?string $site_email = null;
 
     public ?string $site_phone = null;
-    
+
     public ?string $site_secondphone = null;
 
     public ?array $site_social = [];
 
+    public ?string $politics = null;
 
-    public ?array $forms_callback = null;
+    public ?string $cookies = null;
 
     public static function group(): string
     {
-        return 'sites';
+        return "sites";
     }
 }
