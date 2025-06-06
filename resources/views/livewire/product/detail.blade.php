@@ -2,36 +2,42 @@
     product: @js($variation->product),
     variation: @js($variation),
     cart_quantity: 1,
-    gallerySlider: new window.splide('.gallery-slider', {
-      type       : 'fade',
-      heightRatio: 1,
-      pagination : true,
-      arrows     : false,
-      cover      : true,
-      rewind          : true,
-    }),
-    thumbnailSlider: new window.splide('.gallery-thumbnails', {
-      rewind          : true,
-      isNavigation    : true,
-      gap             : 10,
-      perPage : 7,
-      heightRatio: 0.1,
-      focus           : 'center',
-      pagination      : false,
-      cover           : true,
-      direction       : 'ttb',
-      paginationDirection: 'ltr',
-      dragMinThreshold: {
-        mouse: 4,
-        touch: 10,
-      },
-    }),
+    gallerySlider: null,
+    thumbnailSlider: null,
     init() {
-        setTimeout(() => {
-            this.gallerySlider.sync( this.thumbnailSlider );
-            this.gallerySlider.mount();
-            this.thumbnailSlider.mount();
-        }, 0)
+        if (document.querySelector('.gallery-slider')) {
+            setTimeout(() => {
+                    this.gallerySlider = new window.splide('.gallery-slider', {
+                      type       : 'fade',
+                      heightRatio: 1,
+                      pagination : true,
+                      arrows     : false,
+                      cover      : true,
+                      rewind          : true,
+                    });
+
+                    this.thumbnailSlider = new window.splide('.gallery-thumbnails', {
+                      rewind          : true,
+                      isNavigation    : true,
+                      gap             : 10,
+                      perPage : 7,
+                      heightRatio: 0.1,
+                      focus           : 'center',
+                      pagination      : false,
+                      cover           : true,
+                      direction       : 'ttb',
+                      paginationDirection: 'ltr',
+                      dragMinThreshold: {
+                        mouse: 4,
+                        touch: 10,
+                      },
+                    });
+
+                    this.gallerySlider.sync( this.thumbnailSlider );
+                    this.gallerySlider.mount();
+                    this.thumbnailSlider.mount();
+            }, 0)
+        }
     },
     addVariationToCart: function () {
         $store.cart.addVariationToCart({
@@ -218,14 +224,14 @@
                                     </div>
                                 </div>
                             @endif
-                            
+
                             @if ($variation->new_price)
                                 <p class="text-slate-500 text-lg"><strike>{{Number::format($variation->price, 0)}} ₽</strike></p>
                             @endif
                         </div>
 
                         <div class="flex flex-wrap items-center gap-4">
-                            
+
                             <div class="max-w-40 py-2 px-3 bg-gray-100 rounded-lg dark:bg-neutral-700">
                                 <div class="flex justify-between items-center gap-x-5">
                                     <div class="grow">
@@ -296,7 +302,7 @@
                                                 <x-carbon-cics-system-group class="w-full" />
                                                 @break
                                             @default
-                                                
+
                                         @endswitch
                                     </div>
                                     <div class="col-span-5">
@@ -304,7 +310,7 @@
                                             {{ $delivery->name }}
                                         </div>
                                         @if ($delivery->type == 'map')
-                                            
+
                                             @if($delivery->points)
                                                 <div class="text-sm text-slate-600">
                                                     {{ explode("|", $delivery->points)[0] }}
@@ -315,7 +321,7 @@
                                             {{ $delivery->description }}
                                         </div>
 
-                                        
+
                                     </div>
                                 </div>
                             @endforeach
@@ -419,5 +425,5 @@
         @livewire('product.components.crossails', ['title' => 'Похожие товары', 'variations' => $variation->crossSells], key($variation->id + rand(1,100)))
     @endif
 
-    
+
 </div>

@@ -367,29 +367,61 @@
                     <p class="text-xl font-semibold text-gray-900 dark:text-white">Стоимость</p>
 
                     <div class="space-y-4">
-                    <div class="space-y-2">
-                        <dl class="flex items-center justify-between gap-4">
-                        <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Общая стоимость</dt>
-                        <dd class="text-base font-medium text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(getTotalPrice())"></dd>
-                        </dl>
-                        <dl class="flex items-center justify-between gap-4">
-                        <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Cтоимость со скидкой</dt>
-                        <dd class="text-base font-medium text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(getDiscountedPrice())"></dd>
-                        </dl>
+                        <div class="space-y-2">
+                            <dl class="flex items-center justify-between gap-4">
+                            <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Общая стоимость</dt>
+                            <dd class="text-base font-medium text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(getTotalPrice())"></dd>
+                            </dl>
+                            <dl class="flex items-center justify-between gap-4">
+                            <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Cтоимость со скидкой</dt>
+                            <dd class="text-base font-medium text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(getDiscountedPrice())"></dd>
+                            </dl>
 
-                        <dl class="flex items-center justify-between gap-4">
-                        <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Скидка</dt>
-                        <dd class="text-base font-medium text-green-600" x-text="`-${new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(getTotalPrice() - getDiscountedPrice())}`"></dd>
+                            <dl class="flex items-center justify-between gap-4">
+                            <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Скидка</dt>
+                            <dd class="text-base font-medium text-green-600" x-text="`-${new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(getTotalPrice() - getDiscountedPrice())}`"></dd>
+                            </dl>
+                        </div>
+
+                        <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
+                            <dt class="text-base font-bold text-gray-900 dark:text-white">Итого</dt>
+                            <dd class="text-base font-bold text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(getDiscountedPrice())"></dd>
                         </dl>
                     </div>
 
-                    <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
-                        <dt class="text-base font-bold text-gray-900 dark:text-white">Итого</dt>
-                        <dd class="text-base font-bold text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(getDiscountedPrice())"></dd>
-                    </dl>
+                    <div  x-data="{
+                        init() {
+                            this.smartCaptchaInit();
+                        },
+                        smartCaptchaInit() {
+                            if (!window.smartCaptcha) return;
+
+                            window.smartCaptcha.render($refs.smartCaptcha, {
+                                sitekey: '{{ config('services.recaptcha.client_key') }}',
+                                hl: 'ru',
+                                callback: (token) => {
+                                    $wire.set('captcha_token', token);
+                                }
+                            });
+                        }
+                    }" class="w-full">
+                        <div
+                            x-ref="smartCaptcha"
+                            wire:ignore
+                        >
+                        </div>
+                        @error('captcha_token')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800">Оформить заказ</button>
+                    <div class="flex items-center">
+                        <input checked id="checked-checkbox" type="checkbox" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" wire:model="confirmation"
+                        >
+                        <label for="checked-checkbox" class="ms-2 text-sm font-medium @error('confirmation') text-red-500 @else text-gray-900 dark:text-gray-300  @enderror">Я согласен на обработку моих <a href="#" class="text-blue-600">персональных данных</a></label>
+                    </div>
+
+                    <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800">Оформить заказ</button>
                 </div>
             </div>
 

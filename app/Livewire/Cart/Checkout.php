@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Validate;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Collection;
+use App\Rules\SmartCaptchaRule;
 
 class Checkout extends Component
 {
@@ -45,6 +46,10 @@ class Checkout extends Component
 
     public $deliveries;
     public $selected_delivery;
+
+    public $confirmation = false;
+    public $captcha_token = "";
+
     protected $listeners = ["cartUpdated" => "handleCartUpdate"];
 
     protected $messages = [
@@ -62,6 +67,7 @@ class Checkout extends Component
         "file.required" => "Пожалуйста, прикрепите файл с реквизитами",
         "file.mimes" => "Разрешенные типы файлов (pdf,doc,docx,xls,xlsx,csv)",
         "file.max" => "Максимальный размер файла 2 МБ",
+        "captcha_token.required" => "Вы не прошли проверку SmartCaptcha.",
     ];
 
     public function rules()
@@ -71,6 +77,8 @@ class Checkout extends Component
             "name" => "required|string|max:255",
             "email" => "required|email|max:255",
             "phone" => "required|string|max:20",
+            "confirmation" => "accepted",
+            "captcha_token" => ["required", new SmartCaptchaRule()],
         ];
 
         $rules["legal"] = [
@@ -84,6 +92,8 @@ class Checkout extends Component
             "bank_account" => "required|string|max:255",
             "yur_address" => "required|string|max:255",
             "file" => "nullable|file|mimes:pdf,doc,docx,xls,xlsx,csv|max:2048",
+            "confirmation" => "accepted",
+            "captcha_token" => ["required", new SmartCaptchaRule()],
         ];
 
         return $rules[$this->type];
