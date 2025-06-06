@@ -318,14 +318,14 @@
                 </div>
 
                 <div x-data="{
-                selected_delivery: $wire.$entangle('selected_delivery'),
+                    selected_delivery: $wire.$entangle('selected_delivery'),
                 }">
                 @foreach ($deliveries as $delivery)
                     <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800" :class="{ 'hidden': selected_delivery != {{ $delivery->id }} }" wire:key="deliveries.info.{{ $delivery->id }}">
                         @switch($delivery->type)
                         @case('map')
                             @if ($delivery->points)
-                            <div class="w-full h-64" id="delivery-map-{{ $delivery->id }}"></div>
+                                <div class="w-full h-64" id="delivery-map-{{ $delivery->id }}" wire:ignore></div>
                             @endif
                             @break
 

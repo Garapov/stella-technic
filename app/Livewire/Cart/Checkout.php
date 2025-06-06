@@ -92,7 +92,7 @@ class Checkout extends Component
     public function updatedSelectedDelivery()
     {
         // dd($this->deliveries[$this->selected_delivery - 1]);
-        $this->initMap($this->deliveries[$this->selected_delivery - 1]);
+        // $this->initMap($this->deliveries[$this->selected_delivery - 1]);
     }
 
     public function mount()
@@ -119,8 +119,10 @@ class Checkout extends Component
         }
 
         $this->deliveries = Delivery::where("is_active", true)->get();
+
         if ($this->deliveries->isNotEmpty()) {
             $this->selected_delivery = $this->deliveries->first()->id;
+            $this->initMap($this->deliveries[$this->selected_delivery - 1]);
         }
     }
 

@@ -38,18 +38,14 @@ class ProductVariantImporter extends Importer
                     ProductVariantImporter $importer,
                     $record
                 ) {
-                    Log::info(['data', json_decode($state), $state]);
+                    // Log::info(["data", json_decode($state), $state]);
 
                     try {
                         $data = json_decode($state, true);
                     } catch (\Exception $e) {
-                        throw new RowImportFailedException(
-                            $e->getMessage()
-                        );
+                        throw new RowImportFailedException($e->getMessage());
                     }
 
-                    
-                    
                     $requiredFields = ["name", "image", "categories"];
 
                     foreach ($requiredFields as $field) {
@@ -70,13 +66,9 @@ class ProductVariantImporter extends Importer
                         Log::error($e->getMessage());
                     }
 
-                    
-
                     $data["image"] = "/assets/placeholder.svg";
 
                     $product = Product::where("name", $data["name"])->first();
-
-                    
 
                     if (!$product) {
                         $product = Product::create($data);
@@ -84,7 +76,6 @@ class ProductVariantImporter extends Importer
                     } else {
                         // dump("Обновляется товар: " . $product->name);
                     }
-                    
 
                     if (
                         isset($data["categories"]) &&
@@ -93,7 +84,7 @@ class ProductVariantImporter extends Importer
                         try {
                             $product->categories()->sync([]);
                             sleep(0.3);
-                            Log::info(['cats', $data["categories"]]);
+                            // Log::info(["cats", $data["categories"]]);
                             foreach ($data["categories"] as $category) {
                                 static::createCategoriesTreeStatic(
                                     $category,
@@ -109,9 +100,9 @@ class ProductVariantImporter extends Importer
                     }
                     sleep(0.3);
 
-                    
                     return $product->id;
-                })->fillRecordUsing(function (
+                })
+                ->fillRecordUsing(function (
                     $state,
                     ProductVariantImporter $importer,
                     $record
@@ -158,9 +149,11 @@ class ProductVariantImporter extends Importer
                     $record
                 ): void {
                     $data = \json_decode($state, true);
-                    
 
-                    $variationName = Product::where('id', $importer->data['product_id'])->first()->name;
+                    $variationName = Product::where(
+                        "id",
+                        $importer->data["product_id"]
+                    )->first()->name;
                     $variatinLinks = "";
 
                     foreach ($data as $paramItem) {
@@ -272,7 +265,6 @@ class ProductVariantImporter extends Importer
                     ProductVariantImporter $importer,
                     $record
                 ) {
-
                     if (blank($state)) {
                         return [];
                     }
@@ -297,34 +289,32 @@ class ProductVariantImporter extends Importer
 
     public function getJobQueue(): ?string
     {
-        $this->steps[] = 'getJobQueue';
+        $this->steps[] = "getJobQueue";
         return "imports";
     }
 
     public function resolveRecord(): ?ProductVariant
     {
-        
-        $product = ProductVariant::where("sku", $this->data['sku'])->first();
-        
-        Log::warning($product);
+        $product = ProductVariant::firstWhere("sku", $this->data["sku"]);
 
-        if (!$this->options["updateExisting"] && !$product) {
-            $product = new ProductVariant();
-            $product->product_id = $this->data['product_id'];
-            $product->sku = $this->data['sku'];
-            $product->price = 100000;
-            $product->name = 'Не задано';
-            $product->image = "/assets/placeholder.svg";
-        }
         if (!$this->options["updateExisting"] && $product) {
             throw new RowImportFailedException(
                 "Найден товар с артикулом '{$product->sku}', но обновление товаров отключено."
             );
         }
+
+        if (!$this->options["updateExisting"] && !$product) {
+            $product = new ProductVariant();
+            $product->product_id = $this->data["product_id"];
+            $product->sku = $this->data["sku"];
+            $product->price = 100000;
+            $product->name = "Не задано";
+            $product->image = "/assets/placeholder.svg";
+        }
+
         // if ($product) {
         // }
 
-        
         // if (!$this->options["updateExisting"] && $product) {
         //     throw new RowImportFailedException(
         //         "Найден товар с артикулом '{$product->sku}', но обновление товаров отключено."
@@ -338,12 +328,8 @@ class ProductVariantImporter extends Importer
         //     $product->image = "/assets/placeholder.svg";
         //     // $product->save();
         // }
-        dump([$product->sku, $this->data['sku']]);
 
-        
-        
-
-        $this->steps[] = 'resolveRecord';
+        $this->steps[] = "resolveRecord";
 
         return $product;
     }
@@ -424,10 +410,9 @@ class ProductVariantImporter extends Importer
         $this->paramItemIds = [];
         $this->additionalParamItemIds = [];
 
-        $this->steps[] = 'afterSave';
+        $this->steps[] = "afterSave";
         $this->steps[] = $this->record->sku;
         $this->steps[] = $this->record->name;
-
 
         dump($this->steps);
         $this->steps = [];
@@ -449,38 +434,36 @@ class ProductVariantImporter extends Importer
             ]);
         }
 
-        $this->steps[] = 'saveRecord';
+        $this->steps[] = "saveRecord";
     }
 
     public function beforeValidate(): void
     {
-        
         $this->import->update([
             "status" => "processing",
         ]);
-        $this->steps[] = 'beforeValidate';
+        $this->steps[] = "beforeValidate";
     }
 
     public function afterValidate(): void
     {
-        $this->steps[] = 'afterValidate';
+        $this->steps[] = "afterValidate";
     }
 
     public function beforeFill(): void
     {
-        
-        $this->steps[] = 'beforeFill';
+        $this->steps[] = "beforeFill";
     }
 
     public function afterFill(): void
     {
-        $this->steps[] = 'afterFill';
+        $this->steps[] = "afterFill";
     }
 
     public function beforeSave(): void
     {
         $this->record->image = "/assets/placeholder.svg";
-        $this->steps[] = 'beforeSave';
+        $this->steps[] = "beforeSave";
     }
 
     protected function createCategoriesTree(
@@ -488,12 +471,11 @@ class ProductVariantImporter extends Importer
         ProductVariantImporter $importer,
         ?Product $record
     ): ?ProductCategory {
-        Log::info($category);
+        // Log::info($category);
 
         $category_model = null;
 
         try {
-        
             $category_model = ProductCategory::updateOrCreate(
                 [
                     "title" => $category["name"],
@@ -520,9 +502,7 @@ class ProductVariantImporter extends Importer
 
             $record->categories()->attach($category_model->id);
         } catch (\Exception $e) {
-            throw new RowImportFailedException(
-                $e->getMessage()
-            );
+            throw new RowImportFailedException($e->getMessage());
         }
         return $category_model;
     }
