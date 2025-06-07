@@ -25,12 +25,18 @@
                     </button>
                 </div>
                 @error('email')
-                    <span class="text-red-600 text-xs">{{ $message }}</span> 
+                    <span class="text-red-600 text-xs">{{ $message }}</span>
                 @enderror
             </div>
             <div class="flex items-center mt-4">
-                <input wire:model="confirmation" id="default-checkbox" type="checkbox"  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                <label for="default-checkbox" class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300 @error('confirmation') text-red-600 @enderror">Я даю согласие на обработку персональных данных</label>
+                <input wire:model="confirmation" id="default-checkbox" type="checkbox"  class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label for="default-checkbox" class="ms-3 text-xs font-medium text-gray-900 dark:text-gray-300 @error('confirmation') text-red-600 @enderror">Я даю согласие на обработку
+                    @if (setting('politics'))
+                        <a href="{{ \Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId(setting('politics')) }}" class="text-blue-600" wire:navigate>персональных данных</a>
+                    @else
+                        персональных данных
+                    @endif
+                </label>
             </div>
         </form>
     @endif

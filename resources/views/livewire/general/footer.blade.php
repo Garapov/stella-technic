@@ -103,8 +103,13 @@
         <div class="flex flex-wrap lg:flex-row flex-col justify-between items-center mx-auto container lg:text-start text-center">
             <span class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white">© 1991-2025 Все права защищены</span>
             <div class="flex lg:items-center gap-4 lg:flex-row flex-col">
-                <a href="#" class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Политика конфиденциальности</a>
-                <a href="#" class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Использование cookie</a>
+                @if (setting('politics'))
+                    <a href="{{ \Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId(setting('politics')) }}" wire:navigate class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Политика конфиденциальности</a>
+                @endif
+
+                @if (setting('cookies'))
+                    <a href="{{ \Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId(setting('cookies')) }}" wire:navigate class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Использование cookie</a>
+                @endif
                 <a href="#" class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Карта сайта</a>
             </div>
             <div class="flex mt-4 sm:justify-center sm:mt-0">

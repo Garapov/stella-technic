@@ -86,7 +86,13 @@
                 <div class="flex items-center">
                     <input checked id="checked-checkbox" type="checkbox" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" wire:model="confirmation"
                     >
-                    <label for="checked-checkbox" class="ms-2 text-sm font-medium @error('confirmation') text-red-500 @else text-gray-900 dark:text-gray-300  @enderror">Я согласен на обработку моих <a href="#" class="text-blue-600">персональных данных</a></label>
+                    <label for="checked-checkbox" class="ms-2 text-sm font-medium @error('confirmation') text-red-500 @else text-gray-900 dark:text-gray-300  @enderror">Я согласен на обработку моих
+                        @if (setting('politics'))
+                            <a href="{{ \Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId(setting('politics')) }}" class="text-blue-600" wire:navigate>персональных данных</a>
+                        @else
+                            персональных данных
+                        @endif
+                    </label>
                 </div>
                 <button type="submit" class="flex items-center gap-4 mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg" wire:loading.attr="disabled" wire:target="save">
                     <svg aria-hidden="true" role="status" class="inline w-4 h-4 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg" wire:loading wire:target="save">
