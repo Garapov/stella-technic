@@ -2,38 +2,44 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
-use Stephenjude\FilamentBlog\Models\Post as ModelsPost;
-use Stephenjude\FilamentBlog\Models\Category as ModelsCategory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Datlechin\FilamentMenuBuilder\Concerns\HasMenuPanel;
-use Datlechin\FilamentMenuBuilder\Contracts\MenuPanelable;
-
-
-class Post extends ModelsPost implements MenuPanelable
+class Post extends Model
 {
-    use HasMenuPanel;
+    /** @use HasFactory<\Database\Factories\ArticleFactory> */
+    use HasFactory, HasSlug;
 
-    public function getMenuPanelTitleColumn(): string
+    protected $fillable = [
+        "title",
+        "content",
+        "image",
+        "is_popular",
+        "short_content",
+    ];
+
+    protected $casts = [
+        "content" => "array",
+    ];
+
+    /**
+     * Get the options for generating the slug.
+     */
+    public function getSlugOptions(): SlugOptions
     {
-        return 'title';
+        return SlugOptions::create()
+            ->generateSlugsFrom("title")
+            ->saveSlugsTo("slug")
+            ->doNotGenerateSlugsOnUpdate();
     }
 
-    public function getMenuPanelUrlUsing(): callable
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
     {
-        return fn (self $model) => route('client.posts.show', [
-            'category_slug' => $model->category->slug,
-            'slug' => $model->slug,
-        ]);
-    }
-
-    public function getMenuPanelName(): string
-    {
-        return "Посты блога";
-    }
-
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(ModelsCategory::class, 'blog_category_id', 'id');
+        return "slug";
     }
 }

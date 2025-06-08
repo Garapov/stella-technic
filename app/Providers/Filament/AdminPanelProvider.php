@@ -5,7 +5,7 @@ namespace App\Providers\Filament;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use CmsMulti\FilamentClearCache\FilamentClearCachePlugin;
 use Datlechin\FilamentMenuBuilder\MenuPanel\ModelMenuPanel;
-use App\Filament\Plugins\BlogPlugin;
+// use App\Filament\Plugins\BlogPlugin;
 use App\Filament\Plugins\MenuBuilderPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -23,7 +23,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Outerweb\FilamentImageLibrary\Filament\Plugins\FilamentImageLibraryPlugin;
+// use Outerweb\FilamentImageLibrary\Filament\Plugins\FilamentImageLibraryPlugin;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 use Z3d0X\FilamentFabricator\FilamentFabricatorPlugin;
 use App\Filament\Pages\ImportProducts;
@@ -35,8 +35,8 @@ use TomatoPHP\FilamentSettingsHub\Facades\FilamentSettingsHub;
 use TomatoPHP\FilamentSettingsHub\Services\Contracts\SettingHold;
 use App\Filament\Pages\GeneralSettings;
 use App\Filament\Pages\SocialSettings;
-use Filament\Support\Assets\Css;
-use Filament\Support\Assets\Js;
+// use Filament\Support\Assets\Css;
+// use Filament\Support\Assets\Js;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -122,7 +122,7 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([Authenticate::class])
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
-                BlogPlugin::make(),
+                // BlogPlugin::make(),
                 FilamentClearCachePlugin::make(),
                 FilamentFabricatorPlugin::make(),
                 // FilamentImageLibraryPlugin::make(),
@@ -150,9 +150,6 @@ class AdminPanelProvider extends PanelProvider
                     ->addMenuPanels([
                         ModelMenuPanel::make()
                             ->model(\App\Models\Page::class)
-                            ->paginate(perPage: 5, condition: true),
-                        ModelMenuPanel::make()
-                            ->model(\App\Models\Post::class)
                             ->paginate(perPage: 5, condition: true),
                         ModelMenuPanel::make()
                             ->model(\App\Models\ProductCategory::class)

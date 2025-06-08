@@ -2,27 +2,27 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ArticleResource\Pages;
-use App\Models\Article;
+use App\Filament\Resources\PostResource\Pages;
+use App\Models\Post;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Z3d0X\FilamentFabricator\Forms\Components\PageBuilder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Split;
+use Z3d0X\FilamentFabricator\Forms\Components\PageBuilder;
 
-class ArticleResource extends Resource
+class PostResource extends Resource
 {
-    protected static ?string $model = Article::class;
+    protected static ?string $model = Post::class;
 
     protected static ?string $navigationIcon = "ri-article-line";
 
     protected static ?string $navigationGroup = "Блог";
-    protected static ?string $navigationLabel = "Статьи";
-    protected static ?string $modelLabel = "Статья";
-    protected static ?string $pluralModelLabel = "Статьи";
+    protected static ?string $navigationLabel = "Новости";
+    protected static ?string $modelLabel = "Новость";
+    protected static ?string $pluralModelLabel = "Новости";
 
     public static function form(Form $form): Form
     {
@@ -54,7 +54,7 @@ class ArticleResource extends Resource
                         ->required()
                         ->image()
                         ->label("Картинка")
-                        ->directory("posts")
+                        ->directory("Articles")
                         ->visibility("public")
                         ->imageEditor()
                         ->preserveFilenames()
@@ -109,9 +109,9 @@ class ArticleResource extends Resource
     public static function getPages(): array
     {
         return [
-            "index" => Pages\ListArticles::route("/"),
-            "create" => Pages\CreateArticle::route("/create"),
-            "edit" => Pages\EditArticle::route("/{record}/edit"),
+            "index" => Pages\ListPosts::route("/"),
+            "create" => Pages\CreatePost::route("/create"),
+            "edit" => Pages\EditPost::route("/{record}/edit"),
         ];
     }
 }

@@ -18,6 +18,7 @@ class Article extends Model
         "image",
         "is_popular",
         "short_content",
+        "slug",
     ];
 
     protected $casts = [

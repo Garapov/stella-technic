@@ -10,7 +10,9 @@ Route::prefix("/")
     ->group(function () {
         Route::view("/", "client.index")->name("index");
         Route::view("/constructor", "client.constructor")->name("constructor");
-        Route::view("/constructor/embeded", "client.constructor_embeded")->name("constructor_embeded");
+        Route::view("/constructor/embeded", "client.constructor_embeded")->name(
+            "constructor_embeded"
+        );
         Route::view("/catalog", "client.catalog.all")->name("catalog.all");
         Route::view("/catalog/brands", "client.brands.index")->name(
             "brands.index"
@@ -39,9 +41,7 @@ Route::prefix("/")
             return view("client.thanks", ["orderId" => $orderId]);
         })->name("thanks");
         // Route::view('/checkout/thanks', 'client.thanks')->name('thanks');
-        Route::view("/blog/{category_slug}/{slug}", "client.posts.show")->name(
-            "posts.show"
-        );
+        Route::view("/blog/{slug}", "client.posts.show")->name("posts.show");
         Route::view("/blog", "client.posts.index")->name("posts.index");
         Route::view("/articles/{slug}", "client.articles.show")->name(
             "articles.show"
