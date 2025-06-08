@@ -2,7 +2,7 @@
     <div>
         <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"><a href="{{ route('client.articles.show', $article->slug) }}" wire:navigate>{{ $article->title }}</a></h2>
         <div class="mb-5 font-light text-gray-500 dark:text-gray-400">
-            {{ \Illuminate\Support\Str::limit(strip_tags($article->content), 150) }}
+            {{ \Illuminate\Support\Str::limit(strip_tags($article->short_content), 150) }}
         </div>
     </div>
     <div class="flex justify-between items-center">

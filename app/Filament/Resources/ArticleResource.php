@@ -3,15 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ArticleResource\Pages;
-use App\Filament\Resources\ArticleResource\RelationManagers;
 use App\Models\Article;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Z3d0X\FilamentFabricator\Forms\Components\PageBuilder;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Split;
 
 class ArticleResource extends Resource
 {
@@ -27,25 +27,39 @@ class ArticleResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make("title")
-                ->label("Название")
-                ->required(),
-            Forms\Components\Toggle::make("is_popular")
-                ->label("Популярная")
-                ->required(),
-            Forms\Components\RichEditor::make("content")
-                ->label("Содержание")
-                ->required()
-                ->columnSpanFull(),
-            Forms\Components\FileUpload::make("image")
-                ->required()
-                ->image()
-                ->label("Картинка")
-                ->directory("Articles")
-                ->visibility("public")
-                ->imageEditor()
-                ->preserveFilenames()
-                ->imageEditorMode(2),
+            Split::make([
+                Section::make([
+                    Forms\Components\TextInput::make("title")
+                        ->label("Название")
+                        ->required(),
+                    Forms\Components\Textarea::make("short_content")
+                        ->label("Анонс")
+                        ->required(),
+                    PageBuilder::make("content")
+                        ->required()
+                        ->label(
+                            __(
+                                "filament-fabricator::page-resource.labels.blocks"
+                            )
+                        ),
+                ]),
+                Section::make([
+                    Forms\Components\Toggle::make("is_popular")
+                        ->label("Популярная")
+                        ->required(),
+                    Forms\Components\FileUpload::make("image")
+                        ->required()
+                        ->image()
+                        ->label("Картинка")
+                        ->directory("Articles")
+                        ->visibility("public")
+                        ->imageEditor()
+                        ->preserveFilenames()
+                        ->imageEditorMode(2),
+                ])->grow(false),
+            ])
+                ->columnSpanFull()
+                ->from("md"),
         ]);
     }
 
