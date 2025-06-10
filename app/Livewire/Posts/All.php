@@ -9,8 +9,8 @@ class All extends Component
 {
     public function render()
     {
-        return view('livewire.posts.all', [
-            'posts' => Post::published()->get(),
+        return view("livewire.posts.all", [
+            "posts" => Post::all(),
         ]);
     }
 }

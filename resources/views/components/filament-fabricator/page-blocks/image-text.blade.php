@@ -6,7 +6,7 @@
                 <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" class="rounded-lg w-full">
             </div>
             <div class="col-span-2">
-                {!!html_entity_decode($text)!!}
+                {!!nl2br(html_entity_decode($text))!!}
             </div>
         </div>
     </div>

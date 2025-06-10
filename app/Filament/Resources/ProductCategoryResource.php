@@ -65,7 +65,7 @@ class ProductCategoryResource extends Resource
                                     ->directory("categories")
                                     ->label("Картинка")
                                     ->image(),
-                                IconPicker::make("icon")->required(),
+                                // IconPicker::make("icon")->required(),
                             ]),
                         Tabs\Tab::make('SEO')
                             ->schema([

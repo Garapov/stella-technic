@@ -38,7 +38,7 @@ class Gallery extends PageBlock
     public static function mutateData(array $data): array
     {
         // dd(Image::whereIn('id', $data['gallery'])->get()->toArray());
-        $data["gallery"] = Image::whereIn("id", $data["gallery"])->get();
+        // $data["gallery"] = Image::whereIn("id", $data["gallery"])->get();
         return $data;
     }
 }
