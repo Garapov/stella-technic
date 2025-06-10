@@ -91,5 +91,5 @@
 }
 
 .splide__arrow svg {
-    fill: darkgray;
+    fill: rgb(51 65 85 / var(--tw-text-opacity, 1));
 }
