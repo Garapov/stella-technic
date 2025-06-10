@@ -333,89 +333,75 @@
 
 
 
-            <hr class="my-6 border-slate-300" />
-
-
-            <div class="rounded-lg border border-slate-200 overflow-hidden bg-slate-50">
-                <div class="dark:border-neutral-600 dark:bg-body-dark border-b border-slate-200" x-data="{
-                    isOpened: true
-                }">
-                    <button class="group relative flex w-full items-center rounded-t-lg border-0 px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-body-dark dark:text-white font-bold" type="button"  @click="isOpened = !isOpened">
-                        Информация о товаре
-                        <span class="-me-1 ms-auto h-5 w-5 shrink-0 rotate-[-180deg] transition-transform duration-200 ease-in-out group-data-[twe-collapse-collapsed]:me-0 group-data-[twe-collapse-collapsed]:rotate-0 motion-reduce:transition-none [&>svg]:h-6 [&>svg]:w-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" :class="{'-rotate-180': !isOpened, 'rotate-0': isOpened}"><g data-name="arrow-ios-downward"><path d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15 1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16z"></path></g></svg>
-                        </span>
-                    </button>
-                    <div class="px-5 pb-4" x-show="isOpened">
-                        <dl class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            @foreach($variation->paramItems as $paramItem)
-                                <li class="flex items-center justify-between text-sm gap-2">
-                                    <strong class="font-medium text-slate-500">{{ $paramItem->productParam->name }}</strong>
-                                    <span class="grow border-b border-slate-300 border-dashed"></span>
-                                    <span class="font-medium">{{ $paramItem->title }}</span>
-                                </li>
-                            @endforeach
-                            @foreach($variation->parametrs as $parametr)
-                                <li class="flex items-center justify-between text-sm gap-2">
-                                    <strong class="font-medium text-slate-500">{{ $parametr->productParam->name }}</strong>
-                                    <span class="grow border-b border-slate-300 border-dashed"></span>
-                                    <span class="font-medium">{{ $parametr->title }}</span>
-                                </li>
-                            @endforeach
-                        </dl>
-                    </div>
-                </div>
-
-
-
-                <div class="dark:border-neutral-600 dark:bg-body-dark @if (!empty($files)) border-b border-slate-200 @endif" x-data="{
-                    isOpened: true
-                }">
-                    <button class="group relative flex w-full items-center rounded-t-lg border-0 px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-body-dark dark:text-white font-bold" type="button"  @click="isOpened = !isOpened">
-                        Подробное описание
-                        <span class="-me-1 ms-auto h-5 w-5 shrink-0 rotate-[-180deg] transition-transform duration-200 ease-in-out group-data-[twe-collapse-collapsed]:me-0 group-data-[twe-collapse-collapsed]:rotate-0 motion-reduce:transition-none [&>svg]:h-6 [&>svg]:w-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" :class="{'-rotate-180': !isOpened, 'rotate-0': isOpened}"><g data-name="arrow-ios-downward"><path d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15 1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16z"></path></g></svg>
-                        </span>
-                    </button>
-                    <div class="px-5 pb-4" x-show="isOpened">
-                        {!! str($variation->description)->sanitizeHtml() !!}
-                    </div>
-                </div>
-                @if (!empty($files))
-                    <div class="dark:border-neutral-600 dark:bg-body-dark" x-data="{
-                        isOpened: false
-                    }">
-                        <button class="group relative flex w-full items-center rounded-t-lg border-0 px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-body-dark dark:text-white font-bold" type="button"  @click="isOpened = !isOpened">
-                            Файлы
-                            <span class="-me-1 ms-auto h-5 w-5 shrink-0 rotate-[-180deg] transition-transform duration-200 ease-in-out group-data-[twe-collapse-collapsed]:me-0 group-data-[twe-collapse-collapsed]:rotate-0 motion-reduce:transition-none [&>svg]:h-6 [&>svg]:w-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" :class="{'-rotate-180': !isOpened, 'rotate-0': isOpened}"><g data-name="arrow-ios-downward"><path d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15 1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16z"></path></g></svg>
-                            </span>
-                        </button>
-                        <div class="px-5 pb-4" x-show="isOpened">
-                            <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
-                                @foreach($files as $key=>$file)
-                                    <li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm/6">
-                                        <div class="flex w-0 flex-1 items-center">
-                                            <x-fas-file-import class="size-5 shrink-0 text-gray-400" />
-                                            <div class="ml-4 flex min-w-0 flex-1 gap-2">
-                                                <span class="truncate font-bold">{{ $file['name'] }}</span>
-                                                <span class="truncate font-medium">{{ File::basename(Storage::disk(config('filesystems.default'))->url($file['file'])) }}</span>
-                                                <span class="shrink-0 text-gray-400">{{ $variation->formatBytes(Storage::disk(config('filesystems.default'))->size($file['file'])) }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="ml-4 shrink-0">
-                                            {{-- <a href="{{ Storage::disk(config('filesystems.default'))->url($file['file']) }}" class="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer" download="{{ File::basename(Storage::disk(config('filesystems.default'))->url($file['file'])) }}">Скачать</a> --}}
-                                            <div class="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer" @click="downloadFile({{ $key }})">Скачать</div>
-                                        </div>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                @endif
-            </div>
         </div>
     </div>
+
+
+
+    <div class="py-8" x-data="{
+        activeTab: 0,
+    }">
+        <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 dark:text-gray-400 mb-4">
+            <li class="me-2">
+                <span class="inline-block px-4 py-3 rounded-lg active" :class="activeTab == 0 ? 'text-white bg-blue-600' : 'hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white cursor-pointer'" aria-current="page" @click="activeTab = 0">Технические характеристики</span>
+            </li>
+            <li class="me-2">
+                <span class="inline-block px-4 py-3 rounded-lg active" :class="activeTab == 1 ? 'text-white bg-blue-600' : 'hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white cursor-pointer'" aria-current="page" @click="activeTab = 1">Подробное описание</span>
+            </li>
+            @if (!empty($files))
+                <li class="me-2">
+                    <span class="inline-block px-4 py-3 rounded-lg active" :class="activeTab == 2 ? 'text-white bg-blue-600' : 'hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white cursor-pointer'" aria-current="page" @click="activeTab = 2">Файлы</span>
+                </li>
+            @endif
+        </ul>
+        <div class="p-6 bg-gray-50 text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-lg w-full" x-show="activeTab == 0">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Технические характеристики</h3>
+            <dl class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                @foreach($variation->paramItems as $paramItem)
+                    <li class="flex items-center justify-between text-sm gap-2">
+                        <strong class="font-medium text-slate-500">{{ $paramItem->productParam->name }}</strong>
+                        <span class="grow border-b border-slate-300 border-dashed"></span>
+                        <span class="font-medium">{{ $paramItem->title }}</span>
+                    </li>
+                @endforeach
+                @foreach($variation->parametrs as $parametr)
+                    <li class="flex items-center justify-between text-sm gap-2">
+                        <strong class="font-medium text-slate-500">{{ $parametr->productParam->name }}</strong>
+                        <span class="grow border-b border-slate-300 border-dashed"></span>
+                        <span class="font-medium">{{ $parametr->title }}</span>
+                    </li>
+                @endforeach
+            </dl>
+        </div>
+        <div class="p-6 bg-gray-50 text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-lg w-full" x-show="activeTab == 1">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Подробное описание</h3>
+            {!! nl2br(str($variation->description)->sanitizeHtml()) !!}
+        </div>
+        @if (!empty($files))
+            <div class="p-6 bg-gray-50 text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-lg w-full" x-show="activeTab == 2">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Файлы</h3>
+                <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
+                    @foreach($files as $key=>$file)
+                        <li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm/6">
+                            <div class="flex w-0 flex-1 items-center">
+                                <x-fas-file-import class="size-5 shrink-0 text-gray-400" />
+                                <div class="ml-4 flex min-w-0 flex-1 gap-2">
+                                    <span class="truncate font-bold">{{ $file['name'] }}</span>
+                                    <span class="truncate font-medium">{{ File::basename(Storage::disk(config('filesystems.default'))->url($file['file'])) }}</span>
+                                    <span class="shrink-0 text-gray-400">{{ $variation->formatBytes(Storage::disk(config('filesystems.default'))->size($file['file'])) }}</span>
+                                </div>
+                            </div>
+                            <div class="ml-4 shrink-0">
+                                {{-- <a href="{{ Storage::disk(config('filesystems.default'))->url($file['file']) }}" class="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer" download="{{ File::basename(Storage::disk(config('filesystems.default'))->url($file['file'])) }}">Скачать</a> --}}
+                                <div class="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer" @click="downloadFile({{ $key }})">Скачать</div>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+    </div>
+
 
     @if (!empty($variation->upSells))
         @livewire('product.components.crossails', ['title' => 'С этим товаром покупают', 'variations' => $variation->upSells], key($variation->id))
