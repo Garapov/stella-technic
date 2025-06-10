@@ -13,7 +13,7 @@
             </div>
             @php
                 $all_products = $products->get();
-                $paginated_products = $products->paginate(12);
+                $paginated_products = $products->paginate(40);
             @endphp
             <!-- Heading & Filters -->
             @if ($category)

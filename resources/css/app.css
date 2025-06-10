@@ -89,3 +89,7 @@
 .vertical-carousel-height-fix {
     height: 100% !important;
 }
+
+.splide__arrow svg {
+    fill: darkgray;
+}

@@ -5,7 +5,5 @@
             @livewire('product.detail', ['slug' => $product_slug])
         </div>
     </section>
-    @livewire('main.articles')
-    @livewire('main.customers')
-    @livewire('main.news')
+
 </x-guest-layout>

@@ -1,6 +1,6 @@
 <div>
     @if (count($variations) > 0)
-        <section class="pt-20 pb-10 px-4 dark:bg-dark" x-data="{
+        <section class="py-10 dark:bg-dark" x-data="{
             slider: new window.glide($refs.slider, {
                 autoplay: 5000,
                 perView: 4,
@@ -53,7 +53,7 @@
                 </div>
                 <div class="glide__track" data-glide-el="track">
                     <div class="glide__slides whitespace-normal">
-                    
+
                         @foreach ($variations as $variation)
                             @livewire('general.product-variant', [
                                 'variant' => $variation
