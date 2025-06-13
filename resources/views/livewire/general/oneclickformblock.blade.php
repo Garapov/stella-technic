@@ -28,25 +28,44 @@
             <form class="flex flex-col gap-4" wire:submit.prevent="save">
                 <div class="flex gap-4 justify-between">
                     <div class="flex items-center gap-4">
-                        <div class="flex items-center gap-4">
-                            <div class="shrink-0">
-                                <img class="h-40 w-40" src="{{ Storage::disk(config('filesystems.default'))->url($variation->gallery[0]) }}" alt="imac image" />
-                            </div>
+                        <img class="h-20 w-20" src="{{ Storage::disk(config('filesystems.default'))->url($variation->gallery[0]) }}" alt="imac image" />
+
+                        <div class="shrink">
                             <div class="text-base font-medium text-gray-900 dark:text-white">{{ $variation->name }}</div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex items-center gap-2">
+                                        @if ($variation->product->brand)
+                                            <span class="text-sm text-blue-500 dark:text-gray-400">{{ $variation->product->brand->name }}</span>
+                                            <span class="text-sm text-gray-500 dark:text-gray-400">|</span>
+                                        @endif
+                                        <span class="text-sm text-gray-500 dark:text-gray-400">АРТ: {{ $variation->sku }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="text-slate-900 text-2xl font-semibold">{{ $variation->new_price ? Number::format($variation->new_price, 0) : Number::format($variation->getActualPrice(), 0) }} ₽</h4>
+                                         @if ($variation->new_price)
+                                            <div class="text-slate-500 text-lg"><strike>{{Number::format($variation->price, 0)}} ₽</strike></div>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="max-w-[100px] py-2 px-3 bg-gray-100 rounded-lg dark:bg-neutral-700">
+                                    <div class="flex justify-between gap-2">
+                                        <div class="grow">
+                                            <input class="w-full h-full p-0 bg-transparent border-0 text-gray-800 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none dark:text-white" style="-moz-appearance: textfield;" type="number" aria-roledescription="Quantity field" wire:model="variation_count" wire:change="validateQuantity">
+                                        </div>
+                                        <div class="flex flex-col justify-end items-center gap-1.5">
+                                            <button type="button" class="size-6 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-md border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" tabindex="-1" aria-label="Increase Quantity" wire:click="incrementCount">
+                                                <x-heroicon-o-plus class="shrink-0 size-3.5" />
+                                            </button>
+                                            <button type="button" class="size-6 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-md border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" tabindex="-1" aria-label="Decrease Quantity" wire:click="decrementCount">
+                                                <x-heroicon-o-minus class="shrink-0 size-3.5" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="relative flex items-center">
-                            <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" wire:click="decrementCount">
-                                <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
-                                </svg>
-                            </button>
-                            <input class="bg-gray-50 border-x-0 border border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-12 py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" wire:model="variation_count" />
-                            <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" wire:click="incrementCount">
-                                <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                                </svg>
-                            </button>
-                        </div>
+                        
                     </div>
                 </div>
                 @foreach ($fields as $field)

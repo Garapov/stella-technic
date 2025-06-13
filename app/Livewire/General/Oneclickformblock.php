@@ -72,13 +72,13 @@ class Oneclickformblock extends Component
 
     public function decrementCount()
     {
-        if ($this->variation_count < 2) {
-            $this->variation_count = 1;
-        } else {
-            $this->variation_count--;
-        }
+        $this->variation_count--;
     }
 
+    public function validateQuantity()
+    {
+        if ($this->variation_count < 2) $this->variation_count = 1;
+    }
 
 
     public function save()
