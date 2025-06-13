@@ -73,7 +73,7 @@
                 </div>
             </div>
             <div class="grow flex flex-col gap-2">
-                <button class="font-medium text-blue-600 dark:text-blue-500 underline">Купить в один клик</button>
+                <button class="rounded-lg p-3 text-gray-500 bg-gray-100 text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" @click="$store.application.forms.buy_one_click = true">Купить в один клик</button>
             </div>
             <button type="button" class="w-full text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center" @click="addVariationToCart()">
                 <x-fas-cart-arrow-down class="w-6 h-6 mr-2" />

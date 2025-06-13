@@ -44,6 +44,15 @@ class FormsSettings extends SiteSettings
                                 )
                             )
                             ->searchable(),
+                        Select::make("buy_one_click")
+                            ->label("Купить в один клик")
+                            ->options(
+                                fn() => Former::all()->pluck(
+                                    "name",
+                                    "id"
+                                )
+                            )
+                            ->searchable(),
                     ]),
                 ])
                 ->columnSpanFull(),

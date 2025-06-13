@@ -93,7 +93,7 @@
             @seo(['image' => Storage::disk(config('filesystems.default'))->url($variation->gallery[0])])
         @endif
     @endif
-
+    
     <h1 class="text-lg sm:text-3xl font-semibold text-slate-700 dark:text-white mb-8">{{ $variation->name }} @if ($variation->product->brand){{$variation->product->brand->name}}@endif ({{$variation->sku}})</h1>
 
 
@@ -287,5 +287,5 @@
         @livewire('product.components.crossails', ['title' => 'Похожие товары', 'variations' => $variation->crossSells], key($variation->id + rand(1,100)))
     @endif
 
-
+    @livewire('general.forms.buyoneclick', ['variation' => $variation])
 </div>
