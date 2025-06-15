@@ -6,6 +6,7 @@ export default (() => {
                 callback: false,
                 buy_one_click: false,
             },
+            burger: false,
             init() {
                 window.addEventListener('resize', () => {
                     this.windowWidth = window.innerWidth;

@@ -1,4 +1,8 @@
 <header>
+
+    @livewire('general.header.burger')
+
+
     <div class="lg:bg-white bg-slate-50 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 relative z-30 lg:block hidden">
         <div class="flex flex-wrap justify-between items-center lg:mx-auto lg:container">
             <div class="hidden justify-between items-center w-full lg:flex lg:w-auto">
@@ -29,7 +33,7 @@
 
     <div class="lg:bg-white bg-slate-50 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 relative z-20">
         <div class="flex flex-wrap gap-8 justify-between items-center lg:mx-auto lg:container">
-            <button type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800 lg:hidden block">
+            <button type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800 lg:hidden block" @click="$store.application.burger = !$store.application.burger">
                 <x-fas-list-ul class="w-3.5 h-3.5"/>
             </button>
             @if (setting('site_logo'))
