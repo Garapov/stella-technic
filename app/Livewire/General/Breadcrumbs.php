@@ -146,7 +146,7 @@ class Breadcrumbs extends Component
 
                 // Добавляем название продукта
                 $breadcrumbs[] = [
-                    "title" => $product->name,
+                    "title" => $product->sku,
                     "url" => null,
                     "active" => true,
                 ];

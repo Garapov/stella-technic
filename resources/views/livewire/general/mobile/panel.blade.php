@@ -1,11 +1,19 @@
 <div class="fixed bottom-0 left-0 right-0 z-40 block lg:hidden">
     <div class="px-7 bg-slate-50 shadow-lg rounded-t-xl">
         <div class="flex items-end gap-2 pt-4 px-4">
+            
             <div class="flex-1 group">
                 <a href="{{ route('client.index') }}" wire:navigate class="flex items-center flex-col gap-2 text-center w-full group-hover:text-blue-500  @if(request()->routeIs('client.index')) text-blue-500 @else text-gray-400 @endif">
                     <x-heroicon-s-home class="w-5 h-5" />
                     <span class="block text-xs">Главная</span>
                     <span class="block w-full mx-auto h-1 group-hover:bg-blue-500 rounded-t-lg @if(request()->routeIs('client.index')) bg-blue-500 @endif"></span>
+                </a>
+            </div>
+            <div class="flex-1 group">
+                <a href="{{ route('client.search') }}" wire:navigate class="flex items-center flex-col gap-2 text-center w-full group-hover:text-blue-500  @if(request()->routeIs('client.search')) text-blue-500 @else text-gray-400 @endif">
+                    <x-eva-search-outline class="w-5 h-5" />
+                    <span class="block text-xs">Поиск</span>
+                    <span class="block w-full mx-auto h-1 group-hover:bg-blue-500 rounded-t-lg @if(request()->routeIs('client.search')) bg-blue-500 @endif"></span>
                 </a>
             </div>
             <div class="flex-1 group">

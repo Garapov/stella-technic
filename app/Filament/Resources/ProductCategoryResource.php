@@ -20,6 +20,7 @@ use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use App\Models\ProductParamItem;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Hidden;
 
 class ProductCategoryResource extends Resource
 {
@@ -64,7 +65,9 @@ class ProductCategoryResource extends Resource
                                 FileUpload::make("image")
                                     ->directory("categories")
                                     ->label("Картинка")
+                                    ->required()
                                     ->image(),
+                                Hidden::make('icon')->default("fas-box-archive"),
                                 // IconPicker::make("icon")->required(),
                             ]),
                         Tabs\Tab::make('SEO')
@@ -116,6 +119,7 @@ class ProductCategoryResource extends Resource
                                             ->preserveFilenames(),
                                     ])
                                     ->columns(2)
+                                    ->defaultItems(0)
                             ])
                     ]),                    
                 Section::make([
