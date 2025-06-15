@@ -297,19 +297,49 @@ class ProductVariantImporter extends Importer
     {
         $product = ProductVariant::firstWhere("sku", $this->data["sku"]);
 
-        if (!$this->options["updateExisting"] && $product) {
-            throw new RowImportFailedException(
-                "Найден товар с артикулом '{$product->sku}', но обновление товаров отключено."
+        if ($this->options["updateExisting"] && $product) {
+
+            Log::info(
+                "Обновление товара с артикулом с включенным обновлением '{$product->sku}'"
             );
+            return $product;
         }
 
-        if (!$this->options["updateExisting"] && !$product) {
+        if ($this->options["updateExisting"] && !$product) {
             $product = new ProductVariant();
             $product->product_id = $this->data["product_id"];
             $product->sku = $this->data["sku"];
             $product->price = 100000;
             $product->name = "Не задано";
             $product->image = "/assets/placeholder.svg";
+
+            Log::info(
+                "Создание товара с включенным обновлением с артикулом '{$product->sku}'"
+            );
+            return $product;
+        }
+
+        if (!$this->options["updateExisting"] && $product) {
+            Log::info(
+                "Найден товар '{$product->sku}', но обновление товаров отключено."
+            );
+            throw new RowImportFailedException(
+                "Найден товар с артикулом '{$product->sku}', но обновление товаров отключено."
+            );
+        }
+
+        if (!$this->options["updateExisting"] && !$product) {
+            
+            $product = new ProductVariant();
+            $product->product_id = $this->data["product_id"];
+            $product->sku = $this->data["sku"];
+            $product->price = 100000;
+            $product->name = "Не задано";
+            $product->image = "/assets/placeholder.svg";
+            Log::info(
+                "Создание товара с отключенным обновлением с артикулом '{$product->sku}'"
+            );
+            return $product;
         }
 
         // if ($product) {
@@ -330,8 +360,6 @@ class ProductVariantImporter extends Importer
         // }
 
         $this->steps[] = "resolveRecord";
-
-        return $product;
     }
 
     public static function getCompletedNotificationBody(Import $import): string
