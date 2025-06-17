@@ -1,4 +1,5 @@
 <div class="bg-white dark:bg-gray-700 p-4 col-span-2 relative flex flex-col justify-between gap-4 relative overflow-hidden" x-ref="settings">
+    
     <div class="flex flex-col gap-4">
         <div class="text-xl italic font-semibold text-gray-900 dark:text-white">1. Выберите тип стойки</div>
         <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
@@ -75,4 +76,5 @@
             </button>
         </template>
     </div>
+    <x-constructor.panel />
 </div>

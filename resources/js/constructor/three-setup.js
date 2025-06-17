@@ -139,6 +139,7 @@ export function setupThreeEnvironment(container, projection, settings) {
     }
     // Теперь, когда рендереры готовы, настроим контроллеры
     three.controls = new OrbitControls(three.camera, three.renderer.domElement);
+    three.controls.maxPolarAngle = Math.PI / 2
     three.controls.enableDamping = true;
     three.controls.dampingFactor = 0.05;
     three.controls.enablePan = false;

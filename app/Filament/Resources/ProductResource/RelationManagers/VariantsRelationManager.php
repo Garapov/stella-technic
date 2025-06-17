@@ -41,36 +41,36 @@ class VariantsRelationManager extends RelationManager
                 ->tabs([
                     Tab::make("Основная информация")
                         ->schema([
-                            Forms\Components\TextInput::make("name")
+                            TextInput::make("name")
                                 ->required()
                                 ->live()
                                 ->label("Название"),
-                            Forms\Components\TextInput::make("price")
+                            TextInput::make("price")
                                 ->required()
                                 ->numeric()
                                 ->prefix("₽")
                                 ->label("Цена"),
-                            Forms\Components\TextInput::make("new_price")
+                            TextInput::make("new_price")
                                 ->numeric()
                                 ->lt("price")
                                 ->prefix("₽")
                                 ->label("Цена со скидкой"),
-                            Forms\Components\TextInput::make("auth_price")
+                            TextInput::make("auth_price")
                                 ->numeric()
                                 ->lt("price")
                                 ->prefix("₽")
                                 ->label("Цена после авторизации"),
-                            Forms\Components\TextInput::make("count")
+                            TextInput::make("count")
                                 ->required()
                                 ->numeric()
                                 ->label("Остаток"),
-                            Forms\Components\TextInput::make("sku")
+                            TextInput::make("sku")
                                 ->required()
                                 ->label("Артикул"),
-                            Forms\Components\Toggle::make("is_popular")
+                            Toggle::make("is_popular")
                                 ->label("Популярный")
                                 ->inline(false),
-                            Forms\Components\Toggle::make("is_constructable")
+                            Toggle::make("is_constructable")
                                 ->label("Конструктор")
                                 ->live()
                                 ->inline(false),

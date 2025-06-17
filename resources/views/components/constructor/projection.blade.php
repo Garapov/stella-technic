@@ -1,4 +1,4 @@
-<div class="bg-white dark:bg-gray-700 col-span-3 flex flex-col items-center relative" x-ref="projection">
+<div class="bg-white dark:bg-gray-700 col-span-3 flex flex-col items-center relative" x-ref="projection" wire:ignore>
 
     <!-- Кнопка для включения режима отладки, когда режим выключен -->
     <button @click="toggleDebugMode" x-show="!debugMode" class="debug-toggle">
