@@ -154,6 +154,27 @@ class VariantsRelationManager extends RelationManager
                                 ->columnSpanFull(),
                         ])
                         ->columnSpan("full"),
+                    Tab::make("Параметры 2")
+                        ->schema([
+                            Forms\Components\Select::make("paramItems")
+                                ->multiple()
+                                ->relationship("paramItems", "title")
+                                ->preload()
+                                ->options(function () {
+                                    return ProductParamItem::query()
+                                        ->with("productParam")
+                                        ->get()
+                                        ->mapWithKeys(function ($item) {
+                                            $paramName = $item->productParam
+                                                ? $item->productParam->name
+                                                : "Unknown";
+                                            $name = "$paramName: $item->title";
+                                            return [$item->id => $name];
+                                        });
+                                })
+                                ->columnSpanFull(),
+                        ])
+                        ->columnSpan("full"),
                     Tab::make("Серия")->schema([
                         Forms\Components\Select::make("batch")
                             ->label("Серия")
@@ -246,6 +267,38 @@ class VariantsRelationManager extends RelationManager
                                 ])
                                 ->columnSpanFull(),
 
+                            Forms\Components\Select::make('selected_width')
+                                ->label('Ширина стойки')
+                                ->options([
+                                    'slim' => 'Узкая (735 мм)',
+                                    'wide' => 'Широкая (1150 мм)',
+                                ])
+                                ->visible(fn(Get $get) => $get("constructor_type") == 'deck'),
+
+                            Forms\Components\Select::make('selected_height')
+                                ->label('Высота стойки')
+                                ->options([
+                                    'low' => 'Низкая (1515 мм)',
+                                    'high' => 'Высокая (2020 мм)',
+                                ])
+                                ->visible(fn(Get $get) => $get("constructor_type") == 'deck'),
+
+                            Forms\Components\Select::make('selected_desk_type')
+                                ->label('Тип стойки')
+                                ->options([
+                                    'Односторонняя' => 'Односторонняя',
+                                    'Двусторонняя' => 'Двусторонняя',
+                                ])
+                                ->visible(fn(Get $get) => $get("constructor_type") == 'deck'),
+
+                            Forms\Components\Select::make('selected_position')
+                                ->label('Позиция стойки')
+                                ->options([
+                                    'on_floor' => 'На полу',
+                                    'on_wall' => 'На стене',
+                                ])
+                                ->visible(fn(Get $get) => $get("constructor_type") == 'deck'),
+
                             Repeater::make("rows")
                                 ->label("Ряды ящиков")
                                 ->schema([
@@ -263,7 +316,7 @@ class VariantsRelationManager extends RelationManager
                                             "red" => "Красный",
                                             "green" => "Зеленый",
                                             "blue" => "Синий",
-                                            "yellow" => "Желтый",
+                                            "#ffeb00" => "Желтый",
                                             "gray" => "Серый",
                                         ])
                                         ->required(),
@@ -288,6 +341,8 @@ class VariantsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute("name")
             ->columns([
+                Tables\Columns\TextColumn::make("id")
+                    ->label("ID"),
                 Tables\Columns\ImageColumn::make("gallery")
                     ->label("Галерея")
                     ->square()

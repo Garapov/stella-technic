@@ -18,6 +18,7 @@
         <script src="{{ 'https://api-maps.yandex.ru/2.1/?apikey='. config('services.maps.key') . '&lang=ru_RU&suggest_apikey=' . config('services.maps.suggestion_key') }}"></script>
         <!-- Scripts -->
         @filamentStyles
+        @livewireStyles
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
     </head>

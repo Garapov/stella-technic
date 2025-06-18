@@ -47,6 +47,10 @@ class ProductVariant extends Model
         "rows",
         "files",
         "show_category_files",
+        "selected_width",
+        "selected_height",
+        "selected_desk_type",
+        "selected_position"
     ];
 
     protected $casts = [

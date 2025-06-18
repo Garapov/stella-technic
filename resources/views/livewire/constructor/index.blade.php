@@ -12,8 +12,12 @@
         'box_medium' => \App\Models\ProductVariant::where('id', setting('box_medium'))->first(),
         'box_large' => \App\Models\ProductVariant::where('id', setting('box_large'))->first(),
     )),
-    addedRows: @js($added_rows),
-    embeded: @js($embeded)
+    addedRows: $wire.entangle('added_rows'),
+    embeded: $wire.entangle('embeded'),
+    selectedWidth: $wire.entangle('selectedWidth'),
+    selectedHeight: $wire.entangle('selectedHeight'),
+    selectedDeskType: $wire.entangle('selectedDeskType'),
+    selectedPosition: $wire.entangle('selectedPosition')
 })" >
     <x-constructor.projection />
     <x-constructor.buttons :products="$products" :param_items="$param_items" :selected_params="$selected_params" />

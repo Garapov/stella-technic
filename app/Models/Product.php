@@ -168,7 +168,7 @@ class Product extends Model implements Searchable
             $paramIds = [];
 
             foreach ($link["row"] as $param) {
-                $parametr = ProductParamItem::where("id", $param)->first();
+                $parametr = ProductParamItem::where("id", intval($param))->first();
 
                 if (!$parametr) {
                     continue;

@@ -24,7 +24,8 @@ class Detail extends Component
 
         $this->variation = Cache::get($slug, ProductVariant::where("slug", $slug)->first());
 
-        // dd($this->variation);
+        if (!$this->variation) abort(404);
+        // dd($this->variation->links);
 
         $this->product = $this->variation->product;
         $this->groupedParams = $this->getGroupedParams();

@@ -41,7 +41,11 @@ export default ({
     desks = [],
     boxes = [],
     addedRows = [],
-    embeded = false
+    embeded = false,
+    selectedWidth = 'slim',
+    selectedHeight = 'low',
+    selectedDeskType = 'Односторонняя',
+    selectedPosition = 'on_floor'
 }) => {
     // Three.js контейнер
     const three = { scene: new THREE.Scene() };
@@ -82,13 +86,13 @@ export default ({
         ],
         selectedSize: "small",
         deskTypes: ["Односторонняя", "Двусторонняя"],
-        selectedDeskType: "Односторонняя",
+        selectedDeskType: selectedDeskType,
         positions: [
             { name: "На полу", value: "on_floor" },
             { name: "На стене", value: "on_wall" },
             // { name: "На колесах", value: "on_wheels" },
         ],
-        selectedPosition: "on_floor",
+        selectedPosition: selectedPosition,
         width: [
             {
                 name: "735 мм",
@@ -101,7 +105,7 @@ export default ({
                 number: 1150,
             },
         ],
-        selectedWidth: "slim",
+        selectedWidth: selectedWidth,
         selectedWidthValue: 735,
         panelOpened: false,
         height: [
@@ -116,7 +120,7 @@ export default ({
                 number: 2020,
             },
         ],
-        selectedHeight: "low",
+        selectedHeight: selectedHeight,
         selectedHeightValue: 1515,
         // Информация о доступном пространстве
         usedHeightPercent: 0,
@@ -174,7 +178,21 @@ export default ({
 
                 this.addDeskClone();
 
-                this.rebuildRows();
+                if (this.selectedWidth != 'slim') {
+                    this.changeDescWidth(three, this.selectedWidth, '');
+                }
+                if (this.selectedHeight != 'low') {
+                    this.changeDescHeight(three, this.selectedHeight, '');
+                }
+                if (this.selectedDeskType !== 'Односторонняя') {
+                    this.changeDeskCloneVisibility(this.selectedDeskType, '');
+                }
+                if (this.selectedPosition != 'on_floor') {
+                    this.changeDescPosition(three, this.selectedPosition, '');
+                }
+                // if (!this.embeded) {
+                //     this.rebuildRows();
+                // }
 
                 this.$watch("selectedDeskType", (newVal, oldVal) => {
                     this.changeDeskCloneVisibility(newVal, oldVal);

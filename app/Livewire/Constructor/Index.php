@@ -24,9 +24,14 @@ class Index extends Component implements HasForms
     #[Url()]
     public $variation_id;
     public $variation;
-    public $addedRows = [];
+    public $added_rows = [];
     public $parent_product_id = null;
     public $selected_params = [];
+    public $embeded = false;
+    public $selectedWidth = 'slim';
+    public $selectedHeight = 'low';
+    public $selectedDeskType = 'Односторонняя';
+    public $selectedPosition = 'on_floor';
     public ?array $data = [];
 
     public function mount()
@@ -35,8 +40,14 @@ class Index extends Component implements HasForms
         if ($this->variation_id) {
             $this->variation = ProductVariant::where('id', $this->variation_id)->first();
             if ($this->variation && $this->variation->is_constructable && $this->variation->constructor_type == 'deck' && $this->variation->rows) {
-                $this->addedRows = $this->variation->rows;
+                $this->added_rows = $this->variation->rows;
                 $this->parent_product_id = $this->variation->product->id;
+
+
+                if ($this->variation->selected_width) $this->selectedWidth = $this->variation->selected_width;
+                if ($this->variation->selected_height) $this->selectedHeight = $this->variation->selected_height;
+                if ($this->variation->selected_desk_type) $this->selectedDeskType = $this->variation->selected_desk_type;
+                if ($this->variation->selected_position) $this->selectedPosition = $this->variation->selected_position;
             }
         }
     }
@@ -49,6 +60,7 @@ class Index extends Component implements HasForms
                     ->searchable()
                     ->preload()
                     ->label('Родительский товар')
+                    ->required()
                     ->options(
                         fn() => Product::all()->pluck("name", "id")
                     ),
@@ -60,9 +72,11 @@ class Index extends Component implements HasForms
                     ->numeric()
                     ->postfix("₽")
                     ->label("Цена"),
-                TextInput::make("sku")->label(
-                    "Артикул"
-                ),
+                TextInput::make("sku")
+                    ->required()
+                    ->label(
+                        "Артикул"
+                    ),
                 TextInput::make("count")
                     ->required()
                     ->numeric()
@@ -77,6 +91,7 @@ class Index extends Component implements HasForms
                     ->minItems(2)
                     ->maxItems(6)
                     ->label("Ключевые параметры")
+                    ->required()
                     ->simple(
                         Select::make(
                             "parametrs"
@@ -109,6 +124,7 @@ class Index extends Component implements HasForms
                     ->multiple()
                     ->preload()
                     ->label('Второстепенные параметры')
+                    ->required()
                     ->options(function () {
                         return ProductParamItem::query()
                             ->with("productParam")
@@ -130,18 +146,27 @@ class Index extends Component implements HasForms
     public function createVariation(): void
     {
 
+
         $parentProduct = Product::find($this->data['product_id']);
 
         if (!$parentProduct) return;
 
         // Check if the link already exists
         $linkExists = false;
+        $row = [];
+        $links_field = "";
+
+        foreach($this->data['row'] as $key => $rowItem) {
+            $row[] = intval($this->data['row']["$key"]['parametrs']);
+            $links_field .= intval($this->data['row']["$key"]['parametrs']);
+        }
+
 
         // dd($parent_product->links);
         foreach ($parentProduct->links as $link) {
             if (
                 isset($link["row"]) &&
-                $link["row"] === $this->data['row']
+                $link["row"] === $row
             ) {
                 $linkExists = true;
                 break;
@@ -152,7 +177,7 @@ class Index extends Component implements HasForms
 
         if (!$linkExists) {
             $newLink = [
-                "row" => $this->data['row'],
+                "row" => $row,
             ];
             $links = $parentProduct->links;
             $links[] = $newLink;
@@ -165,12 +190,22 @@ class Index extends Component implements HasForms
         unset($this->data['row']);
 
         $this->data['gallery'][] = '/assets/placeholder.svg';
+        $this->data['is_constructable'] = true;
+        $this->data['rows'] = $this->added_rows;
+        $this->data['selected_width'] = $this->selectedWidth;
+        $this->data['selected_height'] = $this->selectedHeight;
+        $this->data['selected_desk_type'] = $this->selectedDeskType;
+        $this->data['selected_position'] = $this->selectedPosition;
+        $this->data['links'] = $links_field;
 
 
         $variation = ProductVariant::create($this->data);
 
+        $variation->paramItems()->sync($row);
+        $variation->parametrs()->sync($this->data['parametrs']);
 
-        Log::info(['Создана вариация в конструкторе', $variation]);
+
+        Log::info(['Создана вариация в конструкторе', $variation, $parentProduct]);
 
         $this->redirect(route('client.product_detail', $variation->slug));
     }
@@ -179,8 +214,8 @@ class Index extends Component implements HasForms
     public function render()
     {
         return view("livewire.constructor.index", [
-            'added_rows' => $this->addedRows,
-            'embeded' => false,
+            'added_rows' => $this->added_rows,
+            'embeded' => $this->embeded,
             'products' => Product::all(),
             'param_items' => ProductParamItem::all()
         ]);
