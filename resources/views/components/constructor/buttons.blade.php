@@ -59,11 +59,9 @@
                 <x-carbon-clean class="w-6 h-6" />
             </button>
             @if (auth()->user() && auth()->user()->hasRole('super_admin'))
-                <template x-if="100 - usedHeightPercent < 10">
-                    <button type="button" class="text-white bg-green-500 hover:bg-green-500/80 focus:ring-4 focus:outline-none focus:ring-green-500/50 font-medium rounded-lg text-sm px-2.5 py-2.5 text-center inline-flex items-center dark:hover:bg-green-500/80 dark:focus:ring-green-500/40" @click="openPanel">
-                        <x-carbon-save class="w-6 h-6" />
-                    </button>
-                </template>
+                <button type="button" class="text-white bg-green-500 hover:bg-green-500/80 focus:ring-4 focus:outline-none focus:ring-green-500/50 font-medium rounded-lg text-sm px-2.5 py-2.5 text-center inline-flex items-center dark:hover:bg-green-500/80 dark:focus:ring-green-500/40" @click="openPanel">
+                    <x-carbon-save class="w-6 h-6" />
+                </button>
             @endif
         </div>
     </div>

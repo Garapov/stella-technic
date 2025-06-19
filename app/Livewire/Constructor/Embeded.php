@@ -32,6 +32,7 @@ class Embeded extends Component
             $this->variation = ProductVariant::where('id', $this->variation_id)->first();
 
             if ($this->variation && $this->variation->is_constructable && $this->variation->constructor_type == 'deck' && $this->variation->rows) {
+                
                 $this->added_rows = $this->variation->rows;
 
                 

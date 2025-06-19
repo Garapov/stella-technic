@@ -190,6 +190,10 @@ export default ({
                 if (this.selectedPosition != 'on_floor') {
                     this.changeDescPosition(three, this.selectedPosition, '');
                 }
+
+                if (this.selectedWidth == 'slim' && this.selectedHeight == 'low' && this.selectedDeskType == 'Односторонняя' && this.selectedPosition == 'on_floor') {
+                    this.rebuildRows();
+                }
                 // if (!this.embeded) {
                 //     this.rebuildRows();
                 // }
