@@ -167,6 +167,7 @@
                                         @foreach ($paginated_products as $variant)
                                             @livewire('general.product-variant', [
                                                 'variant' => $variant,
+                                                'category' => $category ?? null,
                                             ], key('variant_' . $variant->id))
                                         @endforeach
 

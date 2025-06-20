@@ -16,6 +16,7 @@ use Datlechin\FilamentMenuBuilder\Concerns\HasMenuPanel;
 use Datlechin\FilamentMenuBuilder\Contracts\MenuPanelable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
+use Illuminate\Support\Facades\Log;
 
 class ProductCategory extends Model implements Searchable,MenuPanelable
 {
@@ -53,6 +54,24 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
         return SlugOptions::create()
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug');
+    }
+
+    public function urlChain()
+    {
+        $urlChain = [$this->slug];
+
+        $currentCategory = $this;
+
+        while ($currentCategory->parent_id && $currentCategory->parent_id != '-1') {
+            
+            $parentCategory = ProductCategory::find($currentCategory->parent_id);
+            Log::info(['parentCategory', $parentCategory]);
+            $currentCategory = $parentCategory;
+            array_unshift($urlChain, $currentCategory->slug);
+        }
+
+
+        return join('/', $urlChain);
     }
 
     public function paramItems(): BelongsToMany

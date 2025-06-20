@@ -28,8 +28,11 @@
             <form class="flex flex-col gap-4" wire:submit.prevent="save">
                 <div class="flex gap-4 justify-between">
                     <div class="flex items-center gap-4">
-                        <img class="h-20 w-20" src="{{ Storage::disk(config('filesystems.default'))->url($variation->gallery[0]) }}" alt="imac image" />
-
+                        @if ($variation->gallery && count($variation->gallery) > 0)
+                            <img class="h-20 w-20" src="{{ Storage::disk(config('filesystems.default'))->url($variation->gallery[0]) }}" alt="imac image" />
+                        @else
+                            <img src="{{ asset('assets/placeholder.svg') }}" alt="Product1" class="h-20 w-20"  />
+                        @endif
                         <div class="shrink">
                             <div class="text-base font-medium text-gray-900 dark:text-white">{{ $variation->name }}</div>
                             <div class="flex items-center justify-between">

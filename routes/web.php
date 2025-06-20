@@ -23,11 +23,12 @@ Route::prefix("/")
         Route::view("/catalog/popular", "client.popular_products")->name(
             "catalog.popular"
         );
-        Route::view("/catalog/{slug}", "client.catalog")->name("catalog");
         Route::view(
-            "/catalog/products/{product_slug}",
+            "/catalog/products/{path}/{product_slug}",
             "client.product_detail"
-        )->name("product_detail");
+        )->name("product_detail")->where(['path' => '.*', 'product_slug' => '.*']);
+
+        Route::view("/catalog/{path}", "client.catalog")->name("catalog")->where('path', '.*');
 
         Route::view("/cart", "client.cart")->name("cart");
         Route::view("/checkout", "client.checkout")->name("checkout");

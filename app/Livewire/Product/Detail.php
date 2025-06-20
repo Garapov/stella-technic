@@ -16,13 +16,15 @@ class Detail extends Component
     public $product;
     public $variation;
     public $groupedParams;
+    public $path;
     public $files = [];
 
-    public function mount($slug)
+    public function mount($slug, $path = null)
     {
+        $this->path = $path;
         // $this->variation = ProductVariant::where("slug", $slug)->first();
 
-        $this->variation = Cache::get($slug, ProductVariant::where("slug", $slug)->first());
+        $this->variation = ProductVariant::where("slug", $slug)->first();
 
         if (!$this->variation) abort(404);
         // dd($this->variation->links);

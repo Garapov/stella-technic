@@ -138,7 +138,7 @@ class Breadcrumbs extends Component
                     $breadcrumbs[] = [
                         "title" => $category->title,
                         "url" => route("client.catalog", [
-                            "slug" => $category->slug,
+                            "path" => $category->urlChain(),
                         ]),
                         "active" => false,
                     ];

@@ -30,13 +30,15 @@ class Items extends Component
     public $type = "category";
 
     public function mount(
-        $slug = null,
+        $path = null,
         $brand_slug = null,
         $products = null,
         $display_filter = false
     ) {
         $this->display_filter = $display_filter;
-        if ($slug) {
+        if ($path) {
+            $slugs = explode('/', $path);
+            $slug = end($slugs);
             $this->category = ProductCategory::where("slug", $slug)->first();
             $this->product_ids = $this->category->products->pluck("id");
             $this->type = "category";

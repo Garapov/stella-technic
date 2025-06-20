@@ -11,13 +11,13 @@
                 {{ $count . ' ' . ($count % 10 === 1 && $count % 100 !== 11 ? 'товар' : ($count % 10 >= 2 && $count % 10 <= 4 && ($count % 100 < 10 || $count % 100 >= 20) ? 'товара' : 'товаров')) }}
             </span>
         @endif
-        <a href="{{ route('client.catalog', $category->slug) }}" wire:navigate class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white hover:text-blue-600">{{ $category->title }}</a>
+        <a href="{{ route('client.catalog', $category->urlChain()) }}" wire:navigate class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white hover:text-blue-600">{{ $category->title }}</a>
         @if ($category->categories)
             <ul class="flex flex-col gap-0.5">
                 @foreach ($category->categories as $subcategory)
                     @if ($subcategory->variationsCount() > 0)
                          <li>
-                            <a href="{{ route('client.catalog', $subcategory->slug) }}" wire:navigate class="text-gray-500 hover:text-gray-900 dark:hover:text-white text-xs flex items-center gap-2">
+                            <a href="{{ route('client.catalog', $subcategory->urlChain()) }}" wire:navigate class="text-gray-500 hover:text-gray-900 dark:hover:text-white text-xs flex items-center gap-2">
                                 {{ $subcategory->title }}
                                 @if ($show_counts)<span class="bg-blue-100 text-blue-800 text-sm font-medium px-1.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300 text-xs">{{ $subcategory->variationsCount() }}</span>@endif
                             </a>
