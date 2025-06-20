@@ -158,7 +158,7 @@
                                         <div class="flex flex-wrap gap-4 mt-2 @if (count($activeParamName) < 1) hidden @endif">
                                             @foreach($paramGroup['values'] as $value)
                                                 @if($paramGroup['name'] === 'Цвет')
-                                                    <a href="{{ route('client.product_detail', [$path, $variation->product->variants->where('id', $value['variant_id'])->first()->slug]) }}" wire:navigate
+                                                    <a href="{{ route('client.catalog', $variation->product->variants->where('id', $value['variant_id'])->first()->urlChain()) }}" wire:navigate
                                                         @class([
                                                             'relative flex items-center gap-2 border rounded-full',
                                                             'border-blue-600' => $value['is_current'],
@@ -182,7 +182,7 @@
                                                         </div>
                                                     </a>
                                                 @else
-                                                    <a href="{{ route('client.product_detail', [$path, $variation->product->variants->where('id', $value['variant_id'])->first()->slug]) }}"
+                                                    <a href="{{ route('client.catalog', $variation->product->variants->where('id', $value['variant_id'])->first()->urlChain()) }}"
                                                         @class([
                                                             'px-2 py-2 border text-sm flex items-center justify-center shrink-0 text-xs rounded-xl dark:text-white',
                                                             'bg-blue-50 border-blue-50' => $value['is_current'],

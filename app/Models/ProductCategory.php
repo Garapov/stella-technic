@@ -82,7 +82,7 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
 
     public function getSearchResult(): SearchResult
      {
-        $url = route('client.product_detail', $this->slug);
+        $url = route('client.catalog', $this->urlChain());
 
         // dd($this);
         $searchResult = new \Spatie\Searchable\SearchResult(

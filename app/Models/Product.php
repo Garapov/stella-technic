@@ -18,12 +18,11 @@ use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 use Illuminate\Support\Str;
 
-class Product extends Model implements Searchable
+class Product extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductFactory> */
     use HasFactory, HasSlug, SoftDeletes;
 
-    public $searchableType = "Товары";
 
     protected $fillable = [
         "name",
@@ -49,19 +48,6 @@ class Product extends Model implements Searchable
 
     protected $with = ["paramItems", "categories", "variants"];
 
-    public function getSearchResult(): SearchResult
-    {
-        $url = route("client.product_detail", $this->slug);
-
-        // dd($this);
-        $searchResult = new \Spatie\Searchable\SearchResult(
-            $this,
-            $this->name,
-            $url
-        );
-
-        return $searchResult;
-    }
 
     /**
      * Get the options for generating the slug.

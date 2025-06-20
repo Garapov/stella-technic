@@ -251,7 +251,7 @@
                                                         @foreach($batch as $item)
                                                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                                                                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                                    <a href="{{ route('client.product_detail', $item->slug) }}" class="flex items-center gap-2 text-blue-500" wire:navigate>
+                                                                    <a href="{{ route('client.catalog', $item->urlChain()) }}" class="flex items-center gap-2 text-blue-500" wire:navigate>
                                                                         {{ $item->sku }}
                                                                         <x-carbon-link class="w-4 h-4" />
                                                                     </a>

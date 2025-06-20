@@ -21,7 +21,7 @@
             <ul class="flex flex-col gap-4 pr-2 max-h-[60vh] overflow-y-auto">
                 @foreach ($categories as $category)
                     <li>
-                        <a href="{{ route('client.catalog', $category->urlChain()) }}" wire:navigate class="flex flex-center justify-between gap-2 text-gray-600" :class="{ 'text-red-700': selectedCategory == {{ $category->id }}}" @mouseover="changeSelectedCategory({{ $category->id }})">
+                        <a href="{{ route('client.catalog', ['path' => $category->urlChain()]) }}" wire:navigate class="flex flex-center justify-between gap-2 text-gray-600" :class="{ 'text-red-700': selectedCategory == {{ $category->id }}}" @mouseover="changeSelectedCategory({{ $category->id }})">
                             <div class="flex items-center gap-2">
                                 <div class="min-w-8 max-w-8">
                                     <img src="{{ Storage::disk(config('filesystems.default'))->url($category->image) }}">

@@ -20,7 +20,7 @@
                 <ul>
                     @foreach($results['products'] as $product)
                         <li>
-                            <a href="{{ route('client.product_detail', $product->slug) }}" wire:navigate>{{ $product->name }}</a>
+                            <a href="{{ route('client.catalog', $product->urlChain()) }}" wire:navigate>{{ $product->name }}</a>
                         </li>
                     @endforeach
                 </ul>

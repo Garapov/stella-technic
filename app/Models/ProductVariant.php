@@ -75,6 +75,25 @@ class ProductVariant extends Model
             ->doNotGenerateSlugsOnUpdate();
     }
 
+    public function urlChain()
+    {
+        $urlChain = [];
+
+        $currentCategory = $this->product->categories->last();
+
+        while ($currentCategory->parent_id && $currentCategory->parent_id != '-1') {
+            
+            $parentCategory = ProductCategory::find($currentCategory->parent_id);
+            $currentCategory = $parentCategory;
+            array_unshift($urlChain, $currentCategory->slug);
+        }
+
+        $urlChain[] = $this->slug;
+
+
+        return join('/', $urlChain);
+    }
+
     /**
      * Get the route key for the model.
      */

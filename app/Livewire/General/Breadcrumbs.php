@@ -86,7 +86,7 @@ class Breadcrumbs extends Component
                         $breadcrumbs[] = [
                             "title" => $parent->title,
                             "url" => route("client.catalog", [
-                                "slug" => $parent->slug,
+                                "path" => $parent->slug,
                             ]),
                             "active" => false,
                         ];
@@ -99,57 +99,6 @@ class Breadcrumbs extends Component
                         "active" => true,
                     ];
                 }
-            }
-        } elseif ($currentRoute->getName() === "client.product_detail") {
-            $breadcrumbs[] = [
-                "title" => "Каталог",
-                "url" => route("client.catalog.all"),
-                "active" => false,
-            ];
-
-            // Получаем текущий продукт
-            $productSlug = $currentRoute->parameter("product_slug");
-            $product = ProductVariant::where("slug", $productSlug)->first();
-
-            if ($product) {
-                // Добавляем первую категорию продукта
-                $category = $product->product->categories->first();
-                if ($category) {
-                    // Добавляем родительские категории
-                    $parents = collect([]);
-                    $parent = $category->parent;
-                    while ($parent) {
-                        $parents->push($parent);
-                        $parent = $parent->parent;
-                    }
-
-                    // Добавляем родительские категории в обратном порядке
-                    foreach ($parents->reverse() as $parent) {
-                        $breadcrumbs[] = [
-                            "title" => $parent->title,
-                            "url" => route("client.catalog", [
-                                "slug" => $parent->slug,
-                            ]),
-                            "active" => false,
-                        ];
-                    }
-
-                    // Добавляем категорию продукта
-                    $breadcrumbs[] = [
-                        "title" => $category->title,
-                        "url" => route("client.catalog", [
-                            "path" => $category->urlChain(),
-                        ]),
-                        "active" => false,
-                    ];
-                }
-
-                // Добавляем название продукта
-                $breadcrumbs[] = [
-                    "title" => $product->sku,
-                    "url" => null,
-                    "active" => true,
-                ];
             }
         } elseif ($currentRoute->getName() === "client.cart") {
             $breadcrumbs[] = [

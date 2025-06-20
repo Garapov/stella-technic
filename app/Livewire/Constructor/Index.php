@@ -207,7 +207,7 @@ class Index extends Component implements HasForms
 
         Log::info(['Создана вариация в конструкторе', $variation, $parentProduct]);
 
-        $this->redirect(route('client.product_detail', $variation->slug));
+        $this->redirect(route('client.catalog', $variation->urlChain()));
     }
     
 

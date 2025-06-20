@@ -5,7 +5,7 @@
     @php
         $category = $category ?? $variant->product->categories->last();
     @endphp
-        <a class="block aspect-[1/1] relative" href="{{ route('client.product_detail', [$category->urlChain(), $variant->slug]) }}" wire:navigate @mouseleave="imageIdToDisplay = 0">
+        <a class="block aspect-[1/1] relative" href="{{ route('client.catalog', $variant->urlChain()) }}" wire:navigate @mouseleave="imageIdToDisplay = 0">
             @if($variant->gallery)
                 @foreach($variant->gallery as $key => $image)
                     <img class="absolute top-0 left-0 mx-auto h-full w-full object-cover" src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" x-show="imageIdToDisplay === {{ $key }}" :loading="imageIdToDisplay === {{ $key }} ? 'eager' : 'lazy'" />
@@ -38,7 +38,7 @@
                 @endif
             </div>
 
-            <a href="{{ route('client.product_detail', [$category->urlChain(), $variant->slug]) }}"
+            <a href="{{ route('client.catalog', $variant->urlChain()) }}"
                 class="text-md font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate>
                 {{ $variant->name }} @if ($variant->product->brand) {{ $variant->product->brand->name }} @endif ({{ $variant->sku }})
             </a>
