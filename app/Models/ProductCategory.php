@@ -110,7 +110,7 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
 
     public function getMenuPanelUrlUsing(): callable
     {
-        return fn (self $model) => route('client.catalog', $model->slug);
+        return fn (self $model) => route('client.catalog', $model->urlChain());
     }
 
     public function getMenuPanelName(): string

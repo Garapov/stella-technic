@@ -5,7 +5,6 @@ use Filament\Actions\Imports\Http\Controllers\DownloadImportFailureCsv;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
-use \App\Services\CatalogRouter;
 
 Route::prefix("/")
     ->name("client.")
@@ -27,7 +26,7 @@ Route::prefix("/")
         );
 
         Route::get('/catalog/{path}', function ($path) {
-            return app(CatalogRouter::class)->resolve($path);
+            return app(\App\Services\CatalogRouter::class)->resolve($path);
         })->where('path', '.*')->name('catalog');
 
         Route::view("/cart", "client.cart")->name("cart");

@@ -4,8 +4,6 @@ namespace App\Services;
 
 use App\Models\ProductCategory;
 use App\Models\ProductVariant;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ProductController;
 
 class CatalogRouter
 {
