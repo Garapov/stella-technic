@@ -12,4 +12,8 @@
     @livewire('main.customers')
     @livewire('main.news')
     @livewire('general.contacts')
+
+    <x-floating-control-panel>
+        <livewire:general.panel.clear-page-cache-button />
+    </x-floating-control-panel>
 </x-guest-layout>

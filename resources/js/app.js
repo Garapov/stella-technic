@@ -4,6 +4,7 @@ import Splide from "@splidejs/splide";
 import { Fancybox } from "@fancyapps/ui";
 import mask from "@alpinejs/mask";
 import rangeSlider from "range-slider-input";
+import Toastify from "toastify-js";
 // import sort from '@alpinejs/sort'
 // import persist from '@alpinejs/persist';
 
@@ -23,6 +24,7 @@ window.glide = Glide;
 window.splide = Splide;
 window.fancybox = Fancybox;
 window.rangeSlider = rangeSlider;
+window.toastify = Toastify;
 
 // window.Alpine = Alpine;
 
@@ -97,7 +99,25 @@ document.addEventListener("init-map", (data) => {
     }
 });
 
+
+document.addEventListener("cache-cleared", (data) => {
+    Toastify({
+        text: `Кеш страницы очищен`,
+        duration: 3000,
+        close: true,
+        gravity: "bottom",
+        position: "right",
+        stopOnFocus: true,
+        style: {
+            background:
+                "linear-gradient(to right, #00b09b,rgb(94, 35, 117))",
+        },
+        onClick: function () {},
+    }).showToast();
+});
+
 Alpine.plugin(mask);
+// Alpine.plugin(uI);
 // Alpine.plugin(sort)
 
 // Alpine.start();

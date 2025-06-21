@@ -5,5 +5,7 @@
             @livewire('product.detail', ['slug' => $product_slug, 'path' => $path], key($product_slug . $path))
         </div>
     </section>
-
+    <x-floating-control-panel>
+        <livewire:general.panel.clear-page-cache-button />
+    </x-floating-control-panel>
 </x-guest-layout>
