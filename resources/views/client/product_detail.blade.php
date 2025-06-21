@@ -7,5 +7,9 @@
     </section>
     <x-floating-control-panel>
         <livewire:general.panel.clear-page-cache-button />
+
+        @if ($product_slug)
+            <livewire:general.panel.edit-resource-button link="{{ \App\Filament\Resources\ProductVariantResource::getUrl('edit', ['record' => $product_slug ]) }}" title="Редактировать товар" />
+        @endif
     </x-floating-control-panel>
 </x-guest-layout>

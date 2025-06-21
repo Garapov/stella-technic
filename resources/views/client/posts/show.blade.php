@@ -29,4 +29,12 @@
             <x-filament-fabricator::page-blocks :blocks="$post->content" />
         </div>
       </main>
+
+      <x-floating-control-panel>
+        <livewire:general.panel.clear-page-cache-button />
+
+        @if ($slug)
+            <livewire:general.panel.edit-resource-button link="{{ \App\Filament\Resources\PostResource::getUrl('edit', ['record' => $slug ]) }}" title="Редактировать новость" />
+        @endif
+    </x-floating-control-panel>
 </x-guest-layout>
