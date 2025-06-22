@@ -65,7 +65,7 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
         while ($currentCategory->parent_id && $currentCategory->parent_id != '-1') {
             
             $parentCategory = ProductCategory::find($currentCategory->parent_id);
-            Log::info(['parentCategory', $parentCategory]);
+            // Log::info(['parentCategory', $parentCategory]);
             $currentCategory = $parentCategory;
             array_unshift($urlChain, $currentCategory->slug);
         }

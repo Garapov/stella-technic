@@ -99,18 +99,15 @@ class ProductVariantExporter extends Exporter
                     $gallery = "";
                     if ($record->gallery) {
                         foreach ($record->gallery as $key => $image) {
-                            Log::info($image);
 
                             $url = Storage::disk(config('filesystems.default'))->url($image);
 
                             // Log::info(['url', $url]);
                             $delimeter = $key == (count($record->gallery) - 1) ? '' : ',';
 
-                            Log::info(['delimeter3', $key, count($record->gallery), $delimeter]);
 
                             $gallery .= $url . $delimeter;
 
-                            Log::info(['gallery', $gallery]);
                         }
                     }
                     return $gallery;

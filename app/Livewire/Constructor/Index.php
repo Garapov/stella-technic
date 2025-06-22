@@ -205,7 +205,6 @@ class Index extends Component implements HasForms
         $variation->parametrs()->sync($this->data['parametrs']);
 
 
-        Log::info(['Создана вариация в конструкторе', $variation, $parentProduct]);
 
         $this->redirect(route('client.catalog', $variation->urlChain()));
     }
