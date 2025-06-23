@@ -1,6 +1,4 @@
 <x-guest-layout>
-
-
     @livewire('main.slider')
     @livewire('main.features')
     @livewire('main.brands')

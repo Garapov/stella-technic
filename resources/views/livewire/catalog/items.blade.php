@@ -39,7 +39,7 @@
                     @seo(['image' => Storage::disk(config('filesystems.default'))->url($category->image)])
                 @endif
                 <div class="mb-5">
-                    @livewire('general.breadcrumbs')
+                    {{ Breadcrumbs::render('category', $category) }}
                 </div>
                 @if ($category->categories)
                     <div class="grid grid-cols-8 gap-4 mb-4">

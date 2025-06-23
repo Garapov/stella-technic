@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Filament\Actions\Imports\Http\Controllers\DownloadImportFailureCsv;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Z3d0X\FilamentFabricator\Facades\FilamentFabricator;
+use Z3d0X\FilamentFabricator\Http\Controllers\PageController;
 
 
 Route::prefix("/")
@@ -96,6 +98,18 @@ Route::middleware("auth")->group(function () {
     //     DownloadImportFailureCsv::class
     // )->name("filament.imports.failed-rows.download");
 });
+
+
+if (!config('filament-fabricator.routing.enabled')) {
+    Route::middleware(config('filament-fabricator.middleware') ?? [])
+        ->prefix(FilamentFabricator::getRoutingPrefix())
+        ->group(function () {
+            Route::get('/{filamentFabricatorPage?}', PageController::class)
+                ->where('filamentFabricatorPage', '.*')
+                ->fallback()
+                ->name('filament-fabricator.page.show');
+        });
+}
 
 Route::middleware("auth")->group(function () {
     Route::view("/profile/orders", "orders.index")->name("orders.index");
