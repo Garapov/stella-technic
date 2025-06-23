@@ -21,16 +21,20 @@ class UpdateCategoriesSeo extends Command
 
     public function handle()
     {
+        $this->newLine(1);
         $this->info('Starting SEO update for categories...');
-        
+        $this->newLine(1);
         $delay = (int) $this->option('delay');
         $categories = ProductCategory::all();
 
         $bar = $this->output->createProgressBar($categories->count());
+        $bar->setFormat("%percent:3s%% [%bar%] %current% из %max% %message%");
         $bar->start();
 
         foreach ($categories as $category) {
             $title = $category->title;
+
+            $bar->setMessage("\n\nОбрабатывается: {$category->title}\n");
 
             // Обновляем SEO
             $this->seoUpdater->updateCategory($title);
@@ -41,6 +45,8 @@ class UpdateCategoriesSeo extends Command
             // Пауза между запросами
             usleep($delay * 1000); // milliseconds → microseconds
         }
+
+        $bar->setMessage("\n\nВсе категории успешно обновлены.");
 
         $bar->finish();
         $this->newLine(2);
