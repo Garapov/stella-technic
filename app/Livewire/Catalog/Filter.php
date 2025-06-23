@@ -143,6 +143,9 @@ class Filter extends Component
             ->all(); // Преобразуем в массив
     }
 
+
+    // TODO нужно проверить фильтрацию по второстепенным параметрам
+
     protected function initializeParameters()
     {
         $this->parameters = $this->products
