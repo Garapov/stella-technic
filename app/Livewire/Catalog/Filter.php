@@ -149,7 +149,7 @@ class Filter extends Component
             ->flatMap(function ($product) {
                 // Объединяем paramItems и parameters в одну коллекцию
                 return collect($product->paramItems ?? [])->merge(
-                    $product->parameters ?? []
+                    $product->parametrs ?? []
                 );
             })
             ->filter(function ($paramItem) {
