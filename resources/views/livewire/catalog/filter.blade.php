@@ -45,14 +45,24 @@
                 <h6 class="text-md font-medium mb-3 dark:text-white">
                     {{ $paramName }}
                 </h6>
+
                 @if ($params->first()['type'] == 'color')
                     <ul class="flex flex-wrap gap-2" aria-labelledby="dropdownDefault">
                         @foreach($params as $colorItemId => $color)
                             @php
                                 $colors = explode('|', $color['value']);
                             @endphp
-                            <label class="relative w-8 h-8 rounded-full border @if(in_array($colorItemId, $selectedParams)) border-blue-800 border-4 @else border-gray-300 @endif overflow-hidden">
-                                <input type="checkbox" id="param_{{ $colorItemId }}" wire:model.live="selectedParams" value="{{ $colorItemId }}" class="hidden" />
+                            <label class="relative w-8 h-8 rounded-full border 
+                                @if(isset($selectedParams[$colorItemId])) border-blue-800 border-4 
+                                @else border-gray-300 
+                                @endif overflow-hidden">
+                                <input
+                                    type="checkbox"
+                                    id="param_{{ $colorItemId }}"
+                                    class="hidden"
+                                    wire:click="toggleParam({{ $colorItemId }}, '{{ $color['source'] }}')"
+                                    @if(isset($selectedParams[$colorItemId])) checked @endif
+                                />
                                 @if(count($colors) > 1)
                                     <div class="absolute inset-0">
                                         <div class="h-full w-1/2 float-left" style="background-color: {{ trim($colors[0]) }}"></div>
@@ -65,37 +75,36 @@
                         @endforeach
                     </ul>
                 @else
-                    <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault" x-data="{
-                        showAll: false,
-                    }">
-                        @php
-                            $counter = 0;
-                        @endphp
-                        @foreach($params as $paramItemId => $paramData)
-                            <li class="flex items-center" @if($counter > 4 && !in_array($paramItemId, $selectedParams)) x-show="showAll" @endif>
-                                <input type="checkbox" id="param_{{ $paramItemId }}" wire:model.live="selectedParams" value="{{ $paramItemId }}"
-                                class="w-5 h-5 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+                    <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault" x-data="{ showAll: false }">
+                        @php $counter = 0; @endphp
 
+                        @foreach($params as $paramItemId => $paramData)
+                            <li class="flex items-center"
+                                @if($counter > 4 && !isset($selectedParams[$paramItemId])) x-show="showAll" @endif>
+                                <input
+                                    type="checkbox"
+                                    id="param_{{ $paramItemId }}"
+                                    class="w-5 h-5 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                                    wire:click="toggleParam({{ $paramItemId }}, '{{ $paramData['source'] }}')"
+                                    @if(isset($selectedParams[$paramItemId])) checked @endif
+                                />
                                 <label for="param_{{ $paramItemId }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                                {{ $paramData['title'] }}
+                                    {{ $paramData['title'] }}
                                 </label>
                             </li>
-                            @php
-                                $counter++;
-                            @endphp
+                            @php $counter++; @endphp
                         @endforeach
+
                         @if (count($params) > 5)
                             <li @click="showAll = !showAll" class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline">
                                 Показать <template x-if="!showAll"><span>больше</span></template><template x-if="showAll"><span>меньше</span></template>
                             </li>
                         @endif
-                        @php
-                            $counter = 0;
-                        @endphp
                     </ul>
                 @endif
             </div>
         @endforeach
+
         @if ($brands)
             <div>
                 <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">

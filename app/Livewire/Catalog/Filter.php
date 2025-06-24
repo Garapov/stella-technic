@@ -9,16 +9,20 @@ use Livewire\Attributes\Url;
 class Filter extends Component
 {
     public $products;
+
     #[Url]
     public $filters = [];
+
     public $availableFilters = [];
     public $parameters = [];
     public $brands = [];
     public $batches = [];
+
     public $priceRange = [0, 100000];
     public $startPriceRange = [0, 100000];
     public $priceRangeToDisplay = [0, 100000];
-    public $selectedParams = [];
+
+    public $selectedParams = []; // [paramItemId => 'paramItems' | 'parametrs']
     public $selectedBrands = [];
     public $selectedBatches = [];
 
@@ -28,69 +32,79 @@ class Filter extends Component
 
         if (
             isset($this->filters["paramItems"]) &&
-            !empty($this->filters["paramItems"]) &&
-            $this->filters["paramItems"]['$related']
+            !empty($this->filters["paramItems"]['$related'])
         ) {
-            $this->selectedParams = $this->filters["paramItems"]['$related'];
+            foreach ($this->filters["paramItems"]['$related'] as $id) {
+                $this->selectedParams[$id] = 'paramItems';
+            }
+        }
+
+        if (
+            isset($this->filters["parametrs"]) &&
+            !empty($this->filters["parametrs"]['$related'])
+        ) {
+            foreach ($this->filters["parametrs"]['$related'] as $id) {
+                $this->selectedParams[$id] = 'parametrs';
+            }
         }
 
         $this->calculatePriceRangeOnMount();
-
-        $this->dispatch("filters-changed", filters: $this->filters);
-
         $this->initializeBrands();
         $this->initializeParameters();
-        // $this->initializeBatches();
+
+        $this->dispatch("filters-changed", filters: $this->filters);
     }
 
     public function updatedSelectedBatches()
     {
-        // dd($this->selectedBatches);
-
-        if (
-            empty($this->selectedBatches) &&
-            isset($this->filters["batch_id"])
-        ) {
+        if (empty($this->selectedBatches)) {
             unset($this->filters["batch_id"]);
         } else {
-            $this->filters = array_merge($this->filters, [
-                "batch_id" => [
-                    '$in' => $this->selectedBatches,
-                ],
-            ]);
+            $this->filters["batch_id"] = [
+                '$in' => $this->selectedBatches,
+            ];
         }
         $this->dispatch("filters-changed", filters: $this->filters);
     }
 
     public function updatedSelectedBrands()
     {
-        // dd($this->selectedBrands);
-        if (
-            empty($this->selectedBrands) &&
-            isset($this->filters['$hasbrand'])
-        ) {
-            unset($this->filters['$hasbrand']);
+        if (empty($this->selectedBrands)) {
+            unset($this->filters["$hasbrand"]);
         } else {
-            $this->filters = array_merge($this->filters, [
-                '$hasbrand' => $this->selectedBrands,
-            ]);
+            $this->filters["$hasbrand"] = $this->selectedBrands;
         }
         $this->dispatch("filters-changed", filters: $this->filters);
     }
+
     public function updatedSelectedParams()
     {
-        if (
-            empty($this->selectedParams) &&
-            isset($this->filters["paramItems"])
-        ) {
-            unset($this->filters["paramItems"]);
-        } else {
-            $this->filters = array_merge($this->filters, [
-                "paramItems" => ['$related' => $this->selectedParams],
-            ]);
+        $primary = [];
+        $secondary = [];
+
+        foreach ($this->selectedParams as $id => $source) {
+            if ($source === 'paramItems') {
+                $primary[] = (int) $id;
+            } elseif ($source === 'parametrs') {
+                $secondary[] = (int) $id;
+            }
         }
+
+        if (!empty($primary)) {
+            $this->filters['paramItems'] = ['$related' => $primary];
+        } else {
+            unset($this->filters['paramItems']);
+        }
+
+        if (!empty($secondary)) {
+            $this->filters['parametrs'] = ['$related' => $secondary];
+        } else {
+            unset($this->filters['parametrs']);
+        }
+
         $this->dispatch("filters-changed", filters: $this->filters);
     }
+
     public function updatedPriceRange()
     {
         $this->filters["price"]['$between'] = $this->priceRange;
@@ -99,10 +113,7 @@ class Filter extends Component
 
     public function calculatePriceRangeOnMount()
     {
-        if (
-            isset($this->filters["price"]) &&
-            $this->filters["price"]['$between']
-        ) {
+        if (isset($this->filters["price"]['$between'])) {
             $this->startPriceRange = $this->priceRangeToDisplay =
                 $this->filters["price"]['$between'];
         } else {
@@ -111,6 +122,7 @@ class Filter extends Component
                 $this->products->max("price"),
             ];
         }
+
         $this->priceRange = [
             $this->products->min("price"),
             $this->products->max("price"),
@@ -120,71 +132,70 @@ class Filter extends Component
     protected function initializeBrands()
     {
         $this->brands = $this->products
-            ->map(function ($product) {
-                // Получаем связанный product и его brand
-                return $product->product->brand ?? null;
-            })
-            ->filter() // Удаляем null значения
-            ->unique("id") // Оставляем только уникальные бренды по id
-            ->values() // Переиндексируем коллекцию
-            ->all(); // Преобразуем в массив
+            ->map(fn($product) => $product->product->brand ?? null)
+            ->filter()
+            ->unique("id")
+            ->values()
+            ->all();
     }
 
     protected function initializeBatches()
     {
         $this->batches = $this->products
-            ->map(function ($product) {
-                // Получаем связанный product и его brand
-                return $product->batch ?? null;
-            })
-            ->filter() // Удаляем null значения
-            ->unique("id") // Оставляем только уникальные бренды по id
-            ->values() // Переиндексируем коллекцию
-            ->all(); // Преобразуем в массив
+            ->map(fn($product) => $product->batch ?? null)
+            ->filter()
+            ->unique("id")
+            ->values()
+            ->all();
     }
-
-
-    // TODO нужно проверить фильтрацию по второстепенным параметрам
 
     protected function initializeParameters()
     {
-        $this->parameters = $this->products
-            ->flatMap(function ($product) {
-                // Объединяем paramItems и parameters в одну коллекцию
-                return collect($product->paramItems ?? [])->merge(
-                    $product->parametrs ?? []
-                );
-            })
-            ->filter(function ($paramItem) {
-                // Сначала проверяем существование productParam
-                if (!$paramItem || !$paramItem->productParam) {
-                    return false;
-                }
-                // Затем проверяем allow_filtering
-                return $paramItem->productParam->allow_filtering &&
-                    $paramItem->productParam->name;
-            })
-            ->groupBy(function ($paramItem) {
-                return $paramItem->productParam->name;
-            })
-            ->map(function ($items) {
-                return $items->unique("id")->mapWithKeys(function ($item) {
-                    return [
-                        $item->id => [
-                            "title" => $item->title ?? "",
-                            "value" => $item->value ?? "",
-                            "param_id" => $item->product_param_id,
-                            "type" => $item->productParam->type ?? "default",
-                        ],
-                    ];
-                });
+        $allParams = collect();
+
+        $primaryParams = $this->products->flatMap(fn($product) => $product->paramItems ?? []);
+        $secondaryParams = $this->products->flatMap(fn($product) => $product->parametrs ?? []);
+
+        $mergedParams = $primaryParams
+            ->merge($secondaryParams)
+            ->filter(fn($paramItem) =>
+                $paramItem &&
+                $paramItem->productParam &&
+                $paramItem->productParam->allow_filtering &&
+                $paramItem->productParam->name
+            )
+            ->map(function ($item) use ($primaryParams) {
+                return [
+                    'id' => $item->id,
+                    'title' => $item->title ?? '',
+                    'value' => $item->value ?? '',
+                    'param_id' => $item->product_param_id,
+                    'type' => $item->productParam->type ?? 'default',
+                    'group' => $item->productParam->name,
+                    'source' => $primaryParams->contains($item) ? 'paramItems' : 'parametrs',
+                ];
             });
+
+        $this->parameters = $mergedParams->groupBy('group')->map(fn($items) =>
+            $items->keyBy('id')
+        );
     }
 
     public function render()
     {
         return view("livewire.catalog.filter");
     }
+
+    public function toggleParam($id, $source)
+    {
+        if (isset($this->selectedParams[$id])) {
+            unset($this->selectedParams[$id]);
+        } else {
+            $this->selectedParams[$id] = $source;
+        }
+
+        $this->updatedSelectedParams(); // вручную вызываем фильтрацию
+}
 
     public function updatedFilters()
     {
@@ -197,10 +208,12 @@ class Filter extends Component
         $this->selectedParams = [];
         $this->selectedBrands = [];
         $this->selectedBatches = [];
+
         $this->startPriceRange = $this->priceRangeToDisplay = [
             $this->products->min("price"),
             $this->products->max("price"),
         ];
+
         $this->dispatch("filters-changed", filters: $this->filters);
     }
 }
