@@ -140,28 +140,7 @@ class ProductVariantResource extends Resource
                                             $paramName = $item->productParam
                                                 ? $item->productParam->name
                                                 : "Unknown";
-                                            $name = "$paramName: $item->title";
-                                            return [$item->id => $name];
-                                        });
-                                })
-                                ->columnSpanFull(),
-                        ])
-                        ->columnSpan("full"),
-                    Tab::make("Параметры 2")
-                        ->schema([
-                            Forms\Components\Select::make("paramItems")
-                                ->multiple()
-                                ->relationship("paramItems", "title")
-                                ->preload()
-                                ->options(function () {
-                                    return ProductParamItem::query()
-                                        ->with("productParam")
-                                        ->get()
-                                        ->mapWithKeys(function ($item) {
-                                            $paramName = $item->productParam
-                                                ? $item->productParam->name
-                                                : "Unknown";
-                                            $name = "$paramName: $item->title";
+                                            $name = "$paramName: $item->title ($item->value)";
                                             return [$item->id => $name];
                                         });
                                 })
