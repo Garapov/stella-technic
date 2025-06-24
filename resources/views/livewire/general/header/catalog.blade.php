@@ -48,6 +48,9 @@
                                 @endif
                                 @livewire('general.category', [
                                     'category' => $subcategory,
+                                    'counts' => $variationCounts,
+                                    'minPrices' => $minPrices,
+                                    'allCategoryIds' => $allCategoryIds,
                                     'show_counts' => true,
                                     'show_price' => true,
                                     'transparent' => true

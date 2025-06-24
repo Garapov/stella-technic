@@ -1,6 +1,25 @@
 <x-guest-layout>
     @php
         $categories = \App\Models\ProductCategory::where('parent_id', -1)->get();
+
+        $allCategoryIds = \App\Models\ProductCategory::all()->pluck('id')->toArray();
+
+        // Получаем счётчики вариантов
+        $variationCounts = \App\Models\ProductVariant::selectRaw('count(*) as count, product_product_category.product_category_id')
+            ->join('products', 'products.id', '=', 'product_variants.product_id')
+            ->join('product_product_category', 'products.id', '=', 'product_product_category.product_id')
+            ->whereIn('product_product_category.product_category_id', $allCategoryIds)
+            ->groupBy('product_product_category.product_category_id')
+            ->pluck('count', 'product_product_category.product_category_id');
+
+
+        // Получаем минимальные цены
+        $minPrices = \App\Models\ProductVariant::selectRaw('MIN(COALESCE(product_variants.new_price, product_variants.price)) as min_price, product_product_category.product_category_id')
+            ->join('products', 'products.id', '=', 'product_variants.product_id')
+            ->join('product_product_category', 'products.id', '=', 'product_product_category.product_id')
+            ->whereIn('product_product_category.product_category_id', $allCategoryIds)
+            ->groupBy('product_product_category.product_category_id')
+            ->pluck('min_price', 'product_product_category.product_category_id');
     @endphp
 
     <section class="py-8 bg-white md:py-10 dark:bg-gray-900 antialiased">
@@ -22,6 +41,10 @@
                             @foreach ($categories as $category)
                                 @livewire('general.category', [
                                     'category' => $category,
+                                    'counts' => $variationCounts,
+                                    'minPrices' => $minPrices,
+                                    'show_counts' => true,
+                                    'show_price' => true
                                 ], key($category->id))
                             @endforeach
                         </div>

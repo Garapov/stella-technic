@@ -17,6 +17,7 @@ use Abbasudo\Purity\Traits\Sortable;
 use Filament\Support\Assets\Asset;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 
 class ProductVariant extends Model
 {
@@ -77,21 +78,23 @@ class ProductVariant extends Model
 
     public function urlChain()
     {
-        $urlChain = [];
+        return Cache::rememberForever("variation_{$this->id}_url_chain", function () {
+            $urlChain = [];
 
-        $currentCategory = $this->product->categories->last();
+            $currentCategory = $this->product->categories->last();
 
-        while ($currentCategory->parent_id && $currentCategory->parent_id != '-1') {
-            
-            $parentCategory = ProductCategory::find($currentCategory->parent_id);
-            $currentCategory = $parentCategory;
-            array_unshift($urlChain, $currentCategory->slug);
-        }
+            while ($currentCategory->parent_id && $currentCategory->parent_id != '-1') {
+                
+                $parentCategory = ProductCategory::find($currentCategory->parent_id);
+                $currentCategory = $parentCategory;
+                array_unshift($urlChain, $currentCategory->slug);
+            }
 
-        $urlChain[] = $this->slug;
+            $urlChain[] = $this->slug;
 
 
-        return join('/', $urlChain);
+            return join('/', $urlChain);
+        });
     }
 
     /**

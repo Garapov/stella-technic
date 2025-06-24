@@ -1,6 +1,11 @@
 <header>
 
-    @livewire('general.header.burger')
+    @livewire('general.header.burger', [
+        'categories' => $categories,
+        'variationCounts' => $variationCounts,
+        'minPrices' => $minPrices,
+        'allCategoryIds' => $allCategoryIds,
+    ])
 
 
     <div class="lg:bg-white bg-slate-50 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 relative z-30 lg:block hidden">
@@ -71,6 +76,9 @@
             @if (count($categories) > 0)
                 @livewire('general.header.catalog', [
                     'categories' => $categories,
+                    'variationCounts' => $variationCounts,
+                    'minPrices' => $minPrices,
+                    'allCategoryIds' => $allCategoryIds,
                 ])
             @endif
 

@@ -21,11 +21,15 @@
 
                 <div class="grid lg:grid-cols-4 grid-cols-1 gap-4 mt-10">
                     @foreach ($categories as $category)
-                        @if ($category->variationsCount() < 1)
+                        @if (!isset($variationCounts[$category->id]) || $variationCounts[$category->id] < 1)
                             @continue
                         @endif
                         @livewire('general.category', [
                             'category' => $category,
+                            'counts' => $variationCounts,
+                            'allCategoryIds' => $allCategoryIds,
+                            'show_counts' => false,
+                            'show_price' => false,
                         ], key($category->id))
                     @endforeach
                     

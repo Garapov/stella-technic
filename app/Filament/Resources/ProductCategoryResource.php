@@ -44,7 +44,7 @@ class ProductCategoryResource extends Resource
                         Tabs\Tab::make('Основная информация')
                             ->schema([
                                 TextInput::make("title")->label("Заголовок")->required(),
-                                TextInput::make("slug")->label("Имя в ссылке")->required(),
+                                TextInput::make("slug")->label("Имя в ссылке"),
                                 Textarea::make("description")->label("Описание")->required(),
                                 // Select::make("paramItems")
                                 //     ->multiple()

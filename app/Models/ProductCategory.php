@@ -17,6 +17,7 @@ use Datlechin\FilamentMenuBuilder\Contracts\MenuPanelable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class ProductCategory extends Model implements Searchable,MenuPanelable
 {
@@ -58,20 +59,21 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
 
     public function urlChain()
     {
-        $urlChain = [$this->slug];
+        return Cache::rememberForever("category_{$this->id}_url_chain", function () {
+            $urlChain = [$this->slug];
+            $currentCategory = $this;
 
-        $currentCategory = $this;
+            while ($currentCategory->parent_id && $currentCategory->parent_id != '-1') {
+                $parentCategory = ProductCategory::find($currentCategory->parent_id);
+                if (!$parentCategory) {
+                    break;
+                }
+                $currentCategory = $parentCategory;
+                array_unshift($urlChain, $currentCategory->slug);
+            }
 
-        while ($currentCategory->parent_id && $currentCategory->parent_id != '-1') {
-            
-            $parentCategory = ProductCategory::find($currentCategory->parent_id);
-            // Log::info(['parentCategory', $parentCategory]);
-            $currentCategory = $parentCategory;
-            array_unshift($urlChain, $currentCategory->slug);
-        }
-
-
-        return join('/', $urlChain);
+            return join('/', $urlChain);
+        });
     }
 
     public function paramItems(): BelongsToMany
@@ -126,30 +128,6 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'product_product_category');
-    }
-
-    public function minProductPrice()
-    {
-        $category = $this;
-        
-        $minPrice = ProductVariant::query()
-        ->whereHas('product', function ($query) use ($category) {
-            $query->whereHas('categories', function ($q) use ($category) {
-                $q->where('product_categories.id', $category->id);
-            });
-        })
-        ->min(DB::raw('COALESCE(new_price, price)'));
-        return $minPrice;
-    }
-
-    public function variationsCount()
-    {
-        $count = 0;
-
-        foreach ($this->products as $product) {
-            $count += $product->variants->count();
-        }
-        return $count;
     }
 
     
