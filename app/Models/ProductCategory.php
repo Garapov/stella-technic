@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use SolutionForest\FilamentTree\Concern\ModelTree;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Searchable\Searchable;
@@ -22,7 +21,7 @@ use Illuminate\Support\Facades\Cache;
 class ProductCategory extends Model implements Searchable,MenuPanelable
 {
     /** @use HasFactory<\Database\Factories\ProductCategoryFactory> */
-    use HasFactory, ModelTree, HasSlug, HasMenuPanel;
+    use HasFactory, HasSlug, HasMenuPanel;
 
     public $searchableType = 'Категории';
 

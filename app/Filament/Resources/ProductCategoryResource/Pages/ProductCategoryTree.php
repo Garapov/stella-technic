@@ -4,12 +4,12 @@ namespace App\Filament\Resources\ProductCategoryResource\Pages;
 
 use App\Filament\Resources\ProductCategoryResource;
 use Filament\Pages\Actions\CreateAction;
-use SolutionForest\FilamentTree\Actions;
-use SolutionForest\FilamentTree\Concern;
-use SolutionForest\FilamentTree\Resources\Pages\TreePage as BasePage;
-use SolutionForest\FilamentTree\Support\Utils;
+// use SolutionForest\FilamentTree\Actions;
+// use SolutionForest\FilamentTree\Concern;
+// use SolutionForest\FilamentTree\Resources\Pages\TreePage as BasePage;
+// use SolutionForest\FilamentTree\Support\Utils;
 
-class ProductCategoryTree extends BasePage
+class ProductCategoryTree
 {
     protected static string $resource = ProductCategoryResource::class;
 
@@ -18,7 +18,7 @@ class ProductCategoryTree extends BasePage
     protected function getActions(): array
     {
         return [
-            $this->getCreateAction(),
+            // $this->getCreateAction(),
             // SAMPLE CODE, CAN DELETE
             //\Filament\Pages\Actions\Action::make('sampleAction'),
         ];

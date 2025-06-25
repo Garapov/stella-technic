@@ -11,6 +11,7 @@ class CatalogRouter
     {
         $segments = explode('/', $path);
         
+        
 
         $productSlug = null;
         $category = null;
@@ -27,10 +28,10 @@ class CatalogRouter
             }
         }
 
-        
-        if ($productSlug && $category) {
+        if ($productSlug) {
             
             $product = ProductVariant::where('slug', $productSlug)->first();
+            
 
             if (!$product) {
                 abort(404);
@@ -44,7 +45,7 @@ class CatalogRouter
             // Используем конкретный контроллер
             return view('client.product_detail', [
                 'product_slug' => $product->slug,
-                'path' => $category->urlChain(),
+                'path' => $path,
             ]);
         }
 

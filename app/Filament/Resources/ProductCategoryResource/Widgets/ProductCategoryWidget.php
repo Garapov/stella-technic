@@ -8,14 +8,14 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Guava\FilamentIconPicker\Forms\IconPicker;
-use SolutionForest\FilamentTree\Actions\Action;
-use SolutionForest\FilamentTree\Actions\ActionGroup;
-use SolutionForest\FilamentTree\Actions\DeleteAction;
-use SolutionForest\FilamentTree\Actions\EditAction;
-use SolutionForest\FilamentTree\Actions\ViewAction;
-use SolutionForest\FilamentTree\Widgets\Tree as BaseWidget;
+// use SolutionForest\FilamentTree\Actions\Action;
+// use SolutionForest\FilamentTree\Actions\ActionGroup;
+// use SolutionForest\FilamentTree\Actions\DeleteAction;
+// use SolutionForest\FilamentTree\Actions\EditAction;
+// use SolutionForest\FilamentTree\Actions\ViewAction;
+// use SolutionForest\FilamentTree\Widgets\Tree as BaseWidget;
 
-class ProductCategoryWidget extends BaseWidget
+class ProductCategoryWidget 
 {
     protected static string $model = ProductCategory::class;
 
