@@ -17,7 +17,7 @@ class ListProductCategories extends ListRecords
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            // Actions\CreateAction::make(),
         ];
     }
  
@@ -30,17 +30,18 @@ class ListProductCategories extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\CreateAction::make(),
             // Action::make('tree-list')
             //     ->url('/admin/product-categories/tree-list')
         ];
     }
 
     public function getTabs(): array
-{
-        return [
-            'Первого уровня' => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', -1)),
-            'Все' => Tab::make(),
-        ];
+    {
+            return [
+                'Первого уровня' => Tab::make()
+                    ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', -1)),
+                'Все' => Tab::make(),
+            ];
+        }
     }
-}

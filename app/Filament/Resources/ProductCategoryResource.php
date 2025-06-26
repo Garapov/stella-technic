@@ -6,6 +6,7 @@ use App\Filament\Resources\ProductCategoryResource\Pages;
 use App\Filament\Resources\ProductCategoryResource\RelationManagers\CategoriesRelationManager;
 use App\Filament\Resources\ProductCategoryResource\RelationManagers\ProductsRelationManager;
 use App\Models\ProductCategory;
+use App\Models\ProductVariant;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -22,6 +23,9 @@ use Guava\FilamentIconPicker\Forms\IconPicker;
 use App\Models\ProductParamItem;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Hidden;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Get;
 
 class ProductCategoryResource extends Resource
 {
@@ -47,21 +51,54 @@ class ProductCategoryResource extends Resource
                                 TextInput::make("title")->label("Заголовок")->required(),
                                 TextInput::make("slug")->label("Имя в ссылке"),
                                 Textarea::make("description")->label("Описание")->required(),
-                                // Select::make("paramItems")
-                                //     ->multiple()
-                                //     ->relationship("paramItems", "title")
-                                //     ->preload()
-                                //     ->options(function () {
-                                //         return ProductParamItem::query()
-                                //             ->with("productParam")
-                                //             ->get()
-                                //             ->mapWithKeys(function ($item) {
-                                //                 return [
-                                //                     $item->id => "{$item->productParam->name}: {$item->title}",
-                                //                 ];
-                                //             });
-                                //     }),
-                            ]),
+                                Select::make("paramItems")
+                                    ->label('Параметры фильтрации')
+                                    ->multiple()
+                                    ->relationship("paramItems", "title")
+                                    ->preload()
+                                    ->options(function () {
+                                        return ProductParamItem::query()
+                                            ->with("productParam")
+                                            ->get()
+                                            ->mapWithKeys(function ($item) {
+                                                return [
+                                                    $item->id => "{$item->productParam->name}: {$item->title}",
+                                                ];
+                                            });
+                                    })
+                                    ->visible(fn(Get $get) => $get('type') == 'filter'),
+
+                                Select::make("variations")
+                                    ->label('Вариации')
+                                    ->multiple()
+                                    ->relationship("variations", "name")
+                                    ->preload()
+                                    ->options(function () {
+                                        return ProductVariant::query()
+                                            ->get()
+                                            ->mapWithKeys(function ($item) {
+                                                return [
+                                                    $item->id => "{$item->name} ({$item->sku})",
+                                                ];
+                                            });
+                                    })
+                                    ->visible(fn(Get $get) => $get('type') == 'variations'),
+                                
+                                Select::make("duplicate_id")
+                                    ->label('Категория для дублирования')
+                                    ->preload()
+                                    ->searchable()
+                                    ->options(function () {
+                                        return ProductCategory::query()
+                                            ->get()
+                                            ->mapWithKeys(function ($item) {
+                                                return [
+                                                    $item->id => "{$item->title}",
+                                                ];
+                                            });
+                                    })
+                                    ->visible(fn(Get $get) => $get('type') == 'duplicator'),
+                            ]), 
                         Tabs\Tab::make('Изображения')
                             ->schema([
                                 FileUpload::make("image")
@@ -125,6 +162,14 @@ class ProductCategoryResource extends Resource
                             ])
                     ]),                    
                 Section::make([
+                    Select::make('type')
+                        ->label('Тип категории')
+                        ->options([
+                            'variations' => 'Избранные вариации',
+                            'filter' => 'Категория-фильтр',
+                            'duplicator' => 'Дубликат категории'
+                        ])
+                        ->live(),
                     Toggle::make("is_visible")->inline(false)->label("Видимость"),
                 ])->grow(false),
             ])->columnSpanFull()->from('md')

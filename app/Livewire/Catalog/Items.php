@@ -39,8 +39,29 @@ class Items extends Component
         if ($path) {
             $slugs = explode('/', $path);
             $slug = end($slugs);
-            $this->category = ProductCategory::where("slug", $slug)->first();
-            $this->product_ids = $this->category->products->pluck("id");
+            $this->category = ProductCategory::where("slug", $slug)->with([
+                'products',
+                'products.variants',
+                'variations',
+                'paramItems',
+            ])->first();
+
+            
+
+            if ($this->category->type == 'duplicator' && $this->category->duplicate_id) {
+                $category_for_duplication = ProductCategory::where('id', $this->category->duplicate_id)->with([
+                    'products',
+                    'products.variants'
+                ])->first();
+                // dd($category_for_duplication);
+                $this->product_ids = $category_for_duplication->products->pluck("id");
+                // dd($this->product_ids);
+            } else if ($this->category->type == 'variations') {
+                $this->product_ids = $this->category->variations->pluck('id');
+            } else {
+                $this->product_ids = $this->category->products->pluck("id");
+            }
+            
             $this->type = "category";
         }
 
@@ -104,11 +125,30 @@ class Items extends Component
         if ($this->type == "products") {
             $products = ProductVariant::filter($this->filters)
                 ->whereIn("id", $this->product_ids)
-                ->sort([$this->sort]);
+                ->sort([$this->sort])
+                ->with([
+                    'parametrs',
+                    'paramItems'
+                ]);
         } else {
-            $products = ProductVariant::filter($this->filters)
-                ->whereIn("product_id", $this->product_ids)
-                ->sort([$this->sort]);
+            if ($this->category->type == 'variations') {
+                $products = ProductVariant::filter($this->filters)
+                    ->whereIn("id", $this->product_ids)
+                    ->sort([$this->sort])
+                    ->with([
+                        'parametrs',
+                        'paramItems'
+                    ]);
+            } else {
+                $products = ProductVariant::filter($this->filters)
+                    ->whereIn("product_id", $this->product_ids)
+                    ->sort([$this->sort])
+                    ->with([
+                        'parametrs',
+                        'paramItems'
+                    ]);
+            }
+            
         }
 
         return view("livewire.catalog.items", [

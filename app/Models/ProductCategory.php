@@ -35,7 +35,9 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
         "order",
         "image",
         "seo",
-        "files"
+        "files",
+        "type",
+        "duplicate_id"
     ];
 
     protected $casts = [
@@ -78,6 +80,12 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
     public function paramItems(): BelongsToMany
     {
         return $this->belongsToMany(ProductParamItem::class, 'product_category_product_param_item')
+            ->withTimestamps();
+    }
+
+    public function variations(): BelongsToMany
+    {
+        return $this->belongsToMany(ProductVariant::class, 'product_category_product_variant')
             ->withTimestamps();
     }
 
