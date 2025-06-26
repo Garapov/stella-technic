@@ -19,6 +19,11 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Select;
+use App\Models\ProductCategory;
+use Filament\Forms\Get;
+use App\Models\ProductVariant;
+use App\Models\ProductParamItem;
 
 class CategoriesRelationManager extends RelationManager
 {
@@ -36,21 +41,54 @@ class CategoriesRelationManager extends RelationManager
                                 TextInput::make("title")->label("Заголовок")->required(),
                                 TextInput::make("slug")->label("Имя в ссылке"),
                                 Textarea::make("description")->label("Описание")->required(),
-                                // Select::make("paramItems")
-                                //     ->multiple()
-                                //     ->relationship("paramItems", "title")
-                                //     ->preload()
-                                //     ->options(function () {
-                                //         return ProductParamItem::query()
-                                //             ->with("productParam")
-                                //             ->get()
-                                //             ->mapWithKeys(function ($item) {
-                                //                 return [
-                                //                     $item->id => "{$item->productParam->name}: {$item->title}",
-                                //                 ];
-                                //             });
-                                //     }),
-                            ]),
+                                Select::make("paramItems")
+                                    ->label('Параметры фильтрации')
+                                    ->multiple()
+                                    ->relationship("paramItems", "title")
+                                    ->preload()
+                                    ->options(function () {
+                                        return ProductParamItem::query()
+                                            ->with("productParam")
+                                            ->get()
+                                            ->mapWithKeys(function ($item) {
+                                                return [
+                                                    $item->id => "{$item->productParam->name}: {$item->title}",
+                                                ];
+                                            });
+                                    })
+                                    ->visible(fn(Get $get) => $get('type') == 'filter'),
+
+                                Select::make("variations")
+                                    ->label('Вариации')
+                                    ->multiple()
+                                    ->relationship("variations", "name")
+                                    ->preload()
+                                    ->options(function () {
+                                        return ProductVariant::query()
+                                            ->get()
+                                            ->mapWithKeys(function ($item) {
+                                                return [
+                                                    $item->id => "{$item->name} ({$item->sku})",
+                                                ];
+                                            });
+                                    })
+                                    ->visible(fn(Get $get) => $get('type') == 'variations'),
+                                
+                                Select::make("duplicate_id")
+                                    ->label('Категория для дублирования')
+                                    ->preload()
+                                    ->searchable()
+                                    ->options(function () {
+                                        return ProductCategory::query()
+                                            ->get()
+                                            ->mapWithKeys(function ($item) {
+                                                return [
+                                                    $item->id => "{$item->title}",
+                                                ];
+                                            });
+                                    })
+                                    ->visible(fn(Get $get) => $get('type') == 'duplicator'),
+                            ]), 
                         Tabs\Tab::make('Изображения')
                             ->schema([
                                 FileUpload::make("image")
@@ -114,6 +152,14 @@ class CategoriesRelationManager extends RelationManager
                             ])
                     ]),                    
                 Section::make([
+                    Select::make('type')
+                        ->label('Тип категории')
+                        ->options([
+                            'variations' => 'Избранные вариации',
+                            'filter' => 'Категория-фильтр',
+                            'duplicator' => 'Дубликат категории'
+                        ])
+                        ->live(),
                     Toggle::make("is_visible")->inline(false)->label("Видимость"),
                 ])->grow(false),
             ])->columnSpanFull()->from('md')
@@ -131,12 +177,35 @@ class CategoriesRelationManager extends RelationManager
                 Tables\Columns\ToggleColumn::make('is_tag')
                     ->label('Категория "тег"'),
             ])
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
+            ->filters([
+                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make("Перенести")
+                    ->icon("carbon-port-definition")
+                    ->iconButton()
+                    ->form([
+                        Select::make("parent_id")
+                            ->label("Новый родитель для категории")
+                            ->options(
+                                fn() => ProductCategory::all()->pluck("title", "id")
+                            )
+                            ->required()
+                            ->searchable(),
+                    ])
+                    ->action(function (array $data, $record) {
+                        $category = ProductCategory::where('id', $data['parent_id'])->first();
+                        
+                        if ($category) {
+                            $record->parent_id = $category->id;
+                            $record->save();
+                        }
+
+                        redirect(request()->header("Referer"));
+                        // }
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
