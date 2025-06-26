@@ -20,70 +20,75 @@ class Items extends Component
     public $items = null;
     public $product_ids = [];
     public ?ProductCategory $category = null;
+
     #[Url]
     public $sort = "id:asc";
+
     public $filters = [];
+
     #[Url]
     public $displayMode = "block";
+
     public $showSorting = false;
     public $display_filter = false;
     public $type = "category";
 
-    public function mount(
-        $path = null,
-        $brand_slug = null,
-        $products = null,
-        $display_filter = false
-    ) {
+    public function mount($path = null, $brand_slug = null, $products = null, $display_filter = false)
+    {
         $this->display_filter = $display_filter;
+
         if ($path) {
-            $slugs = explode('/', $path);
-            $slug = end($slugs);
-            $this->category = ProductCategory::where("slug", $slug)->with([
-                'products',
-                'products.variants',
-                'variations',
-                'paramItems',
-            ])->first();
+            $slug = collect(explode('/', $path))->last();
+            $this->category = ProductCategory::with([
+                'products:id',
+                'products.variants:id,product_id',
+                'variations:id',
+                'paramItems:id',
+            ])->where("slug", $slug)->first();
 
-            
+            if (!$this->category) return;
 
-            if ($this->category->type == 'duplicator' && $this->category->duplicate_id) {
-                $category_for_duplication = ProductCategory::where('id', $this->category->duplicate_id)->with([
-                    'products',
-                    'products.variants'
-                ])->first();
-                // dd($category_for_duplication);
-                $this->product_ids = $category_for_duplication->products->pluck("id");
-                // dd($this->product_ids);
-            } else if ($this->category->type == 'filter') {
-                $paramItemIds = $this->category->paramItems->pluck('id') ?? collect();
+            switch ($this->category->type) {
+                case 'duplicator':
+                    if ($this->category->duplicate_id) {
+                        $this->product_ids = ProductCategory::with('products:id')
+                            ->find($this->category->duplicate_id)
+                            ?->products->pluck("id") ?? collect();
+                    }
+                    break;
 
-                // Получаем варианты через paramItems
-                $byParamItems = ProductVariant::whereHas('paramItems', function ($query) use ($paramItemIds) {
-                    $query->whereIn('product_param_items.id', $paramItemIds);
-                })->pluck('id');
+                case 'filter':
+                    $paramItemIds = $this->category->paramItems->pluck('id');
 
-                // Получаем варианты через parametrs
-                $byParametrs = ProductVariant::whereHas('parametrs', function ($query) use ($paramItemIds) {
-                    $query->whereIn('product_param_items.id', $paramItemIds);
-                })->pluck('id');
+                    $byParamItems = ProductVariant::whereHas('paramItems', fn($q) =>
+                        $q->whereIn('product_param_items.id', $paramItemIds)
+                    )->pluck('id');
 
-                // Объединяем и убираем дубликаты
-                $this->product_ids = $byParamItems->merge($byParametrs)->unique()->values();
+                    $byParametrs = ProductVariant::whereHas('parametrs', fn($q) =>
+                        $q->whereIn('product_param_items.id', $paramItemIds)
+                    )->pluck('id');
 
-            }  else if ($this->category->type == 'variations') {
-                $this->product_ids = $this->category->variations->pluck('id');
-            } else {
-                $this->product_ids = $this->category->products->pluck("id");
+                    $this->product_ids = $byParamItems->merge($byParametrs)->unique()->values();
+                    break;
+
+                case 'variations':
+                    $this->product_ids = $this->category->variations->pluck('id');
+                    break;
+
+                default:
+                    $this->product_ids = $this->category->products->pluck("id");
+                    break;
             }
-            
+
             $this->type = "category";
         }
 
         if ($brand_slug) {
-            $brand = Brand::where("slug", $brand_slug)->first();
-            $this->product_ids = $brand->products()->pluck("id");
+            $this->product_ids = Brand::where("slug", $brand_slug)
+                ->with('products:id')
+                ->first()
+                ?->products->pluck("id") ?? collect();
+
             $this->type = "brand";
         }
 
@@ -96,31 +101,11 @@ class Items extends Component
     public function getSortOptions()
     {
         return [
-            "id:asc" => [
-                "label" => "По умолчанию",
-                "icon" =>
-                    "M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25",
-            ],
-            "price:asc" => [
-                "label" => "Подешевле",
-                "icon" =>
-                    "M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12",
-            ],
-            "price:desc" => [
-                "label" => "Подороже",
-                "icon" =>
-                    "M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12",
-            ],
-            "name:asc" => [
-                "label" => "По названию А-Я",
-                "icon" =>
-                    "M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25",
-            ],
-            "name:desc" => [
-                "label" => "По названию Я-А",
-                "icon" =>
-                    "M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25",
-            ],
+            "id:asc" => ["label" => "По умолчанию", "icon" => "M3 4.5h14.25..."],
+            "price:asc" => ["label" => "Подешевле", "icon" => "M3 4.5h14.25..."],
+            "price:desc" => ["label" => "Подороже", "icon" => "M3 4.5h14.25..."],
+            "name:asc" => ["label" => "По названию А-Я", "icon" => "M3 4.5h14.25..."],
+            "name:desc" => ["label" => "По названию Я-А", "icon" => "M3 4.5h14.25..."],
         ];
     }
 
@@ -138,37 +123,18 @@ class Items extends Component
 
     public function render()
     {
-        if ($this->type == "products") {
-            $products = ProductVariant::filter($this->filters)
-                ->whereIn("id", $this->product_ids)
-                ->sort([$this->sort])
-                ->with([
-                    'parametrs',
-                    'paramItems'
-                ]);
+        $builder = ProductVariant::filter($this->filters)
+            ->sort([$this->sort])
+            ->with(['parametrs', 'paramItems']);
+
+        if ($this->type === 'products' || in_array($this->category?->type, ['variations', 'filter'])) {
+            $builder->whereIn('id', $this->product_ids);
         } else {
-            if ($this->category->type == 'variations' || $this->category->type == 'filter') {
-                $products = ProductVariant::filter($this->filters)
-                    ->whereIn("id", $this->product_ids)
-                    ->sort([$this->sort])
-                    ->with([
-                        'parametrs',
-                        'paramItems'
-                    ]);
-            } else {
-                $products = ProductVariant::filter($this->filters)
-                    ->whereIn("product_id", $this->product_ids)
-                    ->sort([$this->sort])
-                    ->with([
-                        'parametrs',
-                        'paramItems'
-                    ]);
-            }
-            
+            $builder->whereIn('product_id', $this->product_ids);
         }
 
         return view("livewire.catalog.items", [
-            "products" => $products,
+            "products" => $builder,
             "mode" => $this->displayMode,
         ]);
     }
