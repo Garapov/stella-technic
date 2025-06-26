@@ -70,9 +70,9 @@ class Filter extends Component
     public function updatedSelectedBrands()
     {
         if (empty($this->selectedBrands)) {
-            unset($this->filters["$hasbrand"]);
+            unset($this->filters['$hasbrand']);
         } else {
-            $this->filters["$hasbrand"] = $this->selectedBrands;
+            $this->filters['$hasbrand'] = $this->selectedBrands;
         }
         $this->dispatch("filters-changed", filters: $this->filters);
     }

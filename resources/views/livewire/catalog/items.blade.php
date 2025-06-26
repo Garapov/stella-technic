@@ -12,9 +12,17 @@
                 </div>
             </div>
             @php
-                $all_products = $products->get();
-                $paginated_products = $products->paginate(40);
+                $paginated_products = $products;
+                $all_products = $all_products = \App\Models\ProductVariant::filter($filters)
+                    ->when($type === 'products' || in_array(optional($category)->type, ['variations', 'filter']), function ($q) use ($product_ids) {
+                        return $q->whereIn('id', $product_ids);
+                    }, function ($q) use ($product_ids) {
+                        return $q->whereIn('product_id', $product_ids);
+                    })
+                    ->with(['parametrs', 'paramItems'])
+                    ->get();
             @endphp
+
             <!-- Heading & Filters -->
             @if ($category)
                 @if ($category->seo)
@@ -41,22 +49,24 @@
                 <div class="mb-5">
                     {{ Breadcrumbs::render('category', $category) }}
                 </div>
-                @if ($category->categories)
+                @if (!empty($nonTagCategories))
                     <div class="grid grid-cols-8 gap-4 mb-4">
-                        @foreach ($category->categories->where('is_tag', false) as $subcategory)
+                        @foreach ($nonTagCategories as $subcategory)
                             @if ($subcategory->products->count() == 0)
                                 @continue
                             @endif
-                            <x-catalog.category.big :category="$subcategory" />
+                            <x-catalog.category.big :subcategory="$subcategory" />
                         @endforeach
                     </div>
+                @endif
+                @if (!empty($tagCategories))
                     <ul class="flex items-center gap-2 overflow-auto pb-2 mb-4">
-                        @foreach ($category->categories->where('is_tag', true) as $subcategory)
+                        @foreach ($tagCategories as $subcategory)
                             @if ($subcategory->products->count() == 0)
                                 @continue
                             @endif
                             <li>
-                                <x-catalog.category.small :category="$subcategory" />
+                                <x-catalog.category.small :subcategory="$subcategory" />
                             </li>
                         @endforeach
                     </ul>
