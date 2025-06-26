@@ -19,7 +19,15 @@
                     }, function ($q) use ($product_ids) {
                         return $q->whereIn('product_id', $product_ids);
                     })
-                    ->with(['parametrs', 'paramItems'])
+                    ->with([
+                        'product.brand',
+                        'product.categories',
+                        'paramItems',
+                        'parametrs',
+                        'paramItems.productParam',
+                        'parametrs.productParam',
+                        'batch',
+                    ])
                     ->get();
             @endphp
 

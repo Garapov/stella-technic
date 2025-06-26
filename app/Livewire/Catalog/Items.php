@@ -15,8 +15,6 @@ class Items extends Component
 {
     use WithPagination;
 
-    // protected $paginationTheme = "tailwind";
-
     public $items = null;
     public $product_ids = [];
     public ?ProductCategory $category = null;
@@ -71,28 +69,23 @@ class Items extends Component
         return [
             "id:asc" => [
                 "label" => "По умолчанию",
-                "icon" =>
-                    "M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25",
+                "icon" => "M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25",
             ],
             "price:asc" => [
                 "label" => "Подешевле",
-                "icon" =>
-                    "M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12",
+                "icon" => "M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12",
             ],
             "price:desc" => [
                 "label" => "Подороже",
-                "icon" =>
-                    "M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12",
+                "icon" => "M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12",
             ],
             "name:asc" => [
                 "label" => "По названию А-Я",
-                "icon" =>
-                    "M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25",
+                "icon" => "M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25",
             ],
             "name:desc" => [
                 "label" => "По названию Я-А",
-                "icon" =>
-                    "M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25",
+                "icon" => "M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25",
             ],
         ];
     }
@@ -112,8 +105,7 @@ class Items extends Component
     public function render()
     {
         $builder = ProductVariant::filter($this->filters)
-            ->sort([$this->sort])
-            ->with(['parametrs', 'paramItems']);
+            ->sort([$this->sort]);
 
         if ($this->type === 'products' || in_array($this->category?->type, ['variations', 'filter'])) {
             $builder->whereIn('id', $this->product_ids);
@@ -121,7 +113,13 @@ class Items extends Component
             $builder->whereIn('product_id', $this->product_ids);
         }
 
-        $products = $builder->paginate(40);
+        $products = $builder->with([
+            'product.brand',
+            'product.categories',
+            'paramItems.productParam',
+            'parametrs.productParam',
+            'batch',
+        ])->paginate(40);
 
         return view("livewire.catalog.items", [
             "products" => $products,
