@@ -56,7 +56,23 @@ class Items extends Component
                 // dd($category_for_duplication);
                 $this->product_ids = $category_for_duplication->products->pluck("id");
                 // dd($this->product_ids);
-            } else if ($this->category->type == 'variations') {
+            } else if ($this->category->type == 'filter') {
+                $paramItemIds = $this->category->paramItems->pluck('id') ?? collect();
+
+                // Получаем варианты через paramItems
+                $byParamItems = ProductVariant::whereHas('paramItems', function ($query) use ($paramItemIds) {
+                    $query->whereIn('product_param_items.id', $paramItemIds);
+                })->pluck('id');
+
+                // Получаем варианты через parametrs
+                $byParametrs = ProductVariant::whereHas('parametrs', function ($query) use ($paramItemIds) {
+                    $query->whereIn('product_param_items.id', $paramItemIds);
+                })->pluck('id');
+
+                // Объединяем и убираем дубликаты
+                $this->product_ids = $byParamItems->merge($byParametrs)->unique()->values();
+
+            }  else if ($this->category->type == 'variations') {
                 $this->product_ids = $this->category->variations->pluck('id');
             } else {
                 $this->product_ids = $this->category->products->pluck("id");
@@ -131,7 +147,7 @@ class Items extends Component
                     'paramItems'
                 ]);
         } else {
-            if ($this->category->type == 'variations') {
+            if ($this->category->type == 'variations' || $this->category->type == 'filter') {
                 $products = ProductVariant::filter($this->filters)
                     ->whereIn("id", $this->product_ids)
                     ->sort([$this->sort])
