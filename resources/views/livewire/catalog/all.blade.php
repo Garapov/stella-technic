@@ -9,9 +9,6 @@
                 <!-- ====== Categories Section Start -->
                 <div class="grid grid-cols-4 gap-4">
                     @foreach ($categories as $category)
-                        @if (count($category->products) < 1)
-                            @continue
-                        @endif
                         @livewire('general.category', [
                             'category' => $category,
                         ], key($category->id))
