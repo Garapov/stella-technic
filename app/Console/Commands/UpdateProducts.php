@@ -8,9 +8,9 @@ use App\Services\ProductSeoUpdater;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Sleep;
 
-class UpdateProductsSeo extends Command
+class UpdateProducts extends Command
 {
-    protected $signature = 'seo:update-products-seo {--delay=200}';
+    protected $signature = 'update:products {--delay=200}';
     protected $description = 'Update SEO data for all product variants, sequentially with progress';
 
     protected $seoUpdater;

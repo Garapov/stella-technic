@@ -51,7 +51,8 @@ class ProductVariant extends Model
         "selected_width",
         "selected_height",
         "selected_desk_type",
-        "selected_position"
+        "selected_position",
+        "uuid"
     ];
 
     protected $casts = [

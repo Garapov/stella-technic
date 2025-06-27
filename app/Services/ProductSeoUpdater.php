@@ -23,7 +23,8 @@ class ProductSeoUpdater
                 if ($body->success) {
                     try {
                         ProductVariant::where('sku', $product_sku)->first()?->update([
-                            'seo' => $body->data
+                            'seo' => $body->data->seo ?? [],
+                            'uuid' => $body->data->uuid ?? null,
                         ]);
                     } catch (\Exception $e) {
                         Log::error("DB error for SKU {$product_sku}: " . $e->getMessage());

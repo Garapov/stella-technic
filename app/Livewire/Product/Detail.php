@@ -26,6 +26,9 @@ class Detail extends Component
         $this->deliveries = Delivery::where("is_active", true)->get();
         // $this->variation = ProductVariant::where("slug", $slug)->first();
 
+
+        dd(ProductVariant::all()->pluck('id'));
+
         $this->variation = $variation;
 
 
