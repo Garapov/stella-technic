@@ -22,19 +22,19 @@ class AddGlobalPages
     {
         $pages = new Collection();
 
-        $pages->politics = Page::find(setting("politics"));
-        if ($pages->politics) {
-            $pages->politics->url = FilamentFabricator::getPageUrlFromId(
-                $pages->politics->id
-            );
-        }
+        // $pages->politics = Page::find(setting("politics"));
+        // if ($pages->politics) {
+        //     $pages->politics->url = FilamentFabricator::getPageUrlFromId(
+        //         $pages->politics->id
+        //     );
+        // }
 
-        $pages->cookies = Page::find(setting("cookies"));
-        if ($pages->cookies) {
-            $pages->cookies->url = FilamentFabricator::getPageUrlFromId(
-                $pages->cookies->id
-            );
-        }
+        // $pages->cookies = Page::find(setting("cookies"));
+        // if ($pages->cookies) {
+        //     $pages->cookies->url = FilamentFabricator::getPageUrlFromId(
+        //         $pages->cookies->id
+        //     );
+        // }
 
         // Добавление переменной в глобальное пространство имен Blade
         View::share("globalPages", $pages);

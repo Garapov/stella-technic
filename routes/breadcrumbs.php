@@ -43,6 +43,8 @@ Breadcrumbs::for('category', function (BreadcrumbTrail $trail, ProductCategory $
 
 Breadcrumbs::for('product', function (BreadcrumbTrail $trail, ProductVariant $variation) {
     $trail->parent('catalog');
+    
+    $all_categories = ProductCategory::all();
 
     $current = $variation->product->categories->last();
 
@@ -50,7 +52,7 @@ Breadcrumbs::for('product', function (BreadcrumbTrail $trail, ProductVariant $va
     $parents = collect();
 
     while ($current->parent_id && $current->parent_id != '-1') {
-        $parentCategory = ProductCategory::find($current->parent_id);
+        $parentCategory = $all_categories->find($current->parent_id);
 
         if ($parentCategory) {
             $parents->prepend($parentCategory);

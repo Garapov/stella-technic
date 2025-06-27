@@ -19,7 +19,14 @@ class Header extends Component
     {
         $this->categories = ProductCategory::where('parent_id', '-1')->with([
             'categories',
-            'products'
+            'products',
+            'products.variants',
+            'products.variants.paramItems',
+            'products.variants.parametrs',
+            'products.variants.paramItems.productParam',
+            'products.variants.parametrs.productParam',
+            'products.brand',
+            'products.categories',
         ])->get();
 
         $this->allCategoryIds = ProductCategory::all()->pluck('id')->toArray();

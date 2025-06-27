@@ -14,11 +14,12 @@ class CatalogRouter
         
 
         $productSlug = null;
+        $categories = ProductCategory::all();
         $category = null;
 
         $parent = null;
         foreach ($segments as $i => $segment) {
-            $possibleCategory = ProductCategory::where('slug', $segment)->first();
+            $possibleCategory = $categories->where('slug', $segment)->first();
 
             if ($possibleCategory) {
                 $category = $possibleCategory;
@@ -30,7 +31,21 @@ class CatalogRouter
 
         if ($productSlug) {
             
-            $product = ProductVariant::where('slug', $productSlug)->first();
+            $product = ProductVariant::where('slug', $productSlug)->with([
+                'product',
+                'paramItems',
+                'parametrs',
+                'paramItems.productParam',
+                'parametrs.productParam',
+                'product.categories',
+                'product.categories',
+                'product.variants',
+                'product.variants.paramItems',
+                'product.variants.paramItems.productParam',
+                'product.brand',
+                'crossSells',
+                'upSells',
+            ])->first();
             
 
             if (!$product) {
@@ -44,8 +59,7 @@ class CatalogRouter
 
             // Используем конкретный контроллер
             return view('client.product_detail', [
-                'product_slug' => $product->slug,
-                'path' => $path,
+                'variation' => $product,
             ]);
         }
 

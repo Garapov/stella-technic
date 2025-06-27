@@ -18,13 +18,18 @@ class Detail extends Component
     public $groupedParams;
     public $path;
     public $files = [];
+    public $deliveries;
 
-    public function mount($slug, $path = null)
+    public function mount($path = null, $variation = null)
     {
         $this->path = $path;
+        $this->deliveries = Delivery::where("is_active", true)->get();
         // $this->variation = ProductVariant::where("slug", $slug)->first();
 
-        $this->variation = ProductVariant::where("slug", $slug)->first();
+        $this->variation = $variation;
+
+
+        
 
         if (!$this->variation) abort(404);
         // dd($this->variation->links);
@@ -56,11 +61,14 @@ class Detail extends Component
         $currentVariantId = $this->variation->id;
 
         // Получаем текущие параметры
+        
         $currentParams = $this->variation->paramItems
             ->unique(function ($item) {
+                
                 return $item->productParam->name . "_" . $item->title;
             })
             ->mapWithKeys(function ($param) {
+                
                 return [
                     $param->productParam->name => [
                         "id" => $param->id,
@@ -71,9 +79,11 @@ class Detail extends Component
                 ];
             })
             ->toArray();
-
+        
         // Собираем все возможные параметры и их комбинации
         $availableCombinations = [];
+
+        // dd($variants->toArray());
         foreach ($variants as $variant) {
             // Собираем уникальные параметры для варианта
             $variantParams = $variant->paramItems
@@ -216,12 +226,6 @@ class Detail extends Component
 
     public function render()
     {
-        return view("livewire.product.detail", [
-            "product" => $this->product,
-            "variation" => $this->variation,
-            "groupedParams" => $this->groupedParams,
-            "deliveries" => Delivery::where('is_active', true)->get(),
-            "files" => $this->files
-        ]);
+        return view("livewire.product.detail");
     }
 }
