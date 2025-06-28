@@ -74,6 +74,9 @@ class VariantsRelationManager extends RelationManager
                                 ->label("Конструктор")
                                 ->live()
                                 ->inline(false),
+                            Toggle::make("is_pre_order")
+                                ->label("По предзаказу")
+                                ->inline(false),
                         ])
                         ->columns([
                             "sm" => 1,
@@ -457,6 +460,11 @@ class VariantsRelationManager extends RelationManager
                         redirect(request()->header("Referer"));
                         // }
                     }),
+                Tables\Actions\Action::make('Открыть')
+                    ->icon('ionicon-open-outline')
+                    ->iconButton()
+                    ->url(fn (ProductVariant $record): string => route('client.catalog', $record->urlChain()))
+                    ->openUrlInNewTab()
             ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([

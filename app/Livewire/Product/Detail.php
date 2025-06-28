@@ -24,18 +24,12 @@ class Detail extends Component
     {
         $this->path = $path;
         $this->deliveries = Delivery::where("is_active", true)->get();
-        // $this->variation = ProductVariant::where("slug", $slug)->first();
-
-
-        // dd(ProductVariant::all()->pluck('id'));
 
         $this->variation = $variation;
 
-
-        
-
         if (!$this->variation) abort(404);
-        // dd($this->variation->links);
+
+        // dd($this->variation->seo);
 
         $this->product = $this->variation->product;
         $this->groupedParams = $this->getGroupedParams();
@@ -86,7 +80,6 @@ class Detail extends Component
         // Собираем все возможные параметры и их комбинации
         $availableCombinations = [];
 
-        // dd($variants->toArray());
         foreach ($variants as $variant) {
             // Собираем уникальные параметры для варианта
             $variantParams = $variant->paramItems
@@ -140,9 +133,6 @@ class Detail extends Component
                 }
             }
         }
-
-        // Удалите отладочный вызов dd()
-        // dd($groupedParams);
 
         // Проверяем доступность значений
         foreach ($groupedParams as $paramName => &$paramGroup) {

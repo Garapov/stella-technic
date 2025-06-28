@@ -191,31 +191,36 @@ class ProductCategoryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make("Перенести")
-                    ->icon("carbon-port-definition")
-                    ->iconButton()
-                    ->form([
-                        Select::make("parent_id")
-                            ->label("Новый родитель для категории")
-                            ->options(
-                                fn() => ProductCategory::all()->pluck("title", "id")
-                            )
-                            ->required()
-                            ->searchable(),
-                    ])
-                    ->action(function (array $data, $record) {
-                        $category = ProductCategory::where('id', $data['parent_id'])->first();
-                        
-                        if ($category) {
-                            $record->parent_id = $category->id;
-                            $record->save();
-                        }
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\Action::make("Перенести")
+                        ->icon("carbon-port-definition")
+                        ->form([
+                            Select::make("parent_id")
+                                ->label("Новый родитель для категории")
+                                ->options(
+                                    fn() => ProductCategory::all()->pluck("title", "id")
+                                )
+                                ->required()
+                                ->searchable(),
+                        ])
+                        ->action(function (array $data, $record) {
+                            $category = ProductCategory::where('id', $data['parent_id'])->first();
+                            
+                            if ($category) {
+                                $record->parent_id = $category->id;
+                                $record->save();
+                            }
 
-                        redirect(request()->header("Referer"));
-                        // }
-                    }),
+                            redirect(request()->header("Referer"));
+                            // }
+                        }),
+                    Tables\Actions\Action::make('Открыть')
+                        ->icon('ionicon-open-outline')
+                        ->url(fn (ProductCategory $record): string => route('client.catalog', $record->urlChain()))
+                        ->openUrlInNewTab(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

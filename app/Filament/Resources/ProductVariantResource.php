@@ -67,6 +67,9 @@ class ProductVariantResource extends Resource
                                 ->label("Конструктор")
                                 ->live()
                                 ->inline(false),
+                            Toggle::make("is_pre_order")
+                                ->label("По предзаказу")
+                                ->inline(false),
                         ])
                         ->columns([
                             "sm" => 1,
