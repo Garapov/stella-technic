@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\ProductVariant;
 
-class ProductSeoUpdater
+class ProductUpdater
 {
     public function updateProduct($product_sku)
     {
@@ -22,9 +22,13 @@ class ProductSeoUpdater
 
                 if ($body->success) {
                     try {
-                        ProductVariant::where('sku', $product_sku)->first()?->update([
+                        $variation = ProductVariant::where('sku', $product_sku)->first();
+
+                        if (!$variation) return;
+                        $variation->update([
                             'seo' => $body->data->seo ?? [],
                             'uuid' => $body->data->uuid ?? null,
+                            'price' => $body->data->price ?? $variation->price,
                         ]);
                     } catch (\Exception $e) {
                         Log::error("DB error for SKU {$product_sku}: " . $e->getMessage());

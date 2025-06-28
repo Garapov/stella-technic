@@ -6,7 +6,7 @@ use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class CategorySeoUpdater
+class CategoryUpdater
 {
     public function updateCategory($category_title)
     {
@@ -22,8 +22,12 @@ class CategorySeoUpdater
 
                 if ($body->success) {
                     try {
-                        ProductCategory::where('title', $category_title)->first()?->update([
-                            'seo' => $body->data
+                        $category = ProductCategory::where('title', $category_title)->first();
+
+                        if (!$category) return;
+
+                        $category->update([
+                            'seo' => $body->data->seo ?? [],
                         ]);
                     } catch (\Exception $e) {
                         Log::error("DB error for TITLE {$category_title}: " . $e->getMessage());

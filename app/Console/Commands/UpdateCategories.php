@@ -3,26 +3,26 @@
 namespace App\Console\Commands;
 
 use App\Models\ProductCategory;
-use App\Services\CategorySeoUpdater;
+use App\Services\CategoryUpdater;
 use Illuminate\Console\Command;
 
-class UpdateCategoriesSeo extends Command
+class UpdateCategories extends Command
 {
-    protected $signature = 'seo:update-categories-seo {--delay=200}';
-    protected $description = 'Update SEO data for all categories, sequentially with progress';
+    protected $signature = 'update:categories {--delay=200}';
+    protected $description = 'Обновление данных категорий со старого сайта (не будет работать после переноса)';
 
-    protected $seoUpdater;
+    protected $updater;
 
-    public function __construct(CategorySeoUpdater $seoUpdater)
+    public function __construct(CategoryUpdater $updater)
     {
         parent::__construct();
-        $this->seoUpdater = $seoUpdater;
+        $this->updater = $updater;
     }
 
     public function handle()
     {
         $this->newLine(1);
-        $this->info('Starting SEO update for categories...');
+        $this->info('Начало обновления категорий...');
         $this->newLine(1);
         $delay = (int) $this->option('delay');
         $categories = ProductCategory::all();
@@ -37,7 +37,7 @@ class UpdateCategoriesSeo extends Command
             $bar->setMessage("\n\nОбрабатывается: {$category->title}\n");
 
             // Обновляем SEO
-            $this->seoUpdater->updateCategory($title);
+            $this->updater->updateCategory($title);
 
             // Продвигаем прогресс
             $bar->advance();
@@ -50,6 +50,6 @@ class UpdateCategoriesSeo extends Command
 
         $bar->finish();
         $this->newLine(2);
-        $this->info('SEO update completed.');
+        $this->info('Обновление завершено.');
     }
 }

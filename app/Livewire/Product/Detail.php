@@ -27,7 +27,7 @@ class Detail extends Component
         // $this->variation = ProductVariant::where("slug", $slug)->first();
 
 
-        dd(ProductVariant::all()->pluck('id'));
+        // dd(ProductVariant::all()->pluck('id'));
 
         $this->variation = $variation;
 

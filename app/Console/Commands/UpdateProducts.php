@@ -4,27 +4,27 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\ProductVariant;
-use App\Services\ProductSeoUpdater;
+use App\Services\ProductUpdater;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Sleep;
 
 class UpdateProducts extends Command
 {
     protected $signature = 'update:products {--delay=200}';
-    protected $description = 'Update SEO data for all product variants, sequentially with progress';
+    protected $description = 'Обновление данных товаров со старого сайта (не будет работать после переноса)';
 
-    protected $seoUpdater;
+    protected $updater;
 
-    public function __construct(ProductSeoUpdater $seoUpdater)
+    public function __construct(ProductUpdater $updater)
     {
         parent::__construct();
-        $this->seoUpdater = $seoUpdater;
+        $this->updater = $updater;
     }
 
     public function handle()
     {
         $this->newLine(1);
-        $this->info('Starting SEO update for product variants...');
+        $this->info('Начало обновления товаров...');
         $this->newLine(1);
 
         $delay = (int) $this->option('delay');
@@ -40,7 +40,7 @@ class UpdateProducts extends Command
             $bar->setMessage("\n\nОбрабатывается: {$variant->name} ({$variant->sku})\n");
 
             // Обновляем SEO
-            $this->seoUpdater->updateProduct($sku);
+            $this->updater->updateProduct($sku);
 
             // Продвигаем прогресс
             $bar->advance();
@@ -53,6 +53,6 @@ class UpdateProducts extends Command
 
         $bar->finish();
         $this->newLine(2);
-        $this->info('SEO update completed.');
+        $this->info('Обновление завершено.');
     }
 }

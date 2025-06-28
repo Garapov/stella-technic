@@ -65,7 +65,8 @@
 }">
 
     @if ($variation->seo)
-        @forelse($variation->seo as $seo_tag)
+        
+        {{-- @forelse($variation->seo as $seo_tag)
             @foreach($seo_tag['data'] as $key => $tag)
 
                 @if ($key == 'image')
@@ -83,7 +84,7 @@
             @if ($variation->gallery)
                 @seo(['image' => Storage::disk(config('filesystems.default'))->url($variation->gallery[0])])
             @endif
-        @endforelse
+        @endforelse --}}
     @else
         @seo(['title' => $variation->name])
         @if ($variation->short_description)
