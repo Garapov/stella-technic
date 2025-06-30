@@ -161,7 +161,7 @@
                                     </div>
                                 </div>
 
-                                <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-lg bg-white border-gray-200 text-gray-900 cursor-pointer"
+                                <div class="inline-flex md:hidden items-center px-3 py-2 text-sm font-medium border rounded-lg bg-white border-gray-200 text-gray-900 cursor-pointer"
                                         @click="isFilterOpened = !isFilterOpened" >
                                     <x-carbon-filter class="w-5 h-5" />
                                 </div>

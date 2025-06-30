@@ -46,7 +46,7 @@
                                     
                                 <div class="p-6">
                                     <h2 class="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">{{$item->category->name}}</h2>
-                                    <h1 class="title-font text-lg font-medium text-blue-500 mb-3">{{$item->title}}</h1>
+                                    <h1 class="title-font text-lg font-medium text-blue-500 mb-3 whitespace-normal">{{$item->title}}</h1>
                                     <p class="leading-relaxed mb-3 dark:text-gray-200 text-gray-900 whitespace-normal">{{$item->excerpt}}</p>
                                     <div class="flex items-center flex-wrap ">
                                         <a href="{{ route('client.posts.show', ['category_slug' => $item->category->slug, 'slug' => $item->slug]) }}" class="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0" wire:navigate>Читать далее

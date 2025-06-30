@@ -23,7 +23,7 @@
     @endphp
 
     <section class="py-8 bg-white md:py-10 dark:bg-gray-900 antialiased">
-        <div class="mx-auto container">
+        <div class="lg:container p-4 lg:mx-auto">
             <!-- Heading & Filters -->
     
             <div class="items-end justify-between space-y-4 sm:flex sm:space-y-0">
@@ -36,8 +36,8 @@
             @if (count($categories))
                 <!-- ====== Categories Section Start -->
                 <div class="py-10 dark:bg-dark">
-                    <div class="container mx-auto">
-                        <div class="grid grid-cols-4 gap-4">
+                    <div class="">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             @foreach ($categories as $category)
                                 @livewire('general.category', [
                                     'category' => $category,
