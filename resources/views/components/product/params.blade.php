@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-2 md:sticky top-10">
+<div class="flex flex-col gap-2 md:sticky top-40">
     <div class="parametrs">
         @foreach($groupedParams as $paramGroup)
             <div class="mb-6">

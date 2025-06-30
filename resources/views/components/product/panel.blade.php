@@ -1,30 +1,39 @@
 <div class="flex flex-col gap-4">
     <div class="flex flex-col gap-4 border border-blue-500 p-4 rounded-xl">
         <div class="flex items-center flex-wrap justify-between gap-4">
-            <h4 class="text-slate-900 text-4xl font-semibold">{{ $variation->new_price ? Number::format($variation->new_price, 0) : Number::format($variation->getActualPrice(), 0) }} ₽</h4>
-            @if (!auth()->user() && $variation->auth_price)
-                <div class="relative flex items-center gap-2 text-green-800 dark:text-green-300 bg-green-100 text-md font-medium me-2 px-2.5 py-0.5 rounded-md dark:bg-green-900" x-data="{
-                    popover: false,
-                }" @mouseover="popover = true"  @mouseover.away = "popover = false">
-                    <span>{{ $variation->auth_price }} ₽</span>
-                    <x-carbon-information class="w-4 h-4" />
-                    <div x-show="popover"
-                        x-cloak
-                        x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0 translate-y-1"
-                        x-transition:enter-end="opacity-100 translate-y-0"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="opacity-100 translate-y-0"
-                        x-transition:leave-end="opacity-0 translate-y-1"
-                        class="absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 transform rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm w-[250px]">
-                        <span>Эта цена доступна для авторизованных пользователей. <a class="text-blue-500" href="{{ route('login') }}" wire:navigate>Войдите</a> или <a class="text-blue-500" href="{{ route('register') }}" wire:navigate>зарегистрируйтесь</a> для применения этой цены.</span>
-                        <div class="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 transform rotate-45 bg-gray-900"></div>
+            <div class="flex items-center gap-4">
+                <h4 class="text-slate-900 text-4xl font-semibold">{{ $variation->new_price ? Number::format($variation->new_price, 0) : Number::format($variation->getActualPrice(), 0) }} ₽</h4>
+                @if (!auth()->user() && $variation->auth_price)
+                    <div class="relative flex items-center gap-2 text-green-800 dark:text-green-300 bg-green-100 text-md font-medium me-2 px-2.5 py-0.5 rounded-md dark:bg-green-900" x-data="{
+                        popover: false,
+                    }" @mouseover="popover = true"  @mouseover.away = "popover = false">
+                        <span>{{ $variation->auth_price }} ₽</span>
+                        <x-carbon-information class="w-4 h-4" />
+                        <div x-show="popover"
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 translate-y-1"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 translate-y-1"
+                            class="absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 transform rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm w-[250px]">
+                            <span>Эта цена доступна для авторизованных пользователей. <a class="text-blue-500" href="{{ route('login') }}" wire:navigate>Войдите</a> или <a class="text-blue-500" href="{{ route('register') }}" wire:navigate>зарегистрируйтесь</a> для применения этой цены.</span>
+                            <div class="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 transform rotate-45 bg-gray-900"></div>
+                        </div>
                     </div>
-                </div>
-            @endif
+                @endif
 
-            @if ($variation->new_price)
-                <p class="text-slate-500 text-lg"><strike>{{Number::format($variation->price, 0)}} ₽</strike></p>
+                @if ($variation->new_price)
+                    <p class="text-slate-500 text-lg"><strike>{{Number::format($variation->price, 0)}} ₽</strike></p>
+                @endif
+            </div>
+
+            @if ($variation->count > 0 && !$variation->is_pre_order)
+                <div class="text-green-500 text-2xl">В наличии</div>
+            @endif
+            @if ($variation->is_pre_order)
+                <div class="text-green-500 text-2xl">Предзаказ</div>
             @endif
         </div>
 
@@ -87,45 +96,31 @@
             @endif
         </div>
     </div>
-    @if (count($deliveries) > 0)
-        <div class="bg-slate-50 p-4 rounded-xl flex flex-col gap-4">
-            @foreach($deliveries as $delivery)
-                <div class="grid grid-cols-7 items-start gap-2">
-                    <div class="text-green-600 p-2 rounded-lg bg-white">
-                        @switch($delivery->type)
-                            @case('map')
-                                <x-carbon-pin class="w-full" />
-                                @break
-                            @case('text')
-                                <x-carbon-delivery class="w-full" />
-                                @break
-                            @case('delivery_systems')
-                                <x-carbon-cics-system-group class="w-full" />
-                                @break
-                            @default
-
-                        @endswitch
-                    </div>
-                    <div class="col-span-6">
-                        <div class="text-md text-slate-700 font-bold mb-1">
-                            {{ $delivery->name }}
-                        </div>
-                        @if ($delivery->type == 'map')
-
-                            @if($delivery->points)
-                                <div class="text-sm text-slate-600">
-                                    {{ explode("|", $delivery->points)[0] }}
-                                </div>
-                            @endif
-                        @endif
-                        <div class="text-xs text-slate-500 font-semibold">
-                            {{ $delivery->description }}
-                        </div>
 
 
-                    </div>
-                </div>
-            @endforeach
+    <ul class="grid grid-cols-1 gap-4 md:grid-cols-1">
+
+        @foreach($variation->paramItems as $paramItem)
+            <li class="flex items-center justify-between text-sm gap-2">
+                <strong class="font-medium text-slate-500">{{ $paramItem->productParam->name }}</strong>
+                <span class="grow border-b border-slate-300 border-dashed"></span>
+                <span class="font-medium">{{ $paramItem->title }}</span>
+            </li>
+        @endforeach
+        <div class="flex items-center justify-end">
+            <a href="#params" class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline" @click="activeTab = 0">
+                Все характиристики
+                <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                </svg>
+            </a>
         </div>
-    @endif
+        {{-- @foreach($variation->parametrs as $parametr)
+            <li class="flex items-center justify-between text-sm gap-2">
+                <strong class="font-medium text-slate-500">{{ $parametr->productParam->name }}</strong>
+                <span class="grow border-b border-slate-300 border-dashed"></span>
+                <span class="font-medium">{{ $parametr->title }}</span>
+            </li>
+        @endforeach --}}
+    </ul>
 </div>

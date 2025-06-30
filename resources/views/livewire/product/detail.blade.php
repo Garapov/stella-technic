@@ -4,6 +4,7 @@
     cart_quantity: 1,
     gallerySlider: null,
     thumbnailSlider: null,
+    activeTab: 0,
     init() {
         if (document.querySelector('.gallery-slider')) {
             setTimeout(() => {
@@ -95,9 +96,24 @@
         @endif
     @endif
     
-    <h1 class="text-lg sm:text-3xl font-semibold text-slate-700 dark:text-white mb-8">{{ $variation->name }} @if ($variation->product->brand){{$variation->product->brand->name}}@endif ({{$variation->sku}})</h1>
+    <h1 class="text-lg sm:text-3xl font-semibold text-slate-700 dark:text-white mb-4">{{ $variation->name }}</h1>
 
-
+    <div class="flex items-center gap-4 mb-4">
+        <div class="flex items-center gap-2">
+            Артикул: <span class="text-slate-500 font-semibold">{{ $variation->sku }}</span>
+        </div>
+        <div class="text-slate-500">|</div>
+        @if ($variation->product->brand)
+            
+            <div class="flex items-center gap-2">
+                Бренд: <div class="flex items-center gap-1">
+                    <img src="{{ Storage::disk(config('filesystems.default'))->url($variation->product->brand->image) }}" alt="{{ $variation->product->brand->name }}" class="h-6" />
+                    <span class="text-slate-500 font-semibold">{{ $variation->product->brand->name }}</span>
+                </div>
+            </div>
+            
+        @endif
+    </div>
 
     <div class="grid grid-cols-9 gap-8">
         <div class="flex flex-col gap-8 md:col-span-7 col-span-full">
@@ -145,7 +161,7 @@
                 </div>
 
                 <div class="w-full lg:sticky top-10 lg:col-span-3 col-span-full">
-                    <x-product.panel :variation="$variation" :deliveries="$deliveries" />
+                    <x-product.panel :variation="$variation" />
                 </div>
                 <div class="md:col-span-3 col-span-full md:hidden block">
                     <div class="flex flex-col items-start gap-4">
@@ -154,12 +170,10 @@
                 </div>
             </div>
 
-            <div class="pt-8" x-data="{
-                activeTab: 0,
-            }">
+            <div class="pt-8">
 
                 <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-100 dark:border-gray-700 dark:text-gray-400">
-                    <li class="me-2">
+                    <li class="me-2" id="params">
                         <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 0 ? 'active bg-gray-100 dark:bg-gray-800 dark:text-blue-50' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 cursor-pointer'" aria-current="page" @click="activeTab = 0">Технические характеристики</span>
                     </li>
                     <li class="me-2">
@@ -168,6 +182,12 @@
                     @if (!empty($files))
                         <li class="me-2">
                             <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 2 ? 'active bg-gray-100 dark:bg-gray-800 dark:text-blue-50' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 cursor-pointer'" aria-current="page" @click="activeTab = 2">Файлы</span>
+                        </li>
+                    @endif
+
+                    @if (count($deliveries) > 0)
+                        <li class="me-2">
+                            <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 3 ? 'active bg-gray-100 dark:bg-gray-800 dark:text-blue-50' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 cursor-pointer'" aria-current="page" @click="activeTab = 3">Доставка</span>
                         </li>
                     @endif
                 </ul>
@@ -215,6 +235,48 @@
                                 </li>
                             @endforeach
                         </ul>
+                    </div>
+                @endif
+                
+                @if (count($deliveries) > 0)
+                    <div class="bg-gray-100 p-4 rounded-b-xl flex flex-col gap-4" x-show="activeTab == 3">
+                        @foreach($deliveries as $delivery)
+                            <div class="grid grid-cols-10 items-center gap-4">
+                                <div class="text-green-600 p-2 rounded-lg bg-white">
+                                    @switch($delivery->type)
+                                        @case('map')
+                                            <x-carbon-pin class="w-full" />
+                                            @break
+                                        @case('text')
+                                            <x-carbon-delivery class="w-full" />
+                                            @break
+                                        @case('delivery_systems')
+                                            <x-carbon-cics-system-group class="w-full" />
+                                            @break
+                                        @default
+
+                                    @endswitch
+                                </div>
+                                <div class="col-span-7">
+                                    <div class="text-md text-slate-700 font-bold mb-1">
+                                        {{ $delivery->name }}
+                                    </div>
+                                    @if ($delivery->type == 'map')
+
+                                        @if($delivery->points)
+                                            <div class="text-sm text-slate-600">
+                                                {{ explode("|", $delivery->points)[0] }}
+                                            </div>
+                                        @endif
+                                    @endif
+                                    <div class="text-xs text-slate-500 font-semibold">
+                                        {{ $delivery->description }}
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 @endif
             </div>
