@@ -1,7 +1,9 @@
 
 <section class="py-8 bg-white md:py-10 dark:bg-gray-900 antialiased">
     @if ($category || $product_ids)
-    <div class="mx-auto container relative">
+    <div class="lg:container p-4 lg:mx-auto relative" x-data="{
+        isFilterOpened: false,
+    }">
 
             <!-- Loading Overlay -->
             <div wire:loading.class.remove="hidden"
@@ -58,7 +60,7 @@
                     {{ Breadcrumbs::render('category', $category) }}
                 </div>
                 @if (!empty($nonTagCategories))
-                    <div class="grid grid-cols-8 gap-4 mb-4">
+                    <div class="grid grid-cols-2 md:grid-cols-8 gap-4 mb-4">
                         @foreach ($nonTagCategories as $subcategory)
                             @if ($subcategory->products->count() == 0)
                                 @continue
@@ -94,14 +96,14 @@
 
                     </div>
                 @endif
-                <div class="flex flex-col gap-4 @if ($display_filter) col-span-7 @else col-span-full @endif">
+                <div class="flex flex-col gap-4 @if ($display_filter) md:col-span-7 @else md:col-span-full @endif col-span-full">
                     @if ($category && $category->title)
-                        <div class="items-end justify-between flex">
+                        <div class="items-start md:items-end justify-between flex flex-col md:flex-row gap-4">
                             <div>
 
                                 <h1 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl flex items-center">
 
-                                        <span>{{ $category->title }}</span> <span class="bg-blue-100 text-blue-800 text-xs font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300">
+                                        <span>{{ $category->title }}</span> <span class="bg-blue-100 text-blue-800 text-xs font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300 whitespace-nowrap">
                                             @php
                                                 $count = $all_products->count();
                                             @endphp
@@ -157,6 +159,11 @@
                                             @endforeach
                                         </ul>
                                     </div>
+                                </div>
+
+                                <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-lg bg-white border-gray-200 text-gray-900 cursor-pointer"
+                                        @click="isFilterOpened = !isFilterOpened" >
+                                    <x-carbon-filter class="w-5 h-5" />
                                 </div>
                             </div>
                         </div>
