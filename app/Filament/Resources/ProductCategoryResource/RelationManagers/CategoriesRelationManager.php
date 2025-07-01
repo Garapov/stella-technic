@@ -24,6 +24,7 @@ use App\Models\ProductCategory;
 use Filament\Forms\Get;
 use App\Models\ProductVariant;
 use App\Models\ProductParamItem;
+use Filament\Support\Enums\MaxWidth;
 
 class CategoriesRelationManager extends RelationManager
 {
@@ -179,6 +180,11 @@ class CategoriesRelationManager extends RelationManager
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make()->modalWidth(
+                    MaxWidth::SevenExtraLarge
+                ),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([

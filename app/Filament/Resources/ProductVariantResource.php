@@ -17,6 +17,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -25,6 +26,10 @@ class ProductVariantResource extends Resource
     protected static ?string $model = ProductVariant::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = "Товары (Вариации)";
+    protected static ?string $modelLabel = "Товар (Вариация)";
+    protected static ?string $pluralModelLabel = "Товары (Вариации)";
+    protected static ?string $navigationGroup = "Магазин";
     protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
@@ -459,6 +464,19 @@ class ProductVariantResource extends Resource
                 //     Tables\Actions\DeleteBulkAction::make(),
                 // ]),
             ]);
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        // dd($record->categories->pluck('title')->implode(', '));
+        return [
+            "Название" => $record->name . " ($record->sku)",
+        ];
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ["name", "slug", "short_description", "description"];
     }
 
     public static function getRelations(): array

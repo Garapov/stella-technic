@@ -99,7 +99,9 @@
 
 
     <ul class="grid grid-cols-1 gap-4 md:grid-cols-1">
-
+        <li class="text-md font-bold">
+            Технические характиристики:
+        </li>
         @foreach($variation->paramItems as $paramItem)
             <li class="flex items-center justify-between text-sm gap-2">
                 <strong class="font-medium text-slate-500">{{ $paramItem->productParam->name }}</strong>
@@ -107,14 +109,14 @@
                 <span class="font-medium">{{ $paramItem->title }}</span>
             </li>
         @endforeach
-        <div class="flex items-center justify-end">
+        <li class="flex items-center justify-end">
             <a href="#params" class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline" @click="activeTab = 0">
                 Все характиристики
                 <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
                 </svg>
             </a>
-        </div>
+        </li>
         {{-- @foreach($variation->parametrs as $parametr)
             <li class="flex items-center justify-between text-sm gap-2">
                 <strong class="font-medium text-slate-500">{{ $parametr->productParam->name }}</strong>

@@ -61,19 +61,23 @@ class Index extends Component implements HasForms
                     ->preload()
                     ->label('Родительский товар')
                     ->required()
+                    ->default(1841)
                     ->options(
                         fn() => Product::all()->pluck("name", "id")
                     ),
                 TextInput::make("name")
                     ->required()
+                    ->default('Стойка 735х1500 с ящиками Стелла-техник')
                     ->label("Название"),
                 TextInput::make("price")
                     ->required()
                     ->numeric()
+                    ->default(0)
                     ->postfix("₽")
                     ->label("Цена"),
                 TextInput::make("sku")
                     ->required()
+                    ->default('А1-00-00-00')
                     ->label(
                         "Артикул"
                     ),
@@ -87,7 +91,7 @@ class Index extends Component implements HasForms
                     ->reorderable(false)
                     ->addActionLabel("Добавить связь")
                     ->grid(1)
-                    ->defaultItems(2)
+                    ->defaultItems(4)
                     ->minItems(2)
                     ->maxItems(6)
                     ->label("Ключевые параметры")
@@ -151,6 +155,8 @@ class Index extends Component implements HasForms
 
         if (!$parentProduct) return;
 
+        
+
         // Check if the link already exists
         $linkExists = false;
         $row = [];
@@ -173,6 +179,7 @@ class Index extends Component implements HasForms
             }
         }
 
+
         if ($linkExists) return;
 
         if (!$linkExists) {
@@ -187,7 +194,11 @@ class Index extends Component implements HasForms
             $parentProduct->save();
         }
 
+        
+
         unset($this->data['row']);
+
+        
 
         $this->data['gallery'][] = '/assets/placeholder.svg';
         $this->data['is_constructable'] = true;
@@ -200,6 +211,7 @@ class Index extends Component implements HasForms
 
 
         $variation = ProductVariant::create($this->data);
+        
 
         $variation->paramItems()->sync($row);
         $variation->parametrs()->sync($this->data['parametrs']);

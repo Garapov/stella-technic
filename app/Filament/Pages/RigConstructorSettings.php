@@ -27,42 +27,46 @@ class RigConstructorSettings extends SiteSettings
                     Tabs\Tab::make("Стойки")->schema([
                         Select::make("deck_low_slim")
                             ->label("Стойка 735x1515")
-                            ->options(
-                                fn() => ProductVariant::all()->pluck(
-                                    "name",
-                                    "id"
-                                )
-                            )
+                            ->options(function () {
+                                return ProductVariant::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($variation) {
+                                            return [$variation->id => $variation->name . " ($variation->sku)"];
+                                        });
+                                })
                             ->searchable()
                             ->required(),
                         Select::make("deck_high_slim")
                             ->label("Стойка 735x2020")
-                            ->options(
-                                fn() => ProductVariant::all()->pluck(
-                                    "name",
-                                    "id"
-                                )
-                            )
+                            ->options(function () {
+                                return ProductVariant::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($variation) {
+                                            return [$variation->id => $variation->name . " ($variation->sku)"];
+                                        });
+                                })
                             ->searchable()
                             ->required(),
                         Select::make("deck_low_wide")
                             ->label("Стойка 1150x1515")
-                            ->options(
-                                fn() => ProductVariant::all()->pluck(
-                                    "name",
-                                    "id"
-                                )
-                            )
+                            ->options(function () {
+                                return ProductVariant::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($variation) {
+                                            return [$variation->id => $variation->name . " ($variation->sku)"];
+                                        });
+                                })
                             ->searchable()
                             ->required(),
                         Select::make("deck_high_wide")
                             ->label("Стойка 1150x2020")
-                            ->options(
-                                fn() => ProductVariant::all()->pluck(
-                                    "name",
-                                    "id"
-                                )
-                            )
+                            ->options(function () {
+                                return ProductVariant::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($variation) {
+                                            return [$variation->id => $variation->name . " ($variation->sku)"];
+                                        });
+                                })
                             ->searchable()
                             ->required(),
                     ]),

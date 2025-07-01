@@ -219,6 +219,8 @@ export default ({
         },
         get selectedDesk() {
             let selector = this.selectedHeight + "_" + this.selectedWidth;
+
+            console.log(selector, this.desks);
             return this.desks[selector];
         },
         get selectedBox() {
@@ -227,6 +229,7 @@ export default ({
         },
         get calculatedPrice() {
             let price = 0;
+            console.log('this.selectedDesk', this.selectedDesk);
             price += this.selectedDesk.price;
 
             this.addedRows.forEach((box) => {

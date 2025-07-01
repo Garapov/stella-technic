@@ -1,4 +1,7 @@
 <div class="flex flex-col gap-2 md:sticky top-40">
+    <div class="text-md font-bold pb-2">
+        Другие вариации товара:
+    </div>
     <div class="parametrs">
         @foreach($groupedParams as $paramGroup)
             <div class="mb-6">
