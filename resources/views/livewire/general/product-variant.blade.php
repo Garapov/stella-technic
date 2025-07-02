@@ -40,7 +40,7 @@
 
             <a href="{{ route('client.catalog', $variant->urlChain()) }}"
                 class="text-md font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate>
-                {{ $variant->name }} @if ($variant->product->brand) {{ $variant->product->brand->name }} @endif ({{ $variant->sku }})
+                {{ $variant->name }} ({{ $variant->sku }})
             </a>
         </div>
         @if($variant->paramItems || $variant->parametrs)

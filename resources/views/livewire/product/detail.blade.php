@@ -161,7 +161,7 @@
                 </div>
 
                 <div class="w-full lg:sticky top-10 lg:col-span-3 col-span-full">
-                    <x-product.panel :variation="$variation" />
+                    <x-product.panel :variation="$variation" :features="$features" />
                 </div>
                 <div class="md:col-span-3 col-span-full md:hidden block">
                     <div class="flex flex-col items-start gap-4">

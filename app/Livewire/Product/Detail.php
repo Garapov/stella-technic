@@ -3,6 +3,7 @@
 namespace App\Livewire\Product;
 
 use App\Models\Delivery;
+use App\Models\Feature;
 use App\Models\Product;
 use App\Models\Image;
 use App\Models\ProductVariant;
@@ -19,11 +20,14 @@ class Detail extends Component
     public $path;
     public $files = [];
     public $deliveries;
+    public $features;
 
     public function mount($path = null, $variation = null)
     {
         $this->path = $path;
         $this->deliveries = Delivery::where("is_active", true)->get();
+
+        $this->features = Feature::take(4)->get();
 
         $this->variation = $variation;
 

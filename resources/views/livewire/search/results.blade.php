@@ -1,6 +1,6 @@
 <div>
 
-    <div class="rounded-lg bg-blue-500 flex items-center relative w-full z-20 mb-4">
+    <div class="rounded-lg bg-blue-500 flex items-center w-full mb-4">
         <input type="search" id="search-dropdown"
         class="rounded-lg bg-white block p-2.5 w-full text-sm text-gray-900 dark:placeholder-gray-400 dark:text-white border border-blue-500"
         placeholder="Поиск" name="q" wire:model.live="q" @focus="isOpen = true" @blur="isOpen = false" style="outline: none; box-shadow: none;" />

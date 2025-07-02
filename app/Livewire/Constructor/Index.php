@@ -61,7 +61,7 @@ class Index extends Component implements HasForms
                     ->preload()
                     ->label('Родительский товар')
                     ->required()
-                    ->default(1841)
+                    ->default(1844)
                     ->options(
                         fn() => Product::all()->pluck("name", "id")
                     ),
