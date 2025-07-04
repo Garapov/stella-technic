@@ -169,7 +169,7 @@
                         <div>
                             @if ($displayMode == 'block')
                                 <div>
-                                    <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 @if ($display_filter) lg:grid-cols-2 xl:grid-cols-4 @else lg:grid-cols-3 xl:grid-cols-5 @endif">
+                                    <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 @if ($display_filter) lg:grid-cols-2 xl:grid-cols-3 @else lg:grid-cols-3 xl:grid-cols-5 @endif">
                                         @foreach ($products as $variant)
                                             @livewire('general.product-variant', [
                                                 'variant' => $variant,

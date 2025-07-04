@@ -110,6 +110,10 @@
                                   </a>
                                   <a href="#" class="text-base font-medium text-gray-900 hover:underline dark:text-white" x-text="cart_item.name"></a>
                                 </div>
+                                <div class="text-end">
+                                    <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.new_price ?? (userAuthenticated & cart_item.auth_price ? cart_item.auth_price : cart_item.price))"></p>
+                                    <p class="text-md line-through font-extrabold leading-tight text-gray-600 dark:text-white" x-show="cart_item.new_price !== null" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format((userAuthenticated & cart_item.auth_price ? cart_item.auth_price : cart_item.price))"></p>
+                                </div>
                                 <div class="relative flex items-center">
                                     <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"  @click="decreaseQuantity(cart_item.id)">
                                         <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
@@ -125,8 +129,8 @@
                                 </div>
                                 <div class="flex items-center justify-between md:justify-end gap-4">
                                     <div class="text-end">
-                                        <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.new_price ?? (userAuthenticated & cart_item.auth_price ? cart_item.auth_price : cart_item.price))"></p>
-                                        <p class="text-md line-through font-extrabold leading-tight text-gray-600 dark:text-white" x-show="cart_item.new_price !== null" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format((userAuthenticated & cart_item.auth_price ? cart_item.auth_price : cart_item.price))"></p>
+                                        <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.new_price ? cart_item.new_price * $store.cart.list[cart_item.id] : (userAuthenticated & cart_item.auth_price ? cart_item.auth_price * $store.cart.list[cart_item.id] : cart_item.price * $store.cart.list[cart_item.id]))"></p>
+                                        <p class="text-md line-through font-extrabold leading-tight text-gray-600 dark:text-white" x-show="cart_item.new_price !== null" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format((userAuthenticated & cart_item.auth_price ? cart_item.auth_price * $store.cart.list[cart_item.id] : cart_item.price * $store.cart.list[cart_item.id]))"></p>
                                     </div>
                                     <div class="flex items-center gap-4">
                                         <button type="button" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 hover:underline dark:text-gray-400 dark:hover:text-white" @click.prevent="$store.favorites.toggleProduct(cart_item.id)">
