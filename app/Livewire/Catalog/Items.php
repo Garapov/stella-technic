@@ -146,6 +146,7 @@ class Items extends Component
         $this->displayMode = $mode;
     }
 
+    #[On("filters-reset")]
     public function resetFilters()
     {
         $this->filters = [];

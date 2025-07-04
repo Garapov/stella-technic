@@ -5,6 +5,8 @@ import { Fancybox } from "@fancyapps/ui";
 import mask from "@alpinejs/mask";
 import rangeSlider from "range-slider-input";
 import Toastify from "toastify-js";
+// import 'toolcool-range-slider/dist/plugins/tcrs-marks.min.js';
+// import 'toolcool-range-slider';
 // import sort from '@alpinejs/sort'
 // import persist from '@alpinejs/persist';
 

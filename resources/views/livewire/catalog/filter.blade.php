@@ -20,6 +20,7 @@
         this.rangeSlider.value = [@js($products->min('price')), @js($products->max('price'))];
     }
 }">
+
     <div class="flex flex-col gap-4">
         <div class="flex items-center justify-between">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Фильтры</h3>
@@ -85,14 +86,14 @@
                         @php $counter = 0; @endphp
 
                         @foreach($params as $paramItemId => $paramData)
-                            <li class="flex items-center @if(!in_array($paramItemId, $availableFilters)) opacity-50 cursor-not-allowed pointer-events-none @endif"
+                            <li class="flex items-center @if(!in_array($paramItemId, $availableFilters)) opacity-30 cursor-not-allowed pointer-events-none @endif"
                                 @if($counter > 4 && !isset($selectedParams[$paramItemId])) x-show="showAll" @endif>
                                 <input
                                     type="checkbox"
                                     id="param_{{ $paramItemId }}"
                                     class="w-5 h-5 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
                                     wire:click="toggleParam({{ $paramItemId }}, '{{ $paramData['source'] }}')"
-                                    @if(isset($selectedParams[$paramItemId])) checked @endif
+                                    {{ isset($selectedParams[$paramItemId]) ? 'checked' : '' }}
                                 />
                                 <label for="param_{{ $paramItemId }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                                     {{ $paramData['title'] }}

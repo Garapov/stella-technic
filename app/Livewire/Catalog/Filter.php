@@ -228,12 +228,15 @@ class Filter extends Component
         $this->selectedParams = [];
         $this->selectedBrands = [];
         $this->selectedBatches = [];
+        $this->availableFilters = [];
 
         $this->startPriceRange = $this->priceRangeToDisplay = [
             $this->products->min("price"),
             $this->products->max("price"),
         ];
 
-        $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability());
+        $this->js('setTimeout(() => {
+            window.location.reload();
+        }, 100);'); 
     }
 }
