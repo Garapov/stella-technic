@@ -5,6 +5,7 @@ namespace App\Filters;
 use Abbasudo\Purity\Filters\Filter;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 
 class ProductVariantHasBrand extends Filter
 {
@@ -23,6 +24,7 @@ class ProductVariantHasBrand extends Filter
     public function apply(): Closure
     {
         return function (Builder $query) {
+
             $values = $this->values;
 
             $query->whereHas("product", function ($subquery) use ($values) {

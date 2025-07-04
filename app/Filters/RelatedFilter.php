@@ -8,25 +8,32 @@ use Illuminate\Database\Eloquent\Builder;
 
 class RelatedFilter extends Filter
 {
+    /**
+     * Operator string to detect in the query params.
+     *
+     * @var string
+     */
     protected static string $operator = '$related';
 
+    /**
+     * Apply filter logic to $query.
+     *
+     * @return Closure
+     */
     public function apply(): Closure
     {
         return function (Builder $query) {
             $values = $this->values;
 
-            // Приводим к массиву, если передано строкой
             if (is_string($values)) {
                 $values = json_decode($values, true) ?? [$values];
             }
 
-            // Убедимся, что $values — массив чисел
             $values = collect($values)
                 ->map(function ($val) {
                     if (is_string($val) && preg_match('/^\[(\d+)\]$/', $val, $m)) {
                         return (int) $m[1];
                     }
-
                     return (int) $val;
                 })
                 ->filter()
@@ -34,14 +41,14 @@ class RelatedFilter extends Filter
                 ->values()
                 ->all();
 
-            if (empty($values)) {
-                return; // нет смысла добавлять whereHas
-            }
+            if (empty($values)) return;
 
-            $query->whereHas($this->column, function ($subquery) use ($values) {
-                $table = $subquery->getModel()->getTable();
-                $subquery->whereIn("{$table}.id", $values);
-            });
+            foreach ($values as $value) {
+                $query->whereHas($this->column, function ($subquery) use ($value) {
+                    $table = $subquery->getModel()->getTable();
+                    $subquery->where("{$table}.id", $value);
+                });
+            }
         };
     }
 }

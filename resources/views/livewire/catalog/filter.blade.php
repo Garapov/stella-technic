@@ -45,6 +45,7 @@
             </div>
         </div>
 
+
         @foreach($parameters as $paramName => $params)
             <div>
                 <h6 class="text-md font-medium mb-3 dark:text-white">
@@ -84,7 +85,7 @@
                         @php $counter = 0; @endphp
 
                         @foreach($params as $paramItemId => $paramData)
-                            <li class="flex items-center"
+                            <li class="flex items-center @if(!in_array($paramItemId, $availableFilters)) opacity-50 cursor-not-allowed pointer-events-none @endif"
                                 @if($counter > 4 && !isset($selectedParams[$paramItemId])) x-show="showAll" @endif>
                                 <input
                                     type="checkbox"

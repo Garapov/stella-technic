@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Catalog;
 
+use App\Models\ProductVariant;
 use Livewire\Component;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
 
 class Filter extends Component
@@ -52,7 +54,7 @@ class Filter extends Component
         $this->initializeBrands();
         $this->initializeParameters();
 
-        $this->dispatch("filters-changed", filters: $this->filters);
+        $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability());
     }
 
     public function updatedSelectedBatches()
@@ -64,7 +66,7 @@ class Filter extends Component
                 '$in' => $this->selectedBatches,
             ];
         }
-        $this->dispatch("filters-changed", filters: $this->filters);
+        $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability());
     }
 
     public function updatedSelectedBrands()
@@ -74,7 +76,25 @@ class Filter extends Component
         } else {
             $this->filters['$hasbrand'] = $this->selectedBrands;
         }
-        $this->dispatch("filters-changed", filters: $this->filters);
+        $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability());
+    }
+
+
+    public function checkParamsvAilability()
+    {
+        $this->availableFilters = ProductVariant::filter($this->filters)
+            ->with(['paramItems', 'parametrs'])
+            ->get()
+            ->flatMap(function ($variant) {
+                // Собираем все id из paramItems и parametrs
+                $paramItemsIds = $variant->paramItems->pluck('id')->toArray();
+                $parametrsIds = $variant->parametrs->pluck('id')->toArray();
+                return array_merge($paramItemsIds, $parametrsIds);
+            })
+            ->unique()
+            ->values()
+            ->toArray();
+        return $this->availableFilters;
     }
 
     public function updatedSelectedParams()
@@ -102,13 +122,14 @@ class Filter extends Component
             unset($this->filters['parametrs']);
         }
 
-        $this->dispatch("filters-changed", filters: $this->filters);
+        
+        $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability());
     }
 
     public function updatedPriceRange()
     {
         $this->filters["price"]['$between'] = $this->priceRange;
-        $this->dispatch("filters-changed", filters: $this->filters);
+        $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability());
     }
 
     public function calculatePriceRangeOnMount()
@@ -151,7 +172,6 @@ class Filter extends Component
 
     protected function initializeParameters()
     {
-        $allParams = collect();
 
         $primaryParams = $this->products->flatMap(fn($product) => $product->paramItems ?? []);
         $secondaryParams = $this->products->flatMap(fn($product) => $product->parametrs ?? []);
@@ -182,7 +202,7 @@ class Filter extends Component
     }
 
     public function render()
-    {
+    {   
         return view("livewire.catalog.filter");
     }
 
@@ -199,7 +219,7 @@ class Filter extends Component
 
     public function updatedFilters()
     {
-        $this->dispatch("filters-changed", filters: $this->filters);
+        $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability());
     }
 
     public function resetFilters()
@@ -214,6 +234,6 @@ class Filter extends Component
             $this->products->max("price"),
         ];
 
-        $this->dispatch("filters-changed", filters: $this->filters);
+        $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability());
     }
 }

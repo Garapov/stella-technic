@@ -113,6 +113,15 @@ class Items extends Component
             $builder->whereIn('product_id', $this->product_ids);
         }
 
+
+        $all_products = $builder->with([
+            'product.brand',
+            'product.categories',
+            'paramItems.productParam',
+            'parametrs.productParam',
+            'batch',
+        ])->get();
+
         $products = $builder->with([
             'product.brand',
             'product.categories',
@@ -123,6 +132,7 @@ class Items extends Component
 
         return view("livewire.catalog.items", [
             "products" => $products,
+            "all_products" => $all_products,
             "mode" => $this->displayMode,
             "nonTagCategories" => $this->nonTagCategories,
             "tagCategories" => $this->tagCategories,

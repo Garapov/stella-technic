@@ -13,25 +13,6 @@
                     <span class="text-gray-700 dark:text-gray-300">Загрузка...</span>
                 </div>
             </div>
-            @php
-                $paginated_products = $products;
-                $all_products = $all_products = \App\Models\ProductVariant::filter($filters)
-                    ->when($type === 'products' || in_array(optional($category)->type, ['variations', 'filter']), function ($q) use ($product_ids) {
-                        return $q->whereIn('id', $product_ids);
-                    }, function ($q) use ($product_ids) {
-                        return $q->whereIn('product_id', $product_ids);
-                    })
-                    ->with([
-                        'product.brand',
-                        'product.categories',
-                        'paramItems',
-                        'parametrs',
-                        'paramItems.productParam',
-                        'parametrs.productParam',
-                        'batch',
-                    ])
-                    ->get();
-            @endphp
 
             <!-- Heading & Filters -->
             @if ($category)
@@ -168,7 +149,7 @@
                             </div>
                         </div>
                     @endif
-                    @if($paginated_products->isEmpty())
+                    @if($products->isEmpty())
                         <div class="flex flex-col items-center justify-center p-8 text-center">
                             <div class="mb-4">
                                 <svg class="w-12 h-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -189,7 +170,7 @@
                             @if ($displayMode == 'block')
                                 <div>
                                     <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 @if ($display_filter) lg:grid-cols-2 xl:grid-cols-4 @else lg:grid-cols-3 xl:grid-cols-5 @endif">
-                                        @foreach ($paginated_products as $variant)
+                                        @foreach ($products as $variant)
                                             @livewire('general.product-variant', [
                                                 'variant' => $variant,
                                                 'category' => $category ?? null,
@@ -197,7 +178,7 @@
                                         @endforeach
 
                                     </div>
-                                    {{ $paginated_products->links() }}
+                                    {{ $products->links() }}
                                 </div>
                             @else
                                 @php
