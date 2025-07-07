@@ -155,10 +155,6 @@ class Filter extends Component
             }
         }
 
-        Log::info('[Filter] toggleParam after', [
-            'selectedParams_after' => $this->selectedParams,
-            'filters_after' => $this->filters,
-        ]);
         $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability());
     }
 
