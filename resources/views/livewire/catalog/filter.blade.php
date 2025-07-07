@@ -48,6 +48,9 @@
 
 
         @foreach($parameters as $paramName => $params)
+            @php
+                // Теперь $availableFilters — просто массив id, доступен ли параметр: in_array(id, $availableFilters)
+            @endphp
             <div>
                 <h6 class="text-md font-medium mb-3 dark:text-white">
                     {{ $paramName }}
@@ -56,19 +59,19 @@
                 @if ($params->first()['type'] == 'color')
                     <ul class="flex flex-wrap gap-2" aria-labelledby="dropdownDefault">
                         @foreach($params as $colorItemId => $color)
-                            @php
-                                $colors = explode('|', $color['value']);
-                            @endphp
+                            @php $colors = explode('|', $color['value']); @endphp
                             <label class="relative w-8 h-8 rounded-full border 
                                 @if(isset($selectedParams[$colorItemId])) border-blue-800 border-4 
                                 @else border-gray-300 
-                                @endif overflow-hidden">
+                                @endif overflow-hidden
+                                @unless(in_array($colorItemId, $availableFilters)) opacity-30 cursor-not-allowed pointer-events-none @endunless">
                                 <input
                                     type="checkbox"
                                     id="param_{{ $colorItemId }}"
                                     class="hidden"
                                     wire:click="toggleParam({{ $colorItemId }}, '{{ $color['source'] }}')"
                                     @if(isset($selectedParams[$colorItemId])) checked @endif
+                                    @unless(in_array($colorItemId, $availableFilters)) disabled @endunless
                                 />
                                 @if(count($colors) > 1)
                                     <div class="absolute inset-0">
@@ -84,9 +87,8 @@
                 @else
                     <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault" x-data="{ showAll: false }">
                         @php $counter = 0; @endphp
-
                         @foreach($params as $paramItemId => $paramData)
-                            <li class="flex items-center @if(!in_array($paramItemId, $availableFilters)) opacity-30 cursor-not-allowed pointer-events-none @endif"
+                            <li class="flex items-center @unless(in_array($paramItemId, $availableFilters)) opacity-30 cursor-not-allowed pointer-events-none @endunless"
                                 @if($counter > 4 && !isset($selectedParams[$paramItemId])) x-show="showAll" @endif>
                                 <input
                                     type="checkbox"
@@ -94,6 +96,7 @@
                                     class="w-5 h-5 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
                                     wire:click="toggleParam({{ $paramItemId }}, '{{ $paramData['source'] }}')"
                                     {{ isset($selectedParams[$paramItemId]) ? 'checked' : '' }}
+                                    @unless(in_array($paramItemId, $availableFilters)) disabled @endunless
                                 />
                                 <label for="param_{{ $paramItemId }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                                     {{ $paramData['title'] }}
