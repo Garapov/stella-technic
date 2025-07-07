@@ -428,14 +428,14 @@ export default ({
                 HELPER_BOX_SELECTOR,
                 true,
             );
-            let helperBoxHeight = this.selectedHeightValue; // Используем значение по умолчанию
+            let helperBoxHeight = Math.round(this.selectedHeightValue); // Используем значение по умолчанию
 
             if (helperBox) {
                 // Получаем размеры из бокса
                 const box = new THREE.Box3().setFromObject(helperBox);
                 const size = new THREE.Vector3();
                 box.getSize(size);
-                helperBoxHeight = size.y * 1000; // Конвертируем в мм
+                helperBoxHeight = Math.round(size.y * 1000); // Конвертируем в мм
             } else {
                 this.log(
                     "Предупреждение: HELPER_BOX_SELECTOR не найден на сцене, используется значение по умолчанию",
@@ -443,10 +443,10 @@ export default ({
                 );
             }
 
-            const usedHeight = this.addedRows.reduce(
+            const usedHeight = Math.round(this.addedRows.reduce(
                 (sum, row) => sum + ROW_CONFIGS[row.size].height,
                 0,
-            );
+            ));
 
             this.usedHeight = usedHeight;
             this.remainingHeight = Math.round(helperBoxHeight - usedHeight);
@@ -454,6 +454,11 @@ export default ({
                 100,
                 Math.round((usedHeight / helperBoxHeight) * 100),
             );
+
+            console.log('usedHeight', this.usedHeight);
+            console.log('usedHeightPercent', this.usedHeightPercent);
+            console.log('remainingHeight', this.remainingHeight);
+            console.log('helperBoxHeight', helperBoxHeight);
 
             // Обновляем флаги доступности размеров
             this.canAddSmallRow =

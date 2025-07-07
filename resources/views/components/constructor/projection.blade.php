@@ -29,7 +29,7 @@
         <div class="debug-section">
             <h4>Сцена</h4>
             <p>Всего объектов: <span x-text="debugInfo.modelCount"></span></p>
-            <p>Доступное пространство: <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full"><div class="text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full" :style="{width: usedHeightPercent + '%'}" x-bind:class="usedHeightPercent > 90 ? 'bg-red-500' : (usedHeightPercent > 70 ? ' цяbg-yellow-600' : 'bg-green-600')"> <span x-text="Math.floor(usedHeightPercent)"></span>%</div></div></p>
+            <p>Доступное пространство: <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full"><div class="text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full" :style="{width: usedHeightPercent + '%'}" x-bind:class="usedHeightPercent > 85 ? 'bg-red-500' : (usedHeightPercent > 65 ? 'bg-yellow-600' : 'bg-green-600')"> <span x-text="Math.floor(usedHeightPercent)"></span>%</div></div></p>
             <p>Занято: <span x-text="`${usedHeight} мм`"></span></p>
             <p>Осталось: <span x-text="`${remainingHeight} мм`"></span></p>
             <p>Можно добавить еще: <span x-text="`V1: ${maxSmallRowsToAdd} шт. V2: ${maxMediumRowsToAdd} шт. V3: ${maxLargeRowsToAdd} шт.`"></span></p>
