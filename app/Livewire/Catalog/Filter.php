@@ -42,44 +42,26 @@ class Filter extends Component
 
         // Восстанавливаем выбранные параметры и первую группу строго по очередности в $this->filters
         $this->selectedParams = [];
-        $this->firstSelectedGroupPrimary = null;
-        $this->firstSelectedGroupSecondary = null;
-        $firstGroupFound = false;
+        $firstSelectedId = null;
         foreach (["paramItems", "parametrs"] as $filterKey) {
             if (isset($this->filters[$filterKey])) {
                 foreach (['$hasid', '$related'] as $type) {
                     if (!empty($this->filters[$filterKey][$type])) {
                         foreach ($this->filters[$filterKey][$type] as $id) {
                             $this->selectedParams[$id] = $filterKey;
-                            if (!$firstGroupFound) {
-                                // Найти имя группы по id
-                                foreach ($this->parameters as $groupName => $params) {
-                                    if (isset($params[$id])) {
-                                        if ($filterKey === 'paramItems') {
-                                            $this->firstSelectedGroupPrimary = $groupName;
-                                        } else {
-                                            $this->firstSelectedGroupSecondary = $groupName;
-                                        }
-                                        $firstGroupFound = true;
-                                        break 2;
-                                    }
-                                }
+                            if ($firstSelectedId === null) {
+                                $firstSelectedId = $id;
                             }
                         }
                     }
                 }
             }
         }
-        $this->firstSelectedGroup = $this->firstSelectedGroupPrimary;
-
-        Log::info('[Filter] mount: параметры при загрузке', [
-            'selectedParams' => $this->selectedParams,
-            'firstSelectedGroupPrimary' => $this->firstSelectedGroupPrimary,
-            'firstSelectedGroupSecondary' => $this->firstSelectedGroupSecondary,
-            'filters' => $this->filters,
-            'availableFilters' => $this->availableFilters,
-            'parameters' => $this->parameters,
-        ]);
+        if ($firstSelectedId !== null) {
+            $this->setFirstSelectedGroupIds($firstSelectedId);
+        } else {
+            $this->firstSelectedGroup = [];
+        }
 
         $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability());
     }
@@ -106,22 +88,35 @@ class Filter extends Component
         $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability());
     }
 
+        /**
+     * Определяет и возвращает массив id параметров первой выбранной группы по id выбранного параметра.
+     * Если filters пустой — возвращает все id из группы, где находится переданный id.
+     * Если filters не пустой — ищет id первого выбранного параметра и возвращает все id из его группы.
+     * Записывает результат в $this->firstSelectedGroup.
+     */
+    public function setFirstSelectedGroupIds($paramId)
+    {
+        
+        if (empty($this->filters)) {
+            $this->firstSelectedGroup = [];
+        }
+        if (!$this->firstSelectedGroup) {        
+
+            foreach ($this->parameters as $groupName => $params) {
+                if (isset($this->parameters[$groupName]) && isset($this->parameters[$groupName][$paramId])) {
+                    $this->firstSelectedGroup = $this->parameters[$groupName]->keys()->toArray();
+                }
+            }
+        };
+
+        
+        
+        return $this->firstSelectedGroup;
+    }
+
 
     public function checkParamsvAilability()
     {
-        // 1. Определяем первую выбранную группу
-        $firstGroup = null;
-        if ($this->firstSelectedGroupPrimary) {
-            $firstGroup = $this->firstSelectedGroupPrimary;
-        } elseif ($this->firstSelectedGroupSecondary) {
-            $firstGroup = $this->firstSelectedGroupSecondary;
-        }
-
-        $firstGroupIds = [];
-        if ($firstGroup && isset($this->parameters[$firstGroup])) {
-            $firstGroupIds = array_keys($this->parameters[$firstGroup]->toArray());
-        }
-
         // id параметров товаров после фильтрации
         $filteredIds = ProductVariant::filter($this->filters)
             ->with(['paramItems', 'parametrs'])
@@ -136,134 +131,34 @@ class Filter extends Component
             ->toArray();
 
         // объединяем id первой группы и id из фильтрации, оставляя только уникальные
-        $this->availableFilters = array_unique(array_merge($firstGroupIds, $filteredIds));
+        $this->availableFilters = array_unique(array_merge($this->firstSelectedGroup, $filteredIds));
+
+        // dd([$this->firstSelectedGroup, $filteredIds, $this->availableFilters]);
         return $this->availableFilters;
+        
     }
 
     public function updatedSelectedParams()
     {
-        $primary_related = [];
-        $primary_hasid = [];
-        $secondary_related = [];
-        $secondary_hasid = [];
-
-        // Определяем первую выбранную группу отдельно для paramItems и parametrs
-        $firstSelectedGroupPrimary = null;
-        $firstSelectedGroupSecondary = null;
-
-        // Найти первый выбранный paramItems и parametrs
-        foreach ($this->selectedParams as $id => $source) {
-            if ($firstSelectedGroupPrimary === null && $source === 'paramItems') {
-                foreach ($this->parameters as $groupName => $params) {
-                    if (isset($params[$id])) {
-                        $firstSelectedGroupPrimary = $groupName;
-                        break 2;
-                    }
-                }
-            }
-        }
-        foreach ($this->selectedParams as $id => $source) {
-            if ($firstSelectedGroupSecondary === null && $source === 'parametrs') {
-                foreach ($this->parameters as $groupName => $params) {
-                    if (isset($params[$id])) {
-                        $firstSelectedGroupSecondary = $groupName;
-                        break 2;
-                    }
-                }
-            }
-        }
-
-        Log::info('[Filter] updatedSelectedParams', [
-            'selectedParams' => $this->selectedParams,
-            'firstSelectedGroupPrimary' => $firstSelectedGroupPrimary,
-            'firstSelectedGroupSecondary' => $firstSelectedGroupSecondary,
-            'parameters' => $this->parameters,
-        ]);
-
-        Log::info('[Filter] availableFilters before split', [
-            'availableFilters' => $this->availableFilters
-        ]);
-
-        // Для совместимости с шаблоном оставим firstSelectedGroup = primary
-        $this->firstSelectedGroup = $firstSelectedGroupPrimary;
-
-        // 1. Все параметры из первой выбранной группы (primary/secondary) — в $hasid
-        // 2. Остальные выбранные параметры — в $related, только если они есть в availableFilters
-        $available = $this->checkParamsvAilability();
-        // Явно обновляем $availableFilters для корректной работы Blade после выбора
-        $this->availableFilters = $available;
-        // primary
-        if ($firstSelectedGroupPrimary && isset($this->parameters[$firstSelectedGroupPrimary])) {
-            foreach ($this->parameters[$firstSelectedGroupPrimary] as $id => $param) {
-                if (isset($this->selectedParams[$id]) && $this->selectedParams[$id] === 'paramItems') {
-                    $primary_hasid[] = (int) $id;
-                }
-            }
-        }
-        // secondary
-        if ($firstSelectedGroupSecondary && isset($this->parameters[$firstSelectedGroupSecondary])) {
-            foreach ($this->parameters[$firstSelectedGroupSecondary] as $id => $param) {
-                if (isset($this->selectedParams[$id]) && $this->selectedParams[$id] === 'parametrs') {
-                    $secondary_hasid[] = (int) $id;
-                }
-            }
-        }
-        // Остальные выбранные параметры (не из первой группы), только если они доступны
-        foreach ($this->selectedParams as $id => $source) {
-            if ($source === 'paramItems') {
-                $inFirstGroup = $firstSelectedGroupPrimary && isset($this->parameters[$firstSelectedGroupPrimary][$id]);
-                if (!$inFirstGroup && in_array((int)$id, $available)) {
-                    $primary_related[] = (int) $id;
-                }
-            } elseif ($source === 'parametrs') {
-                $inFirstGroup = $firstSelectedGroupSecondary && isset($this->parameters[$firstSelectedGroupSecondary][$id]);
-                if (!$inFirstGroup && in_array((int)$id, $available)) {
-                    $secondary_related[] = (int) $id;
-                }
-            }
-        }
-
-        Log::info('[Filter] updatedSelectedParams split', [
-            'primary_hasid' => $primary_hasid,
-            'primary_related' => $primary_related,
-            'secondary_hasid' => $secondary_hasid,
-            'secondary_related' => $secondary_related,
-        ]);
-
-
-        // Формируем фильтры с нужными ключами: одновременно $hasid и $related, если есть
-        if (!empty($primary_hasid) || !empty($primary_related)) {
-            $this->filters['paramItems'] = [];
-            if (!empty($primary_hasid)) {
-                $this->filters['paramItems']['$hasid'] = $primary_hasid;
-            }
-            if (!empty($primary_related)) {
-                $this->filters['paramItems']['$related'] = $primary_related;
-            }
-        } else {
+        // dd($this->filters, $this->selectedParams, $this->firstSelectedGroup);
+        if (isset($this->filters['paramItems'])) {
             unset($this->filters['paramItems']);
-        }
-
-        if (!empty($secondary_hasid) || !empty($secondary_related)) {
-            $this->filters['parametrs'] = [];
-            if (!empty($secondary_hasid)) {
-                $this->filters['parametrs']['$hasid'] = $secondary_hasid;
-            }
-            if (!empty($secondary_related)) {
-                $this->filters['parametrs']['$related'] = $secondary_related;
-            }
-        } else {
+        };
+        if (isset($this->filters['parametrs'])) {
             unset($this->filters['parametrs']);
+        };
+        foreach ($this->selectedParams as $id => $source) {
+            if (in_array($id, $this->firstSelectedGroup)) {
+                $this->filters[$source]['$hasid'][] = (int) $id;
+            } else {
+                $this->filters[$source]['$related'][] = (int) $id;
+            }
         }
 
-        Log::info('[Filter] updatedSelectedParams filters', [
-            'filters' => $this->filters
+        Log::info('[Filter] toggleParam after', [
+            'selectedParams_after' => $this->selectedParams,
+            'filters_after' => $this->filters,
         ]);
-
-        Log::info('[Filter] availableFilters after split', [
-            'availableFilters' => $this->availableFilters
-        ]);
-
         $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability());
     }
 
@@ -349,19 +244,19 @@ class Filter extends Component
 
     public function toggleParam($id, $source)
     {
-        Log::info('[Filter] toggleParam called', [
-            'id' => $id,
-            'source' => $source,
-            'selectedParams_before' => $this->selectedParams
-        ]);
+        
         if (isset($this->selectedParams[$id])) {
             unset($this->selectedParams[$id]);
         } else {
             $this->selectedParams[$id] = $source;
         }
-        Log::info('[Filter] toggleParam after', [
-            'selectedParams_after' => $this->selectedParams
-        ]);
+        
+        if (empty($this->selectedParams)) {
+            $this->firstSelectedGroup = [];
+        } else {
+            $this->setFirstSelectedGroupIds($id);
+        }
+        
         $this->updatedSelectedParams(); // вручную вызываем фильтрацию
     }
 
@@ -377,6 +272,7 @@ class Filter extends Component
         $this->selectedBrands = [];
         $this->selectedBatches = [];
         $this->availableFilters = [];
+        $this->firstSelectedGroup = [];
 
         $this->startPriceRange = $this->priceRangeToDisplay = [
             $this->products->min("price"),
