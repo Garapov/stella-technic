@@ -1,6 +1,6 @@
 <div class="h-full grid grid-cols-9" x-data="construct({
     selectedColor: 'blue',
-    debugMode: true,
+    debugMode: false,
     desks: @js(array(
         'low_slim' => \App\Models\ProductVariant::where('id', setting('deck_low_slim'))->first(),
         'high_slim' => \App\Models\ProductVariant::where('id', setting('deck_high_slim'))->first(),

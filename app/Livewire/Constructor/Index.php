@@ -28,8 +28,8 @@ class Index extends Component implements HasForms
     public $parent_product_id = null;
     public $selected_params = [];
     public $embeded = false;
-    public $selectedWidth = 'slim';
-    public $selectedHeight = 'low';
+    public $selectedWidth = 'wide';
+    public $selectedHeight = 'high';
     public $selectedDeskType = 'Односторонняя';
     public $selectedPosition = 'on_floor';
     public ?array $data = [];
@@ -61,13 +61,13 @@ class Index extends Component implements HasForms
                     ->preload()
                     ->label('Родительский товар')
                     ->required()
-                    ->default(1844)
+                    ->default(1940)
                     ->options(
                         fn() => Product::all()->pluck("name", "id")
                     ),
                 TextInput::make("name")
                     ->required()
-                    ->default('Стойка 735х1500 с ящиками Стелла-техник')
+                    ->default('Стойка 1150х2020 с ящиками Стелла-техник')
                     ->label("Название"),
                 TextInput::make("price")
                     ->required()
@@ -77,7 +77,7 @@ class Index extends Component implements HasForms
                     ->label("Цена"),
                 TextInput::make("sku")
                     ->required()
-                    ->default('А1-00-00-00')
+                    ->default('В1-00-00-00')
                     ->label(
                         "Артикул"
                     ),

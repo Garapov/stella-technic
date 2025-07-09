@@ -1,5 +1,5 @@
 @if (auth()->user() && auth()->user()->hasRole('super_admin'))
-    <div class="absolute top-0 left-0 w-full h-full bg-white dark:bg-gray-700 p-4 transition-transform overflow-auto" x-bind:class="!panelOpened ? 'translate-y-full' : 'translate-y-0'">
+    <div class="pb-40 absolute top-0 left-0 w-full h-full bg-white dark:bg-gray-700 ps-4 pe-4 pt-4 transition-transform overflow-auto" x-bind:class="!panelOpened ? 'translate-y-full' : 'translate-y-0'">
         <div class="absolute top-4 right-4  cursor-pointer" @click="closePanel">
             <x-carbon-close-large class="w-6 h-6" />
         </div>
