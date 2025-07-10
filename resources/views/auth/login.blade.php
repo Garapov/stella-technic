@@ -1,5 +1,5 @@
 <x-auth-layout>
-    <section class="py-16 bg-white md:py-24 dark:bg-gray-900 antialiased flex items-center">
+    <section class="p-4 bg-white dark:bg-gray-900 antialiased flex items-center">
         <div class="mx-auto w-full max-w-md">
             <!-- Session Status -->
             <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -16,7 +16,7 @@
 
                 <!-- Password -->
                 <div class="mt-4">
-                    <x-input-label for="password" :value="__('Password')" />
+                    <x-input-label for="password" value="Пароль" />
 
                     <x-text-input id="password" class="block mt-1 w-full"
                                     type="password"
@@ -30,11 +30,11 @@
                 <div class="flex items-center justify-between mt-4">
                     <label for="remember_me" class="inline-flex items-center">
                         <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                        <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                        <span class="ms-2 text-sm text-gray-600">Запомнить меня</span>
                     </label>
                     @if (Route::has('register'))
                         <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('register') }}">
-                            {{ __('Register') }}
+                            Зарегистрироваться
                         </a>
                     @endif
                 </div>
@@ -42,12 +42,12 @@
                 <div class="flex items-center justify-end mt-4">
                     @if (Route::has('password.request'))
                         <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}" wire:navigate>
-                            {{ __('Forgot your password?') }}
+                            Забыли пароль?
                         </a>
                     @endif
 
                     <x-primary-button class="ms-3">
-                        {{ __('Log in') }}
+                        Войти
                     </x-primary-button>
                 </div>
             </form>

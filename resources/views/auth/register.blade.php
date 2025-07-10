@@ -1,6 +1,6 @@
 <x-auth-layout>
-    <section class="py-16 bg-white md:py-24 dark:bg-gray-900 antialiased flex items-center">
-        <div class="mx-auto w-full max-w-lg">
+    <section class="p-4 bg-white dark:bg-gray-900 antialiased flex items-center">
+        <div class="mx-auto w-full max-w-md">
             @livewire('auth.register')
         </div>
 
