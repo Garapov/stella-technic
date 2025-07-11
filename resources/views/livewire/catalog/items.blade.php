@@ -43,9 +43,9 @@
                 @if (!empty($nonTagCategories))
                     <div class="grid grid-cols-2 md:grid-cols-8 gap-4 mb-4">
                         @foreach ($nonTagCategories as $subcategory)
-                            @if ($subcategory->products->count() == 0)
+                            {{-- @if ($subcategory->products->count() == 0)
                                 @continue
-                            @endif
+                            @endif --}}
                             <x-catalog.category.big :subcategory="$subcategory" />
                         @endforeach
                     </div>
@@ -53,9 +53,9 @@
                 @if (!empty($tagCategories))
                     <ul class="flex items-center gap-2 overflow-auto pb-2 mb-4">
                         @foreach ($tagCategories as $subcategory)
-                            @if ($subcategory->products->count() == 0)
+                            {{-- @if ($subcategory->products->count() == 0)
                                 @continue
-                            @endif
+                            @endif --}}
                             <li>
                                 <x-catalog.category.small :subcategory="$subcategory" />
                             </li>
