@@ -128,6 +128,7 @@ class ProductResource extends Resource
                     Tab::make("Категории")
                         ->schema([
                             Forms\Components\Select::make("categories")
+                                ->required()
                                 ->label("Категории")
                                 ->placeholder("Выберите категории")
                                 ->multiple()

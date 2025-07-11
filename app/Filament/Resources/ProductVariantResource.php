@@ -65,6 +65,8 @@ class ProductVariantResource extends Resource
                             TextInput::make("sku")
                                 ->required()
                                 ->label("Артикул"),
+                            TextInput::make("uuid")
+                                ->label("UID"),
                             Toggle::make("is_popular")
                                 ->label("Популярный")
                                 ->inline(false),
