@@ -39,9 +39,9 @@ class ListProductCategories extends ListRecords
     public function getTabs(): array
     {
             return [
+                'Все' => Tab::make(),
                 'Первого уровня' => Tab::make()
                     ->modifyQueryUsing(fn (Builder $query) => $query->where('parent_id', -1)),
-                'Все' => Tab::make(),
             ];
         }
     }
