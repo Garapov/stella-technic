@@ -49,6 +49,8 @@ class ParamsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('title')
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID'),
                 Tables\Columns\TextColumn::make('title')
                     ->label('Название'),
                 Tables\Columns\TextColumn::make('value')

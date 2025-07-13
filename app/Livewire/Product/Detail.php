@@ -33,7 +33,7 @@ class Detail extends Component
 
         if (!$this->variation) abort(404);
 
-        // dd($this->variation->seo);
+        // dd($this->variation->parametrs->pluck('value', 'productParam.name')->toArray());
 
         $this->product = $this->variation->product;
         $this->groupedParams = $this->getGroupedParams();

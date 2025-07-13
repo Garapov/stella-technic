@@ -181,6 +181,8 @@ class ProductCategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make("image")->label("Картинка"),
+                Tables\Columns\TextColumn::make("id")
+                    ->label("ID"),
                 Tables\Columns\TextColumn::make("title")
                     ->label("Название")
                     ->searchable(),
