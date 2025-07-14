@@ -29,10 +29,19 @@ class ProductUpdater
         ['code' => 'kol_smeshchenie_osej', 'name' => 'Смещение осей'],
         ['code' => 'diametr_gnezda_podshipnikov', 'name' => 'Диаметр гнезда подшипника'],
         ['code' => 'glubina_gnezda_podshipnikov', 'name' => 'Глубина гнезда подшипника'],
-        ['code' => 'glubina_gnezda_podshipnikov', 'name' => 'Крепление'],
+        ['code' => 'fastening', 'name' => 'Крепление'],
         ['code' => 'kol_ves_kolesa_kg', 'name' => 'Вес'],
+        ['code' => 'ves_kg', 'name' => 'Вес'],
         ['code' => 'kol_diametr_paneli', 'name' => 'Диаметр площадки'],
         ['code' => 'diametr_krepezhnogo_otverstiya', 'name' => 'Диаметр крепежного отверстия'],
+        ['code' => 'country_of_origin', 'name' => 'Страна производства'],
+        ['code' => 'temperature', 'name' => 'Температура эксплуатации, °С'],
+        ['code' => 'sphere', 'name' => 'Сфера'],
+        ['code' => 'setup_type', 'name' => 'Тип установки'],
+        ['code' => 'tip_tovara_box', 'name' => 'Тип ящиков в системе хранения'],
+        ['code' => 'kol_gruzopod_t_kolesa_kg_6_km_ch', 'name' => 'Грузоподъемность до 6 км/ч'],
+        ['code' => 'maks_diametr_osi_mm', 'name' => 'Максимальный диаметр ступицы'],
+        ['code' => 'naruzhnyj_diametr_stupicy_mm', 'name' => 'Наружный диаметр ступицы'],
     ];
 
     public function updateProduct($variant)
@@ -103,10 +112,19 @@ class ProductUpdater
 
         if (empty($param_name)) return;
 
+        
+
         $param = ProductParam::firstOrCreate([
             'name' => $param_name,
             'type' => 'checkboxes'
         ]);
+
+        $key_param_items = $variation->paramItems()->where('product_param_items.product_param_id', $param->id)->get();
+
+        if ($key_param_items->count() > 0) {
+            Log::info("Параметр '{$param_name}' ключевой и существует SKU {$variation->sku}, пропускаем.");
+            return;
+        }; 
 
         $currentItems = $variation->parametrs()->where('product_param_items.product_param_id', $param->id)->get();
 
