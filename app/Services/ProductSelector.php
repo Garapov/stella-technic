@@ -13,31 +13,46 @@ class ProductSelector
 
     public function fromCategory(?ProductCategory $category): Collection
     {
-        if (!$category) return collect();
+        if (!$category) {
+            return collect();
+        }
 
-        $key = 'category_' . $category->id;
-        if (isset($this->memo[$key])) return $this->memo[$key];
+        $key = "category_" . $category->id;
+        if (isset($this->memo[$key])) {
+            return $this->memo[$key];
+        }
 
         switch ($category->type) {
-            case 'duplicator':
+            case "duplicator":
                 $result = $category->duplicate_id
-                    ? ProductCategory::with('products:id')->find($category->duplicate_id)?->products->pluck('id') ?? collect()
+                    ? ProductCategory::with("products:id")
+                            ->find($category->duplicate_id)
+                            ?->products->pluck("id") ?? collect()
                     : collect();
                 break;
 
-            case 'filter':
-                $paramItemIds = $category->paramItems->pluck('id');
-                $byParamItems = $this->variantsByRelation('paramItems', $paramItemIds);
-                $byParametrs = $this->variantsByRelation('parametrs', $paramItemIds);
+            case "filter":
+                $paramItemIds = $category->paramItems->pluck("id");
+                $byParamItems = $this->variantsByRelation(
+                    "paramItems",
+                    $paramItemIds,
+                    $category->duplicate_id,
+                );
+                $byParametrs = $this->variantsByRelation(
+                    "parametrs",
+                    $paramItemIds,
+                    $category->duplicate_id,
+                );
                 $result = $byParamItems->merge($byParametrs)->unique();
+                // dd($result);
                 break;
 
-            case 'variations':
-                $result = $category->variations->pluck('id');
+            case "variations":
+                $result = $category->variations->pluck("id");
                 break;
 
             default:
-                $result = $category->products->pluck('id');
+                $result = $category->products->pluck("id");
                 break;
         }
 
@@ -46,16 +61,27 @@ class ProductSelector
 
     public function fromBrandSlug(string $slug): Collection
     {
-        return Brand::where('slug', $slug)
-            ->with('products:id')
+        return Brand::where("slug", $slug)
+            ->with("products:id")
             ->first()
-            ?->products->pluck('id') ?? collect();
+            ?->products->pluck("id") ?? collect();
     }
 
-    protected function variantsByRelation(string $relation, Collection $ids): Collection
-    {
+    protected function variantsByRelation(
+        string $relation,
+        Collection $ids,
+        $category_id = null,
+    ): Collection {
         return ProductVariant::whereHas($relation, function ($q) use ($ids) {
-            $q->whereIn('product_param_items.id', $ids);
-        })->pluck('id');
+            $q->whereIn("product_param_items.id", $ids);
+        })
+            ->when($category_id, function ($query) use ($category_id) {
+                $query->whereHas("product.categories", function ($q) use (
+                    $category_id,
+                ) {
+                    $q->where("product_categories.id", $category_id);
+                });
+            })
+            ->pluck("id");
     }
 }

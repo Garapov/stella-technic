@@ -44,135 +44,150 @@ class ProductCategoryResource extends Resource
     {
         return $form->schema([
             Split::make([
-                Tabs::make('Tabs')
-                    ->tabs([
-                        Tabs\Tab::make('Основная информация')
-                            ->schema([
-                                TextInput::make("title")->label("Заголовок")->required(),
-                                TextInput::make("slug")->label("Имя в ссылке"),
-                                Textarea::make("description")->label("Описание")->required(),
-                                Select::make("paramItems")
-                                    ->label('Параметры фильтрации')
-                                    ->multiple()
-                                    ->relationship("paramItems", "title")
-                                    ->preload()
-                                    ->options(function () {
-                                        return ProductParamItem::query()
-                                            ->with("productParam")
-                                            ->get()
-                                            ->mapWithKeys(function ($item) {
-                                                return [
-                                                    $item->id => "{$item->productParam->name}: {$item->title}",
-                                                ];
-                                            });
-                                    })
-                                    ->visible(fn(Get $get) => $get('type') == 'filter'),
+                Tabs::make("Tabs")->tabs([
+                    Tabs\Tab::make("Основная информация")->schema([
+                        TextInput::make("title")
+                            ->label("Заголовок")
+                            ->required(),
+                        TextInput::make("slug")->label("Имя в ссылке"),
+                        Textarea::make("description")
+                            ->label("Описание")
+                            ->required(),
+                        Select::make("paramItems")
+                            ->label("Параметры фильтрации")
+                            ->multiple()
+                            ->relationship("paramItems", "title")
+                            ->preload()
+                            ->options(function () {
+                                return ProductParamItem::query()
+                                    ->with("productParam")
+                                    ->get()
+                                    ->mapWithKeys(function ($item) {
+                                        return [
+                                            $item->id => "{$item->productParam->name}: {$item->title}",
+                                        ];
+                                    });
+                            })
+                            ->visible(fn(Get $get) => $get("type") == "filter"),
 
-                                Select::make("variations")
-                                    ->label('Вариации')
-                                    ->multiple()
-                                    ->relationship("variations", "name")
-                                    ->preload()
-                                    ->options(function () {
-                                        return ProductVariant::query()
-                                            ->get()
-                                            ->mapWithKeys(function ($item) {
-                                                return [
-                                                    $item->id => "{$item->name} ({$item->sku})",
-                                                ];
-                                            });
-                                    })
-                                    ->visible(fn(Get $get) => $get('type') == 'variations'),
-                                
-                                Select::make("duplicate_id")
-                                    ->label('Категория для дублирования')
-                                    ->preload()
-                                    ->searchable()
-                                    ->options(function () {
-                                        return ProductCategory::query()
-                                            ->get()
-                                            ->mapWithKeys(function ($item) {
-                                                return [
-                                                    $item->id => "{$item->title}",
-                                                ];
-                                            });
-                                    })
-                                    ->visible(fn(Get $get) => $get('type') == 'duplicator'),
-                            ]), 
-                        Tabs\Tab::make('Изображения')
-                            ->schema([
-                                FileUpload::make("image")
-                                    ->directory("categories")
-                                    ->label("Картинка")
-                                    ->required()
-                                    ->image(),
-                                Hidden::make('icon')->default("fas-box-archive"),
-                                // IconPicker::make("icon")->required(),
-                            ]),
-                        Tabs\Tab::make('SEO')
-                            ->schema([
-                                Builder::make('seo')
-                                    ->label('SEO данные')
-                                    ->addActionLabel('Добавить данные')
-                                    ->blockNumbers(false)
-                                    ->blocks([
-                                        Builder\Block::make('title')
-                                            ->label("Заголовок")
-                                            ->schema([
-                                                TextInput::make("title")->label("Заголовок")->required(),
-                                            ])->maxItems(1),
-                                        Builder\Block::make('description')
-                                            ->label("Описание")
-                                            ->schema([
-                                                Textarea::make("description")->label("Описание")->required(),
-                                            ])->maxItems(1),
-                                        Builder\Block::make('image')
-                                            ->label("Картинка")
-                                            ->schema([
-                                                FileUpload::make("image")
-                                                    ->required()
-                                                    ->image()
-                                                    ->label("Картинка")
-                                                    ->directory("categories/seo")
-                                                    ->visibility("public")
-                                                    ->imageEditor()
-                                                    ->preserveFilenames()
-                                                    ->imageCropAspectRatio("1:1")
-                                                    ->imageEditorMode(2),
-                                            ])->maxItems(1)
-                                    ])
-                            ]),
-                        Tabs\Tab::make('Файлы')
-                            ->schema([
-                                Repeater::make('files')
-                                    ->label('Список файлов')
+                        Select::make("variations")
+                            ->label("Вариации")
+                            ->multiple()
+                            ->relationship("variations", "name")
+                            ->preload()
+                            ->options(function () {
+                                return ProductVariant::query()
+                                    ->get()
+                                    ->mapWithKeys(function ($item) {
+                                        return [
+                                            $item->id => "{$item->name} ({$item->sku})",
+                                        ];
+                                    });
+                            })
+                            ->visible(
+                                fn(Get $get) => $get("type") == "variations",
+                            ),
+
+                        Select::make("duplicate_id")
+                            ->label("Категория")
+                            ->preload()
+                            ->searchable()
+                            ->options(function () {
+                                return ProductCategory::query()
+                                    ->get()
+                                    ->mapWithKeys(function ($item) {
+                                        return [
+                                            $item->id => "{$item->title}",
+                                        ];
+                                    });
+                            })
+                            ->visible(
+                                fn(Get $get) => $get("type") == "duplicator" ||
+                                    $get("type") == "filter",
+                            ),
+                    ]),
+                    Tabs\Tab::make("Изображения")->schema([
+                        FileUpload::make("image")
+                            ->directory("categories")
+                            ->label("Картинка")
+                            ->required()
+                            ->image(),
+                        Hidden::make("icon")->default("fas-box-archive"),
+                        // IconPicker::make("icon")->required(),
+                    ]),
+                    Tabs\Tab::make("SEO")->schema([
+                        Builder::make("seo")
+                            ->label("SEO данные")
+                            ->addActionLabel("Добавить данные")
+                            ->blockNumbers(false)
+                            ->blocks([
+                                Builder\Block::make("title")
+                                    ->label("Заголовок")
                                     ->schema([
-                                        TextInput::make('name')
-                                            ->label('Название')
+                                        TextInput::make("title")
+                                            ->label("Заголовок")
                                             ->required(),
-                                        FileUpload::make("file")
-                                            ->required()
-                                            ->label("Файл")
-                                            ->directory("product_files")
-                                            ->visibility("public")
-                                            ->preserveFilenames(),
                                     ])
-                                    ->columns(2)
-                                    ->defaultItems(0)
+                                    ->maxItems(1),
+                                Builder\Block::make("description")
+                                    ->label("Описание")
+                                    ->schema([
+                                        Textarea::make("description")
+                                            ->label("Описание")
+                                            ->required(),
+                                    ])
+                                    ->maxItems(1),
+                                Builder\Block::make("image")
+                                    ->label("Картинка")
+                                    ->schema([
+                                        FileUpload::make("image")
+                                            ->required()
+                                            ->image()
+                                            ->label("Картинка")
+                                            ->directory("categories/seo")
+                                            ->visibility("public")
+                                            ->imageEditor()
+                                            ->preserveFilenames()
+                                            ->imageCropAspectRatio("1:1")
+                                            ->imageEditorMode(2),
+                                    ])
+                                    ->maxItems(1),
+                            ]),
+                    ]),
+                    Tabs\Tab::make("Файлы")->schema([
+                        Repeater::make("files")
+                            ->label("Список файлов")
+                            ->schema([
+                                TextInput::make("name")
+                                    ->label("Название")
+                                    ->required(),
+                                FileUpload::make("file")
+                                    ->required()
+                                    ->label("Файл")
+                                    ->directory("product_files")
+                                    ->visibility("public")
+                                    ->preserveFilenames(),
                             ])
-                    ]),                    
+                            ->columns(2)
+                            ->defaultItems(0),
+                    ]),
+                ]),
                 Section::make([
-                    Select::make('type')
-                        ->label('Тип категории')
+                    Select::make("type")
+                        ->label("Тип категории")
                         ->options([
-                            'variations' => 'Избранные вариации',
-                            'filter' => 'Категория-фильтр',
-                            'duplicator' => 'Дубликат категории'
+                            "variations" => "Избранные вариации",
+                            "filter" => "Категория-фильтр",
+                            "duplicator" => "Дубликат категории",
                         ])
                         ->live(),
-                    Toggle::make("is_visible")->inline(false)->label("Видимость"),
+                    Toggle::make("is_visible")
+                        ->inline(false)
+                        ->label("Видимость"),
                 ])->grow(false),
-            ])->columnSpanFull()->from('md')
+            ])
+                ->columnSpanFull()
+                ->from("md"),
         ]);
     }
 
@@ -181,15 +196,14 @@ class ProductCategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make("image")->label("Картинка"),
-                Tables\Columns\TextColumn::make("id")
-                    ->label("ID"),
+                Tables\Columns\TextColumn::make("id")->label("ID"),
                 Tables\Columns\TextColumn::make("title")
                     ->label("Название")
                     ->searchable(),
-                Tables\Columns\TextColumn::make('type')
-                    ->label('Тип категории'),
-                Tables\Columns\ToggleColumn::make('is_tag')
-                    ->label('Категория "тег"'),
+                Tables\Columns\TextColumn::make("type")->label("Тип категории"),
+                Tables\Columns\ToggleColumn::make("is_tag")->label(
+                    'Категория "тег"',
+                ),
             ])
             ->filters([
                 //
@@ -203,14 +217,20 @@ class ProductCategoryResource extends Resource
                             Select::make("parent_id")
                                 ->label("Новый родитель для категории")
                                 ->options(
-                                    fn() => ProductCategory::all()->pluck("title", "id")
+                                    fn() => ProductCategory::all()->pluck(
+                                        "title",
+                                        "id",
+                                    ),
                                 )
                                 ->required()
                                 ->searchable(),
                         ])
                         ->action(function (array $data, $record) {
-                            $category = ProductCategory::where('id', $data['parent_id'])->first();
-                            
+                            $category = ProductCategory::where(
+                                "id",
+                                $data["parent_id"],
+                            )->first();
+
                             if ($category) {
                                 $record->parent_id = $category->id;
                                 $record->save();
@@ -219,12 +239,17 @@ class ProductCategoryResource extends Resource
                             redirect(request()->header("Referer"));
                             // }
                         }),
-                    Tables\Actions\Action::make('Открыть')
-                        ->icon('ionicon-open-outline')
-                        ->url(fn (ProductCategory $record): string => route('client.catalog', $record->urlChain()))
+                    Tables\Actions\Action::make("Открыть")
+                        ->icon("ionicon-open-outline")
+                        ->url(
+                            fn(ProductCategory $record): string => route(
+                                "client.catalog",
+                                $record->urlChain(),
+                            ),
+                        )
                         ->openUrlInNewTab(),
                     Tables\Actions\DeleteAction::make(),
-                ])
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

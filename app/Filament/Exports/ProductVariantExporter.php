@@ -23,7 +23,7 @@ class ProductVariantExporter extends Exporter
                     $categories = null;
                     $data = array(
                         'name' => $record->product->name,
-                        'image' => $record->product->gallery[0],
+                        'image' => $record->product->gallery[0] ?? '',
                         'categories' => array()
                     );
 
