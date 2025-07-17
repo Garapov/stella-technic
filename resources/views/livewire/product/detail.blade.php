@@ -96,7 +96,7 @@
         @endif
     @endif
     
-    <h1 class="text-lg sm:text-3xl font-semibold text-slate-700 dark:text-white mb-4">{{ $variation->name }}</h1>
+    <h1 class="text-lg sm:text-3xl font-semibold text-slate-700 dark:text-white mb-4">{{ $variation->name }} {{ $variation->sku }}</h1>
 
     <div class="flex items-center gap-4 mb-4">
         <div class="flex items-center gap-2">
