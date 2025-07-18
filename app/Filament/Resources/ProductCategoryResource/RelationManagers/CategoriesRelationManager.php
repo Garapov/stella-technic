@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ProductCategoryResource\RelationManagers;
 
+use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Components\Builder as ComponentsBuilder;
 use Filament\Forms\Components\FileUpload;
@@ -74,9 +75,24 @@ class CategoriesRelationManager extends RelationManager
                                             });
                                     })
                                     ->visible(fn(Get $get) => $get('type') == 'variations'),
+                                Select::make("products")
+                                    ->label('Родительские товары вариаций')
+                                    ->multiple()
+                                    ->relationship("products", "name")
+                                    ->preload()
+                                    ->options(function () {
+                                        return Product::query()
+                                            ->get()
+                                            ->mapWithKeys(function ($item) {
+                                                return [
+                                                    $item->id => "{$item->name}",
+                                                ];
+                                            });
+                                    })
+                                    ->visible(fn(Get $get) => $get('type') == null),
                                 
                                 Select::make("duplicate_id")
-                                    ->label('Категория для дублирования')
+                                    ->label('Категория')
                                     ->preload()
                                     ->searchable()
                                     ->options(function () {
@@ -88,7 +104,10 @@ class CategoriesRelationManager extends RelationManager
                                                 ];
                                             });
                                     })
-                                    ->visible(fn(Get $get) => $get('type') == 'duplicator'),
+                                     ->visible(
+                                        fn(Get $get) => $get("type") == "duplicator" ||
+                                            $get("type") == "filter",
+                                    ),
                             ]), 
                         Tabs\Tab::make('Изображения')
                             ->schema([
@@ -161,7 +180,7 @@ class CategoriesRelationManager extends RelationManager
                             'duplicator' => 'Дубликат категории'
                         ])
                         ->live(),
-                    Toggle::make("is_visible")->inline(false)->label("Видимость"),
+                    Toggle::make("is_visible")->inline(false)->default(true)->label("Видимость"),
                 ])->grow(false),
             ])->columnSpanFull()->from('md')
         ]);

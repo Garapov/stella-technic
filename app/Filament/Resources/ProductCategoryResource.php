@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductCategoryResource\Pages;
 use App\Filament\Resources\ProductCategoryResource\RelationManagers\CategoriesRelationManager;
 use App\Filament\Resources\ProductCategoryResource\RelationManagers\ProductsRelationManager;
+use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductVariant;
 use Filament\Forms\Components\FileUpload;
@@ -87,6 +88,21 @@ class ProductCategoryResource extends Resource
                             ->visible(
                                 fn(Get $get) => $get("type") == "variations",
                             ),
+                        Select::make("products")
+                                ->label('Родительские товары вариаций')
+                                ->multiple()
+                                ->relationship("products", "name")
+                                ->preload()
+                                ->options(function () {
+                                    return Product::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($item) {
+                                            return [
+                                                $item->id => "{$item->name}",
+                                            ];
+                                        });
+                                })
+                                ->visible(fn(Get $get) => $get('type') == null),
 
                         Select::make("duplicate_id")
                             ->label("Категория")
@@ -183,6 +199,7 @@ class ProductCategoryResource extends Resource
                         ->live(),
                     Toggle::make("is_visible")
                         ->inline(false)
+                        ->default(true)
                         ->label("Видимость"),
                 ])->grow(false),
             ])
