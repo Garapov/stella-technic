@@ -82,7 +82,7 @@ class ProductSelector
                 $query->whereHas("product.categories", function ($q) use (
                     $category_id,
                 ) {
-                    $q->where("product_categories.id", $category_id);
+                    $q->whereIn("product_categories.id", $category_id);
                 });
             })
             ->pluck("id");
