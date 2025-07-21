@@ -95,6 +95,7 @@ class CategoriesRelationManager extends RelationManager
                                     ->label('Категория')
                                     ->preload()
                                     ->searchable()
+                                    ->multiple()
                                     ->options(function () {
                                         return ProductCategory::query()
                                             ->get()
