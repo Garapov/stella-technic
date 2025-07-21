@@ -24,11 +24,14 @@ class ProductSelector
 
         switch ($category->type) {
             case "duplicator":
-                $result = $category->duplicate_id
-                    ? ProductCategory::with("products:id")
-                            ->find($category->duplicate_id)
-                            ?->products->pluck("id") ?? collect()
-                    : collect();
+                $result = is_array($category->duplicate_id) && count($category->duplicate_id)
+                ? ProductCategory::with('products:id')
+                    ->whereIn('id', $category->duplicate_id)
+                    ->get()
+                    ->pluck('products') // получаем коллекции продуктов
+                    ->flatten()         // объединяем в одну плоскую коллекцию
+                    ->pluck('id')       // получаем только ID продуктов
+                : collect();
                 break;
 
             case "filter":

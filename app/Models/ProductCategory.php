@@ -44,6 +44,7 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
         'parent_id' => 'int',
         'seo' => 'array',
         'files' => 'array',
+        'duplicate_id' => 'array'
     ];
  
     protected $table = 'product_categories';

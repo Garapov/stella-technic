@@ -108,6 +108,7 @@ class ProductCategoryResource extends Resource
                             ->label("Категория")
                             ->preload()
                             ->searchable()
+                            ->multiple()
                             ->options(function () {
                                 return ProductCategory::query()
                                     ->get()
