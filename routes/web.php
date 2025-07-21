@@ -45,10 +45,10 @@ Route::prefix("/")
         // Route::view('/checkout/thanks', 'client.thanks')->name('thanks');
         Route::view("/blog/{slug}", "client.posts.show")->name("posts.show");
         Route::view("/blog", "client.posts.index")->name("posts.index");
-        Route::view("/articles/{slug}", "client.articles.show")->name(
+        Route::view("/stati/{slug}", "client.articles.show")->name(
             "articles.show"
         );
-        Route::view("/articles", "client.articles.index")->name(
+        Route::view("/stati", "client.articles.index")->name(
             "articles.index"
         );
         Route::view("/search", "client.search")->name("search");
