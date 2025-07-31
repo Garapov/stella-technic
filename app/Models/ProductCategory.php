@@ -136,7 +136,5 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'product_product_category');
-    }
-
-    
+    }  
 }
