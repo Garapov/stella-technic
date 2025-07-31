@@ -20,6 +20,8 @@ class CategoryUpdater
             if ($response->successful()) {
                 $body = json_decode($response->body());
 
+                // dd($body->data);
+
                 if ($body->success) {
                     try {
                         $category = ProductCategory::where('title', $category_title)->first();
@@ -28,7 +30,7 @@ class CategoryUpdater
 
                         $category->update([
                             'seo' => $body->data->seo ?? [],
-                            'slug' => $body->data->seo ?? $category->slug
+                            'slug' => $body->data->slug ?? $category->slug
                         ]);
                     } catch (\Exception $e) {
                         Log::error("DB error for TITLE {$category_title}: " . $e->getMessage());
