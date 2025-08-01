@@ -37,7 +37,7 @@ class CategoryUpdater
                     }
                 }
 
-                Log::info("Success for TITLE {$category_title}: " . $response->body());
+                Log::info("Success for TITLE {$body->data->pagetitle}: " . $response->body());
                 return $body;
             } else {
                 Log::error("Failed to fetch category data for TITLE {$category_title}. Status: " . $response->status());

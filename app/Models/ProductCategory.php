@@ -37,14 +37,16 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
         "seo",
         "files",
         "type",
-        "duplicate_id"
+        "duplicate_id",
+        "params_to_one"
     ];
 
     protected $casts = [
         'parent_id' => 'int',
         'seo' => 'array',
         'files' => 'array',
-        'duplicate_id' => 'array'
+        'duplicate_id' => 'array',
+        'params_to_one' => 'boolean'
     ];
  
     protected $table = 'product_categories';

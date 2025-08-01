@@ -40,11 +40,13 @@ class ProductSelector
                     "paramItems",
                     $paramItemIds,
                     $category->duplicate_id,
+                    $category
                 );
                 $byParametrs = $this->variantsByRelation(
                     "parametrs",
                     $paramItemIds,
                     $category->duplicate_id,
+                    $category
                 );
                 $result = $byParamItems->merge($byParametrs)->unique();
                 // dd($result);
@@ -74,15 +76,36 @@ class ProductSelector
         string $relation,
         Collection $ids,
         $category_id = null,
+        $category = null
     ): Collection {
+        if ($category->params_to_one) {
+            // Загружаем обе связи
+            $query = ProductVariant::with(['paramItems:id', 'parametrs:id']);
+
+            if ($category_id) {
+                $query->whereHas('product.categories', function ($q) use ($category_id) {
+                    $q->whereIn('product_categories.id', (array) $category_id);
+                });
+            }
+
+            return $query->get()->filter(function ($variant) use ($ids) {
+                // Объединяем id из обеих связей
+                $allParamIds = $variant->paramItems->pluck('id')
+                    ->merge($variant->parametrs->pluck('id'))
+                    ->unique();
+
+                // Проверяем, все ли нужные ids найдены
+                return $ids->diff($allParamIds)->isEmpty();
+            })->pluck('id');
+        }
+
+        // Старая логика: достаточно совпадения в одной связи
         return ProductVariant::whereHas($relation, function ($q) use ($ids) {
             $q->whereIn("product_param_items.id", $ids);
         })
             ->when($category_id, function ($query) use ($category_id) {
-                $query->whereHas("product.categories", function ($q) use (
-                    $category_id,
-                ) {
-                    $q->whereIn("product_categories.id", $category_id);
+                $query->whereHas('product.categories', function ($q) use ($category_id) {
+                    $q->whereIn("product_categories.id", (array) $category_id);
                 });
             })
             ->pluck("id");

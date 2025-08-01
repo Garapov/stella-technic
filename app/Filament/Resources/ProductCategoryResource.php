@@ -54,23 +54,30 @@ class ProductCategoryResource extends Resource
                         Textarea::make("description")
                             ->label("Описание")
                             ->required(),
-                        Select::make("paramItems")
-                            ->label("Параметры фильтрации")
-                            ->multiple()
-                            ->relationship("paramItems", "title")
-                            ->preload()
-                            ->options(function () {
-                                return ProductParamItem::query()
-                                    ->with("productParam")
-                                    ->get()
-                                    ->mapWithKeys(function ($item) {
-                                        return [
-                                            $item->id => "{$item->productParam->name}: {$item->title}",
-                                        ];
-                                    });
-                            })
-                            ->visible(fn(Get $get) => $get("type") == "filter"),
-
+                        Section::make('Параметры фильтрации')
+                            ->description(fn (Get $get) => $get("params_to_one") ? 'Все параметры учитываются у одного товара' : 'Любой из параметров учитывается у одного товара')
+                            ->schema([
+                                Select::make("paramItems")
+                                    ->label(false)
+                                    ->multiple()
+                                    ->relationship("paramItems", "title")
+                                    ->preload()
+                                    ->options(function () {
+                                        return ProductParamItem::query()
+                                            ->with("productParam")
+                                            ->get()
+                                            ->mapWithKeys(function ($item) {
+                                                return [
+                                                    $item->id => "{$item->productParam->name}: {$item->title}",
+                                                ];
+                                            });
+                                    }),
+                                    Toggle::make('params_to_one')
+                                        ->label(fn (Get $get) => $get("params_to_one") ? 'Только выбранные' : 'Любой из параметров')
+                                        ->live()
+                                        ->onColor('success')
+                                        ->offColor('danger')
+                            ])->visible(fn(Get $get) => $get("type") == "filter"),
                         Select::make("variations")
                             ->label("Вариации")
                             ->multiple()
