@@ -92,7 +92,7 @@ class MainSliderResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make("updated_at")
-                    ->label("Дата обновления")
+                    ->label("Дата обновления") 
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -10,7 +10,7 @@
                 @endphp
                 <h3 class="text-lg sm:text-sm font-semibold text-slate-900 dark:text-white @if (count($activeParamName) < 1) hidden @endif">{{ $paramGroup['name'] }} @if ($activeParamName->first())({{$activeParamName->first()['title']}})@endif</h3>
                 <div class="flex flex-wrap gap-4 mt-2 @if (count($activeParamName) < 1) hidden @endif">
-                    @foreach($paramGroup['values'] as $value)
+                    @foreach(collect($paramGroup['values'])->sortBy('value') as $value)
                         @if($paramGroup['name'] === 'Цвет')
                             <a href="{{ route('client.catalog', $variation->product->variants->where('id', $value['variant_id'])->first()->urlChain()) }}" wire:navigate
                                 @class([

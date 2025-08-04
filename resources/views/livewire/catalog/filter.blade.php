@@ -86,8 +86,10 @@
                     </ul>
                 @else
                     <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault" x-data="{ showAll: false }">
-                        @php $counter = 0; @endphp
-                        @foreach($params as $paramItemId => $paramData)
+                        @php
+                            $counter = 0;
+                        @endphp
+                        @foreach($params->sortBy('value') as $paramItemId => $paramData)
                             <li class="flex items-center @unless(in_array($paramItemId, $availableFilters)) opacity-30 cursor-not-allowed pointer-events-none @endunless"
                                 @if($counter > 4 && !isset($selectedParams[$paramItemId])) x-show="showAll" @endif>
                                 <input
