@@ -225,6 +225,7 @@ class ProductCategoryResource extends Resource
                 Tables\Columns\TextColumn::make("title")
                     ->label("Название")
                     ->searchable(),
+                Tables\Columns\TextInputColumn::make('sort')->label("Сортировка"),
                 Tables\Columns\TextColumn::make("type")->label("Тип категории"),
                 Tables\Columns\ToggleColumn::make("is_tag")->label(
                     'Категория "тег"',

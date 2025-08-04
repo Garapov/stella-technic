@@ -19,7 +19,7 @@
     <div class="absolute top-full left-[50%] transform translate-x-[-50%] z-[999] hidden container overflow-auto border border-blue-gray-50 bg-white p-3 font-sans text-sm font-normal text-blue-gray-500  shadow-lg shadow-blue-gray-500/10 focus:outline-none lg:block rounded-lg" role="menu" x-show="isOpened"  x-cloak>
         <div class="grid grid-cols-5 gap-4" >
             <ul class="flex flex-col gap-4 pr-2 max-h-[60vh] overflow-y-auto">
-                @foreach ($categories as $category)
+                @foreach ($categories->sortBy('sort') as $category)
                     <li>
                         <a href="{{ route('client.catalog', ['path' => $category->urlChain()]) }}" wire:navigate class="flex flex-center justify-between gap-2 text-gray-600" :class="{ 'text-red-700': selectedCategory == {{ $category->id }}}" @mouseover="changeSelectedCategory({{ $category->id }})">
                             <div class="flex items-center gap-2">
@@ -35,11 +35,11 @@
                     </li>
                 @endforeach
             </ul>
-            @foreach ($categories as $category)
+            @foreach ($categories->sortBy('sort') as $category)
                 <div class="max-h-[70vh] col-span-4"  x-show="selectedCategory == {{ $category->id }}">
                     <div class="bg-gray-200 rounded-lg h-full overflow-y-auto">
                         <ul class="grid grid-cols-3 gap-4 items-stretch p-4">
-                            @foreach ($category->categories as $subcategory)
+                            @foreach ($category->categories->sortBy('sort') as $subcategory)
                                 @livewire('general.category', [
                                     'category' => $subcategory,
                                     'counts' => $variationCounts,

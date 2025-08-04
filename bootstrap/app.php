@@ -16,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(
             append: [
                 \Spatie\ResponseCache\Middlewares\CacheResponse::class,
-                \App\Http\Middleware\AddGlobalPages::class,
+                // \App\Http\Middleware\AddGlobalPages::class,
             ]
         );
         $middleware->alias([

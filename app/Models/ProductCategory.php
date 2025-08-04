@@ -38,7 +38,8 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
         "files",
         "type",
         "duplicate_id",
-        "params_to_one"
+        "params_to_one",
+        "sort"
     ];
 
     protected $casts = [

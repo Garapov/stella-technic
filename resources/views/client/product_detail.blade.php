@@ -12,5 +12,7 @@
 
         <livewire:general.panel.edit-resource-button link="{{ \App\Filament\Resources\ProductVariantResource::getUrl('edit', ['record' => $variation->slug ]) }}" title="Редактировать товар" />
 
+        <livewire:general.panel.edit-resource-button link="{{ \App\Filament\Resources\ProductResource::getUrl('edit', ['record' => $variation->product->slug ]) }}" title="Редактировать родительский товар" />
+
     </x-floating-control-panel>
 </x-guest-layout>

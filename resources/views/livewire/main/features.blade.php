@@ -20,7 +20,7 @@
 
 
                 <div class="grid lg:grid-cols-4 grid-cols-1 gap-4 mt-10">
-                    @foreach ($categories as $category)
+                    @foreach ($categories->sortBy('sort') as $category)
                         @if (!isset($variationCounts[$category->id]) || $variationCounts[$category->id] < 1)
                             @continue
                         @endif

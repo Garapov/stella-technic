@@ -54,6 +54,9 @@ class ProductParamResource extends Resource
                     ->label('Зафиксирован')
                     ->inline(false)
                     ->required(),
+                Forms\Components\Toggle::make('is_hidden')
+                    ->label('Скрыт')
+                    ->inline(false),
                 Forms\Components\Toggle::make('show_on_preview')
                     ->label('Показывать в листинге')
                     ->inline(false)

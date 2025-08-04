@@ -195,6 +195,9 @@
                     <!-- <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Технические характеристики</h3> -->
                     <dl class="grid grid-cols-1 gap-8 md:grid-cols-1">
                         @foreach($variation->paramItems as $paramItem)
+                            @if ($paramItem->productParam->is_hidden)
+                                @continue
+                            @endif
                             <li class="flex items-center justify-between text-sm gap-2">
                                 <strong class="font-medium text-slate-500">{{ $paramItem->productParam->name }}</strong>
                                 <span class="grow border-b border-slate-300 border-dashed"></span>
@@ -202,6 +205,9 @@
                             </li>
                         @endforeach
                         @foreach($variation->parametrs as $parametr)
+                            @if ($parametr->productParam->is_hidden)
+                                @continue
+                            @endif
                             <li class="flex items-center justify-between text-sm gap-2">
                                 <strong class="font-medium text-slate-500">{{ $parametr->productParam->name }}</strong>
                                 <span class="grow border-b border-slate-300 border-dashed"></span>

@@ -35,13 +35,7 @@ class Items extends Component
 
     public function boot(ProductSelector $selector)
     {
-        $products = ProductVariant::whereHas('paramItems', function ($q) {
-            $q->whereIn("product_param_items.id", [666, 663]);
-        })->get();
-
-        foreach ($products as $product) {
-            $product->parametrs()->attach(2688);
-        }
+        
 
         $this->selector = $selector;
     }
@@ -49,6 +43,8 @@ class Items extends Component
     public function mount($path = null, $brand_slug = null, $products = null, $display_filter = false)
     {
         $this->display_filter = $display_filter;
+
+        
 
         if ($path) {
             $slug = collect(explode('/', $path))->last();

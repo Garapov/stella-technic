@@ -1,6 +1,6 @@
 <div class="glide__slide p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-900 dark:border-gray-700 relative overflow-hidden h-auto flex flex-col justify-between gap-8">
-    <div class="w-[45%] absolute top-[-10px] right-[-10px] @if($transparent) opacity-20 @endif text-blue-900 dark:opacity-20 rounded-full overflow-hidden">
-        <img src="{{ Storage::disk(config('filesystems.default'))->url($category->image) }}">
+    <div class="w-[40%] h-[138px] absolute top-0 right-0 @if($transparent) opacity-20 @endif text-blue-900 dark:opacity-20 flex items-end justify-end">
+        <img src="{{ Storage::disk(config('filesystems.default'))->url($category->image) }}" class="object-cover h-full">
     </div>
     <div class="flex flex-col items-start gap-2 @if(!$transparent) w-[65%] @endif">
         
@@ -15,7 +15,7 @@
         <a href="{{ route('client.catalog', ['path' => $category->urlChain()]) }}" wire:navigate class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white hover:text-blue-600">{{ $category->title }}</a>
         {{-- @if (count($category->categories)) --}}
             <ul class="flex flex-col gap-0.5">
-                @foreach ($category->categories as $subcategory)
+                @foreach ($category->categories->sortBy('sort') as $subcategory)
                     <li>
                     <a href="{{ route('client.catalog', ['path' => $subcategory->urlChain()]) }}" wire:navigate class="text-gray-500 hover:text-gray-900 dark:hover:text-white text-xs flex items-center gap-2">
                         {{ $subcategory->title }}
