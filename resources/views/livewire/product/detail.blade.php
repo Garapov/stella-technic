@@ -118,7 +118,13 @@
     <div class="grid grid-cols-9 gap-8">
         <div class="flex flex-col gap-8 md:col-span-7 col-span-full">
             <div class="grid items-start grid-cols-1 lg:grid-cols-6 gap-8 max-lg:gap-12 max-sm:gap-8">
-                <div class="w-full lg:sticky top-10 lg:col-span-3 col-span-full">
+                <div class="w-full lg:sticky top-10 lg:col-span-3 col-span-full" x-data="{
+                    selector: `[data-fancybox='product_detail_page_gallery']`,
+                    init() {
+                        window.fancybox.bind(this.selector);
+                        console.log(window.fancybox.bind(this.selector));
+                    },
+                }">
                     <div class="flex flex-col-reverse gap-4" x-ignore>
                         @if ($variation->gallery)
                             <div class="grid grid-cols-8 gap-2">
@@ -142,7 +148,7 @@
                                     <div class="splide__track">
                                         <ul class="splide__list">
                                             @foreach ($variation->gallery as $image)
-                                                <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
+                                                <li class="splide__slide" data-fancybox="product_detail_page_gallery" data-src="{{ Storage::disk(config('filesystems.default'))->url($image) }}"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
                                             @endforeach
                                             @if ($variation->is_constructable && $variation->rows)
                                                 <li class="splide__slide">
