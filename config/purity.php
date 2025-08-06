@@ -26,6 +26,7 @@ use Abbasudo\Purity\Filters\Strategies\StartsWithFilter;
 use App\Filters\ProductVariantHasBrand;
 use App\Filters\RelatedFilter;
 use App\Filters\HasIdFilter;
+use App\Filters\ParamsIncludesFilter;
 
 return [
     'filters' => [
@@ -55,6 +56,7 @@ return [
         RelatedFilter::class,
         ProductVariantHasBrand::class,
         HasIdFilter::class,
+        ParamsIncludesFilter::class
     ],
 
     'silent' => false,

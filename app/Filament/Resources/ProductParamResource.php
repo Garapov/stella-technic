@@ -44,6 +44,7 @@ class ProductParamResource extends Resource
                     ->options([
                         'number' => 'Числовой',
                         'checkboxes' => 'Список чекбоксов',
+                        'slider' => 'Ползунки',
                         'color' => 'Цвет',
                     ]),
                 Forms\Components\Toggle::make('allow_filtering')
@@ -78,6 +79,7 @@ class ProductParamResource extends Resource
                         'text' => 'Текст',
                         'number' => 'Числовой',
                         'checkboxes' => 'Список чекбоксов',
+                        'slider' => 'Ползунки',
                         'color' => 'Цвет',
                     } : ''),
                 Tables\Columns\ToggleColumn::make('allow_filtering')

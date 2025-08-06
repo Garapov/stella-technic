@@ -7,6 +7,7 @@ use Livewire\Component;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
+use Illuminate\Support\Str;
 
 class Filter extends Component
 {
@@ -45,7 +46,7 @@ class Filter extends Component
         $firstSelectedId = null;
         foreach (["paramItems", "parametrs"] as $filterKey) {
             if (isset($this->filters[$filterKey])) {
-                foreach (['$hasid', '$related'] as $type) {
+                foreach (['$hasid', '$related', '$includes'] as $type) {
                     if (!empty($this->filters[$filterKey][$type])) {
                         foreach ($this->filters[$filterKey][$type] as $id) {
                             $this->selectedParams[$id] = $filterKey;
@@ -115,8 +116,9 @@ class Filter extends Component
     }
 
 
-    public function checkParamsvAilability()
+    public function checkParamsvAilability($change = false)
     {
+        
         // id параметров товаров после фильтрации
         $filteredIds = ProductVariant::filter($this->filters)
             ->with(['paramItems', 'parametrs'])
@@ -130,8 +132,16 @@ class Filter extends Component
             ->values()
             ->toArray();
 
+        // dd($filteredIds);
+
         // объединяем id первой группы и id из фильтрации, оставляя только уникальные
         $this->availableFilters = array_unique(array_merge($this->firstSelectedGroup, $filteredIds));
+
+        // if ($change) {
+        //     dd([$this->firstSelectedGroup, $filteredIds]);
+        // }
+
+        // dd($this->availableFilters);
 
         // dd([$this->firstSelectedGroup, $filteredIds, $this->availableFilters]);
         return $this->availableFilters;
@@ -156,6 +166,33 @@ class Filter extends Component
         }
 
         $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability());
+    }
+
+    function filterParamsByValues(array $params, array $values): array
+    {
+        $min = min($values);
+        $max = max($values);
+
+        return array_filter($params, function ($param) use ($min, $max) {
+            return (float)$param['value'] >= $min && (float)$param['value'] <= $max;
+        });
+    }
+
+    public function setSliderFilter($items, $values, $paramName) {
+        $params = collect($this->filterParamsByValues($items, $values))->sortBy('value');
+
+        // dd($params);    
+        $key = Str::snake(Str::of($paramName)->transliterate()->toString());
+        $this->filters['$includes'][$key] = [];
+
+        $this->filters['$includes'][$key] = $params->pluck('id')->toArray();
+
+        foreach($params as $param) {
+            $this->setFirstSelectedGroupIds($param['id']);
+        }
+
+        // dd($this->filters);
+        $this->dispatch("filters-changed", filters: $this->filters, availableParams: $this->checkParamsvAilability(true));
     }
 
     public function updatedPriceRange()

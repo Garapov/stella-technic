@@ -48,9 +48,6 @@
 
 
         @foreach($parameters as $paramName => $params)
-            @php
-                // Теперь $availableFilters — просто массив id, доступен ли параметр: in_array(id, $availableFilters)
-            @endphp
             <div>
                 <h6 class="text-md font-medium mb-3 dark:text-white">
                     {{ $paramName }}
@@ -84,6 +81,147 @@
                             </label>
                         @endforeach
                     </ul>
+                @elseif ($params->first()['type'] == 'slider')
+                    
+                    @php
+                        // $values = [0, 25, 50, 100, 200, 500];
+                        $ar_values = $params->sortBy('value')->map(function ($item) use($availableFilters) {
+                            return intval($item['value']);
+                        })->toArray();
+                        // dd($ar_values);
+                        $values = [];
+                        foreach ($ar_values as $value) {
+                            $values[] = $value;
+                        }
+                        $alpineKey = Str::snake(Str::of($paramName)->transliterate()->toString()); // уникальный ключ для Alpine
+                        $valuesHash = md5(json_encode($values));
+
+                        $items = $params->sortBy('value')->toArray();
+                        $selected_value_min = 0;
+                        $selected_value_max = count($values) - 1;
+
+                        if (isset($filters['$includes']) && isset($filters['$includes'][$alpineKey]) && count($filters['$includes'][$alpineKey]) > 0) {
+                            $selected_value_min = array_search($items[$filters['$includes'][$alpineKey][0]]['value'], $values) ?? 0;
+                            $selected_value_max = array_search($items[$filters['$includes'][$alpineKey][count($filters['$includes'][$alpineKey]) - 1]]['value'], $values) ?? count($values) - 1;
+                        }
+                    @endphp
+
+
+                    <div key="{{ $alpineKey . '_' . $valuesHash }}" wire:ignore x-data="{
+                        values: @json($values),
+                        minIndex: {{$selected_value_min}},
+                        maxIndex: {{$selected_value_max}},
+                        dragThumb: null,
+                        trackRect: null,
+                        get minThumbStyle() {
+                            return {
+                                left: `${((this.minIndex / (this.values.length - 1)) * 100) * this.$refs.track.getBoundingClientRect().width / 100}px`,
+                                transform: `translate(-${(this.minIndex / (this.values.length - 1)) * 100}%, 0)`
+                            };
+                        },
+
+                        get maxThumbStyle() {
+                            return {
+                                right: `${this.$refs.track.getBoundingClientRect().width - (((this.maxIndex / (this.values.length - 1)) * 100) * this.$refs.track.getBoundingClientRect().width / 100)}px`,
+                                transform: `translate(${100 - ((this.maxIndex / (this.values.length - 1)) * 100)}%, 0)`
+                            };
+                        },
+
+                        get activeRangeStyle() {
+                            const left = (this.minIndex / (this.values.length - 1)) * 100;
+                            const width = ((this.maxIndex - this.minIndex) / (this.values.length - 1)) * 100;
+                            return {
+                                left: `${left}%`,
+                                width: `${width}%`
+                            };
+                        },
+
+                        setFilter() {
+                            {{-- this.onChange(); --}}
+                            $wire.setSliderFilter({{ json_encode($params->sortBy('value')->toArray()) }}, [this.values[this.minIndex], this.values[this.maxIndex]], '{{ $paramName }}');
+                        },
+
+                        startDrag(e) {
+                            e.preventDefault();
+                            this.trackRect = this.$refs.track.getBoundingClientRect();
+
+                            const moveHandler = (event) => {
+                                let clientX = event.type.includes('touch') ? event.touches[0].clientX : event.clientX;
+                                const percent = (clientX - this.trackRect.left) / this.trackRect.width;
+                                const index = Math.round(percent * (this.values.length - 1));
+
+                                if (this.dragThumb === 'min') {
+                                    this.minIndex = Math.min(Math.max(0, index), this.maxIndex);
+                                } else if (this.dragThumb === 'max') {
+                                    this.maxIndex = Math.max(Math.min(this.values.length - 1, index), this.minIndex);
+                                }
+                            };
+
+                            const upHandler = () => {
+                                this.dragThumb = null;
+                                window.removeEventListener('mousemove', moveHandler);
+                                window.removeEventListener('mouseup', upHandler);
+                                window.removeEventListener('touchmove', moveHandler);
+                                window.removeEventListener('touchend', upHandler);
+
+                                this.setFilter();
+
+                                
+                            };
+
+                            window.addEventListener('mousemove', moveHandler);
+                            window.addEventListener('mouseup', upHandler);
+                            window.addEventListener('touchmove', moveHandler);
+                            window.addEventListener('touchend', upHandler);
+                        }
+                    }" class="relative w-full max-w-xl mx-auto mt-4">
+
+                        <!-- Трек слайдера -->
+                        <div
+                            x-ref="track"
+                            class="relative h-2 bg-gray-200 rounded"
+                            @mousedown="startDrag($event)"
+                            @touchstart="startDrag($event)"
+                        >
+                            <!-- Активный диапазон -->
+                            <div
+                                class="absolute h-2 bg-blue-500 rounded"
+                                :style="activeRangeStyle"
+                            ></div>
+
+                            <!-- Левая ручка -->
+                            <div
+                                class="absolute w-5 h-5 bg-white border-2 border-blue-700 rounded-full cursor-pointer -top-1.5 z-10"
+                                :style="minThumbStyle"
+                                @mousedown="dragThumb = 'min'"
+                                @touchstart="dragThumb = 'min'"
+                            ></div>
+
+                            <!-- Правая ручка -->
+                            <div
+                                class="absolute w-5 h-5 bg-white border-2 border-blue-700 rounded-full cursor-pointer -top-1.5 z-10"
+                                :style="maxThumbStyle"
+                                @mousedown="dragThumb = 'max'"
+                                @touchstart="dragThumb = 'max'"
+                            ></div>
+                        </div>
+
+                        <!-- Метки -->
+                        <div class="flex items-center justify-between mt-3 h-4">
+                            <div
+                                class="text-xs"
+                                class="text-blue-700"
+                                x-text="minIndex !== null ? values[minIndex] : ''"
+                            ></div>
+                            <div
+                                class="text-xs"
+                                class="text-blue-700"
+                                x-text="maxIndex !== null ? values[maxIndex] : ''"
+                            ></div>
+                        </div>
+                    </div>
+                    
+
                 @else
                     <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault" x-data="{ showAll: false }">
                         @php

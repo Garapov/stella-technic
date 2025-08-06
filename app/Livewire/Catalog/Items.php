@@ -100,9 +100,10 @@ class Items extends Component
     }
 
     #[On("filters-changed")]
-    public function updateFilters($filters)
+    public function updateFilters($filters, $availableParams)
     {
         $this->filters = $filters;
+        // dd([$this->filters, $availableParams]);
         $this->resetPage();
     }
 

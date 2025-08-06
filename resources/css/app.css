@@ -93,3 +93,30 @@
 .splide__arrow svg {
     fill: rgb(51 65 85 / var(--tw-text-opacity, 1));
 }
+
+input[type=range].range-thumb::-webkit-slider-thumb {
+    appearance: none;
+    height: 16px;
+    width: 16px;
+    background-color: #1E40AF;
+    border-radius: 9999px;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px #1E40AF;
+    margin-top: -7px;
+    position: relative;
+    z-index: 2;
+}
+input[type=range].range-thumb::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    background-color: #1E40AF;
+    border-radius: 9999px;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px #1E40AF;
+}
+
+input[type=range].range-thumb {
+    height: 32px;
+}
