@@ -6,13 +6,7 @@
     }">
 
             <!-- Loading Overlay -->
-            <div wire:loading.class.remove="hidden"
-                class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm hidden">
-                <div class="flex items-center gap-2 rounded-lg bg-white/80 px-6 py-4 shadow-lg dark:bg-gray-800/80">
-                    <div class="animate-spin w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full"></div>
-                    <span class="text-gray-700 dark:text-gray-300">Загрузка...</span>
-                </div>
-            </div>
+            
 
             <!-- Heading & Filters -->
             @if ($category)

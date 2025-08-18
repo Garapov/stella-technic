@@ -1,6 +1,6 @@
 <div class="navbar-menu relative z-50">
-    <div class="navbar-backdrop fixed inset-0 bg-gray-800" :class="$store.application.burger ? 'opacity-25' : 'opacity-0 pointer-events-none'" x-transition @click="$store.application.burger = false"></div>
-    <div class="fixed top-0 left-0 bottom-0 flex flex-col gap-4 w-5/6 max-w-sm py-6 px-6 bg-white border-r overflow-y-auto transition-all" :class="$store.application.burger ? 'translate-x-[0]' : '-translate-x-full'">
+    <div class="navbar-backdrop fixed inset-0 bg-gray-800 opacity-0" :class="$store.application.burger ? 'opacity-25' : 'opacity-0 pointer-events-none'" x-transition @click="$store.application.burger = false"></div>
+    <div class="fixed top-0 left-0 bottom-0 flex flex-col gap-4 w-5/6 max-w-sm py-6 px-6 bg-white border-r overflow-y-auto transition-all -translate-x-full" :class="$store.application.burger ? 'translate-x-[0]' : '-translate-x-full'">
         <div class="flex justify-between items-center">
             <div>
                 @if (setting('site_logo'))

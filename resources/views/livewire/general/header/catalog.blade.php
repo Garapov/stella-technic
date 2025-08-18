@@ -39,16 +39,23 @@
                 <div class="max-h-[70vh] col-span-4"  x-show="selectedCategory == {{ $category->id }}">
                     <div class="bg-gray-200 rounded-lg h-full overflow-y-auto">
                         <ul class="grid grid-cols-3 gap-4 items-stretch p-4">
-                            @foreach ($category->categories->sortBy('sort') as $subcategory)
-                                @livewire('general.category', [
-                                    'category' => $subcategory,
-                                    'counts' => $variationCounts,
-                                    'minPrices' => $minPrices,
-                                    'allCategoryIds' => $allCategoryIds,
-                                    'show_counts' => true,
-                                    'show_price' => true,
-                                    'transparent' => true
-                                ], key($subcategory->id))
+                             @php
+                                $groups = $category->categories->sortBy('sort')->split(3);
+                            @endphp
+                            @foreach ($groups as $group)
+                                <div class="flex flex-col gap-2">
+                                    @foreach ($group->sortBy('sort') as $subcategory)
+                                        @livewire('general.category', [
+                                            'category' => $subcategory,
+                                            'counts' => $variationCounts,
+                                            'minPrices' => $minPrices,
+                                            'allCategoryIds' => $allCategoryIds,
+                                            'show_counts' => true,
+                                            'show_price' => true,
+                                            'transparent' => true
+                                        ], key($subcategory->id))
+                                    @endforeach
+                                </div>
                             @endforeach
                         </ul>
                     </div>
