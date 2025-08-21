@@ -36,6 +36,7 @@
         "rupadana/filament-api-service": "^3.4",
         "spatie/laravel-responsecache": "^7.7",
         "spatie/laravel-searchable": "^1.12",
+        "spatie/laravel-sitemap": "^7.3",
         "spatie/laravel-sluggable": "^3.6",
         "tomatophp/filament-settings-hub": "^2.0",
         "z3d0x/filament-fabricator": "^2.2"
