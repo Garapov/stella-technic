@@ -14,7 +14,7 @@ class Category extends Component
     public $show_price = false;
     public $transparent = false;
 
-    public function mount($category, $show_counts = false, $show_price = false, $transparent = false, $allCategoryIds = [], $counts = [], $minPrices = [])
+    public function mount($category, $show_counts = false, $show_price = false, $transparent = false, $allCategoryIds = [], $counts = [], $minPrices = [], $show_image = true)
     {
         $this->category = $category;
         $this->show_counts = $show_counts;
@@ -23,6 +23,7 @@ class Category extends Component
         $this->allCategoryIds = $allCategoryIds;
         $this->counts = $counts;
         $this->minPrices = $minPrices;
+        $this->show_image = $show_image;
     }
 
     public function render()
@@ -31,6 +32,7 @@ class Category extends Component
             'category' => $this->category,
             'show_counts' => $this->show_counts,
             'show_price' => $this->show_price,
+            'show_image' => $this->show_image,
             'transparent' => $this->transparent,
             'allCategoryIds' => $this->allCategoryIds,
             'counts' => $this->counts,

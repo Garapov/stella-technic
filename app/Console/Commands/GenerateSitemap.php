@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Spatie\Sitemap\SitemapGenerator;
 use Spatie\Sitemap\Tags\Url;
 
@@ -16,7 +17,6 @@ class GenerateSitemap extends Command
      */
     protected $signature = 'create:sitemap';
 
-    protected $path = 'public/sitemap.xml';
 
     /**
      * The console command description.
@@ -30,12 +30,21 @@ class GenerateSitemap extends Command
      */
     public function handle()
     {
-        
-        // dd(config('app.url'));
-        SitemapGenerator::create(config('app.url'))->hasCrawled(function (Url $url) {
-            $this->info($url->url);
-            Http::get($url->url);
-            return $url;
-        })->writeToFile($this->path);
+        try {
+
+            SitemapGenerator::create(config('app.url'))
+            
+                ->hasCrawled(function (Url $url) {
+                    $this->info($url->url);
+                    Http::get($url->url);
+                    return $url;
+                })
+                ->getSitemap()
+                // here we add one extra link, but you can add as many as you'd like
+                ->writeToFile(public_path('sitemap.xml'));
+            Log::error('Sitemap success: ');
+        } catch (\Throwable $e) {
+            Log::error('Sitemap error: ' . $e->getMessage());
+        }
     }
 }

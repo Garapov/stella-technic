@@ -17,11 +17,11 @@
         Каталог
     </button>
     <div class="absolute top-full left-[50%] transform translate-x-[-50%] z-[999] hidden container overflow-auto border border-blue-gray-50 bg-white p-3 font-sans text-sm font-normal text-blue-gray-500  shadow-lg shadow-blue-gray-500/10 focus:outline-none lg:block rounded-lg" role="menu" x-show="isOpened"  x-cloak>
-        <div class="grid grid-cols-5 gap-4" >
-            <ul class="flex flex-col gap-4 pr-2 max-h-[60vh] overflow-y-auto">
+        <div class="grid grid-cols-5 gap-3" >
+            <ul class="flex flex-col max-h-[60vh] overflow-y-auto">
                 @foreach ($categories->sortBy('sort') as $category)
                     <li>
-                        <a href="{{ route('client.catalog', ['path' => $category->urlChain()]) }}" wire:navigate class="flex flex-center justify-between gap-2 text-gray-600" :class="{ 'text-red-700': selectedCategory == {{ $category->id }}}" @mouseover="changeSelectedCategory({{ $category->id }})">
+                        <a href="{{ route('client.catalog', ['path' => $category->urlChain()]) }}" wire:navigate class="flex flex-center justify-between gap-2 text-gray-900 font-semibold p-2 rounded-lg" :class="{ 'text-blue-600 bg-slate-50': selectedCategory == {{ $category->id }}}" @mouseover="changeSelectedCategory({{ $category->id }})">
                             <div class="flex items-center gap-2">
                                 <div class="min-w-8 max-w-8">
                                     <img src="{{ Storage::disk(config('filesystems.default'))->url($category->image) }}">
@@ -37,8 +37,8 @@
             </ul>
             @foreach ($categories->sortBy('sort') as $category)
                 <div class="max-h-[70vh] col-span-4"  x-show="selectedCategory == {{ $category->id }}">
-                    <div class="bg-gray-200 rounded-lg h-full overflow-y-auto">
-                        <ul class="grid grid-cols-3 gap-4 items-stretch p-4">
+                    <div class="bg-slate-50 rounded-lg h-full overflow-y-auto">
+                        <ul class="grid grid-cols-3 gap-2 items-stretch p-2">
                              @php
                                 $groups = $category->categories->sortBy('sort')->split(3);
                             @endphp
@@ -52,7 +52,8 @@
                                             'allCategoryIds' => $allCategoryIds,
                                             'show_counts' => true,
                                             'show_price' => true,
-                                            'transparent' => true
+                                            'show_image' => true,
+                                            'transparent' => false
                                         ], key($subcategory->id))
                                     @endforeach
                                 </div>
