@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // $middleware->append(CheckAllowedHostNames::class);
         $middleware->web(
             append: [
+                \App\Http\Middleware\AddLastModified::class,
                 \Spatie\ResponseCache\Middlewares\CacheResponse::class,
                 // \App\Http\Middleware\AddGlobalPages::class,
             ]
