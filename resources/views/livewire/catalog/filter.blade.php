@@ -1,4 +1,4 @@
-<div class="rounded-lg bg-slate-50 p-6 shadow-sm flex flex-col gap-4 overflow-y-auto fixed md:static left-0 top-0 bottom-0 right-0 z-50 md:translate-x-0 transition-all" :class="isFilterOpened ? 'translate-x-0' : '-translate-x-full'" x-data="{
+<div class="rounded-lg bg-slate-50 p-3 shadow-sm flex flex-col gap-4 overflow-y-auto fixed md:static left-0 top-0 bottom-0 right-0 z-50 md:translate-x-0 transition-all" :class="isFilterOpened ? 'translate-x-0' : '-translate-x-full'" x-data="{
     rangeSlider: window.rangeSlider($refs.range, {
         min: @js($products->min('price')),
         max: @js($products->max('price')),
@@ -21,7 +21,7 @@
     }
 }">
 
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-2">
         <div class="flex items-center justify-between">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Фильтры</h3>
             <button class="navbar-close block md:hidden" @click="isFilterOpened = false">
@@ -31,8 +31,8 @@
             </button>
         </div>
 
-        <div>
-            <h4 class="text-md font-medium mb-3 dark:text-white">Цена</h4>
+        <div class="p-3 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-900 dark:border-gray-700">
+            <h4 class="text-md font-semibold mb-3 dark:text-white">Цена</h4>
 
             <div class="relative mt-4">
                 <div class="relative w-full h-2 bg-gray-200 rounded-md">
@@ -48,13 +48,18 @@
 
 
         @foreach($parameters as $paramName => $params)
-            <div>
-                <h6 class="text-md font-medium mb-3 dark:text-white">
-                    {{ $paramName }}
-                </h6>
+            <div class="p-3 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-900 dark:border-gray-700 flex flex-col gap-3" x-data="{
+                isOpened: false
+            }">
+                <div class="flex items-center justify-between cursor-pointer" @click="isOpened = !isOpened">
+                    <span class="text-[0.9rem] font-semibold dark:text-white">{{ $paramName }}</span>
+                    <span class="block min-w-6 max-w-6 min-h-6 max-h-6" :class="{'rotate-180': isOpened}">
+                        <x-eva-arrow-ios-downward-outline class="w-full h-full"  />
+                    </span>
+                </div>
 
                 @if ($params->first()['type'] == 'color')
-                    <ul class="flex flex-wrap gap-2" aria-labelledby="dropdownDefault">
+                    <ul class="flex flex-wrap gap-2" aria-labelledby="dropdownDefault" x-show="isOpened">
                         @foreach($params as $colorItemId => $color)
                             @php $colors = explode('|', $color['value']); @endphp
                             <label class="relative w-8 h-8 rounded-full border 
@@ -174,7 +179,7 @@
                             window.addEventListener('touchmove', moveHandler);
                             window.addEventListener('touchend', upHandler);
                         }
-                    }" class="relative w-full max-w-xl mx-auto mt-4">
+                    }" class="relative w-full max-w-xl mx-auto mt-4" x-show="isOpened">
 
                         <!-- Трек слайдера -->
                         <div
@@ -223,7 +228,7 @@
                     
 
                 @else
-                    <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault" x-data="{ showAll: false }">
+                    <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault" x-data="{ showAll: false }" x-show="isOpened">
                         @php
                             $counter = 0;
                         @endphp
@@ -256,11 +261,16 @@
         @endforeach
 
         @if ($brands)
-            <div>
-                <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
-                    Бренд
-                </h6>
-                <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
+            <div class="p-3 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-900 dark:border-gray-700 flex flex-col gap-3" x-data="{
+                isOpened: false
+            }">
+                <div class="flex items-center justify-between cursor-pointer" @click="isOpened = !isOpened">
+                    <span class="text-[0.9rem] font-semibold dark:text-white">Бренд</span>
+                    <span class="block min-w-6 max-w-6 min-h-6 max-h-6" :class="{'rotate-180': isOpened}">
+                        <x-eva-arrow-ios-downward-outline class="w-full h-full"  />
+                    </span>
+                </div>
+                <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault" x-show="isOpened">
                     @foreach ($brands as $brand)
                         <li class="flex items-center">
                             <input type="checkbox"

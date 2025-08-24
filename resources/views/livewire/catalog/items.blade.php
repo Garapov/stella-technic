@@ -57,14 +57,9 @@
                     </ul>
                 @endif
             @endif
-
-
-
-
-
             <div class="grid grid-cols-9 gap-4">
                 @if ($display_filter)
-                    <div class="col-span-2">
+                    <div class="col-span-2" wire:loading.class="opacity-25 pointer-events-none">
                         @livewire('catalog.filter', [
                             'products' => $all_products,
                         ])
@@ -87,7 +82,6 @@
 
                                 </h1>
                             </div>
-
                             <div class="flex items-center space-x-4">
                                 <!-- Display Mode Toggle -->
                                 <div class="inline-flex rounded-md shadow-xs" role="group">
@@ -136,7 +130,7 @@
                                     </div>
                                 </div>
 
-                                <div class="inline-flex md:hidden items-center px-3 py-2 text-sm font-medium border rounded-lg bg-white border-gray-200 text-gray-900 cursor-pointer"
+                                <div class="inline-flex md:hidden items-center px-3 py-2 text-sm font-medium border rounded-lg bg-white border-gray-200 text-gray-900 cursor-pointer" 
                                         @click="isFilterOpened = !isFilterOpened" >
                                     <x-carbon-filter class="w-5 h-5" />
                                 </div>
