@@ -4,7 +4,21 @@
     }">
     @php
         $category = $category ?? $variant->product->categories->last();
+        $schema = \Spatie\SchemaOrg\Schema::product()
+            ->name($variant->name ?? $variant->name)
+            ->image(Storage::disk(config('filesystems.default'))->url($variant->gallery[0]))
+            ->description($variant->short_description ?? $variant->description ?? '')
+            ->sku($variant->sku)
+            ->offers(
+                \Spatie\SchemaOrg\Schema::offer()
+                    ->priceCurrency('RUB')
+                    ->price($variant->price)
+                    ->availability(
+                        'https://schema.org/InStock'
+                    )
+            );
     @endphp
+        {!! $schema->toScript() !!}
         <a class="block aspect-[1/1] relative" href="{{ route('client.catalog', $variant->urlChain()) }}" wire:navigate @mouseleave="imageIdToDisplay = 0">
             @if($variant->gallery)
                 @foreach($variant->gallery as $key => $image)

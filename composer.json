@@ -38,6 +38,7 @@
         "spatie/laravel-searchable": "^1.12",
         "spatie/laravel-sitemap": "^7.3",
         "spatie/laravel-sluggable": "^3.6",
+        "spatie/schema-org": "^3.23",
         "tomatophp/filament-settings-hub": "^2.0",
         "z3d0x/filament-fabricator": "^2.2"
     },
