@@ -161,13 +161,29 @@
                     </svg>
                 </button>
 
-                <a href="{{ route('client.cart') }}" wire:navigate
-                class="inline-flex items-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800" x-show="$store.cart.list[{{ $variant->id }}]"
-                >
-                    В корзине
-                </a>
 
-                <input type="number" name="" id="" x-model="$store.cart.list[{{ $variant->id }}]" x-show="$store.cart.list[{{ $variant->id }}]">
+                <div class="relative flex items-center" x-show="$store.cart.list[{{ $variant->id }}]">
+                    <button type="button" class="shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" @click="() => {
+                        $store.cart.list[{{ $variant->id }}]--;
+                        if ($store.cart.list[{{ $variant->id }}] < 1) {
+                            $store.cart.list[{{ $variant->id }}] = 1
+                        }    
+                    }">
+                        <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                        </svg>
+                    </button>
+                    <input type="number" class="appearance-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-12 text-center" x-model="$store.cart.list[{{ $variant->id }}]" x-on:input.debounce="(event) => {
+                        if (event.target.value == '' || $store.cart.list[{{ $variant->id }}] < 1) $store.cart.list[{{ $variant->id }}] = 1;
+
+                        console.log($store.cart.list[{{ $variant->id }}]);
+                    }" />
+                    <button type="button" class="shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" @click="() => { $store.cart.list[{{ $variant->id }}]++ }">
+                        <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
 
 
