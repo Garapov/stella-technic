@@ -1,12 +1,12 @@
 
 <section class="py-8 bg-white md:py-10 dark:bg-gray-900 antialiased">
     @if ($category || $product_ids)
-    <div class="lg:container p-4 lg:mx-auto relative" x-data="{
+    <div class="xl:px-[100px] px-[20px] py-4 lg:mx-auto relative" x-data="{
         isFilterOpened: false,
     }">
 
             <!-- Loading Overlay -->
-            
+
 
             <!-- Heading & Filters -->
             @if ($category)
@@ -34,27 +34,30 @@
                 <div class="mb-5">
                     {{ Breadcrumbs::render('category', $category) }}
                 </div>
-                @if (!empty($nonTagCategories))
-                    <div class="grid grid-cols-2 md:grid-cols-8 gap-4 mb-4">
-                        @foreach ($nonTagCategories as $subcategory)
-                            {{-- @if ($subcategory->products->count() == 0)
-                                @continue
-                            @endif --}}
-                            <x-catalog.category.big :subcategory="$subcategory" />
-                        @endforeach
-                    </div>
-                @endif
-                @if (!empty($tagCategories))
-                    <ul class="flex items-center gap-2 overflow-auto pb-2 mb-4">
-                        @foreach ($tagCategories as $subcategory)
-                            {{-- @if ($subcategory->products->count() == 0)
-                                @continue
-                            @endif --}}
-                            <li>
-                                <x-catalog.category.small :subcategory="$subcategory" />
-                            </li>
-                        @endforeach
-                    </ul>
+
+                @if ($category->tabs_categories)
+
+                    @if ($category->categories)
+                        <x-catalog.category.tabs :categories="$category->categories" />
+                    @endif
+                @else
+                    @if (!empty($nonTagCategories))
+                        <div class="grid grid-cols-2 md:grid-cols-8 gap-4 mb-4">
+                            @foreach ($nonTagCategories as $subcategory)
+                            
+                                <x-catalog.category.big :subcategory="$subcategory" />
+                            @endforeach
+                        </div>
+                    @endif
+                    @if (!empty($tagCategories))
+                        <ul class="flex items-center gap-2 overflow-auto pb-2 mb-4">
+                            @foreach ($tagCategories as $subcategory)
+                                <li>
+                                    <x-catalog.category.small :subcategory="$subcategory" />
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
                 @endif
             @endif
             <div class="grid grid-cols-9 gap-4">
@@ -130,7 +133,7 @@
                                     </div>
                                 </div>
 
-                                <div class="inline-flex md:hidden items-center px-3 py-2 text-sm font-medium border rounded-lg bg-white border-gray-200 text-gray-900 cursor-pointer" 
+                                <div class="inline-flex md:hidden items-center px-3 py-2 text-sm font-medium border rounded-lg bg-white border-gray-200 text-gray-900 cursor-pointer"
                                         @click="isFilterOpened = !isFilterOpened" >
                                     <x-carbon-filter class="w-5 h-5" />
                                 </div>
@@ -157,7 +160,7 @@
                         <div>
                             @if ($displayMode == 'block')
                                 <div>
-                                    <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 @if ($display_filter) lg:grid-cols-2 xl:grid-cols-3 @else lg:grid-cols-3 xl:grid-cols-5 @endif">
+                                    <div class="mb-4 grid gap-4 sm:grid-cols-1 md:mb-8 @if ($display_filter) lg:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 @else lg:grid-cols-3 xl:grid-cols-5 @endif">
                                         @foreach ($products as $variant)
                                             @livewire('general.product-variant', [
                                                 'variant' => $variant,

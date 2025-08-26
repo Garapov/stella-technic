@@ -35,8 +35,6 @@ class Items extends Component
 
     public function boot(ProductSelector $selector)
     {
-        
-
         $this->selector = $selector;
     }
 
@@ -44,11 +42,9 @@ class Items extends Component
     {
         $this->display_filter = $display_filter;
 
-        
-
         if ($path) {
             $slug = collect(explode('/', $path))->last();
-            $this->category = ProductCategory::with(['products:id', 'variations:id', 'paramItems:id', 'categories:id,parent_id,is_tag'])
+            $this->category = ProductCategory::with(['products:id', 'variations:id', 'paramItems:id', 'categories:id,parent_id,is_tag,title'])
                 ->where("slug", $slug)->first();
 
             $this->product_ids = $this->selector->fromCategory($this->category);
@@ -66,6 +62,8 @@ class Items extends Component
             $this->product_ids = $products;
             $this->type = 'products';
         }
+
+        
     }
 
     public function getSortOptions()
@@ -141,7 +139,7 @@ class Items extends Component
             "mode" => $this->displayMode,
             "nonTagCategories" => $this->nonTagCategories,
             "tagCategories" => $this->tagCategories,
-            "category" => $this->category,
+            "category" => $this->category
         ]);
     }
 

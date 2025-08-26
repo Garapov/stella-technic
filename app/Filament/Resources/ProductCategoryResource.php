@@ -209,6 +209,10 @@ class ProductCategoryResource extends Resource
                         ->inline(false)
                         ->default(true)
                         ->label("Видимость"),
+                    Toggle::make("tabs_categories")
+                        ->inline(false)
+                        ->default(true)
+                        ->label("Отображать подкатегории табами"),
                 ])->grow(false),
             ])
                 ->columnSpanFull()

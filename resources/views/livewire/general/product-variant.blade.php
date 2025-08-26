@@ -6,7 +6,7 @@
         $category = $category ?? $variant->product->categories->last();
         $schema = \Spatie\SchemaOrg\Schema::product()
             ->name($variant->name ?? $variant->name)
-            ->image(Storage::disk(config('filesystems.default'))->url($variant->gallery[0]))
+            ->image(count($variant->gallery) > 0 ? Storage::disk(config('filesystems.default'))->url($variant->gallery[0]) : null)
             ->description($variant->short_description ?? $variant->description ?? '')
             ->sku($variant->sku)
             ->offers(
@@ -43,8 +43,8 @@
         @endif
     </div>
     <div class="p-4 flex-auto shrink flex flex-col gap-2 justify-between">
-        <div class="mb-4">
-            <div class="mb-4 flex items-center justify-between gap-2">
+        <div class="mb-2">
+            <div class="mb-2 flex items-center justify-between gap-2">
                 @if($variant->new_price)
                     <span class="me-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-white">
                         Скидка {{ round(100 - ($variant->new_price * 100 / $variant->getActualPrice())) }}%
@@ -58,31 +58,35 @@
             </a>
         </div>
         @if($variant->paramItems || $variant->parametrs)
-            <ul class="flex flex-col gap-4 flex-grow">
-                @foreach($variant->paramItems as $paramItem)
-                    @if (!$paramItem->productParam->show_on_preview)
-                        @continue
-                    @endif
-                    <li class="flex flex-center justify-between text-xs dark:text-white">
-                        <span>{{ $paramItem->productParam->name }}</span>
-                        <span>{{ $paramItem->title }}</span>
-                    </li>
-                @endforeach
-                @foreach($variant->parametrs as $parametr)
-                    @if (!$parametr->productParam->show_on_preview)
-                        @continue
-                    @endif
-                    <li class="flex flex-center justify-between text-xs dark:text-white">
-                        <span>{{ $parametr->productParam->name }}</span>
-                        <span>{{ $parametr->title }}</span>
-                    </li>
-                @endforeach
-            </ul>
+            <div class="flex-grow">
+                <ul class="flex flex-col gap-1 p-2 bg-slate-50 rounded-lg shadow-sm">
+                    @foreach($variant->paramItems as $paramItem)
+                        @if (!$paramItem->productParam->show_on_preview)
+                            @continue
+                        @endif
+                        <li class="flex items-center gap-1 justify-between dark:text-white">
+                            <span class="text-sm font-medium">{{ $paramItem->productParam->name }}</span>
+                            <span class="grow border-b border-dashed"></span>
+                            <span class="text-md font-semibold">{{ $paramItem->title }}</span>
+                        </li>
+                    @endforeach
+                    @foreach($variant->parametrs as $parametr)
+                        @if (!$parametr->productParam->show_on_preview)
+                            @continue
+                        @endif
+                        <li class="flex items-center gap-1 justify-between dark:text-white">
+                            <span class="text-sm font-medium">{{ $parametr->productParam->name }}</span>
+                            <span class="grow border-b border-dashed"></span>
+                            <span class="text-md font-semibold">{{ $parametr->title }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
         @endif
 
 
 
-        <div class="flex items-end justify-between gap-4 mt-4 relative">
+        <div class="flex items-end justify-between gap-4 mt-2 relative">
             <div class="flex flex-col gap-2">
 
                 <div class="flex items-center gap-4">

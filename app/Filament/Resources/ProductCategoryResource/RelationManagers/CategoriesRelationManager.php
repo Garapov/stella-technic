@@ -190,6 +190,10 @@ class CategoriesRelationManager extends RelationManager
                         ])
                         ->live(),
                     Toggle::make("is_visible")->inline(false)->default(true)->label("Видимость"),
+                    Toggle::make("tabs_categories")
+                        ->inline(false)
+                        ->default(true)
+                        ->label("Отображать подкатегории табами"),
                 ])->grow(false),
             ])->columnSpanFull()->from('md')
         ]);
