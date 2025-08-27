@@ -1,7 +1,7 @@
 <div>
     @if (count($features) > 0)
         <section class="text-gray-600 body-font bg-slate-50 dark:bg-gray-700 px-4">
-            <div class="lg:container py-10 lg:mx-auto">
+            <div class="xl:px-[100px] px-[20px] py-10">
                 <div class="text-center mb-10">
                     <h1 class="md:text-4xl text-3xl font-bold text-center title-font mb-2"><span class="text-blue-500">Более 30 лет</span> <span class="text-slate-700">на рынке оборудования и
                         хранения для складов</span></h1>

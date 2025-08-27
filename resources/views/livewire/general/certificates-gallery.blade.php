@@ -31,7 +31,7 @@
                     window.fancybox.bind(this.selector);
                 },
             }" x-ref="slider">
-                <div class="lg:container lg:mx-auto">
+                <div class="xl:px-[100px] px-[20px]">
                     <div class="flex items-center justify-between mb-10">
                         <p class="lg:text-4xl text-xl text-slate-900 dark:text-white font-semibold">{{ $title }}</p>
                         <a href="{{ route('client.posts.index') }}"

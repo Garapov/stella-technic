@@ -1,6 +1,6 @@
 <x-guest-layout>
     <section class="py-8 bg-white md:py-10 dark:bg-gray-900 antialiased">
-        <div class="lg:container px-4 lg:mx-auto">
+        <div class="xl:px-[100px] px-[20px]">
             @if ($variation)
                 <div class="mb-10">{{ Breadcrumbs::render('product', $variation) }}</div>
             @endif

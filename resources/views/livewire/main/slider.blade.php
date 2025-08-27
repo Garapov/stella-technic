@@ -12,7 +12,7 @@
                 })
             },
         }">
-            <div class="m-auto lg:container">
+            <div class="xl:px-[100px] px-[20px]">
                 <div class="glide relative group" x-ref="slider">
                     <div class="glide__track lg:rounded-xl overflow-hidden" data-glide-el="track">
                         <div class="glide__slides">

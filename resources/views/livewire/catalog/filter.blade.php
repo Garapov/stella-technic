@@ -51,12 +51,14 @@
             <div class="p-3 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-900 dark:border-gray-700 flex flex-col gap-3" x-data="{
                 isOpened: true
             }">
-                <div class="flex items-center justify-between cursor-pointer" @click="isOpened = !isOpened">
-                    <span class="text-[0.9rem] font-semibold dark:text-white">{{ $paramName }}</span>
-                    <span class="block min-w-6 max-w-6 min-h-6 max-h-6" :class="{'rotate-180': isOpened}">
-                        <x-eva-arrow-ios-downward-outline class="w-full h-full"  />
-                    </span>
-                </div>
+                @if ($params->first()['type'] != 'switch')
+                    <div class="flex items-center justify-between cursor-pointer" @click="isOpened = !isOpened">
+                        <span class="text-[0.9rem] font-semibold dark:text-white">{{ $paramName }}</span>
+                        <span class="block min-w-6 max-w-6 min-h-6 max-h-6" :class="{'rotate-180': isOpened}">
+                            <x-eva-arrow-ios-downward-outline class="w-full h-full"  />
+                        </span>
+                    </div>
+                @endif
 
                 @if ($params->first()['type'] == 'color')
                     <ul class="flex flex-wrap gap-2" aria-labelledby="dropdownDefault" x-show="isOpened">
@@ -226,7 +228,12 @@
                         </div>
                     </div>
                     
-
+                @elseif ($params->first()['type'] == 'switch')
+                    <label class="inline-flex items-center justify-between cursor-pointer @unless(in_array($params->first()['id'], $availableFilters)) opacity-30 cursor-not-allowed pointer-events-none @endunless">
+                        <span class="me-3 text-sm font-medium text-gray-900 dark:text-gray-300">{{ $paramName }}</span>
+                        <input type="checkbox" id="param_{{ $params->first()['id']}}" wire:click="toggleParam({{ $params->first()['id'] }}, '{{ $params->first()['source'] }}')" class="sr-only peer" @unless(in_array($params->first()['id'], $availableFilters)) disabled @endunless>
+                        <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
+                    </label>
                 @else
                     <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault" x-data="{ showAll: false }" x-show="isOpened">
                         @php

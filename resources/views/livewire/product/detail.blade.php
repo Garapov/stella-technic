@@ -116,7 +116,7 @@
     </div>
 
     <div class="grid grid-cols-9 gap-8">
-        <div class="flex flex-col gap-8 md:col-span-7 col-span-full">
+        <div class="flex flex-col gap-8 md:col-span-6 col-span-full">
             <div class="grid items-start grid-cols-1 lg:grid-cols-6 gap-8 max-lg:gap-12 max-sm:gap-8">
                 <div class="w-full lg:sticky top-10 lg:col-span-3 col-span-full" x-data="{
                     selector: `[data-fancybox='product_detail_page_gallery']`,
@@ -295,7 +295,7 @@
 
         </div>
 
-        <div class="md:col-span-2 col-span-full hidden md:block">
+        <div class="md:col-span-3 col-span-full hidden md:block">
             <x-product.params :variation="$variation" :groupedParams="$groupedParams" />   
         </div>
     </div>

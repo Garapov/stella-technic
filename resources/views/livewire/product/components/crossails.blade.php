@@ -22,7 +22,7 @@
                 })
             },
         }">
-            <div class="lg:container lg:mx-auto" x-ref="slider">
+            <div class="xl:px-[100px] px-[20px]" x-ref="slider">
                 <div class="flex items-center justify-between mb-10">
                     <p class="lg:text-4xl text-xl text-slate-900 dark:text-white font-semibold">{{ $title }}</p>
                     <div class="flex items-center gap-8">

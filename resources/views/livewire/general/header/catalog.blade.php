@@ -16,7 +16,7 @@
             <x-fas-xmark class="w-3.5 h-3.5 me-2" x-show="isOpened" x-cloak />
         Каталог
     </button>
-    <div class="absolute top-full left-[50%] transform translate-x-[-50%] z-[999] hidden container overflow-auto border border-blue-gray-50 bg-white p-3 font-sans text-sm font-normal text-blue-gray-500  shadow-lg shadow-blue-gray-500/10 focus:outline-none lg:block rounded-lg" role="menu" x-show="isOpened"  x-cloak>
+    <div class="w-[calc(100vw-200px)] absolute top-full left-[50%] transform translate-x-[-50%] z-[999] hidden overflow-auto border border-blue-gray-50 bg-white p-3 font-sans text-sm font-normal text-blue-gray-500  shadow-lg shadow-blue-gray-500/10 focus:outline-none lg:block rounded-lg" role="menu" x-show="isOpened"  x-cloak>
         <div class="grid grid-cols-5 gap-3" >
             <ul class="flex flex-col max-h-[60vh] overflow-y-auto">
                 @foreach ($categories->sortBy('sort') as $category)

@@ -2,7 +2,7 @@
     @if (count($brands))
         <!-- ====== Brands Section Start -->
         <section class="py-5 px-4 dark:bg-dark">
-            <div class="lg:container lg:mx-auto">
+            <div class="xl:px-[100px] px-[20px]">
                 <div class="-mx-4 flex flex-wrap">
                     <div class="w-full px-4">
                         <div class="grid lg:grid-cols-6 grid-cols-2 gap-2">

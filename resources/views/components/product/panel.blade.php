@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-4">
-    <div class="flex flex-col gap-4 border border-blue-500 p-4 rounded-xl">
+    <div class="flex flex-col gap-4 bg-slate-50 p-4 rounded-xl">
         <div class="flex items-center flex-wrap justify-between gap-4">
             <div class="flex items-center gap-4">
                 <h4 class="text-slate-900 text-4xl font-semibold">{{ $variation->new_price ? Number::format($variation->new_price, 0) : Number::format($variation->getActualPrice(), 0) }} ₽</h4>
@@ -28,18 +28,46 @@
                     <p class="text-slate-500 text-lg"><strike>{{Number::format($variation->price, 0)}} ₽</strike></p>
                 @endif
             </div>
-
-            @if ($variation->count > 0 && !$variation->is_pre_order)
-                <div class="text-green-500 text-2xl">В наличии</div>
-            @endif
-            @if ($variation->is_pre_order)
-                <div class="text-green-500 text-2xl">Предзаказ</div>
-            @endif
+            <div class="flex items-center gap-4">
+                @if ($variation->count > 0 && !$variation->is_pre_order)
+                    <div class="text-green-500 text-xl">В наличии</div>
+                @endif
+                @if ($variation->is_pre_order)
+                    <div class="text-green-500 text-xl">Предзаказ</div>
+                @endif
+                <div class="relative" x-data="{ showTooltip: false }">
+                    <button type="button"
+                        @mouseenter="showTooltip = true"
+                        @mouseleave="showTooltip = false"
+                        @click.prevent="$store.favorites.toggleProduct({{ $variation->id }})"
+                        class="rounded-lg p-2 text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <span class="sr-only">Добавить в избранное</span>
+                        <svg class="h-7 w-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            :class="{ 'text-red-500 fill-red-500': $store.favorites.list[{{ $variation->id }}] }">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                        </svg>
+                    </button>
+                    <div x-show="showTooltip"
+                        x-cloak
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 translate-y-1"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 translate-y-1"
+                        class="absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 transform rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm whitespace-nowrap">
+                        <span x-show="!$store.favorites.list[{{ $variation->id }}]">Добавить в избранное</span>
+                        <span x-show="$store.favorites.list[{{ $variation->id }}]">Удалить из избранного</span>
+                        <div class="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 transform rotate-45 bg-gray-900"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="flex flex-wrap items-center gap-4">
+        <div class="flex flex-wrap gap-2">
 
-            <div class="max-w-[110px] py-2 px-3 bg-gray-100 rounded-lg dark:bg-neutral-700">
+            <div class="max-w-[110px] py-2 px-3 bg-white border border-slate-200 rounded-lg dark:bg-neutral-700">
                 <div class="flex justify-between items-center gap-x-2">
                     <div class="grow">
                         <input class="w-full p-0 bg-transparent border-0 text-gray-800 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none dark:text-white" style="-moz-appearance: textfield;" type="number" aria-roledescription="Quantity field" x-model="cart_quantity" @change="validateQuantity">
@@ -55,41 +83,13 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center" @click="addVariationToCart()">
+            
+            <button type="button" class="text-white flex-1 bg-green-400 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center" @click="addVariationToCart()">
                 <x-fas-cart-arrow-down class="w-6 h-6 mr-2" />
                 <span class="text-md">В корзину</span>
             </button>
-            
-            <div class="grow flex flex-col gap-2">
-                <button class="rounded-lg p-3 text-gray-500 bg-gray-100 text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" @click="$store.application.forms.buy_one_click = true">Купить в один клик</button>
-            </div>
-            <div class="relative" x-data="{ showTooltip: false }">
-                <button type="button"
-                    @mouseenter="showTooltip = true"
-                    @mouseleave="showTooltip = false"
-                    @click.prevent="$store.favorites.toggleProduct({{ $variation->id }})"
-                    class="rounded-lg p-2 text-gray-500 bg-gray-100 text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                    <span class="sr-only">Добавить в избранное</span>
-                    <svg class="h-7 w-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        :class="{ 'text-red-500 fill-red-500': $store.favorites.list[{{ $variation->id }}] }">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                    </svg>
-                </button>
-                <div x-show="showTooltip"
-                    x-cloak
-                    x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 translate-y-1"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 translate-y-1"
-                    class="absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 transform rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm whitespace-nowrap">
-                    <span x-show="!$store.favorites.list[{{ $variation->id }}]">Добавить в избранное</span>
-                    <span x-show="$store.favorites.list[{{ $variation->id }}]">Удалить из избранного</span>
-                    <div class="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 transform rotate-45 bg-gray-900"></div>
-                </div>
-            </div>
+
+            <button class="rounded-lg p-3 text-gray-500 bg-white border border-slate-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white flex-1" @click="$store.application.forms.buy_one_click = true">Купить в один клик</button>
             
             @if ($variation->is_constructable)
                 <a href="{{ route('client.constructor', ['variation_id' => $variation->id]) }}" class="w-full text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Редактировать в конструкторе</a>

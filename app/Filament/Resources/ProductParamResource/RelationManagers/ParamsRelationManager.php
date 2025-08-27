@@ -40,7 +40,7 @@ class ParamsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('value')
                     ->label('Значение')
                     ->required()
-                    ->visible(fn () => $parentRecord->type === 'checkboxes'),
+                    ->visible(fn () => $parentRecord->type === 'checkboxes' || $parentRecord->type === 'switch'),
             ]);
     }
 
