@@ -190,12 +190,6 @@
                             <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 2 ? 'active bg-blue-600 text-white' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 cursor-pointer'" aria-current="page" @click="activeTab = 2">Файлы</span>
                         </li>
                     @endif
-
-                    @if (count($deliveries) > 0)
-                        <li class="me-2">
-                            <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 3 ? 'active bg-blue-600 text-white' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 cursor-pointer'" aria-current="page" @click="activeTab = 3">Доставка</span>
-                        </li>
-                    @endif
                 </ul>
                 <div class="text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-b-lg w-full p-4" x-show="activeTab == 0">
                     <!-- <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Технические характеристики</h3> -->
@@ -250,11 +244,21 @@
                     </div>
                 @endif
                 
+                
+            </div>
+
+        </div>
+
+        <div class="md:col-span-3 col-span-full hidden md:block">
+            <div class="md:sticky top-20">
+                <x-product.params :variation="$variation" :groupedParams="$groupedParams" /> 
+                
+
                 @if (count($deliveries) > 0)
-                    <div class="p-4 rounded-b-xl flex flex-col gap-4" x-show="activeTab == 3">
+                    <div class="bg-slate-50 p-4 rounded-b-xl flex flex-col gap-4">
                         @foreach($deliveries as $delivery)
-                            <div class="grid grid-cols-10 items-center gap-4">
-                                <div class="text-green-600 p-2 rounded-lg bg-white">
+                            <div class="grid grid-cols-8 items-start gap-4">
+                                <div class="col-span-1 text-green-600 p-2 rounded-lg bg-white">
                                     @switch($delivery->type)
                                         @case('map')
                                             <x-carbon-pin class="w-full" />
@@ -292,11 +296,6 @@
                     </div>
                 @endif
             </div>
-
-        </div>
-
-        <div class="md:col-span-3 col-span-full hidden md:block">
-            <x-product.params :variation="$variation" :groupedParams="$groupedParams" />   
         </div>
     </div>
 

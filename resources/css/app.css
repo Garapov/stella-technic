@@ -93,6 +93,10 @@
 .splide__arrow svg {
     fill: rgb(51 65 85 / var(--tw-text-opacity, 1));
 }
+.splide__pagination {
+    bottom: auto;
+    top: calc(100% + 0.5rem);
+}
 
 input[type=range].range-thumb::-webkit-slider-thumb {
     appearance: none;

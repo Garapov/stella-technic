@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-2 md:sticky top-40">
+<div class="flex flex-col gap-2">
     <div class="text-md font-bold pb-2">
         Другие вариации товара:
     </div>
