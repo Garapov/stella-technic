@@ -1,8 +1,21 @@
-<form action="{{ route('client.search') }}" class="relative items-center grow lg:flex hidden" x-data="{ isOpen: false }">
+<form action="{{ route('client.search') }}" class="relative items-center grow lg:flex hidden" x-data="{
+    isOpen: false,
+    searchRequests: Alpine.$persist([]).as('searchRequests'),
+    init() {
+        Livewire.on('queryUpdated', ({ query }) => {
+            if (!this.searchRequests.includes(query)) {
+                this.searchRequests.push(query);
+            }
+        })
+    },
+    findResults(event) {
+        $wire.set('q', event.target.value);
+    }
+}">
     <div class="rounded-lg bg-blue-500 flex items-center relative w-full z-20">
         <input type="search" id="search-dropdown"
         class="rounded-lg bg-white block p-2.5 w-full text-sm text-gray-900 dark:placeholder-gray-400 dark:text-white border border-blue-500"
-        placeholder="Поиск" name="q" wire:model.live="q" @focus="isOpen = true" @blur="isOpen = false" style="outline: none; box-shadow: none;" />
+        placeholder="Поиск" name="q" @input.debounce.500ms="findResults" @focus="isOpen = true" @blur="isOpen = false" style="outline: none; box-shadow: none;" />
         <button type="submit"
             class="rounded-e-lg py-2.5 px-4 text-sm font-medium h-full text-white bg-blue-500 border border-0">
             <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
@@ -12,9 +25,15 @@
             <span class="sr-only">Поиск</span>
         </button>
     </div>
-    @if ($q != '' && $results['products']->count() > 0)
-        <div class="absolute top-full left-0 right-0 bg-white border border-blue-500 pt-8 pb-4 px-4 h-[400px] overflow-y-scroll rounded-lg -mt-4 z-10"
+    {{-- @if ($q != '' && $results['products']->count() > 0) --}}
+        <div class="absolute top-full left-0 right-0 bg-white border border-blue-500 pt-8 pb-4 px-4 max-h-[400px] overflow-y-scroll rounded-lg -mt-4 z-10"
             x-show="isOpen">
+            @if ($q == '' && $results['products']->count() < 1)
+                <span class="text-md font-semibold">Вы пока ничего не искали...</span>
+            @endif
+            @if ($q != '' && $results['products']->count() < 1)
+                <span class="text-md font-semibold">Мы ничего не нашли...</span>
+            @endif
             @if ($results['products']->count() > 0)
                 <h2 class="text-lg font-bold mb-2">Товары</h2>
                 <ul>
@@ -37,5 +56,5 @@
                 </ul>
             @endif
         </div>
-    @endif
+    {{-- @endif --}}
 </form>

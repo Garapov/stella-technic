@@ -182,9 +182,11 @@
                     <li class="me-2" id="params">
                         <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 0 ? 'active bg-blue-600 text-white' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 cursor-pointer'" aria-current="page" @click="activeTab = 0">Технические характеристики</span>
                     </li>
-                    <li class="me-2">
-                        <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 1 ? 'active bg-blue-600 text-white' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 cursor-pointer'" aria-current="page" @click="activeTab = 1">Подробное описание</span>
-                    </li>
+                    @if ($variation->description)
+                        <li class="me-2">
+                            <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 1 ? 'active bg-blue-600 text-white' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 cursor-pointer'" aria-current="page" @click="activeTab = 1">Подробное описание</span>
+                        </li>
+                    @endif
                     @if (!empty($files))
                         <li class="me-2">
                             <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 2 ? 'active bg-blue-600 text-white' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 cursor-pointer'" aria-current="page" @click="activeTab = 2">Файлы</span>
@@ -216,10 +218,12 @@
                         @endforeach
                     </dl>
                 </div>
-                <div class="text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-b-lgw-full p-4" x-show="activeTab == 1">
-                    <!-- <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Подробное описание</h3> -->
-                    {!! nl2br(str($variation->description)->sanitizeHtml()) !!}
-                </div>
+                @if ($variation->description)
+                    <div class="text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-b-lgw-full p-4" x-show="activeTab == 1">
+                        <!-- <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Подробное описание</h3> -->
+                        {!! nl2br(str($variation->description)->sanitizeHtml()) !!}
+                    </div>
+                @endif
                 @if (!empty($files))
                     <div class="text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 w-full" x-show="activeTab == 2">
                         <!-- <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Файлы</h3> -->
