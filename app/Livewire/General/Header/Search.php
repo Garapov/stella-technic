@@ -40,7 +40,7 @@ class Search extends Component
     {
         if ($this->q == '') return;
         $this->results = [
-            'products' => ProductVariant::where('name', 'like', "%{$this->q}%")->orWhere('synonims', 'like', "%{$this->q}%")->orWhere('sku', 'like', "%{$this->q}%")->get(),
+            'products' => ProductVariant::search($this->q)->take(10)->get(),
             'categories' => ProductCategory::where('title', 'like', "%{$this->q}%")->get()
         ];
         $this->dispatch('queryUpdated', query: $this->q);

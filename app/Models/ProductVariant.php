@@ -18,11 +18,12 @@ use Filament\Support\Assets\Asset;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
+use Laravel\Scout\Searchable;
 
 class ProductVariant extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductVariantFactory> */
-    use HasFactory, SoftDeletes, HasSlug, Filterable, Sortable;
+    use HasFactory, SoftDeletes, HasSlug, Filterable, Sortable, Searchable;
 
     protected $fillable = [
         "product_id",
@@ -66,6 +67,20 @@ class ProductVariant extends Model
     ];
 
     protected $dates = ["deleted_at"];
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'sku' => $this->sku,
+            'short_description' => $this->short_description,
+            'description' => $this->description,
+            'synonims' => $this->synonims,
+            'product_name' => $this->product?->name,
+            'categories' => $this->product?->categories->pluck('name')->toArray(),
+        ];
+    }
 
     /**
      * Get the options for generating the slug.

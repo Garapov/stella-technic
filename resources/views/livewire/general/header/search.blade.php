@@ -25,11 +25,11 @@
             this.searchRequests.splice(index, 1);
         }
     }
-}" @click.outside="isOpen = false" :class="isLoading ? 'pointer-events-none' : ''">
+}" @click.outside="isOpen = false">
     <div class="rounded-lg bg-blue-500 flex items-center relative w-full z-20">
         <input type="search" id="search-dropdown"
         class="rounded-lg bg-white block p-2.5 w-full text-sm text-gray-900 dark:placeholder-gray-400 dark:text-white border border-blue-500"
-        placeholder="Поиск" name="q" x-model="query" @input.debounce.500ms="findResults" @focus="isOpen = true" style="outline: none; box-shadow: none;" />
+        placeholder="Поиск" name="q" x-model="query" @input.debounce.500ms="findResults" @focus="isOpen = true" @input="isOpen = true" style="outline: none; box-shadow: none;" />
         <button type="submit"
             class="rounded-e-lg py-2.5 px-4 text-sm font-medium h-full text-white bg-blue-500 border border-0">
             <template x-if="!isLoading">
@@ -104,14 +104,38 @@
                 </div>
             @endif
             @if ($results['products']->count() > 0)
-                <h2 class="text-lg font-bold mb-2">Товары</h2>
-                <ul>
-                    @foreach($results['products'] as $product)
-                        <li>
-                            <a href="{{ route('client.catalog', $product->urlChain()) }}" wire:navigate>{{ $product->name }}</a>
-                        </li>
-                    @endforeach
-                </ul>
+                <div class="p-4 bg-slate-50 rounded-lg">
+                    <h2 class="flex items-center justify-between mb-4">
+                        <div class="text-md font-semibold">Категории</div>
+                        <a href="{{ route('client.search', ['q' => $q]) }}"
+                            class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:navigate>
+                            Смотреть все
+                            <x-fas-arrow-right class="w-4 h-4 ms-2 rtl:rotate-180" />
+                        </a>
+                    </h2>
+                    <div class="flex flex-col">
+                        @foreach($results['products'] as $product)
+                            <a href="{{ route('client.catalog', $product->urlChain()) }}" wire:navigate class="flex items-center gap-4 py-2 px-0 hover:px-2 rounded-lg hover:bg-white hover:shadow-md transition-all">
+                                {{-- <img src="https://placehold.co/100x100" alt="Product" class="w-20 h-20 object-cover rounded-md"/> --}}
+                                @if ($product->gallery && count($product->gallery) > 0)
+                                    <img class="w-20 h-20 object-cover rounded-md" src="{{ Storage::disk(config('filesystems.default'))->url($product->gallery[0]) }}" alt="imac image" />
+                                @else
+                                    <img src="{{ asset('assets/placeholder.svg') }}" alt="Product1" class="w-20 h-20 object-cover rounded-md"  />
+                                @endif
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-900">{{ $product->name }}</h3>
+                                    <p class="text-lg text-gray-500">{{Number::format($product->price, 0)}} ₽</p>
+                                </div>
+                                {{-- <p class="font-semibold text-gray-900 w-20 text-right">{{Number::format($product->price, 0)}} ₽</p> --}}
+                                {{-- <button class="text-gray-400 hover:text-red-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button> --}}
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
             @endif
 
 
