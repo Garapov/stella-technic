@@ -106,7 +106,7 @@
             @if ($results['products']->count() > 0)
                 <div class="p-4 bg-slate-50 rounded-lg">
                     <h2 class="flex items-center justify-between mb-4">
-                        <div class="text-md font-semibold">Категории</div>
+                        <div class="text-md font-semibold">Товары</div>
                         <a href="{{ route('client.search', ['q' => $q]) }}"
                             class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:navigate>
                             Смотреть все

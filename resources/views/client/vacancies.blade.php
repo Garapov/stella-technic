@@ -12,7 +12,7 @@
             
         </div>
     </section>
-    <div class="container mx-auto py-8">
+    <div class="xl:px-[100px] px-[20px] py-4">
         @livewire('vacancies.all')
     </div>
 </x-guest-layout>

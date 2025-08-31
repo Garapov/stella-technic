@@ -15,22 +15,14 @@
     </div>
 
     @if ($q != '' && ($results['products']->count() > 0 || $results['categories']->count() > 0))
-        @if ($results['products']->count() > 0)
-            <h2 class="text-lg font-bold mb-2">Товары</h2>
-            <div class="grid gap-4 sm:grid-cols-1 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
-                @foreach($results['products'] as $product)
-                    @livewire(
-                        'general.product-variant',
-                        [
-                            'variant' => $product,
-                        ],
-                        key($product->id)
-                    )
+        @if ($results['categories']->count() > 0)
+            <div class="grid grid-cols-2 md:grid-cols-8 gap-4 mb-4">
+                @foreach ($results['categories'] as $subcategory)
+                
+                    <x-catalog.category.big :subcategory="$subcategory" />
                 @endforeach
             </div>
-        @endif
-        @if ($results['categories']->count() > 0)
-            <h2 class="text-lg font-bold mb-2">Категории</h2>
+            {{-- <h2 class="text-lg font-bold mb-2">Категории</h2>
             <div class="grid gap-4 sm:grid-cols-1 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
                 @foreach($results['categories'] as $category)
                     <a href="{{ route('client.catalog', $category->slug) }}" wire:navigate>
@@ -50,7 +42,23 @@
                         </button>
                     </a>
                 @endforeach
-            </div>
+            </div> --}}
         @endif
+        @if ($results['products']->count() > 0)
+            {{-- <h2 class="text-lg font-bold mb-2">Товары</h2>
+            <div class="grid gap-4 sm:grid-cols-1 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
+                @foreach($results['products'] as $product)
+                    @livewire(
+                        'general.product-variant',
+                        [
+                            'variant' => $product,
+                        ],
+                        key($product->id)
+                    )
+                @endforeach
+            </div> --}}
+            @livewire('catalog.items', ['products' => $results['products']->pluck('id'), 'display_filter' => true, 'inset' => true,])
+        @endif
+       
     @endif
 </div>

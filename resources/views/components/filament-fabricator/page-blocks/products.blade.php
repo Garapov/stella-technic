@@ -7,11 +7,11 @@
         @endIf
     </div>
     @if ($type == 'products')
-        @livewire('catalog.items', ['products' => $items, 'filter' => $filter])
+        @livewire('catalog.items', ['products' => $items, 'display_filter' => $filter])
     @endif
 
     @if ($type == 'category')
-        @livewire('catalog.items', ['slug' => $category, 'filter' => $filter])
+        @livewire('catalog.items', ['slug' => $category, 'display_filter' => $filter])
     @endif
 
     @if ($type == 'filter')

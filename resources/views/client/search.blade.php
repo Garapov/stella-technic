@@ -1,6 +1,6 @@
 <x-guest-layout>
     <section class="py-8 bg-white md:py-10 dark:bg-gray-900 antialiased">
-        <div class="mx-auto container">
+        <div class="xl:px-[100px] px-[20px]">
             <!-- Heading & Filters -->
 
             <div class="items-end justify-between space-y-4 sm:flex sm:space-y-0">
@@ -13,7 +13,7 @@
 
         </div>
     </section>
-    <div class="container mx-auto py-8">
+    <div class="xl:px-[100px] px-[20px] py-4">
         @livewire('search.results')
     </div>
 </x-guest-layout>

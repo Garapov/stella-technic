@@ -29,6 +29,7 @@ class Items extends Component
     public $displayMode = "block";
     public $showSorting = false;
     public $display_filter = false;
+    public $inset = false;
     public $type = "category";
 
     protected ProductSelector $selector;
@@ -38,9 +39,10 @@ class Items extends Component
         $this->selector = $selector;
     }
 
-    public function mount($path = null, $brand_slug = null, $products = null, $display_filter = false)
+    public function mount($path = null, $brand_slug = null, $products = null, $display_filter = false, $inset = false)
     {
         $this->display_filter = $display_filter;
+        $this->inset = $inset;
 
         if ($path) {
             $slug = collect(explode('/', $path))->last();

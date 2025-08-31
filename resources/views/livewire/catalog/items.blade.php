@@ -1,7 +1,7 @@
 
 <section class="py-8 bg-white md:py-10 dark:bg-gray-900 antialiased">
     @if ($category || $product_ids)
-    <div class="xl:px-[100px] px-[20px] py-4 lg:mx-auto relative" x-data="{
+    <div class="@if(!$inset) xl:px-[100px] px-[20px] py-4 @endif lg:mx-auto relative" x-data="{
         isFilterOpened: false,
     }">
 
