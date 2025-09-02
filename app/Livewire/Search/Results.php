@@ -22,11 +22,9 @@ class Results extends Component
             // 'pages' => new Collection(),
         ];
 
-        if (Str::length($this->q) > 3) {
-            $results['products'] = ProductVariant::search($this->q)->take(10)->get();
-            $results['categories'] = ProductCategory::where('title', 'like', "%{$this->q}%")->get();
-            // $results['pages'] = Page::where('title', 'like', "%{$this->q}%")->get();
-        }
+        $results['products'] = ProductVariant::search($this->q)->get();
+        $results['categories'] = ProductCategory::where('title', 'like', "%{$this->q}%")->get();
+        // $results['pages'] = Page::where('title', 'like', "%{$this->q}%")->get();
 
         return view('livewire.search.results', [
             'results' => $results

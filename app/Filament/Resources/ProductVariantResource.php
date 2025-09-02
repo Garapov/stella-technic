@@ -114,6 +114,18 @@ class ProductVariantResource extends Resource
                             "2xl" => 1,
                         ])
                         ->columnSpan("full"),
+                    Tab::make("Поиск")
+                        ->schema([
+                            Forms\Components\Textarea::make("synonims")
+                                ->label("Синонимы")
+                                ->columnSpanFull(),
+                        ])
+                        ->columns([
+                            "sm" => 1,
+                            "xl" => 1,
+                            "2xl" => 1,
+                        ])
+                        ->columnSpan("full"),
                     Tab::make("Изображения")
                         ->schema([
                             Forms\Components\FileUpload::make("gallery")
@@ -231,12 +243,14 @@ class ProductVariantResource extends Resource
                             ->placeholder("Выберите вариации")
                             ->multiple()
                             ->relationship("upSells", "name")
+                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} ({$record->sku})")
                             ->preload(),
                         Forms\Components\Select::make("crossSells")
                             ->label("Похожие товары")
                             ->placeholder("Выберите вариации")
                             ->multiple()
                             ->relationship("crossSells", "name")
+                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} ({$record->sku})")
                             ->preload(),                        
                     ]),
                     Tab::make("Конструктор")

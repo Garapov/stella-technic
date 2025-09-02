@@ -22,6 +22,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Get;
 use Filament\Tables\Actions\ExportAction;
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -108,6 +109,18 @@ class VariantsRelationManager extends RelationManager
                                     "undo",
                                 ])
                                 ->label("Описание")
+                                ->columnSpanFull(),
+                        ])
+                        ->columns([
+                            "sm" => 1,
+                            "xl" => 1,
+                            "2xl" => 1,
+                        ])
+                        ->columnSpan("full"),
+                    Tab::make("Поиск")
+                        ->schema([
+                            Forms\Components\Textarea::make("synonims")
+                                ->label("Синонимы")
                                 ->columnSpanFull(),
                         ])
                         ->columns([
@@ -233,12 +246,14 @@ class VariantsRelationManager extends RelationManager
                             ->placeholder("Выберите вариации")
                             ->multiple()
                             ->relationship("upSells", "name")
+                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} ({$record->sku})")
                             ->preload(),
                         Forms\Components\Select::make("crossSells")
                             ->label("Похожие товары")
                             ->placeholder("Выберите вариации")
                             ->multiple()
                             ->relationship("crossSells", "name")
+                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} ({$record->sku})")
                             ->preload(),                        
                     ]),
                     Tab::make("Конструктор")

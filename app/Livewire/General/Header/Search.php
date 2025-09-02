@@ -26,7 +26,7 @@ class Search extends Component
 
     public function updatedQ()
     {
-        if (Str::length($this->q) > 3) {
+        if (Str::length($this->q) >= 3) {
             $this->getQueryResult();
         } else {
             $this->results = [

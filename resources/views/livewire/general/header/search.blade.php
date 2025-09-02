@@ -77,7 +77,7 @@
                             <span x-text="searchRequest" class="text-sm text-slate-500"></span>
                         </span>
 
-                        <div @click.stop="removeSearchQueryFromHistory(searchRequest)" class="cursor-not-allowed text-red-600">
+                        <div @click.stop="removeSearchQueryFromHistory(searchRequest)" class="text-red-600">
                             <x-eva-close-circle-outline class="w-6 h-6" />
                         </div>
                     </li>
@@ -123,7 +123,7 @@
                                     <img src="{{ asset('assets/placeholder.svg') }}" alt="Product1" class="w-20 h-20 object-cover rounded-md"  />
                                 @endif
                                 <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-900">{{ $product->name }}</h3>
+                                    <h3 class="font-semibold text-gray-900">{{ $product->name }} ({{ $product->sku }})</h3>
                                     <p class="text-lg text-gray-500">{{Number::format($product->price, 0)}} ₽</p>
                                 </div>
                                 {{-- <p class="font-semibold text-gray-900 w-20 text-right">{{Number::format($product->price, 0)}} ₽</p> --}}

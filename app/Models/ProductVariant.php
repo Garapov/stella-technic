@@ -71,14 +71,9 @@ class ProductVariant extends Model
     public function toSearchableArray(): array
     {
         return [
-            'id' => $this->id,
             'name' => $this->name,
             'sku' => $this->sku,
-            'short_description' => $this->short_description,
-            'description' => $this->description,
             'synonims' => $this->synonims,
-            'product_name' => $this->product?->name,
-            'categories' => $this->product?->categories->pluck('name')->toArray(),
         ];
     }
 
