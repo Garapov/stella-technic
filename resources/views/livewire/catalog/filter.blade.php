@@ -95,7 +95,7 @@
                         $ar_values = $params->sortBy('value')->map(function ($item) use($availableFilters) {
                             return intval($item['value']);
                         })->toArray();
-                        // dd($ar_values);
+                        // dd($ar_values);  
                         $values = [];
                         foreach ($ar_values as $value) {
                             $values[] = $value;
@@ -113,13 +113,53 @@
                         }
                     @endphp
 
-
+                    {{-- {{ dd($values) }} --}}
                     <div key="{{ $alpineKey . '_' . $valuesHash }}" wire:ignore x-data="{
                         values: @json($values),
                         minIndex: {{$selected_value_min}},
                         maxIndex: {{$selected_value_max}},
                         dragThumb: null,
                         trackRect: null,
+                        minValue: {{ $values[$selected_value_min] }},
+                        maxValue: {{ $values[$selected_value_max] }},
+                        init() {
+                            console.log(this.values);
+                        },
+                        setMinValue(event) {
+                            if (this.values[this.findClosestIndex(event.target.value)] > this.values[this.maxIndex]) {
+                                this.minValue = this.values[this.maxIndex];
+                                this.minIndex = this.maxIndex;
+                            } else {
+                                this.minValue = this.values[this.findClosestIndex(event.target.value)];
+                                this.minIndex = this.findClosestIndex(event.target.value);
+                            }
+                            this.dragThumb = 'min';
+                            {{-- console.log(this.minIndex, this.minValue); --}}
+                            event.target.blur();
+                            this.setFilter();
+                            {{-- this.setFilter(); --}}
+                        },
+                        setMaxValue(event) {
+                            if (this.values[this.findClosestIndex(event.target.value)] < this.values[this.minIndex]) {
+                                this.maxValue = this.values[this.minIndex];
+                                this.maxIndex = this.minIndex;
+                            } else {
+                                this.maxValue = this.values[this.findClosestIndex(event.target.value)];
+                                this.maxIndex = this.findClosestIndex(event.target.value);
+                            }
+                            this.dragThumb = 'max';
+                            {{-- console.log(this.maxIndex, this.maxValue); --}}
+                            event.target.blur();
+                            this.setFilter();
+                            {{-- this.setFilter(); --}}
+                        },
+                        findClosestIndex(value) {
+                            let closestIndex = this.values.reduce((prevIndex, curr, index) => {
+                                return Math.abs(curr - value) < Math.abs(this.values[prevIndex] - value) ? index : prevIndex;
+                            }, 0);
+
+                            return closestIndex;
+                        },
                         get minThumbStyle() {
                             return {
                                 left: `${((this.minIndex / (this.values.length - 1)) * 100) * this.$refs.track.getBoundingClientRect().width / 100}px`,
@@ -159,8 +199,11 @@
 
                                 if (this.dragThumb === 'min') {
                                     this.minIndex = Math.min(Math.max(0, index), this.maxIndex);
+
+                                    this.minValue = this.values[this.minIndex];
                                 } else if (this.dragThumb === 'max') {
                                     this.maxIndex = Math.max(Math.min(this.values.length - 1, index), this.minIndex);
+                                    this.maxValue = this.values[this.maxIndex];
                                 }
                             };
 
@@ -171,7 +214,7 @@
                                 window.removeEventListener('touchmove', moveHandler);
                                 window.removeEventListener('touchend', upHandler);
 
-                                this.setFilter();
+                                this.setFilter();  
 
                                 
                             };
@@ -181,7 +224,12 @@
                             window.addEventListener('touchmove', moveHandler);
                             window.addEventListener('touchend', upHandler);
                         }
-                    }" class="relative w-full max-w-xl mx-auto mt-4" x-show="isOpened">
+                    }" class="relative w-full max-w-xl mx-auto" x-show="isOpened">
+
+                        <div class="flex items-center gap-4 mb-3">
+                            <input type="number" id="small-input" class="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="От" @input.debounce.500ms="setMinValue" x-model="minValue">
+                            <input type="number" id="small-input" class="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="До" @input.debounce.500ms="setMaxValue" x-model="maxValue">
+                        </div>
 
                         <!-- Трек слайдера -->
                         <div
@@ -214,7 +262,7 @@
                         </div>
 
                         <!-- Метки -->
-                        <div class="flex items-center justify-between mt-3 h-4">
+                        {{-- <div class="flex items-center justify-between mt-3 h-4">
                             <div
                                 class="text-xs"
                                 class="text-blue-700"
@@ -225,7 +273,7 @@
                                 class="text-blue-700"
                                 x-text="maxIndex !== null ? values[maxIndex] : ''"
                             ></div>
-                        </div>
+                        </div> --}}
                     </div>
                     
                 @elseif ($params->first()['type'] == 'switch')
