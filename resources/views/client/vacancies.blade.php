@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <section class="py-8 bg-white md:py-10 dark:bg-gray-900 antialiased">
+    <section class="py-4 bg-white md:py-4 dark:bg-gray-900 antialiased">
         <div class="mx-auto container">
             <!-- Heading & Filters -->
     

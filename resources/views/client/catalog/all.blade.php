@@ -22,7 +22,7 @@
             ->pluck('min_price', 'product_product_category.product_category_id');
     @endphp
 
-    <section class="py-8 bg-white md:py-10 dark:bg-gray-900 antialiased">
+    <section class="py-4 bg-white md:py-4 dark:bg-gray-900 antialiased">
         <div class="lg:container p-4 lg:mx-auto">
             <!-- Heading & Filters -->
     

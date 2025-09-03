@@ -12,7 +12,7 @@
 
 /* width */
 ::-webkit-scrollbar {
-    width: 2px;
+    width: 5px;
     height: 2px;
 }
 
@@ -23,13 +23,14 @@
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: rgb(37 99 235 / var(--tw-bg-opacity, 1));
+    background: rgb(226 232 240 / var(--tw-border-opacity, 1));
     border-radius: 5px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: rgb(37 99 235 / var(--tw-bg-opacity, 1));
+    background: rgb(226 232 240 / var(--tw-border-opacity, 1));
+    cursor: pointer;
 }
 
 .debug-panel {

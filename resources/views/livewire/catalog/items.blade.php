@@ -1,5 +1,5 @@
 
-<section class="py-8 bg-white md:py-10 dark:bg-gray-900 antialiased">
+<section class="py-4 bg-white md:py-4 dark:bg-gray-900 antialiased">
     @if ($category || $product_ids)
     <div class="@if(!$inset) xl:px-[100px] px-[20px] py-4 @endif lg:mx-auto relative" x-data="{
         isFilterOpened: false,
@@ -41,16 +41,16 @@
                         <x-catalog.category.tabs :categories="$category->categories" />
                     @endif
                 @else
-                    @if (!empty($nonTagCategories))
-                        <div class="grid grid-cols-2 md:grid-cols-8 gap-4 mb-4">
-                            @foreach ($nonTagCategories as $subcategory)
+                    @if (count($nonTagCategories) > 0)
+                        <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-4 p-4 rounded-lg bg-slate-100">
+                            @foreach ($nonTagCategories->sortBy('sort') as $subcategory)
                             
                                 <x-catalog.category.big :subcategory="$subcategory" />
                             @endforeach
                         </div>
                     @endif
-                    @if (!empty($tagCategories))
-                        <ul class="flex items-center gap-2 overflow-auto pb-2 mb-4">
+                    @if (count($tagCategories) > 0)
+                        <ul class="flex items-center gap-2 overflow-auto pb-2 mb-8">
                             @foreach ($tagCategories as $subcategory)
                                 <li>
                                     <x-catalog.category.small :subcategory="$subcategory" />

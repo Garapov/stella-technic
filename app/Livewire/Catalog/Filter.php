@@ -3,6 +3,7 @@
 namespace App\Livewire\Catalog;
 
 use App\Models\ProductVariant;
+use Carbon\Carbon;
 use Livewire\Component;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -35,6 +36,9 @@ class Filter extends Component
     public function mount($products = new Collection())
         
     {
+
+        
+
         $this->products = $products;
 
         $this->calculatePriceRangeOnMount();
@@ -261,6 +265,7 @@ class Filter extends Component
                     'param_id' => $item->product_param_id,
                     'type' => $item->productParam->type ?? 'default',
                     'group' => $item->productParam->name,
+                    'sort' => $item->sort,
                     'source' => $primaryParams->contains($item) ? 'paramItems' : 'parametrs',
                 ];
             });

@@ -227,8 +227,8 @@
                     }" class="relative w-full max-w-xl mx-auto" x-show="isOpened">
 
                         <div class="flex items-center gap-4 mb-3">
-                            <input type="number" id="small-input" class="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="От" @input.debounce.500ms="setMinValue" x-model="minValue">
-                            <input type="number" id="small-input" class="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="До" @input.debounce.500ms="setMaxValue" x-model="maxValue">
+                            <input type="number" class="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="От" @blur="setMinValue" x-model="minValue">
+                            <input type="number" class="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="До" @blur="setMaxValue" x-model="maxValue">
                         </div>
 
                         <!-- Трек слайдера -->
@@ -287,7 +287,7 @@
                         @php
                             $counter = 0;
                         @endphp
-                        @foreach($params->sortBy('value') as $paramItemId => $paramData)
+                        @foreach($params->sortBy('sort') as $paramItemId => $paramData)
                             <li class="flex items-center @unless(in_array($paramItemId, $availableFilters)) opacity-30 cursor-not-allowed pointer-events-none @endunless"
                                 @if($counter > 4 && !isset($selectedParams[$paramItemId])) x-show="showAll" @endif>
                                 <input

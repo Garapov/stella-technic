@@ -17,6 +17,7 @@ class ProductParamItem extends Model
     protected $fillable = [
         'product_param_id',
         'title',
+        'sort',
         'value',
     ];
 

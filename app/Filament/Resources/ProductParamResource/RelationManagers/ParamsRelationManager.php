@@ -53,6 +53,7 @@ class ParamsRelationManager extends RelationManager
                     ->label('ID'),
                 Tables\Columns\TextColumn::make('title')
                     ->label('Название'),
+                Tables\Columns\TextInputColumn::make('sort')->label("Сортировка"),
                 Tables\Columns\TextColumn::make('value')
                     ->formatStateUsing(function ($state, $record) {
                         $parentRecord = $this->getOwnerRecord();
