@@ -299,7 +299,7 @@
                                     @unless(in_array($paramItemId, $availableFilters)) disabled @endunless
                                 />
                                 <label for="param_{{ $paramItemId }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                                    {{ $paramData['title'] }}
+                                    {{ $paramData['title'] }} @if (auth()->user() && auth()->user()->hasRole('super_admin'))(Сорт: {{ $paramData['sort'] }})@endif
                                 </label>
                             </li>
                             @php $counter++; @endphp

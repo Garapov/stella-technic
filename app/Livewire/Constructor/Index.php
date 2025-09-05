@@ -28,8 +28,8 @@ class Index extends Component implements HasForms
     public $parent_product_id = null;
     public $selected_params = [];
     public $embeded = false;
-    public $selectedWidth = 'wide';
-    public $selectedHeight = 'high';
+    public $selectedWidth = 'slim';
+    public $selectedHeight = 'low';
     public $selectedDeskType = 'Односторонняя';
     public $selectedPosition = 'on_floor';
     public ?array $data = [];

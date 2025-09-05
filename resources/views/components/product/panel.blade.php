@@ -1,13 +1,13 @@
 <div class="flex flex-col gap-4">
-    <div class="flex flex-col gap-4 bg-slate-50 p-4 rounded-xl">
+    <div class="flex flex-col gap-4 bg-gray-200/50 p-4 rounded-xl">
         <div class="flex items-center flex-wrap justify-between gap-4">
             <div class="flex items-center gap-4">
                 <h4 class="text-slate-900 text-4xl font-semibold">{{ $variation->new_price ? Number::format($variation->new_price, 0) : Number::format($variation->getActualPrice(), 0) }} ₽</h4>
                 @if (!auth()->user() && $variation->auth_price)
-                    <div class="relative flex items-center gap-2 text-green-800 dark:text-green-300 bg-green-100 text-md font-medium me-2 px-2.5 py-0.5 rounded-md dark:bg-green-900" x-data="{
+                    <div class="relative flex items-center gap-2 text-green-500 border border-green-500 bg-white text-md font-medium me-2 px-2.5 py-0.5 rounded-md" x-data="{
                         popover: false,
                     }" @mouseover="popover = true"  @mouseover.away = "popover = false">
-                        <span>{{ $variation->auth_price }} ₽</span>
+                        <span class="font-bold">{{ Number::format($variation->auth_price, 0) }} ₽</span>
                         <x-carbon-information class="w-4 h-4" />
                         <div x-show="popover"
                             x-cloak
@@ -30,10 +30,10 @@
             </div>
             <div class="flex items-center gap-4">
                 @if ($variation->count > 0 && !$variation->is_pre_order)
-                    <div class="text-green-500 text-xl">В наличии</div>
+                    <div class="text-green-500 font-bold text-xl">В наличии</div>
                 @endif
                 @if ($variation->is_pre_order)
-                    <div class="text-green-500 text-xl">Предзаказ</div>
+                    <div class="text-green-500 font-bold text-xl">Предзаказ</div>
                 @endif
                 <div class="relative" x-data="{ showTooltip: false }">
                     <button type="button"
@@ -70,13 +70,13 @@
             <div class="max-w-[110px] py-2 px-3 bg-white border border-slate-200 rounded-lg dark:bg-neutral-700">
                 <div class="flex justify-between items-center gap-x-2">
                     <div class="grow">
-                        <input class="w-full p-0 bg-transparent border-0 text-gray-800 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none dark:text-white" style="-moz-appearance: textfield;" type="number" aria-roledescription="Quantity field" x-model="cart_quantity" @change="validateQuantity">
+                        <input class="w-full p-0 bg-transparent border-0 text-gray-800 font-bold focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none " style="-moz-appearance: textfield;" type="number" aria-roledescription="Quantity field" x-model="cart_quantity" @change="validateQuantity">
                     </div>
                     <div class="flex flex-col justify-end items-center gap-0.5">
-                        <button type="button" class="size-5 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-md border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" tabindex="-1" aria-label="Increase Quantity" @click="increaseQuantity">
+                        <button type="button" class="size-5 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-md border border-blue-500 bg-white text-blue-500 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" tabindex="-1" aria-label="Increase Quantity" @click="increaseQuantity">
                             <x-heroicon-o-plus class="shrink-0 size-3.5" />
                         </button>
-                        <button type="button" class="size-5 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-md border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" tabindex="-1" aria-label="Decrease Quantity" @click="decreaseQuantity">
+                        <button type="button" class="size-5 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-md border border-blue-500 bg-white text-blue-500 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" tabindex="-1" aria-label="Decrease Quantity" @click="decreaseQuantity">
                             <x-heroicon-o-minus class="shrink-0 size-3.5" />
                         </button>
                         
@@ -84,12 +84,12 @@
                 </div>
             </div>
             
-            <button type="button" class="text-white flex-1 bg-green-400 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center" @click="addVariationToCart()">
+            <button type="button" class="text-white flex-1 bg-green-600 hover:bg-green-400 focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg px-5 py-2.5 text-center flex items-center justify-center" @click="addVariationToCart()">
                 <x-fas-cart-arrow-down class="w-6 h-6 mr-2" />
-                <span class="text-md">В корзину</span>
+                <span>В КОРЗИНУ</span>
             </button>
 
-            <button class="rounded-lg p-3 text-gray-500 bg-white border border-slate-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white flex-1" @click="$store.application.forms.buy_one_click = true">Купить в один клик</button>
+            <button class="rounded-lg p-3 text-blue-500 bg-white border-2 border-blue-500 flex-1 font-bold" @click="$store.application.forms.buy_one_click = true">Купить в один клик</button>
             
             @if ($variation->is_constructable)
                 <a href="{{ route('client.constructor', ['variation_id' => $variation->id]) }}" class="w-full text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Редактировать в конструкторе</a>
@@ -97,26 +97,29 @@
         </div>
     </div>
 
+    <h3 class="text-md font-bold">
+        Технические характиристики:
+    </h3>
+    <ul class="grid grid-cols-1 gap-4 md:grid-cols-2">
 
-    <ul class="grid grid-cols-1 gap-4 md:grid-cols-1">
-        <li class="text-md font-bold">
-            Технические характиристики:
-        </li>
-        @foreach($variation->paramItems as $paramItem)
-            <li class="flex items-center justify-between text-sm gap-2">
-                <strong class="font-medium text-slate-500">{{ $paramItem->productParam->name }}</strong>
+        @php
+            $counter = 0;   
+        @endphp
+        
+        @foreach($variation->paramItems->merge($variation->parametrs)->sortBy('sort') as $key => $paramItem)
+            
+            <li class="flex items-center justify-between text-xs gap-2 @if ($counter > 5 || $paramItem->productParam->is_hidden) hidden @endif">
+                <strong class="font-medium text-slate-500">{{ $paramItem->productParam->name }} @if (auth()->user() && auth()->user()->hasRole('super_admin'))(Сорт: {{ $paramItem->sort }}) @endif</strong>
                 <span class="grow border-b border-slate-300 border-dashed"></span>
                 <span class="font-medium">{{ $paramItem->title }}</span>
             </li>
+
+            @php
+                $counter++;   
+            @endphp
+            
         @endforeach
-        <li class="flex items-center justify-end">
-            <a href="#params" class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline" @click="activeTab = 0">
-                Все характиристики
-                <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                </svg>
-            </a>
-        </li>
+        
         {{-- @foreach($variation->parametrs as $parametr)
             <li class="flex items-center justify-between text-sm gap-2">
                 <strong class="font-medium text-slate-500">{{ $parametr->productParam->name }}</strong>
@@ -125,10 +128,18 @@
             </li>
         @endforeach --}}
     </ul>
+    <div class="flex items-center justify-end">
+        <a href="#params" class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline" @click="activeTab = 0">
+            Все характиристики
+            <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+            </svg>
+        </a>
+    </div>
     @if (count($features) > 0)
         <div class="grid lg:grid-cols-2 grid-cols-1 gap-4">
             @foreach ($features as $feature)
-                <div class="bg-slate-100 rounded flex p-4 h-full items-center">
+                <div class="bg-slate-50 rounded flex p-4 h-full items-center">
                     <div class="min-w-12 min-h-12 w-12 h-12 text-indigo-500 mr-4">
                         <img src="{{ Storage::disk(config("filesystems.default"))->url($feature->icon) }}" alt="">
                     </div>

@@ -1,4 +1,4 @@
-<div class="h-full grid grid-cols-9" x-data="construct({
+<div class="h-full grid grid-cols-12" x-data="construct({
     selectedColor: 'blue',
     debugMode: false,
     desks: @js(array(

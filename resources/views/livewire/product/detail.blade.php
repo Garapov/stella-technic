@@ -116,8 +116,8 @@
     </div>
 
     <div class="grid grid-cols-9 gap-8">
-        <div class="flex flex-col gap-8 md:col-span-6 col-span-full">
-            <div class="grid items-start grid-cols-1 lg:grid-cols-6 gap-8 max-lg:gap-12 max-sm:gap-8">
+        <div class="flex flex-col gap-8 md:col-span-7 col-span-full">
+            <div class="grid items-start grid-cols-1 lg:grid-cols-7 gap-8 max-lg:gap-12 max-sm:gap-8">
                 <div class="w-full lg:sticky top-10 lg:col-span-3 col-span-full" x-data="{
                     selector: `[data-fancybox='product_detail_page_gallery']`,
                     init() {
@@ -166,7 +166,7 @@
                     </div>
                 </div>
 
-                <div class="w-full lg:sticky top-10 lg:col-span-3 col-span-full">
+                <div class="w-full lg:sticky top-10 lg:col-span-4 col-span-full">
                     <x-product.panel :variation="$variation" :features="$features" />
                 </div>
                 <div class="md:col-span-3 col-span-full md:hidden block">
@@ -180,40 +180,29 @@
 
                 <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-100 dark:border-gray-700 dark:text-gray-400">
                     <li class="me-2" id="params">
-                        <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 0 ? 'active bg-blue-600 text-white' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 cursor-pointer'" aria-current="page" @click="activeTab = 0">Технические характеристики</span>
+                        <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 0 ? 'active bg-blue-600 text-white' : 'text-gray-600 bg-gray-50 cursor-pointer'" aria-current="page" @click="activeTab = 0">Технические характеристики</span>
                     </li>
                     @if ($variation->description)
                         <li class="me-2">
-                            <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 1 ? 'active bg-blue-600 text-white' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 cursor-pointer'" aria-current="page" @click="activeTab = 1">Подробное описание</span>
+                            <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 1 ? 'active bg-blue-600 text-white' : 'text-gray-600 bg-gray-50 cursor-pointer'" aria-current="page" @click="activeTab = 1">Подробное описание</span>
                         </li>
                     @endif
                     @if (!empty($files))
                         <li class="me-2">
-                            <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 2 ? 'active bg-blue-600 text-white' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300 cursor-pointer'" aria-current="page" @click="activeTab = 2">Файлы</span>
+                            <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 2 ? 'active bg-blue-600 text-white' : 'text-gray-600 bg-gray-50 cursor-pointer'" aria-current="page" @click="activeTab = 2">Файлы</span>
                         </li>
                     @endif
                 </ul>
-                <div class="text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-b-lg w-full p-4" x-show="activeTab == 0">
-                    <!-- <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Технические характеристики</h3> -->
-                    <dl class="grid grid-cols-1 gap-8 md:grid-cols-1">
-                        @foreach($variation->paramItems as $paramItem)
+                <div class="text-medium rounded-b-lg w-full p-4" x-show="activeTab == 0">
+                    <dl class="grid grid-cols-1 gap-x-4 md:grid-cols-3 text-slate-700">
+                        @foreach($variation->paramItems->merge($variation->parametrs)->sortBy('sort') as $paramItem)
                             @if ($paramItem->productParam->is_hidden)
                                 @continue
                             @endif
-                            <li class="flex items-center justify-between text-sm gap-2">
-                                <strong class="font-medium text-slate-500">{{ $paramItem->productParam->name }}</strong>
+                            <li class="flex items-center justify-between text-sm gap-2 px-3 py-2 bg-slate-50">
+                                <strong class="font-medium">{{ $paramItem->productParam->name }} @if (auth()->user() && auth()->user()->hasRole('super_admin'))(Сорт: {{ $paramItem->sort }})@endif</strong>
                                 <span class="grow border-b border-slate-300 border-dashed"></span>
-                                <span class="font-medium">{{ $paramItem->title }}</span>
-                            </li>
-                        @endforeach
-                        @foreach($variation->parametrs as $parametr)
-                            @if ($parametr->productParam->is_hidden)
-                                @continue
-                            @endif
-                            <li class="flex items-center justify-between text-sm gap-2">
-                                <strong class="font-medium text-slate-500">{{ $parametr->productParam->name }}</strong>
-                                <span class="grow border-b border-slate-300 border-dashed"></span>
-                                <span class="font-medium">{{ $parametr->title }}</span>
+                                <span class="font-bold">{{ $paramItem->title }}</span>
                             </li>
                         @endforeach
                     </dl>
@@ -253,7 +242,7 @@
 
         </div>
 
-        <div class="md:col-span-3 col-span-full hidden md:block">
+        <div class="md:col-span-2 col-span-full hidden md:block">
             <div class="md:sticky top-20">
                 <x-product.params :variation="$variation" :groupedParams="$groupedParams" /> 
                 
@@ -262,7 +251,7 @@
                     <div class="bg-slate-50 p-4 rounded-b-xl flex flex-col gap-4">
                         @foreach($deliveries as $delivery)
                             <div class="grid grid-cols-8 items-start gap-4">
-                                <div class="col-span-1 text-green-600 p-2 rounded-lg bg-white">
+                                <div class="col-span-2 text-green-600 p-2 rounded-lg bg-white">
                                     @switch($delivery->type)
                                         @case('map')
                                             <x-carbon-pin class="w-full" />
@@ -277,7 +266,7 @@
 
                                     @endswitch
                                 </div>
-                                <div class="col-span-7">
+                                <div class="col-span-6">
                                     <div class="text-md text-slate-700 font-bold mb-1">
                                         {{ $delivery->name }}
                                     </div>

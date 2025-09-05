@@ -10,6 +10,7 @@
             }
             this.isLoading = false;
         })
+        console.log(this.query, 'query');
     },
     setQueryFromHistory(query) {
         this.isLoading = true;
@@ -65,7 +66,7 @@
                 </div>
             @endif
 
-            <ul x-show="JSON.parse(JSON.stringify(searchRequests)).length > 0" class="flex flex-col p-4 bg-slate-50 rounded-lg">
+            <ul x-show="JSON.parse(JSON.stringify(searchRequests)).length > 0 && query == ''" class="flex flex-col p-4 bg-slate-50 rounded-lg">
                 <li class="flex items-center justify-between mb-2">
                     <div class="text-md font-semibold">Ранее вы искали:</div>
 

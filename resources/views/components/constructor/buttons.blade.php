@@ -1,17 +1,17 @@
-<div class="bg-white dark:bg-gray-700 p-4 col-span-2 relative flex flex-col justify-between gap-4 relative overflow-hidden" x-ref="settings">
+<div class="bg-white max-h-full overflow-auto p-4 col-span-4 relative flex flex-col justify-between gap-4 relative overflow-hidden" x-ref="settings">
     
     <div class="flex flex-col gap-4">
         <div class="text-xl italic font-semibold text-gray-900 dark:text-white">1. Выберите тип стойки</div>
         <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
             <template x-for="(deskType, index) in deskTypes" :key="index">
-                <button type="button" class="grow px-5 py-2.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="deskType" @click="selectedDeskType = deskType" :class="{ 'opacity-50': selectedDeskType != deskType }"></button>
+                <button type="button" class="grow px-5 py-2.5 text-sm font-medium rounded-lg text-center" x-text="deskType" @click="selectedDeskType = deskType" :class="{ 'text-slate-400 border border-slate-400 bg-slate-100': selectedDeskType != deskType, 'text-white border border-blue-700 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300': selectedDeskType == deskType}"></button>
             </template>
         </div>
         <div class="flex flex-col gap-1">
             <div class="italic font-semibold text-gray-900 dark:text-white">Размещение:</div>
             <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
                 <template x-for="(position, index) in positions" :key="index">
-                    <button type="button" class="grow px-3 py-1.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="position.name" @click="selectedPosition = position.value" :class="{ 'opacity-50': position.value != selectedPosition }"></button>
+                    <button type="button" class="grow px-3 py-1.5 text-sm font-medium rounded-lg text-center" x-text="position.name" @click="selectedPosition = position.value" :class="{ 'text-slate-400 border border-slate-400 bg-slate-100': position.value != selectedPosition, 'text-white border border-blue-700 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300':  position.value == selectedPosition}"></button>
                 </template>
             </div>
         </div>
@@ -21,7 +21,7 @@
                 <div class="italic font-semibold text-gray-900 dark:text-white">Ширина:</div>
                 <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
                     <template x-for="(wdth, index) in width" :key="index">
-                        <button type="button" class="grow px-3 py-1.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="wdth.name" @click="selectedWidth = wdth.value" :class="{ 'opacity-50': wdth.value != selectedWidth }"></button>
+                        <button type="button" class="grow px-3 py-1.5 text-sm font-medium rounded-full text-center" x-text="wdth.name" @click="selectedWidth = wdth.value" :class="{ 'text-slate-400 border border-slate-400 bg-slate-100': wdth.value != selectedWidth, 'text-white border border-blue-700 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300':  wdth.value == selectedWidth, 'opacity-50 pointer-events-none': selectedHeight == 'high' && wdth.value == 'slim'}"></button>
                     </template>
                 </div>
             </div>
@@ -29,16 +29,28 @@
                 <div class="italic font-semibold text-gray-900 dark:text-white">Высота:</div>
                 <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
                     <template x-for="(hght, index) in height" :key="index">
-                        <button type="button" class="grow px-3 py-1.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="hght.name" @click="selectedHeight = hght.value" :class="{ 'opacity-50': hght.value != selectedHeight }"></button>
+                        <button type="button" class="grow px-3 py-1.5 text-sm font-medium rounded-full text-center" x-text="hght.name" @click="selectedHeight = hght.value" :class="{ 'text-slate-400 border border-slate-400 bg-slate-100': hght.value != selectedHeight, 'text-white border border-blue-700 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300': hght.value == selectedHeight, 'opacity-50 pointer-events-none': selectedWidth == 'slim' && hght.value == 'high'}"></button>
                     </template>
                 </div>
             </div>
         </div>
 
         <div class="text-xl italic font-semibold text-gray-900 dark:text-white">2. Выберите тип и цвет ящиков в одном ряду</div>
+        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-300" role="alert">
+            <div class="flex gap-4 items-center">
+                <div class="w-36 flex flex-col items-end justify-between">
+                    <div class="w-1/2 h-5 bg-slate-300"></div>
+                    <div class="w-2/3 h-5 bg-slate-500"></div>
+                    <div class="w-full h-5 bg-slate-700"></div>
+                </div>
+                <div>
+                    <span class="font-medium">Обратите внимание!</span> Для устойчивости конструкции необходимо обязательно соблюдать порядок сборки! Допускается добавление ящика такого-же либо меньшего размера, относительно предыдущего ряда
+                </div>
+            </div>
+        </div>
         <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
             <template x-for="(size, index) in sizes" :key="index">
-                <button type="button" class="grow px-5 py-2.5 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" x-text="size.name" @click="selectedSize = size.value" :class="{ 'opacity-50': size.value != selectedSize }"></button>
+                <button type="button" class="grow px-5 py-2.5 text-sm font-medium rounded-lg text-center" x-text="size.name" @click="selectedSize = size.value" :class="{ 'text-slate-400 border border-slate-400 bg-slate-100': size.value != selectedSize, 'text-white border border-blue-700 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300': size.value == selectedSize }"></button>
             </template>
         </div>
         <div class="flex items-center justify-center gap-2 rounded-md shadow-xs" role="group">
