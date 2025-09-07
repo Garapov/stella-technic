@@ -50,16 +50,59 @@
         </div>
         <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
             <template x-for="(size, index) in sizes" :key="index">
-                <button type="button" class="grow px-5 py-2.5 text-sm font-medium rounded-lg text-center" x-text="size.name" @click="selectedSize = size.value" :class="{ 'text-slate-400 border border-slate-400 bg-slate-100': size.value != selectedSize, 'text-white border border-blue-700 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300': size.value == selectedSize }"></button>
+                
+                <div class="flex flex-col items-center gap-2 flex-1" x-data="{
+                    box: boxes[`box_${size.value}`],
+                }">
+                    <div class="relative text-blue-500 cursor-pointer" x-data="{
+                        popover: false,
+                    }" @mouseover="popover = true"  @mouseover.away = "popover = false">
+                        <x-css-info class="w-5 h-5" />
+                        <div
+                            x-show="popover"
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 translate-y-1"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 translate-y-1"
+                            class="absolute bottom-full z-10 mb-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-slate-900 shadow-md"
+                            :class="{
+                                'left-0':  size.value == 'small',
+                                'left-1/2 -translate-x-1/2 transform':  size.value == 'medium',
+                                'right-0':  size.value == 'large'
+                            }"
+                        >
+                            <div class="w-[350px] flex items-center gap-2">
+                                <div class="w-[90px]">
+                                    <img :src="`https://stella-technic.ru${box.image}`" alt="">
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-md font-bold" x-text="box.name"></div>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-1  h-2 w-2 rotate-45 bg-white" :class="{
+                                'left-0':  size.value == 'small',
+                                'left-1/2 -translate-x-1/2 transform':  size.value == 'medium',
+                                'right-0':  size.value == 'large'
+                            }"></div>
+                        </div>
+                    </div>
+                    <button type="button" class="grow px-5 py-2.5 text-sm font-medium rounded-lg text-center w-full" x-text="size.name" @click="selectedSize = size.value" :class="{ 'text-slate-400 border border-slate-400 bg-slate-100': size.value != selectedSize, 'text-white border border-blue-700 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300': size.value == selectedSize }"></button>
+                </div>
             </template>
         </div>
         <div class="flex items-center justify-center gap-2 rounded-md shadow-xs" role="group">
             <template x-for="(color, index) in colors" :key="index">
-                <label
-                    class="w-10 h-10 rounded-full cursor-pointer transition-all"
-                    :class="{ 'border-8 border-white dark:border-gray-700': color != selectedColor }"
-                    :style="`background: ${color};`"
-                ><input type="radio" name="colors" :value="color" x-model="selectedColor" class="hidden"></label>
+                
+                    <label
+                        class="w-10 h-10 rounded-full cursor-pointer transition-all"
+                        :class="{ 'border-8 border-white dark:border-gray-700': color != selectedColor }"
+                        :style="`background: ${color};`"
+                    >
+                    <input type="radio" name="colors" :value="color" x-model="selectedColor" class="hidden"></label>
+                
             </template>
         </div>
         <div class="flex justify-center gap-4">

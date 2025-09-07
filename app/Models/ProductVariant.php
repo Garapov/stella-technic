@@ -55,11 +55,13 @@ class ProductVariant extends Model
         "selected_position",
         "uuid",
         "is_pre_order",
-        "deleted_at"
+        "deleted_at",
+        "videos"
     ];
 
     protected $casts = [
         "gallery" => "array",
+        "videos" => "array",
         "is_default" => "boolean",
         "is_popular" => "boolean",
         "seo" => "array",

@@ -126,15 +126,24 @@
                     },
                 }">
                     <div class="flex flex-col-reverse gap-4" x-ignore>
-                        @if ($variation->gallery)
+                        @if ($variation->gallery || $variation->videos)
                             <div class="grid grid-cols-8 gap-2">
                                 <section class="splide gallery-thumbnails" aria-label="Splide Basic HTML Example" ref="gallerySlider">
                                     <div class="h-full">
                                         <div class="splide__track vertical-carousel-height-fix">
                                             <ul class="splide__list">
-                                                @foreach ($variation->gallery as $image)
-                                                    <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
-                                                @endforeach
+                                                @if ($variation->videos)
+                                                    @foreach ($variation->videos as $video)
+                                                        <li class="splide__slide"> <img src="{{ asset('assets/video-icon.jpg') }}"class="w-full  aspect-[1/1] object-cover"  /></li>
+                                                    @endforeach
+                                                @endif
+
+                                                @if ($variation->gallery)
+                                                    @foreach ($variation->gallery as $image)
+                                                        <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
+                                                    @endforeach
+                                                @endif
+                                                
                                                 @if ($variation->is_constructable && $variation->rows)
                                                     <li class="splide__slide">
                                                         <img src="{{ asset('assets/3dicon.png') }}" alt="3dicon" class="w-full  aspect-[1/1] object-cover"  />
@@ -147,9 +156,24 @@
                                 <section class="splide gallery-slider col-span-7" aria-label="Splide Basic HTML Example" ref="gallerySlider">
                                     <div class="splide__track">
                                         <ul class="splide__list">
-                                            @foreach ($variation->gallery as $image)
-                                                <li class="splide__slide" data-fancybox="product_detail_page_gallery" data-src="{{ Storage::disk(config('filesystems.default'))->url($image) }}"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
-                                            @endforeach
+                                            @if ($variation->videos)
+                                                @foreach ($variation->videos as $video)
+                                                    <li class="splide__slide relative">
+                                                        <video src="{{ Storage::disk(config('filesystems.default'))->url($video) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"> </video>
+                                                        <span class="block absolute inset-48 flex items-center justify-center text-white bg-blue-700 rounded-lg opacity-100 hover:opacity-75 transition-opacity cursor-pointer" data-fancybox="product_detail_page_gallery" data-src="{{ Storage::disk(config('filesystems.default'))->url($video) }}">
+                                                            <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M8 5v14l11-7z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </li>
+                                                @endforeach
+                                            @endif
+                                            @if ($variation->gallery)
+                                                @foreach ($variation->gallery as $image)
+                                                    <li class="splide__slide" data-fancybox="product_detail_page_gallery" data-src="{{ Storage::disk(config('filesystems.default'))->url($image) }}"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
+                                                @endforeach
+                                            @endif
+                                            
                                             @if ($variation->is_constructable && $variation->rows)
                                                 <li class="splide__slide">
                                                     <iframe name="constructor" src="{{ route('client.constructor_embeded', ['variation_id' => $variation->id]) }}" frameborder="no" border="0" scrolling="no" width="100%" height="100%"></iframe>

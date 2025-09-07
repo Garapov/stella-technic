@@ -129,12 +129,12 @@ class VariantsRelationManager extends RelationManager
                             "2xl" => 1,
                         ])
                         ->columnSpan("full"),
-                    Tab::make("Изображения")
+                    Tab::make("Галерея")
                         ->schema([
                             Forms\Components\FileUpload::make("gallery")
                                 ->required()
                                 ->image()
-                                ->label("Галерея")
+                                ->label("Изображения")
                                 ->directory("variations")
                                 ->visibility("public")
                                 ->multiple()
@@ -144,6 +144,21 @@ class VariantsRelationManager extends RelationManager
                                 ->preserveFilenames()
                                 ->imageCropAspectRatio("1:1")
                                 ->imageEditorMode(2),
+                            Forms\Components\FileUpload::make("videos")
+                                ->required()
+                                ->label("Видео")
+                                ->directory("variations")
+                                ->visibility("public")
+                                ->multiple()
+                                ->acceptedFileTypes([
+                                    'video/mp4',   // .mp4 (H.264/AAC) — работает везде, самый надёжный вариант
+                                    'video/webm',  // .webm (VP8/VP9/Opus) — современный формат, хорошая поддержка
+                                    'video/ogg',   // .ogv (Theora/Vorbis) — устаревающий, но поддержка в Firefox/Chrome
+                                ])
+                                ->reorderable()
+                                ->panelLayout("grid")
+                                ->reorderable()
+                                ->preserveFilenames(),
                         ])
                         ->columns([
                             "sm" => 1,

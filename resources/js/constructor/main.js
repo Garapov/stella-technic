@@ -138,6 +138,7 @@ export default ({
         // Инициализация компонента
         async init() {
             try {
+                console.log(this.boxes, 'this.boxes');
                 const container = this.$refs.scene;
                 const projection = this.$refs.projection;
                 this.adjustSceneHeight();
@@ -212,6 +213,9 @@ export default ({
                     this.changeSelectedWidthValue(newVal);
                     this.changeDescWidth(three, newVal, oldVal);
                 });
+
+
+                
             } catch (error) {
                 this.error = error.message;
                 console.error("Ошибка инициализации:", error);

@@ -23,6 +23,7 @@
         "hflabs/dadata": "^24.4",
         "jeffgreco13/filament-breezy": "^2.5",
         "jibaymcs/filament-tour": "^3.1",
+        "khatabwedaa/blade-css-icons": "^1.5",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.19",
