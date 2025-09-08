@@ -39,6 +39,7 @@ class Product extends Model
         "uuid",
         "links",
         "sku",
+        "is_hidden"
     ];
 
     protected $casts = [

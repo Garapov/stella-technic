@@ -78,7 +78,7 @@
             @endforeach
 
         @empty
-            @seo(['title' => $variation->name])
+            @seo(['title' => $variation->h1 ?? $variation->name])
             @if ($variation->short_description)
                 @seo(['description' => $variation->short_description])
             @endif
@@ -87,7 +87,7 @@
             @endif
         @endforelse
     @else
-        @seo(['title' => $variation->name])
+        @seo(['title' => $variation->h1 ?? $variation->name])
         @if ($variation->short_description)
             @seo(['description' => $variation->short_description])
         @endif
@@ -96,7 +96,7 @@
         @endif
     @endif
     
-    <h1 class="text-lg sm:text-3xl font-semibold text-slate-700 dark:text-white mb-4">{{ $variation->name }} {{ $variation->sku }}</h1>
+    <h1 class="text-lg sm:text-3xl font-semibold text-slate-700 dark:text-white mb-4">{{ $variation->h1 ?? $variation->name }} {{ $variation->sku }}</h1>
 
     <div class="flex items-center gap-4 mb-4">
         <div class="flex items-center gap-2">

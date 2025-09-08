@@ -46,6 +46,9 @@ class VariantsRelationManager extends RelationManager
                                 ->required()
                                 ->live()
                                 ->label("Название"),
+                            TextInput::make("h1")
+                                ->required()
+                                ->label("H1"),
                             TextInput::make("price")
                                 ->required()
                                 ->numeric()
@@ -75,6 +78,10 @@ class VariantsRelationManager extends RelationManager
                                 ->inline(false),
                             Toggle::make("is_constructable")
                                 ->label("Конструктор")
+                                ->live()
+                                ->inline(false),
+                            Toggle::make("is_hidden")
+                                ->label("Скрыт")
                                 ->live()
                                 ->inline(false),
                             Toggle::make("is_pre_order")
@@ -145,7 +152,6 @@ class VariantsRelationManager extends RelationManager
                                 ->imageCropAspectRatio("1:1")
                                 ->imageEditorMode(2),
                             Forms\Components\FileUpload::make("videos")
-                                ->required()
                                 ->label("Видео")
                                 ->directory("variations")
                                 ->visibility("public")
@@ -375,6 +381,9 @@ class VariantsRelationManager extends RelationManager
                     ->label("Цена"),
                 Tables\Columns\ToggleColumn::make("is_popular")->label(
                     "Популярный"
+                ),
+                Tables\Columns\ToggleColumn::make("is_hidden")->label(
+                    "Скрыт"
                 ),
                 // Tables\Columns\ToggleColumn::make('is_default')
                 //     ->label('По умолчанию')

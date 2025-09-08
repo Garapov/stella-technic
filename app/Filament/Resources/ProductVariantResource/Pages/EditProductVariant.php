@@ -15,7 +15,8 @@ class EditProductVariant extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
-            Actions\Action::make('Открыть на сайте')
+            Actions\Action::make('open')
+                ->label('Открыть на сайте')
                 ->icon('ionicon-open-outline')
                 ->url(fn (ProductVariant $record): string => route('client.catalog', $record->urlChain()))
                 ->openUrlInNewTab(),

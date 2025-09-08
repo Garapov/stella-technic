@@ -65,6 +65,9 @@ class ProductResource extends Resource
                             Forms\Components\Toggle::make("is_popular")
                                 ->label("Популярный")
                                 ->inline(false),
+                            Forms\Components\Toggle::make("is_hidden")
+                                ->label("Скрыть все вариации")
+                                ->inline(false),
                         ])
                         ->columns([
                             "sm" => 1,

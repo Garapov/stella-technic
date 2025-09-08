@@ -3,7 +3,7 @@
         imageIdToDisplay: 0,
     }">
     @php
-        $category = $category ?? $variant->product->categories->last();
+        // $category = $category ?? $variant->product->categories->last();
         $schema = \Spatie\SchemaOrg\Schema::product()
             ->name($variant->name ?? $variant->name)
             ->image(count($variant->gallery) > 0 ? Storage::disk(config('filesystems.default'))->url($variant->gallery[0]) : null)
@@ -54,7 +54,7 @@
 
             <a href="{{ route('client.catalog', $variant->urlChain()) }}"
                 class="text-md font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate>
-                {{ $variant->name }} ({{ $variant->sku }})
+                {{ $variant->h1 ?? $variant->name }}
             </a>
         </div>
         @if($variant->paramItems || $variant->parametrs)

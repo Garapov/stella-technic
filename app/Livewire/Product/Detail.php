@@ -33,6 +33,8 @@ class Detail extends Component
 
         if (!$this->variation) abort(404);
 
+        if ($this->variation->is_hidden || $this->variation->product->is_hidden) abort(404);
+
         // dd($this->variation->parametrs->pluck('value', 'productParam.name')->toArray());
 
         $this->product = $this->variation->product;

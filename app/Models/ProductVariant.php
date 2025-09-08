@@ -56,6 +56,8 @@ class ProductVariant extends Model
         "uuid",
         "is_pre_order",
         "deleted_at",
+        "is_hidden",
+        "h1",
         "videos"
     ];
 

@@ -90,7 +90,8 @@ class ProductUpdater
                 'seo' => $data->seo ?? [],
                 'uuid' => $data->uuid ?? null,
                 'price' => $data->price ?? $variation->price,
-                'slug' => $data->slug ?? $variation->slug
+                'slug' => $data->slug ?? $variation->slug,
+                'h1' => $data->h1 ?? $variation->h1
             ]);
         } catch (\Exception $e) {
             Log::error("Exception while updating ProductVariant fields for SKU {$variation->sku}: " . $e->getMessage());
