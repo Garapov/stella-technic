@@ -51,6 +51,7 @@
             <div class="p-3 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-900 dark:border-gray-700 flex flex-col gap-3" x-data="{
                 isOpened: true
             }">
+                {{-- {{ $params }} --}}
                 @if ($params->first()['type'] != 'switch')
                     <div class="flex items-center justify-between cursor-pointer" @click="isOpened = !isOpened">
                         <span class="text-[0.9rem] font-semibold dark:text-white">{{ $paramName }}</span>

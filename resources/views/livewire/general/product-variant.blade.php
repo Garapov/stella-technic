@@ -60,7 +60,7 @@
         @if($variant->paramItems || $variant->parametrs)
             <div class="flex-grow">
                 <ul class="flex flex-col gap-1 p-2 bg-slate-50 rounded-lg shadow-sm">
-                    @foreach($variant->paramItems as $paramItem)
+                    @foreach($variant->paramItems->merge($variant->parametrs)->sortBy('productParam.sort') as $paramItem)
                         @if (!$paramItem->productParam->show_on_preview)
                             @continue
                         @endif
@@ -68,16 +68,6 @@
                             <span class="text-sm font-medium">{{ $paramItem->productParam->name }}</span>
                             <span class="grow border-b border-dashed"></span>
                             <span class="text-md font-semibold">{{ $paramItem->title }}</span>
-                        </li>
-                    @endforeach
-                    @foreach($variant->parametrs as $parametr)
-                        @if (!$parametr->productParam->show_on_preview)
-                            @continue
-                        @endif
-                        <li class="flex items-center gap-1 justify-between dark:text-white">
-                            <span class="text-sm font-medium">{{ $parametr->productParam->name }}</span>
-                            <span class="grow border-b border-dashed"></span>
-                            <span class="text-md font-semibold">{{ $parametr->title }}</span>
                         </li>
                     @endforeach
                 </ul>

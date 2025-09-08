@@ -251,6 +251,7 @@ class Filter extends Component
 
         $mergedParams = $primaryParams
             ->merge($secondaryParams)
+            ->sortBy('productParam.sort')
             ->filter(fn($paramItem) =>
                 $paramItem &&
                 $paramItem->productParam &&

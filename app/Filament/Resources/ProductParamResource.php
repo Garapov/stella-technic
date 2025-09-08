@@ -84,6 +84,7 @@ class ProductParamResource extends Resource
                         'color' => 'Цвет',
                         'switch' => 'Да/нет',
                     } : ''),
+                Tables\Columns\TextInputColumn::make('sort')->label("Сортировка"),
                 Tables\Columns\ToggleColumn::make('allow_filtering')
                     ->label('Разрешить фильтрацию'),
                 Tables\Columns\ToggleColumn::make('show_on_preview')
