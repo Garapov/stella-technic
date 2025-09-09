@@ -31,9 +31,9 @@ class EditProduct extends EditRecord
         // Get the created product with its paramItems
         // $product = $this->record->fresh(['links']);
 
-        $this->record->makeProductVariations();
+        // $this->record->makeProductVariations();
 
-        $this->dispatch('refreshVariations');
+        // $this->dispatch('refreshVariations');
         // dd($product);
 
         

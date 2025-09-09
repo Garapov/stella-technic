@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-2">
+<div class="flex flex-col gap-2 p-4 bg-slate-50 rounded-lg border border-gray-200">
     <div class="text-md font-bold pb-2">
         Другие вариации товара:
     </div>
@@ -39,10 +39,10 @@
                         @else
                             <a href="{{ route('client.catalog', $variation->product->variants->where('id', $value['variant_id'])->first()->urlChain()) }}"
                                 @class([
-                                    'px-2 py-2 border text-sm flex items-center justify-center shrink-0 text-xs rounded-xl dark:text-white',
-                                    'bg-slate-50 border-blue-500' => $value['is_current'],
-                                    'border-slate-200 hover:border-blue-500' => !$value['is_current'] && $value['is_available'],
-                                    'border-slate-200 opacity-30' => !$value['is_available'],
+                                    'px-2 py-2 text-sm flex items-center justify-center shrink-0 text-xs rounded-xl bg-white',
+                                    'border-2 border-blue-500' => $value['is_current'],
+                                    'border border-slate-200 hover:border-blue-500' => !$value['is_current'] && $value['is_available'],
+                                    'border border-slate-200 opacity-30' => !$value['is_available'],
                                     'hidden' => !$value['is_current'] && $value['is_fixed'],
                                 ]) wire:navigate >
                                 {{ $value['title'] }}

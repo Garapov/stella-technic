@@ -173,83 +173,83 @@ class ProductResource extends Resource
                     //             ->columnSpanFull(),
                     //     ])
                     //     ->columnSpan("full"),
-                    Tab::make("Вариации")
-                        ->schema([
-                            Repeater::make("links")
-                                ->label(false)
-                                ->addActionLabel("Добавить вариацию")
-                                ->defaultItems(1)
-                                ->collapsible()
-                                ->collapsed()
-                                ->reorderable(false)
-                                ->live()
-                                ->itemLabel(function (
-                                    array $state,
-                                    Get $get
-                                ): string {
-                                    $title = "";
+                    // Tab::make("Вариации")
+                    //     ->schema([
+                    //         Repeater::make("links")
+                    //             ->label(false)
+                    //             ->addActionLabel("Добавить вариацию")
+                    //             ->defaultItems(1)
+                    //             ->collapsible()
+                    //             ->collapsed()
+                    //             ->reorderable(false)
+                    //             ->live()
+                    //             ->itemLabel(function (
+                    //                 array $state,
+                    //                 Get $get
+                    //             ): string {
+                    //                 $title = "";
 
-                                    $title .= $get("name");
+                    //                 $title .= $get("name");
 
-                                    foreach ($state["row"] as $param) {
-                                        if (!$param["parametrs"]) {
-                                            continue;
-                                        }
-                                        $parametr = ProductParamItem::where(
-                                            "id",
-                                            $param["parametrs"]
-                                        )->first();
+                    //                 foreach ($state["row"] as $param) {
+                    //                     if (!$param["parametrs"]) {
+                    //                         continue;
+                    //                     }
+                    //                     $parametr = ProductParamItem::where(
+                    //                         "id",
+                    //                         $param["parametrs"]
+                    //                     )->first();
 
-                                        if (!$parametr) {
-                                            continue;
-                                        }
+                    //                     if (!$parametr) {
+                    //                         continue;
+                    //                     }
 
-                                        $title .= " {$parametr->title}";
-                                    }
+                    //                     $title .= " {$parametr->title}";
+                    //                 }
 
-                                    return $title;
-                                })
-                                ->schema([
-                                    Repeater::make("row")
-                                        ->label(false)
-                                        ->reorderable(false)
-                                        ->addActionLabel("Добавить связь")
-                                        ->grid(3)
-                                        ->defaultItems(3)
-                                        ->minItems(1)
-                                        ->maxItems(6)
-                                        ->simple(
-                                            Forms\Components\Select::make(
-                                                "parametrs"
-                                            )
-                                                ->label("Параметр")
-                                                ->distinct()
-                                                ->required()
-                                                ->live()
-                                                ->searchable()
-                                                ->native(false)
-                                                ->options(function () {
-                                                    return ProductParamItem::query()
-                                                        ->with("productParam")
-                                                        ->get()
-                                                        ->mapWithKeys(function (
-                                                            $item
-                                                        ) {
-                                                            $paramName = $item->productParam
-                                                                ? $item
-                                                                    ->productParam
-                                                                    ->name
-                                                                : "Unknown";
-                                                            $name = "$paramName: $item->title";
-                                                            return [
-                                                                $item->id => $name,
-                                                            ];
-                                                        });
-                                                })
-                                        ),
-                                ]),
-                        ])
-                        ->columnSpan("full"),
+                    //                 return $title;
+                    //             })
+                    //             ->schema([
+                    //                 Repeater::make("row")
+                    //                     ->label(false)
+                    //                     ->reorderable(false)
+                    //                     ->addActionLabel("Добавить связь")
+                    //                     ->grid(3)
+                    //                     ->defaultItems(3)
+                    //                     ->minItems(1)
+                    //                     ->maxItems(6)
+                    //                     ->simple(
+                    //                         Forms\Components\Select::make(
+                    //                             "parametrs"
+                    //                         )
+                    //                             ->label("Параметр")
+                    //                             ->distinct()
+                    //                             ->required()
+                    //                             ->live()
+                    //                             ->searchable()
+                    //                             ->native(false)
+                    //                             ->options(function () {
+                    //                                 return ProductParamItem::query()
+                    //                                     ->with("productParam")
+                    //                                     ->get()
+                    //                                     ->mapWithKeys(function (
+                    //                                         $item
+                    //                                     ) {
+                    //                                         $paramName = $item->productParam
+                    //                                             ? $item
+                    //                                                 ->productParam
+                    //                                                 ->name
+                    //                                             : "Unknown";
+                    //                                         $name = "$paramName: $item->title";
+                    //                                         return [
+                    //                                             $item->id => $name,
+                    //                                         ];
+                    //                                     });
+                    //                             })
+                    //                     ),
+                    //             ]),
+                    //     ])
+                    //     ->columnSpan("full"),
                     Tab::make("Бренд")->schema([
                         Forms\Components\Select::make("brand")
                             ->label("Бренд")
