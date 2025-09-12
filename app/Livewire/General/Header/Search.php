@@ -40,7 +40,11 @@ class Search extends Component
     {
         if ($this->q == '') return;
         $this->results = [
-            'products' => ProductVariant::search($this->q)->take(10)->get(),
+            'products' => ProductVariant::search($this->q)
+                ->where('is_hidden', false)
+                ->where('product_is_hidden', false)
+                ->take(10)
+                ->get(),
             'categories' => ProductCategory::where('title', 'like', "%{$this->q}%")->get()
         ];
         $this->dispatch('queryUpdated', query: $this->q);

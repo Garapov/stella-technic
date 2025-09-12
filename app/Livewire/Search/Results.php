@@ -22,7 +22,10 @@ class Results extends Component
             // 'pages' => new Collection(),
         ];
 
-        $results['products'] = ProductVariant::search($this->q)->get();
+        $results['products'] = ProductVariant::search($this->q)
+            ->where('is_hidden', false)
+            ->where('product_is_hidden', false)
+            ->get();
         $results['categories'] = ProductCategory::where('title', 'like', "%{$this->q}%")->get();
         // $results['pages'] = Page::where('title', 'like', "%{$this->q}%")->get();
 

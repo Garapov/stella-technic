@@ -79,6 +79,8 @@ class ProductVariant extends Model
             'name' => $this->name,
             'sku' => $this->sku,
             'synonims' => $this->synonims,
+            'is_hidden' => (bool) $this->is_hidden,
+            'product_is_hidden' => (bool) optional($this->product)->is_hidden,
         ];
     }
 
