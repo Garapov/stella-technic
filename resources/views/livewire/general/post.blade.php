@@ -1,5 +1,5 @@
 <div class="oglide__slide verflow-hidden bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-    <img class="lg:h-48 md:h-36 w-full object-cover object-center" src="{{ Storage::disk(config('filesystems.default'))->url($post->image) }}"
+    <img class="w-full object-cover object-center rounded-t-lg" src="{{ Storage::disk(config('filesystems.default'))->url($post->image) }}"
         alt="blog">
 
 
