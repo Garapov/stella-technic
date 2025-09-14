@@ -5,8 +5,10 @@ namespace App\Livewire\General;
 use App\Models\ProductCategory;
 use App\Models\ProductVariant;
 use Datlechin\FilamentMenuBuilder\Models\Menu;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Spatie\SchemaOrg\Schema;
 
 class Header extends Component
 {
@@ -14,6 +16,7 @@ class Header extends Component
     public $allCategoryIds;
     public $variationCounts;
     public $minPrices;
+    public $organization;
 
      public function mount()
     {
@@ -28,6 +31,23 @@ class Header extends Component
             'products.brand',
             'products.categories',
         ])->get();
+
+        $this->organization = Schema::organization()
+            ->name(setting("site_name") ?? env('APP_NAME'))
+            ->url(url('/'))
+            ->logo(Storage::disk(config('filesystems.default'))->url(setting('site_logo')))
+            ->email(setting("site_email") ?? '')
+            ->telephone([
+                setting('site_phone') ?? '',
+                setting('site_secondphone') ?? ''
+            ])
+            // ->address(
+            //     Schema::postalAddress()
+            //         ->streetAddress('ул. Амир Темур, 10')
+            //         ->addressLocality('Ташкент')
+            //         ->addressCountry('UZ')
+            // )
+            ->toScript();
 
         $this->allCategoryIds = ProductCategory::all()->pluck('id')->toArray();
 

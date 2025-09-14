@@ -7,6 +7,8 @@
         'allCategoryIds' => $allCategoryIds,
     ])
 
+    {!! $organization !!}
+
 
     <div class="lg:bg-white bg-slate-50 border-gray-200 py-2.5 dark:bg-gray-800 relative z-30 lg:block hidden">
         <div class="flex flex-wrap justify-between items-center lg:mx-auto xl:px-[100px] px-[20px]">
