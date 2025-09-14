@@ -1,11 +1,11 @@
 <x-guest-layout>
     <section class="py-4 bg-white md:py-4 dark:bg-gray-900 antialiased">
-        <div class="mx-auto container">
+        <div class="xl:px-[100px] px-[20px]">
             <!-- Heading & Filters -->
 
             <div class="items-end justify-between space-y-4 sm:flex sm:space-y-0">
                 <div>
-                    @livewire('general.breadcrumbs')
+                    {{ Breadcrumbs::render('blog') }}
                     <h2 class="mt-3 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Блог</h2>
                 </div>
             </div>
@@ -14,7 +14,7 @@
     </section>
 
 
-    <div class="mx-auto container py-10">
+    <div class="xl:px-[100px] px-[20px] py-4 ">
         @livewire('posts.all')
     </div>
     <x-floating-control-panel>

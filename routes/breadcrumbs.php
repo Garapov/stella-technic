@@ -19,6 +19,11 @@ Breadcrumbs::for('favorites', function (BreadcrumbTrail $trail) {
     $trail->push('Избранное', route('client.favorites'));
 });
 
+Breadcrumbs::for('blog', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Блог');
+});
+
 Breadcrumbs::for('category', function (BreadcrumbTrail $trail, ProductCategory $category) {
     $trail->parent('catalog');
 

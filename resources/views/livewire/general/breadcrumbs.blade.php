@@ -1,4 +1,5 @@
 <nav class="flex" aria-label="Breadcrumb">
+    
     <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
         @foreach($breadcrumbs as $index => $breadcrumb)
             <li class="inline-flex items-center">

@@ -4,7 +4,7 @@
         <section class="py-10 bg-slate-50 dark:bg-gray-800 glide" x-data="{
             slider: new window.glide($refs.slider, {
                 autoplay: 5000,
-                perView: 3,
+                perView: 5,
                 gap: 20,
                 bound: true
             }).mount(),
