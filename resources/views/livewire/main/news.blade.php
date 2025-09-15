@@ -1,5 +1,6 @@
 <div>
     @if (count($news))
+    {!! $schema !!}
         <section class="px-4 py-10 dark:bg-gray-800 glide" x-data="{
             slider: new window.glide($refs.slider, {
                 autoplay: 5000,
