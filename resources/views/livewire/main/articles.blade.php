@@ -1,6 +1,4 @@
-@php
-    $articles = \App\Models\Article::where('is_popular', true)->pluck('id');
-@endphp
+
 <div>
     @if (count($articles) > 0)
         <section class="px-4 py-10 dark:bg-dark glide article_slider">
