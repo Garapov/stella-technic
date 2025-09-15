@@ -38,6 +38,7 @@ class Features extends Component
 
             // ItemList (общий список)
             $this->featuresScheme = Schema::itemList()
+                ->name('Преимущества компании')
                 ->itemListElement($listItems)->toScript();
         }
 

@@ -19,8 +19,6 @@
                             'variant' => $variant
                         ], key($variant->id))
                     @endforeach
-                    {{-- JSON-LD: общий список --}}
-                    {!! $itemListSchema->toScript() !!}
                 </div>
             </div>
         </section>

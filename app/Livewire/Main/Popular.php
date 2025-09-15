@@ -18,25 +18,9 @@ class Popular extends Component
             ->with(['paramItems', 'parametrs', 'product'])
             ->paginate(4, pageName: 'popular-products');
 
-        $listItems = [];
-
-        if ($products) {
-
-            foreach ($products as $index => $variant) {
-                // элемент списка
-                $listItems[] = Schema::listItem()
-                    ->position($index + 1)
-                    ->url(route('client.catalog', $variant->urlChain()));
-            }
-
-            // ItemList (общий список)
-            $itemListSchema = Schema::itemList()
-                ->itemListElement($listItems);
-        }
 
         return view('livewire.main.popular', [
-            'products'       => $products,
-            'itemListSchema' => $itemListSchema,
+            'products' => $products,
         ]);
     }
 }
