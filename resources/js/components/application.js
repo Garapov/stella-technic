@@ -10,6 +10,7 @@ export default (() => {
             init() {
                 window.addEventListener('resize', () => {
                     this.windowWidth = window.innerWidth;
+                    console.log(this.windowWidth);
                 })
             }
         });

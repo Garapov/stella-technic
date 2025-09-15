@@ -1,5 +1,5 @@
 <div class="fixed bottom-0 left-0 right-0 z-40 block lg:hidden">
-    <div class="px-7 bg-slate-50 shadow-lg rounded-t-xl">
+    <div class="bg-slate-50 shadow-lg rounded-t-xl">
         <div class="flex items-end gap-2 pt-4 px-4">
             
             <div class="flex-1 group">

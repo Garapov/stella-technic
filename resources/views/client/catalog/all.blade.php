@@ -23,7 +23,7 @@
     @endphp
 
     <section class="py-4 bg-white md:py-4 dark:bg-gray-900 antialiased">
-        <div class="lg:container p-4 lg:mx-auto">
+        <div class="xl:px-[100px] px-[20px]">
             <!-- Heading & Filters -->
     
             <div class="items-end justify-between space-y-4 sm:flex sm:space-y-0">
