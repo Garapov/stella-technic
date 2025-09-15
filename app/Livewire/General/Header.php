@@ -37,6 +37,7 @@ class Header extends Component
             ->url(url('/'))
             ->logo(Storage::disk(config('filesystems.default'))->url(setting('site_logo')))
             ->email(setting("site_email") ?? '')
+            ->description(setting("site_description") ?? '')
             ->telephone([
                 setting('site_phone') ?? '',
                 setting('site_secondphone') ?? ''

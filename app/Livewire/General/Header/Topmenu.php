@@ -19,7 +19,7 @@ class Topmenu extends Component
 
     protected function makeSchema()
     {
-        $menu = Schema::menu()->name('Главное меню');
+        $menu = Schema::menu()->name('Верхнее меню');
 
         $sections = [];
         $items = [];

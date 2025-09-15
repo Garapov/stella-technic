@@ -1,5 +1,6 @@
 <div class="hidden justify-between items-center w-full lg:flex lg:w-auto">
-@if ($menu && count($menu->menuItems) > 0) 
+    @if ($menu && count($menu->menuItems) > 0)
+        {!! $schema !!}
         <ul class="flex items-center gap-4 mt-4 font-medium lg:mt-0">
             @foreach ($menu->menuItems as $item)
                 @php
