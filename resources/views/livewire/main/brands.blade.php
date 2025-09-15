@@ -1,6 +1,6 @@
 <div>
     @if (count($brands))
-        <!-- ====== Brands Section Start -->
+        {!! $schema !!}
         <section class="py-5 px-4 dark:bg-dark">
             <div class="xl:px-[100px] px-[20px]">
                 <div class="-mx-4 flex flex-wrap">
@@ -18,6 +18,5 @@
                 </div>
             </div>
         </section>
-        <!-- ====== Brands Section End -->
     @endif
 </div>
