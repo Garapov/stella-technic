@@ -22,6 +22,7 @@
             ->image(count($variant->gallery) > 0 ? Storage::disk(config('filesystems.default'))->url($variant->gallery[0]) : null)
             ->description($variant->short_description ?? $variant->description ?? '')
             ->sku($variant->sku)
+            ->url(route('client.catalog', ['path' => $variant->urlChain()]))
             ->offers(
                 \Spatie\SchemaOrg\Schema::offer()
                     ->priceCurrency('RUB')
