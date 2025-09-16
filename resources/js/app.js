@@ -18,6 +18,7 @@ import clientsSlider from "./components/clients";
 import cart from "./components/cart";
 import favorites from "./components/favorites";
 import application from "./components/application";
+import recently from "./components/recently";
 
 
 

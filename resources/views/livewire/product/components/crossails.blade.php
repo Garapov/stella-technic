@@ -2,11 +2,17 @@
     @if (count($variations) > 0)
         <section class="py-10 dark:bg-dark" x-data="{
             slider: new window.glide($refs.slider, {
-                autoplay: 5000,
-                perView: 4,
+                autoplay: 3000,
+                perView: 5,
                 gap: 20,
                 bound: true,
                 breakpoints: {
+                    1366: {
+                        perView: 4
+                    },
+                    1280: {
+                        perView: 3
+                    },
                     1024: {
                         perView: 2
                     },
@@ -28,7 +34,7 @@
                     <div class="flex items-center gap-8">
                         <div class="flex items-center gap-2" data-glide-el="controls[nav]">
                             @foreach ($variations as $key=>$variation)
-                                @if ($key > count($variations) - 4)
+                                @if ($key > count($variations) - 5)
                                     @continue
                                 @endif
                                 <div class="h-2.5 rounded-full transition-width" :class="{'w-6 bg-blue-400': index == {{ $key }}, 'w-2.5 bg-gray-400': index != {{ $key }} }" data-glide-dir="={{ $key }}"></div>

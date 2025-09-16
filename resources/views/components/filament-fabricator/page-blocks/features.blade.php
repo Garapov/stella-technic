@@ -2,8 +2,8 @@
 <section class="text-gray-600 body-font bg-gray-200 dark:bg-gray-700">
     <div class="container py-24 mx-auto">
         <div class="text-center mb-10">
-            <h1 class="md:text-4xl text-3xl font-medium text-center title-font text-gray-900 dark:text-gray-200 mb-2">
-                {{$title}}</h1>
+            <h2 class="md:text-4xl text-3xl font-medium text-center title-font text-gray-900 dark:text-gray-200 mb-2">
+                {{$title}}</h2>
             <p class="text-base dark:text-gray-400 leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto">{{ $subtitle }}</p>
         </div>
         <div class="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2">

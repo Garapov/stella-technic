@@ -20,7 +20,8 @@ class ProductParam extends Model
         'fixed',
         'icon',
         'is_hidden',
-        'sort'
+        'sort',
+        'is_for_crossail'
     ];
 
     public function params(): HasMany

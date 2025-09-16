@@ -6,6 +6,7 @@
     thumbnailSlider: null,
     activeTab: 0,
     init() {
+        $store.recently.toggleProduct({{ $variation->id }});
         if (document.querySelector('.gallery-slider')) {
             setTimeout(() => {
                     this.gallerySlider = new window.splide('.gallery-slider', {
@@ -232,7 +233,7 @@
                     </dl>
                 </div>
                 @if ($variation->description)
-                    <div class="text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-b-lgw-full p-4" x-show="activeTab == 1">
+                    <div class="text-medium text-gray-900 dark:text-gray-400 dark:bg-gray-800 rounded-b-lgw-full p-4" x-show="activeTab == 1">
                         <!-- <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Подробное описание</h3> -->
                         {!! nl2br(str($variation->description)->sanitizeHtml()) !!}
                     </div>
@@ -347,7 +348,7 @@
                                             </div>
                                         @endif
                                     @endif
-                                    <div class="text-xs text-slate-500 font-semibold">
+                                    <div class="text-xs text-gray-500 font-semibold">
                                         {{ $delivery->description }}
                                     </div>
                                 </div>
@@ -360,13 +361,35 @@
     </div>
 
 
-    @if (count($variation->upSells) > 0)
-        @livewire('product.components.crossails', ['title' => 'С этим товаром покупают', 'variations' => $variation->upSells], key($variation->id))
+    
+    @php
+        $paramItemIds = $variation->paramItems->merge($variation->parametrs)->filter(fn($param) => $param->productParam->is_for_crossail)->pluck('id');
+        $crossSellsVariants = \App\Models\ProductVariant::whereHas('paramItems', function ($query) use ($paramItemIds) {
+            $query->whereIn('product_param_items.id', $paramItemIds);
+        })
+        ->orWhereHas('parametrs', function ($query) use ($paramItemIds) {
+            $query->whereIn('product_param_items.id', $paramItemIds);
+        })
+        ->get()
+        ->filter(function ($variant) use ($paramItemIds) {
+            $allParamItems = $variant->paramItems->merge($variant->parametrs)->pluck('id')->unique();
+
+            // Проверяем, что все элементы из $paramItemIds есть в $allParamItems
+            return collect($paramItemIds)->every(function ($id) use ($allParamItems) {
+                return $allParamItems->contains($id);
+            });
+        });
+    @endphp
+
+    @if ($crossSellsVariants || count($variation->upSells) > 0)
+        @livewire('product.components.crossails', ['title' => 'С этим товаром покупают', 'variations' => $variation->upSells->merge($crossSellsVariants)], key($variation->id))
     @endif
 
-    @if (count($variation->crossSells) > 0)
-        @livewire('product.components.crossails', ['title' => 'Похожие товары', 'variations' => $variation->crossSells], key($variation->id + rand(1,100)))
+    @if ($variation->product->variants || count($variation->crossSells) > 0)
+        @livewire('product.components.crossails', ['title' => 'Похожие товары', 'variations' => $variation->crossSells->merge($variation->product->variants->where('id', '!=', $variation->id))->take(10)], key($variation->id + rand(1,100)))
     @endif
+
+    @livewire('general.recently', key($variation->id))
 
     @livewire('general.forms.buyoneclick', ['variation' => $variation])
 </div>

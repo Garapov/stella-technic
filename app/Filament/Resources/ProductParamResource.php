@@ -56,6 +56,10 @@ class ProductParamResource extends Resource
                     ->label('Зафиксирован')
                     ->inline(false)
                     ->required(),
+                Forms\Components\Toggle::make('is_for_crossail')
+                    ->label('Для перекрестных продаж')
+                    ->inline(false)
+                    ->required(),
                 Forms\Components\Toggle::make('is_hidden')
                     ->label('Скрыт')
                     ->inline(false),
