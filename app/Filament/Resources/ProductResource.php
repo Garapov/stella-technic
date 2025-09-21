@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Get;
 use App\Models\Batch;
+use App\Models\ProductCategory;
+use App\Services\CategoryHelper;
 use Livewire\Attributes\On;
 
 class ProductResource extends Resource
@@ -129,14 +131,36 @@ class ProductResource extends Resource
                         ])
                         ->columnSpan("full"),
                     Tab::make("Категории")
+                        ->extraAttributes(['class' => 'category_tree'])
                         ->schema([
+                            Forms\Components\Select::make("category_id")
+                                ->required()
+                                ->label("Основная категория")
+                                ->placeholder("Выберите категорию")
+                                ->searchable()
+                                ->preload()
+                                ->options(function () {
+                                    $roots = ProductCategory::where('parent_id', -1)->get();
+                                    return CategoryHelper::buildOptions($roots);
+                                })
+                                
+                                ->hint('Категория, к которой будет привязан товар. На основе этой категории будет генерироваться ссылка для вариаций товара.')
+                                ->hintColor('warning')
+                                ->hintIcon('heroicon-c-shield-exclamation'),
                             Forms\Components\Select::make("categories")
                                 ->required()
-                                ->label("Категории")
+                                ->label("Второстепенные категории")
                                 ->placeholder("Выберите категории")
                                 ->multiple()
                                 ->relationship("categories", "title")
-                                ->preload(),
+                                ->options(function () {
+                                    $roots = ProductCategory::where('parent_id', -1)->get();
+                                    return CategoryHelper::buildOptions($roots);
+                                })
+                                ->preload()
+                                ->hint('В этих категориях товар будет отображаться в листинге, но ссылка будет всегда на основную категорию.')
+                                ->hintColor('warning')
+                                ->hintIcon('heroicon-c-shield-exclamation'),
                         ])
                         ->columnSpan("full"),
                     // Tab::make("Параметры")

@@ -6,6 +6,7 @@
 @import "@fancyapps/ui/dist/fancybox/fancybox.css";
 @import "range-slider-input/dist/style.css";
 
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -140,3 +141,5 @@ body #nprogress .bar .peg {
     -ms-transform: rotate(3deg) translate(0px, -4px);
     transform: rotate(3deg) translate(0px, -4px);
 }
+
+

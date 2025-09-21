@@ -1,6 +1,8 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 /* resources/css/filament.css */
 @media (min-width: 1024px) {
@@ -9,6 +11,10 @@
             100% / 4 - 0.5rem
         ); /* Adjust the width to fit 6 files in a row */
     }
+}
+.category_tree .choices__item.choices__item--choice {
+    padding: 0 !important; /* уменьшаем отступ */
+    font-family: monospace, sans-serif; /* дерево смотрится аккуратнее */
 }
 
 @layer base {
@@ -21,5 +27,11 @@
         scroll-margin-top: 8rem;
     }
 }
+
+
+
+
+
+
 
 @config 'tailwind.config.js';

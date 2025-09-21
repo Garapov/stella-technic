@@ -13,7 +13,7 @@ class Features extends Component
     public $categories;
     public $allCategoryIds;
     public $variationCounts;
-    public $minPrices;
+    // public $minPrices;
     public $features;
     public $featuresScheme;
 
@@ -49,12 +49,12 @@ class Features extends Component
         $this->allCategoryIds = ProductCategory::all()->pluck('id')->toArray();
 
         // Получаем счётчики вариантов
-        $this->variationCounts = ProductVariant::selectRaw('count(*) as count, product_product_category.product_category_id')
-            ->join('products', 'products.id', '=', 'product_variants.product_id')
-            ->join('product_product_category', 'products.id', '=', 'product_product_category.product_id')
-            ->whereIn('product_product_category.product_category_id', $this->allCategoryIds)
-            ->groupBy('product_product_category.product_category_id')
-            ->pluck('count', 'product_product_category.product_category_id');
+        // $this->variationCounts = ProductVariant::selectRaw('count(*) as count, product_product_category.product_category_id')
+        //     ->join('products', 'products.id', '=', 'product_variants.product_id')
+        //     ->join('product_product_category', 'products.id', '=', 'product_product_category.product_id')
+        //     ->whereIn('product_product_category.product_category_id', $this->allCategoryIds)
+        //     ->groupBy('product_product_category.product_category_id')
+        //     ->pluck('count', 'product_product_category.product_category_id');
     }
     
     public function render()
@@ -62,8 +62,8 @@ class Features extends Component
         return view('livewire.main.features', [
             'features' => $this->features,
             'categories' => $this->categories,
-            'counts' => $this->variationCounts,
-            'minPrices' => $this->minPrices,
+            // 'counts' => $this->variationCounts,
+            // 'minPrices' => $this->minPrices,
             'allCategoryIds' => $this->allCategoryIds,
             'featuresScheme' => $this->featuresScheme
         ]);

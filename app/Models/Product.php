@@ -39,7 +39,8 @@ class Product extends Model
         "uuid",
         "links",
         "sku",
-        "is_hidden"
+        "is_hidden",
+        "product_category_id"
     ];
 
     protected $casts = [
@@ -83,6 +84,10 @@ class Product extends Model
             ProductCategory::class,
             "product_product_category"
         );
+    }
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(ProductCategory::class);
     }
 
     public function variants(): HasMany
