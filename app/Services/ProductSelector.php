@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Brand;
+use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Support\Collection;
 use App\Models\ProductVariant;
@@ -57,7 +58,25 @@ class ProductSelector
                 break;
 
             default:
-                $result = $category->products->pluck("id");
+                $allCategoryIds = collect();
+
+                $collectIds = function ($category) use (&$collectIds, &$allCategoryIds) {
+                    $allCategoryIds->push($category->id);
+
+                    foreach ($category->categories as $child) {
+                        $collectIds($child);
+                    }
+                };
+
+                $collectIds($category);
+
+                $result = Product::whereIn('category_id', $allCategoryIds)
+                    ->orWhereHas('categories', function ($q) use ($allCategoryIds) {
+                        $q->whereIn('product_categories.id', $allCategoryIds);
+                    })
+                    ->pluck('id')
+                    ->unique();
+                // dd($result);
                 break;
         }
 

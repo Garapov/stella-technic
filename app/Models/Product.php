@@ -40,7 +40,7 @@ class Product extends Model
         "links",
         "sku",
         "is_hidden",
-        "product_category_id"
+        "category_id"
     ];
 
     protected $casts = [

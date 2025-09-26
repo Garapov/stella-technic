@@ -148,11 +148,32 @@ class ProductResource extends Resource
                                 ->hintColor('warning')
                                 ->hintIcon('heroicon-c-shield-exclamation'),
                             Forms\Components\Select::make("categories")
-                                ->required()
+                                // ->required()
                                 ->label("Второстепенные категории")
                                 ->placeholder("Выберите категории")
                                 ->multiple()
-                                ->relationship("categories", "title")
+                                ->relationship(
+                                    name: "categories",
+                                    titleAttribute: "title",
+                                )
+                                // ->getOptionLabelFromRecordUsing(function (Model $record) {
+                                //     // dd([$record->parent->title, $record->title]);
+
+                                //     $category = $record;
+                                //     $title = '|';
+
+
+                                //     while ($category->parent) {
+                                //         $category = $category->parent;
+                                //         if ($category->parent) {
+                                //             $title = $title . '-';
+                                //         }
+                                //     }
+
+                                //     $title = $title . '-' . $record->title;
+
+                                //     return $title;
+                                // })
                                 ->options(function () {
                                     $roots = ProductCategory::where('parent_id', -1)->get();
                                     return CategoryHelper::buildOptions($roots);
