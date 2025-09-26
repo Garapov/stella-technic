@@ -51,7 +51,8 @@ Breadcrumbs::for('product', function (BreadcrumbTrail $trail, ProductVariant $va
     
     $all_categories = ProductCategory::all();
 
-    $current = $variation->product->categories->last();
+    // $current = $variation->product->categories->last();
+    $current = ProductCategory::find($variation->product->category_id && $variation->product->category_id != 0 ? $variation->product->category_id : $variation->product->categories->last()->id);
 
     // dd($variation);
     $parents = collect();
@@ -69,7 +70,7 @@ Breadcrumbs::for('product', function (BreadcrumbTrail $trail, ProductVariant $va
         $trail->push($parentCategory->title, route('client.catalog', $parentCategory->urlChain()));
     }
 
-    $trail->push($variation->product->categories->last()->title, route('client.catalog', $variation->product->categories->last()->urlChain()));
+    $trail->push(ProductCategory::find($variation->product->category_id && $variation->product->category_id != 0 ? $variation->product->category_id : $variation->product->categories->last()->id)->title, route('client.catalog', ProductCategory::find($variation->product->category_id && $variation->product->category_id != 0 ? $variation->product->category_id : $variation->product->categories->last()->id)->urlChain()));
 
     $trail->push($variation->sku, route('client.catalog', $variation->urlChain()));
 });

@@ -146,70 +146,70 @@ class Product extends Model
 
     public function makeProductVariations()
     {
-        $existingVariationsIds = ProductVariant::where("product_id", $this->id)
-            ->pluck("id")
-            ->toArray();
-        $createdVariationsIds = [];
+        // $existingVariationsIds = ProductVariant::where("product_id", $this->id)
+        //     ->pluck("id")
+        //     ->toArray();
+        // $createdVariationsIds = [];
 
-        foreach ($this->links as $link) {
-            $name = "";
-            $name .= $this->name;
-            $links = "";
+        // foreach ($this->links as $link) {
+        //     $name = "";
+        //     $name .= $this->name;
+        //     $links = "";
 
-            // Собираем параметры для привязки к вариации
-            $paramIds = [];
+        //     // Собираем параметры для привязки к вариации
+        //     $paramIds = [];
 
-            foreach ($link["row"] as $param) {
-                $parametr = ProductParamItem::where("id", intval($param))->first();
+        //     foreach ($link["row"] as $param) {
+        //         $parametr = ProductParamItem::where("id", intval($param))->first();
 
-                if (!$parametr) {
-                    continue;
-                }
+        //         if (!$parametr) {
+        //             continue;
+        //         }
 
-                // Добавляем параметр в список для привязки
-                $paramIds[] = $param;
-                $links .= $param;
+        //         // Добавляем параметр в список для привязки
+        //         $paramIds[] = $param;
+        //         $links .= $param;
 
-                $name .= " {$parametr->title}";
-            }
+        //         $name .= " {$parametr->title}";
+        //     }
 
-            $findedVariant = ProductVariant::withTrashed()->firstOrCreate(
-                [
-                    "product_id" => $this->id,
-                    "links" => $links,
-                ],
-                [
-                    "price" => $this->price,
-                    "new_price" => $this->new_price,
-                    "image" => $this->image,
-                    "gallery" => $this->gallery,
-                    "short_description" => $this->short_description,
-                    "description" => $this->description,
-                    "is_popular" => $this->is_popular,
-                    "count" => $this->count,
-                    "synonims" => $this->synonims,
-                    "name" => $name,
-                ]
-            );
+        //     $findedVariant = ProductVariant::withTrashed()->firstOrCreate(
+        //         [
+        //             "product_id" => $this->id,
+        //             "links" => $links,
+        //         ],
+        //         [
+        //             "price" => $this->price,
+        //             "new_price" => $this->new_price,
+        //             "image" => $this->image,
+        //             "gallery" => $this->gallery,
+        //             "short_description" => $this->short_description,
+        //             "description" => $this->description,
+        //             "is_popular" => $this->is_popular,
+        //             "count" => $this->count,
+        //             "synonims" => $this->synonims,
+        //             "name" => $name,
+        //         ]
+        //     );
 
-            $createdVariationsIds[] = $findedVariant->id;
+        //     $createdVariationsIds[] = $findedVariant->id;
 
-            if ($findedVariant->trashed()) {
-                $findedVariant->restore();
-            }
+        //     if ($findedVariant->trashed()) {
+        //         $findedVariant->restore();
+        //     }
 
-            // Привязываем параметры к вариации
-            if (!empty($paramIds)) {
-                // Синхронизируем параметры, чтобы избежать дублирования
-                $findedVariant->paramItems()->sync($paramIds);
-            }
-        }
+        //     // Привязываем параметры к вариации
+        //     if (!empty($paramIds)) {
+        //         // Синхронизируем параметры, чтобы избежать дублирования
+        //         $findedVariant->paramItems()->sync($paramIds);
+        //     }
+        // }
 
-        if (!empty(array_diff($existingVariationsIds, $createdVariationsIds))) {
-            ProductVariant::whereIn(
-                "id",
-                array_diff($existingVariationsIds, $createdVariationsIds)
-            )->delete();
-        }
+        // if (!empty(array_diff($existingVariationsIds, $createdVariationsIds))) {
+        //     ProductVariant::whereIn(
+        //         "id",
+        //         array_diff($existingVariationsIds, $createdVariationsIds)
+        //     )->delete();
+        // }
     }
 }

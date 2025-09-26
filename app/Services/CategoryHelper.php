@@ -4,6 +4,8 @@ namespace App\Services;
 
 class CategoryHelper
 {
+
+    
     public static function buildOptions($categories, int $depth = 0): array
     {
         $options = [];
@@ -22,7 +24,6 @@ class CategoryHelper
                 $options += self::buildOptions($category->categories, $depth + 1);
             }
         }
-
         return $options;
     }
 }

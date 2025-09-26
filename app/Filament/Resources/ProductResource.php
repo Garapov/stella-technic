@@ -141,6 +141,7 @@ class ProductResource extends Resource
                                 ->preload()
                                 ->options(function () {
                                     $roots = ProductCategory::where('parent_id', -1)->get();
+                                    // dd($roots->pluck('title'));
                                     return CategoryHelper::buildOptions($roots);
                                 })
                                 
