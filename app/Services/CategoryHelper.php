@@ -20,8 +20,8 @@ class CategoryHelper
 
             $options[$category->id] = $prefix . $branch . $category->title;
 
-            if ($category->categories->isNotEmpty()) {
-                $options += self::buildOptions($category->categories, $depth + 1);
+            if ($category->categories->where('type', null)->isNotEmpty()) {
+                $options += self::buildOptions($category->categories->where('type', null), $depth + 1);
             }
         }
         return $options;
