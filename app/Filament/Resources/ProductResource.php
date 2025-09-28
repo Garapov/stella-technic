@@ -21,6 +21,7 @@ use Filament\Forms\Get;
 use App\Models\Batch;
 use App\Models\ProductCategory;
 use App\Services\CategoryHelper;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 
 class ProductResource extends Resource
@@ -138,12 +139,18 @@ class ProductResource extends Resource
                                 ->label("Основная категория")
                                 ->placeholder("Выберите категорию")
                                 ->searchable()
-                                ->preload()
                                 ->options(function () {
-                                    $roots = ProductCategory::where('parent_id', -1)->get();
-                                    // dd($roots->pluck('title'));
-                                    return CategoryHelper::buildOptions($roots);
+                                    $roots = ProductCategory::where([
+                                        ['parent_id', '=', -1],
+                                        ['is_visible', '=', true],
+                                        ['type', '=', null],
+                                    ])->get();
+
+                                    $categories = CategoryHelper::buildOptions($roots);
+                                    
+                                    return $categories;
                                 })
+                                ->optionsLimit(100000)
                                 
                                 ->hint('Категория, к которой будет привязан товар. На основе этой категории будет генерироваться ссылка для вариаций товара.')
                                 ->hintColor('warning')
@@ -157,29 +164,18 @@ class ProductResource extends Resource
                                     name: "categories",
                                     titleAttribute: "title",
                                 )
-                                // ->getOptionLabelFromRecordUsing(function (Model $record) {
-                                //     // dd([$record->parent->title, $record->title]);
-
-                                //     $category = $record;
-                                //     $title = '|';
-
-
-                                //     while ($category->parent) {
-                                //         $category = $category->parent;
-                                //         if ($category->parent) {
-                                //             $title = $title . '-';
-                                //         }
-                                //     }
-
-                                //     $title = $title . '-' . $record->title;
-
-                                //     return $title;
-                                // })
                                 ->options(function () {
-                                    $roots = ProductCategory::where('parent_id', -1)->get();
-                                    return CategoryHelper::buildOptions($roots);
+                                    $roots = ProductCategory::where([
+                                        ['parent_id', '=', -1],
+                                        ['is_visible', '=', true],
+                                        ['type', '=', null],
+                                    ])->get();
+
+                                    $categories = CategoryHelper::buildOptions($roots);
+
+                                    return $categories;
                                 })
-                                ->preload()
+                                ->optionsLimit(100000)
                                 ->hint('В этих категориях товар будет отображаться в листинге, но ссылка будет всегда на основную категорию.')
                                 ->hintColor('warning')
                                 ->hintIcon('heroicon-c-shield-exclamation'),

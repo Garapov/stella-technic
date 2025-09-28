@@ -9,12 +9,16 @@
     .filepond--root[data-style-panel-layout="grid"] .filepond--item {
         width: calc(
             100% / 4 - 0.5rem
-        ); /* Adjust the width to fit 6 files in a row */
+        );
     }
 }
 .category_tree .choices__item.choices__item--choice {
-    padding: 0 !important; /* уменьшаем отступ */
-    font-family: monospace, sans-serif; /* дерево смотрится аккуратнее */
+    padding: 0 !important;
+    font-family: monospace, sans-serif;
+}
+
+.category_tree .choices__list--dropdown .choices__list, .choices__list[aria-expanded] .choices__list {
+    max-height: 35rem;
 }
 
 @layer base {
@@ -22,7 +26,6 @@
         color-scheme: dark;
     }
 
-    /* When scrolling to validation error, do not hide element behind the top bar */
     [data-field-wrapper] {
         scroll-margin-top: 8rem;
     }
