@@ -45,7 +45,7 @@ class Search extends Component
                 ->where('product_is_hidden', false)
                 ->take(10)
                 ->get(),
-            'categories' => ProductCategory::where('title', 'like', "%{$this->q}%")->get()
+            'categories' => ProductCategory::search($this->q)->get()
         ];
         $this->dispatch('queryUpdated', query: $this->q);
         // $results['pages'] = Page::where('title', 'like', "%{$this->q}%")->get();

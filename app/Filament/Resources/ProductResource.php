@@ -22,6 +22,7 @@ use App\Models\Batch;
 use App\Models\ProductCategory;
 use App\Services\CategoryHelper;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
 
 class ProductResource extends Resource
@@ -160,6 +161,7 @@ class ProductResource extends Resource
                                 ->label("Второстепенные категории")
                                 ->placeholder("Выберите категории")
                                 ->multiple()
+                                ->live()
                                 ->relationship(
                                     name: "categories",
                                     titleAttribute: "title",
@@ -178,7 +180,8 @@ class ProductResource extends Resource
                                 ->optionsLimit(100000)
                                 ->hint('В этих категориях товар будет отображаться в листинге, но ссылка будет всегда на основную категорию.')
                                 ->hintColor('warning')
-                                ->hintIcon('heroicon-c-shield-exclamation'),
+                                ->hintIcon('heroicon-c-shield-exclamation')
+                                ->helperText(fn($state, ?Model $record) => array_diff($record->categories->pluck('id')->toArray(), $state) ? new HtmlString('<strong class="text-red-500">Зафиксирована разница между базой данных и содержимым поля</strong>') : ''),
                         ])
                         ->columnSpan("full"),
                     // Tab::make("Параметры")

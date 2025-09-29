@@ -5,10 +5,11 @@
     isLoading: false,
     init() {
         Livewire.on('queryUpdated', ({ query }) => {
+            this.isLoading = false;
             if (!this.searchRequests.includes(query)) {
                 this.searchRequests.push(query);
             }
-            this.isLoading = false;
+            
         })
         console.log(this.query, 'query');
     },
@@ -30,7 +31,7 @@
     <div class="rounded-lg bg-blue-500 flex items-center relative w-full z-20">
         <input type="search" id="search-dropdown"
         class="rounded-lg bg-white block p-2.5 w-full text-sm text-gray-900 dark:placeholder-gray-400 dark:text-white border border-blue-500"
-        placeholder="Поиск" name="q" x-model="query" @input.debounce.500ms="findResults" @focus="isOpen = true" @input="isOpen = true" style="outline: none; box-shadow: none;" />
+        placeholder="Поиск" name="q" x-model="query" @input.debounce.500ms="findResults" @focus="isOpen = true" @input="isOpen = true" style="outline: none; box-shadow: none;" autocomplete="off" />
         <button type="submit"
             class="rounded-e-lg py-2.5 px-4 text-sm font-medium h-full text-white bg-blue-500 border border-0">
             <template x-if="!isLoading">
@@ -69,7 +70,7 @@
             <ul x-show="JSON.parse(JSON.stringify(searchRequests)).length > 0 && query == ''" class="flex flex-col p-4 bg-slate-50 rounded-lg">
                 <li class="flex items-center justify-between mb-2">
                     <div class="text-md font-semibold">Ранее вы искали:</div>
-
+                    <div type="button" @click="searchRequests = []" class="cursor-pointer px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Очистить историю</div>
                 </li>
                 <template x-for="(searchRequest, key) in JSON.parse(JSON.stringify(searchRequests)).reverse()" :key="searchRequest">
                     <li  class="flex justify-between items-center py-2 px-0 hover:shadow-md hover:px-2 hover:bg-white rounded-xl transition-all cursor-pointer" @click="setQueryFromHistory(searchRequest)" x-show="key < 5">

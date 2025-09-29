@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
-use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 use Datlechin\FilamentMenuBuilder\Concerns\HasMenuPanel;
 use Datlechin\FilamentMenuBuilder\Contracts\MenuPanelable;
@@ -17,11 +16,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Laravel\Scout\Searchable;
 
-class ProductCategory extends Model implements Searchable,MenuPanelable
+class ProductCategory extends Model implements MenuPanelable
 {
     /** @use HasFactory<\Database\Factories\ProductCategoryFactory> */
-    use HasFactory, HasSlug, HasMenuPanel;
+    use HasFactory, HasSlug, HasMenuPanel, Searchable;
 
     public $searchableType = 'Категории';
 
@@ -52,6 +52,16 @@ class ProductCategory extends Model implements Searchable,MenuPanelable
     ];
  
     protected $table = 'product_categories';
+
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'description' => $this->description,
+        ];
+    }
 
     /**
      * Get the options for generating the slug.

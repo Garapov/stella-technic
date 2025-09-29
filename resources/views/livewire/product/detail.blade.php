@@ -225,7 +225,7 @@
                                 @continue
                             @endif
                             <li class="flex items-center justify-between text-sm gap-2 px-3 py-2 bg-slate-50">
-                                <strong class="font-medium">{{ $paramItem->productParam->name }} @if (auth()->user() && auth()->user()->hasRole('super_admin'))(Сорт: {{ $paramItem->sort }})@endif</strong>
+                                <strong class="font-medium">{{ $paramItem->productParam->name }}</strong>
                                 <span class="grow border-b border-slate-300 border-dashed"></span>
                                 <span class="font-bold">{{ $paramItem->title }}</span>
                             </li>

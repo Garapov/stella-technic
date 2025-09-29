@@ -109,7 +109,7 @@
         @foreach($variation->paramItems->merge($variation->parametrs)->sortBy('sort') as $key => $paramItem)
             
             <li class="flex items-center justify-between text-xs gap-2 @if ($counter > 5 || $paramItem->productParam->is_hidden) hidden @endif">
-                <strong class="font-medium">{{ $paramItem->productParam->name }} @if (auth()->user() && auth()->user()->hasRole('super_admin'))(Сорт: {{ $paramItem->sort }}) @endif</strong>
+                <strong class="font-medium">{{ $paramItem->productParam->name }}</strong>
                 <span class="grow border-b border-slate-300 border-dashed"></span>
                 <span class="font-bold">{{ $paramItem->title }}</span>
             </li>
