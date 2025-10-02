@@ -126,7 +126,7 @@
                         console.log(window.fancybox.bind(this.selector));
                     },
                 }">
-                    <div class="flex flex-col-reverse gap-4" x-ignore>
+                    <div class="flex flex-col-reverse gap-4 p-4 rounded-lg shadow bg-white" x-ignore>
                         @if ($variation->gallery || $variation->videos)
                             <div class="grid grid-cols-8 gap-2">
                                 <section class="splide gallery-thumbnails" aria-label="Splide Basic HTML Example" ref="gallerySlider">
@@ -205,41 +205,41 @@
 
                 <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-100 dark:border-gray-700 dark:text-gray-400">
                     <li class="me-2" id="params">
-                        <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 0 ? 'active bg-blue-600 text-white' : 'text-gray-600 bg-gray-50 cursor-pointer'" aria-current="page" @click="activeTab = 0">Технические характеристики</span>
+                        <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 0 ? 'active bg-blue-600 text-white' : 'text-gray-600 bg-white shadow cursor-pointer'" aria-current="page" @click="activeTab = 0">Технические характеристики</span>
                     </li>
                     @if ($variation->description)
                         <li class="me-2">
-                            <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 1 ? 'active bg-blue-600 text-white' : 'text-gray-600 bg-gray-50 cursor-pointer'" aria-current="page" @click="activeTab = 1">Подробное описание</span>
+                            <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 1 ? 'active bg-blue-600 text-white' : 'text-gray-600 bg-white shadow cursor-pointer'" aria-current="page" @click="activeTab = 1">Подробное описание</span>
                         </li>
                     @endif
                     @if (!empty($files))
                         <li class="me-2">
-                            <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 2 ? 'active bg-blue-600 text-white' : 'text-gray-600 bg-gray-50 cursor-pointer'" aria-current="page" @click="activeTab = 2">Файлы</span>
+                            <span aria-current="page" class="inline-block p-4 rounded-t-lg" :class="activeTab == 2 ? 'active bg-blue-600 text-white' : 'text-gray-600 bg-white shadow cursor-pointer'" aria-current="page" @click="activeTab = 2">Файлы</span>
                         </li>
                     @endif
                 </ul>
-                <div class="text-medium rounded-b-lg w-full p-4" x-show="activeTab == 0">
-                    <dl class="grid grid-cols-1 gap-x-4 md:grid-cols-3 text-slate-700">
+                <div class="text-medium rounded-b-lg bg-white shadow w-full p-4" x-show="activeTab == 0">
+                    <dl class="grid grid-cols-1 gap-x-4 md:grid-cols-2 text-slate-700">
                         @foreach($variation->paramItems->merge($variation->parametrs)->sortBy('sort') as $paramItem)
                             @if ($paramItem->productParam->is_hidden)
                                 @continue
                             @endif
-                            <li class="flex items-center justify-between text-sm gap-2 px-3 py-2 bg-slate-50">
+                            <li class="flex items-center justify-between text-sm gap-2 px-3 py-2">
                                 <strong class="font-medium">{{ $paramItem->productParam->name }}</strong>
-                                <span class="grow border-b border-slate-300 border-dashed"></span>
+                                <span class="grow border-b border-gray-200 border-dotted border-b-2"></span>
                                 <span class="font-bold">{{ $paramItem->title }}</span>
                             </li>
                         @endforeach
                     </dl>
                 </div>
                 @if ($variation->description)
-                    <div class="text-medium text-gray-900 dark:text-gray-400 dark:bg-gray-800 rounded-b-lgw-full p-4" x-show="activeTab == 1">
+                    <div class="text-medium text-gray-900 bg-white shadow rounded-b-lgw-full p-4" x-show="activeTab == 1">
                         <!-- <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Подробное описание</h3> -->
                         {!! nl2br(str($variation->description)->sanitizeHtml()) !!}
                     </div>
                 @endif
                 @if (!empty($files))
-                    <div class="text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 w-full" x-show="activeTab == 2">
+                    <div class="text-medium text-gray-500 bg-white shadow w-full" x-show="activeTab == 2">
                         <!-- <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Файлы</h3> -->
                         <ul role="list" class="divide-y divide-gray-100 rounded-b-lg">
                             @foreach($files as $key=>$file)

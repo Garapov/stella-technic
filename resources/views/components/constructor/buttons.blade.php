@@ -1,4 +1,4 @@
-<div class="bg-white max-h-full overflow-auto p-4 col-span-4 relative flex flex-col justify-between gap-4 relative overflow-hidden" x-ref="settings">
+<div class="bg-white max-h-full overflow-auto p-4 col-span-4 absolute top-[calc(100%-40px)] lg:top-0 lg:relative flex flex-col justify-between gap-4 overflow-hidden" x-ref="settings">
     
     <div class="flex flex-col gap-4">
         <div class="text-xl italic font-semibold text-gray-900 dark:text-white">1. Выберите тип стойки</div>

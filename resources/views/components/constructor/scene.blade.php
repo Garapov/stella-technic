@@ -1,4 +1,4 @@
-<div class="relative col-span-4 bg-gray-700 dark:bg-gray-700" x-ref="scene" wire:ignore>
+<div class="relative col-span-4 bg-gray-700 dark:bg-gray-700 hidden lg:block" x-ref="scene" wire:ignore>
     <div class="absolute top-0 left-0 w-full h-full bg-gray-700 dark:bg-gray-700 flex flex-col items-center justify-center gap-4 p-10" x-show="!isLoaded">
         <div class="text-lg text-gray-500">Загружаем 3D модели</div>
         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full flex justify-center">

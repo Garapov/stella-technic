@@ -24,7 +24,7 @@ class Features extends Component
             'products'
         ])->get();
 
-        $this->features = Feature::all();
+        $this->features = Feature::where('show_on_main', true)->get()->sortBy('sort');
 
         $listItems = [];
         if ($this->features) {

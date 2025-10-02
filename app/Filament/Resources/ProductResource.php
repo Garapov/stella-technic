@@ -295,6 +295,18 @@ class ProductResource extends Resource
                     //             ]),
                     //     ])
                     //     ->columnSpan("full"),
+                    Tab::make("Преимущества")->schema([
+                        Forms\Components\Select::make("features")
+                                // ->required()
+                                ->label("Преимущества")
+                                ->placeholder("Выберите преимущества")
+                                ->multiple()
+                                ->relationship(
+                                    name: "features",
+                                    titleAttribute: "text",
+                                )
+                                ->preload()
+                    ]),
                     Tab::make("Бренд")->schema([
                         Forms\Components\Select::make("brand")
                             ->label("Бренд")

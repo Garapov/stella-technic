@@ -38,6 +38,13 @@ class FeatureResource extends Resource
                 Forms\Components\TextInput::make('text')
                     ->label('Текст')
                     ->required(),
+                Forms\Components\Toggle::make('show_on_main')
+                    ->label('Показывать на главной')
+                    ->inline(false)
+                    ->required(),
+                Forms\Components\TextInput::make('sort')
+                    ->label('Сортировка')
+                    ->required(),
             ]);
     }
 
@@ -55,6 +62,9 @@ class FeatureResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextInputColumn::make('sort')->label("Сортировка"),
+                Tables\Columns\ToggleColumn::make('show_on_main')
+                    ->label('Показывать на главной'),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Дата обновления')
                     ->dateTime()

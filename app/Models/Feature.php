@@ -13,5 +13,7 @@ class Feature extends Model
     protected $fillable = [
         'icon',
         'text',
+        'show_on_main',
+        'sort'
     ];
 }

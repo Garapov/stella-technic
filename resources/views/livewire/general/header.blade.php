@@ -1,4 +1,4 @@
-<header>
+<header class="shadow relative z-10">
 
     @livewire('general.header.burger', [
         'categories' => $categories,
@@ -72,7 +72,7 @@
         </div>
     </div>
 
-    <div class="bg-slate-50 py-2.5 dark:bg-gray-700 relative z-10 lg:flex hidden">
+    <div class="lg:bg-white bg-slate-50 py-2.5 dark:bg-gray-700 relative z-10 lg:flex hidden">
         <div class="flex flex-wrap justify-between items-center lg:mx-auto xl:px-[100px] px-[20px] w-full">
 
             @if (count($categories) > 0)

@@ -27,14 +27,14 @@ class Detail extends Component
         $this->path = $path;
         $this->deliveries = Delivery::where("is_active", true)->get();
 
-        $this->features = Feature::take(4)->get();
-
+        
         $this->variation = $variation;
-
+        
         if (!$this->variation) abort(404);
-
+        
         if ($this->variation->is_hidden || $this->variation->product->is_hidden) abort(404);
-
+        
+        $this->features = $this->variation->product->features->sortBy('sort');
         // dd($this->variation->parametrs->pluck('value', 'productParam.name')->toArray());
 
         $this->product = $this->variation->product;

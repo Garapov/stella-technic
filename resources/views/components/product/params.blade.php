@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-2 p-4 bg-slate-50 rounded-lg border border-gray-200">
+<div class="flex flex-col gap-2 p-4 bg-white rounded-lg shadow-lg">
     <div class="text-md font-bold pb-2">
         Другие вариации товара:
     </div>
