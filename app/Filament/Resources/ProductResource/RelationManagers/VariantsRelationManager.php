@@ -23,8 +23,10 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Get;
 use Filament\Tables\Actions\ExportAction;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Illuminate\Support\Str;
 
 class VariantsRelationManager extends RelationManager
 {
@@ -427,6 +429,34 @@ class VariantsRelationManager extends RelationManager
                     ->modalWidth("7xl"),
             ])
             ->actions([
+                Tables\Actions\ReplicateAction::make()
+                    ->iconButton()
+                    ->excludeAttributes(['slug', 'uuid'])
+                    ->after(function (Model $replica, ProductVariant $record): void {
+                        Log::info('Replicating record with data: ', $record->toArray());
+
+                        if ($record->paramItems) {
+                            $replica->paramItems()->sync($record->paramItems->pluck('id')->toArray());
+                        }
+                        if ($record->parametrs) {
+                            $replica->parametrs()->sync($record->parametrs->pluck('id')->toArray());
+                        }
+                        if ($record->upSells) {
+                            $replica->upSells()->sync($record->upSells->pluck('id')->toArray());
+                        }
+                        if ($record->crossSells) {
+                            $replica->crossSells()->sync($record->crossSells->pluck('id')->toArray());
+                        }
+
+                        if ($record->crossSells) {
+                            $replica->update([
+                                'name' => $record->name . ' (копия)',
+                                'sku' => $record->sku . '-copy-' . Str::random(5),
+                                'is_hidden' => true,
+                            ]);
+                        }
+                    })
+                    ->successRedirectUrl(fn (Model $replica): string => \App\Filament\Resources\ProductVariantResource::getUrl('edit', ['record' => $replica->slug ])),
                 Tables\Actions\EditAction::make()
                     ->modalWidth("7xl")
                     ->iconButton(),
