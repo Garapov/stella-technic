@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-4">
-    <div class="flex flex-col gap-4 shadow-lg bg-white p-4 rounded-xl">
+    <div class="flex flex-col gap-4 border border-2 border-green-600 shadow-lg shadow-green-900/20 bg-white p-4 rounded-xl">
         <div class="flex items-center flex-wrap justify-between gap-4">
             <div class="flex items-center gap-4">
                 <h4 class="text-slate-900 text-4xl font-semibold">{{ $variation->new_price ? Number::format($variation->new_price, 0) : Number::format($variation->getActualPrice(), 0) }} ₽</h4>
@@ -137,13 +137,13 @@
         </a>
     </div>
     @if (count($features) > 0)
-        <div class="grid lg:grid-cols-2 grid-cols-1 gap-4">
+        <div class="grid lg:grid-cols-4 grid-cols-1 gap-4">
             @foreach ($features as $feature)
-                <div class="bg-white shadow rounded-lg flex p-4 h-full items-center">
-                    <div class="min-w-10 min-h-10 w-10 h-10 text-indigo-500 mr-4">
+                <div class="bg-white shadow-md rounded-lg flex p-4 h-full items-center flex flex-col gap-2 items-center">
+                    <div class="min-w-10 min-h-10 w-10 h-10 text-indigo-500 flex items-center justify-center">
                         <img src="{{ Storage::disk(config("filesystems.default"))->url($feature->icon) }}" alt="">
                     </div>
-                    <span class="title-font font-medium">{{ $feature->text }}</span>
+                    <span class="title-font text-sm font-medium text-slate-600 text-center">{{ $feature->text }}</span>
                 </div>
             @endforeach
         </div>

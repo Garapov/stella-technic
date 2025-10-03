@@ -54,7 +54,7 @@ class FeatureResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make("icon")
                     ->label('Иконка'),
-                Tables\Columns\TextColumn::make('text')
+                Tables\Columns\TextInputColumn::make('text')
                     ->label('Текст')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
