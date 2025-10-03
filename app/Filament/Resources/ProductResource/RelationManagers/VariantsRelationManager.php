@@ -421,9 +421,7 @@ class VariantsRelationManager extends RelationManager
                 //         return $state;
                 //     })
             ])
-            ->filters([
-                //
-            ])
+            ->filters([Tables\Filters\TrashedFilter::make()])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->modalWidth("7xl"),
@@ -465,6 +463,8 @@ class VariantsRelationManager extends RelationManager
                     ->after(function ($record) {
                         redirect(request()->header("Referer"));
                     }),
+                    Tables\Actions\ForceDeleteAction::make()->iconButton(),
+                    Tables\Actions\RestoreAction::make()->iconButton(),
                 Tables\Actions\Action::make("Перенести")
                     ->icon("carbon-port-definition")
                     ->iconButton()
@@ -558,10 +558,20 @@ class VariantsRelationManager extends RelationManager
                     ->openUrlInNewTab()
             ])
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
+                    // ...
+                ]),
             ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]);
     }
 
     public function dispatchEventOnDelete() {}

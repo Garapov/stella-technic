@@ -15,6 +15,8 @@ class EditProductVariant extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
+            Actions\ForceDeleteAction::make(),
+            Actions\RestoreAction::make(),
             Actions\Action::make('open')
                 ->label('Открыть на сайте')
                 ->icon('ionicon-open-outline')

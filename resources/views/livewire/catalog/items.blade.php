@@ -66,23 +66,19 @@
                         @livewire('catalog.filter', [
                             'products' => $all_products,
                         ])
-
                     </div>
                 @endif
                 <div class="flex flex-col gap-4 @if ($display_filter) md:col-span-7 @else md:col-span-full @endif col-span-full">
                     @if ($category && $category->title)
                         <div class="items-start md:items-end justify-between flex flex-col md:flex-row gap-4">
                             <div>
-
                                 <h1 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl flex items-center">
-
-                                        <span>{{ $category->title }}</span> <span class="bg-blue-100 text-blue-800 text-xs font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300 whitespace-nowrap">
-                                            @php
-                                                $count = $all_products->count();
-                                            @endphp
-                                            {{ $count . ' ' . ($count % 10 === 1 && $count % 100 !== 11 ? 'товар' : ($count % 10 >= 2 && $count % 10 <= 4 && ($count % 100 < 10 || $count % 100 >= 20) ? 'товара' : 'товаров')) }}
-                                        </span>
-
+                                    <span>{{ $category->title }}</span> <span class="bg-blue-100 text-blue-800 text-xs font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300 whitespace-nowrap">
+                                        @php
+                                            $count = $all_products->count();
+                                        @endphp
+                                        {{ $count . ' ' . ($count % 10 === 1 && $count % 100 !== 11 ? 'товар' : ($count % 10 >= 2 && $count % 10 <= 4 && ($count % 100 < 10 || $count % 100 >= 20) ? 'товара' : 'товаров')) }}
+                                    </span>
                                 </h1>
                             </div>
                             <div class="flex items-center space-x-4">
@@ -247,7 +243,7 @@
                                                     <tbody>
                                                         @foreach($batch as $item)
                                                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                                <th scope="row" class="px-2 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                                     <a href="{{ route('client.catalog', $item->urlChain()) }}" class="flex items-center gap-2 text-blue-500" wire:navigate>
                                                                         {{ $item->sku }}
                                                                         <x-carbon-link class="w-4 h-4" />
@@ -255,7 +251,7 @@
                                                                 </th>
                                                                 @foreach ($uniqueParamNames as $paramName)
 
-                                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                                    <td class="px-2 py-2 whitespace-nowrap">
                                                                         @php
                                                                             $paramValue = '';
 
@@ -286,7 +282,7 @@
                                                                         {{ $paramValue }}
                                                                     </td>
                                                                 @endforeach
-                                                                <td class="px-6 py-4">
+                                                                <td class="px-2 py-2">
                                                                     <div class="flex flex-col gap-1 relative whitespace-nowrap">
 
                                                                         <div class="flex items-center gap-4">
@@ -327,7 +323,7 @@
                                                                         @endif
                                                                     </div>
                                                                 </td>
-                                                                <td class="px-6 py-4">
+                                                                <td class="px-2 py-2">
                                                                     <div class="flex items-center justify-end gap-4" x-data="{
                                                                         count: 1,
                                                                         init() {

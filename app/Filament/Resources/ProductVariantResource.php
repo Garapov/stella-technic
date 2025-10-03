@@ -7,7 +7,8 @@ use App\Models\Product;
 use App\Models\ProductParamItem;
 use App\Models\ProductVariant;
 use Filament\Forms;
-use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder as ComponentsBuilder;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs;
@@ -20,6 +21,7 @@ use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProductVariantResource extends Resource
 {
@@ -216,12 +218,12 @@ class ProductVariantResource extends Resource
                             ->preload(),
                     ]),
                     Tab::make("SEO")->schema([
-                        Builder::make("seo")
+                        ComponentsBuilder::make("seo")
                             ->label("SEO данные")
                             ->addActionLabel("Добавить данные")
                             ->blockNumbers(false)
                             ->blocks([
-                                Builder\Block::make("title")
+                                ComponentsBuilder\Block::make("title")
                                     ->label("Заголовок")
                                     ->schema([
                                         TextInput::make("title")
@@ -229,7 +231,7 @@ class ProductVariantResource extends Resource
                                             ->required(),
                                     ])
                                     ->maxItems(1),
-                                Builder\Block::make("description")
+                                ComponentsBuilder\Block::make("description")
                                     ->label("Описание")
                                     ->schema([
                                         Forms\Components\Textarea::make(
@@ -239,7 +241,7 @@ class ProductVariantResource extends Resource
                                             ->required(),
                                     ])
                                     ->maxItems(1),
-                                Builder\Block::make("image")
+                                ComponentsBuilder\Block::make("image")
                                     ->label("Картинка")
                                     ->schema([
                                         Forms\Components\FileUpload::make(
@@ -413,9 +415,7 @@ class ProductVariantResource extends Resource
                 //         return $state;
                 //     })
             ])
-            ->filters([
-                //
-            ])
+            ->filters([Tables\Filters\TrashedFilter::make()])
             ->headerActions([
                 // Tables\Actions\CreateAction::make(),
             ])
@@ -428,6 +428,8 @@ class ProductVariantResource extends Resource
                     ->after(function ($record) {
                         redirect(request()->header("Referer"));
                     }),
+                Tables\Actions\ForceDeleteAction::make()->iconButton(),
+                Tables\Actions\RestoreAction::make()->iconButton(),
                 Tables\Actions\Action::make("Перенести")
                     ->icon("carbon-port-definition")
                     ->iconButton()
@@ -516,9 +518,12 @@ class ProductVariantResource extends Resource
                     }),
             ])
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
+                    // ...
+                ]),
             ]);
     }
 
@@ -540,6 +545,13 @@ class ProductVariantResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]);
     }
 
     public static function getPages(): array

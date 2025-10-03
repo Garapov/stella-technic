@@ -385,6 +385,7 @@ class ProductResource extends Resource
             RelationManagers\VariantsRelationManager::class
         ];
     }
+    
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->withoutGlobalScopes([
