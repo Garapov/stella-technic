@@ -219,7 +219,7 @@
                                                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                                         <tr>
-                                                            <th scope="col" class="px-6 py-3">
+                                                            <th scope="col" class="p-2">
                                                                 Артикул
                                                             </th>
 
@@ -227,18 +227,18 @@
 
                                                             <!-- Заголовки параметров -->
                                                             @foreach ($uniqueParamNames as $paramName)
-                                                                <th scope="col" class="px-6 py-3">
+                                                                <th scope="col" class="p-2 text-center">
                                                                     @if ($paramName['icon'])
-                                                                        <img src="{{ Storage::disk(config('filesystems.default'))->url($paramName['icon']) }}" class="min-w-10 max-w-10">
+                                                                        <img src="{{ Storage::disk(config('filesystems.default'))->url($paramName['icon']) }}" class="min-w-10 max-w-10 mx-auto">
                                                                     @else
                                                                         {{ $paramName['name'] }}
                                                                     @endif
                                                                 </th>
                                                             @endforeach
-                                                            <th scope="col" class="px-6 py-3">
+                                                            <th scope="col" class="p-2 text-center">
                                                                 Цена
                                                             </th>
-                                                            <th scope="col" class="px-6 py-3"></th>
+                                                            <th scope="col" class="p-2"></th>
                                                     </thead>
                                                     <tbody>
                                                         @foreach($batch as $item)
@@ -251,7 +251,7 @@
                                                                 </th>
                                                                 @foreach ($uniqueParamNames as $paramName)
 
-                                                                    <td class="px-2 py-2 whitespace-nowrap">
+                                                                    <td class="px-2 py-2 whitespace-nowrap text-center">
                                                                         @php
                                                                             $paramValue = '';
 
@@ -283,9 +283,9 @@
                                                                     </td>
                                                                 @endforeach
                                                                 <td class="px-2 py-2">
-                                                                    <div class="flex flex-col gap-1 relative whitespace-nowrap">
+                                                                    <div class="flex flex-col gap-1 relative whitespace-nowrap text-center">
 
-                                                                        <div class="flex items-center gap-4">
+                                                                        <div class="flex items-center justify-center gap-4">
                                                                             <span class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white">
                                                                                 {{ $item->new_price ?? $item->getActualPrice() }} ₽
                                                                             </span>
@@ -336,33 +336,55 @@
                                                                             if (this.count < 1) this.count = 1;
                                                                         }
                                                                     }">
-                                                                        <div class="relative flex items-center max-w-[8rem]">
-                                                                            <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-2 h-9 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"  @click="count--">
-                                                                                <svg class="w-2 h-2 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                                                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
-                                                                                </svg>
-                                                                            </button>
-                                                                            <input type="number" class="[-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none bg-gray-50 border-x-0 border-gray-300 h-9 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 min-w-10" placeholder="999" x-model="count" />
-                                                                            <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-2 h-9 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" @click="count++">
-                                                                                <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                                                                                </svg>
-                                                                            </button>
-                                                                        </div>
+                                                                        @if ($item->count > 0 && !$item->is_pre_order)
+                                                                            <div class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-green-900 dark:text-green-300">В наличии</div>
+                                                                        @endif
+                                                                        @if ($item->count < 1)
+                                                                            <div class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-gray-300">Нет в наличии</div>
+                                                                        @endif
+                                                                        @if ($item->count > 0 && $item->is_pre_order)
+                                                                            <div class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-yellow-900 dark:text-yellow-300">Предзаказ</div>
+                                                                        @endif
+                                                                        
                                                                         <button type="button"
-                                                                        class="inline-flex items-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800"
-                                                                        @click="$store.cart.addVariationToCart({
-                                                                            count: count,
-                                                                            variationId: {{ $item->id }},
-                                                                            name: '{{ $item->name }}'
-                                                                        });">
-                                                                            <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                                                                width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                                                    stroke-width="2"
-                                                                                    d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6" />
+                                                                            @click.prevent="$store.favorites.toggleProduct({{ $item->id }})"
+                                                                            class="rounded-lg p-2 text-gray-500 bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                                                            <span class="sr-only">Добавить в избранное</span>
+                                                                            <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                                                :class="{ 'text-red-500 fill-red-500': $store.favorites.list[{{ $item->id }}] }">
+                                                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                                                                             </svg>
                                                                         </button>
+                                                                        @if ($item->count > 0)
+                                                                            <div class="relative flex items-center max-w-[8rem]">
+                                                                                <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-2 h-9 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"  @click="count--">
+                                                                                    <svg class="w-2 h-2 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                                                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                                                                                    </svg>
+                                                                                </button>
+                                                                                <input type="number" class="[-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none bg-gray-50 border-x-0 border-gray-300 h-9 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 min-w-10" placeholder="999" x-model="count" />
+                                                                                <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-2 h-9 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" @click="count++">
+                                                                                    <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                                                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                                                                                    </svg>
+                                                                                </button>
+                                                                            </div>
+                                                                            <button type="button"
+                                                                            class="inline-flex items-center rounded-lg bg-green-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                                                                            @click="$store.cart.addVariationToCart({
+                                                                                count: count,
+                                                                                variationId: {{ $item->id }},
+                                                                                name: '{{ $item->name }}'
+                                                                            });">
+                                                                                <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                                                    width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                                                        stroke-width="2"
+                                                                                        d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6" />
+                                                                                </svg>
+                                                                            </button>
+                                                                        @endif
                                                                     </div>
                                                                 </td>
                                                             </tr>
