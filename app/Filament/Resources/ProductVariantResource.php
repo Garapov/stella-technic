@@ -171,7 +171,26 @@ class ProductVariantResource extends Resource
                         ->columnSpan("full"),
                     Tab::make("Параметры")
                         ->schema([
+                            Forms\Components\Select::make("paramItems")
+                                ->label('Ключевые')
+                                ->multiple()
+                                ->relationship("paramItems", "title")
+                                ->preload()
+                                ->options(function () {
+                                    return ProductParamItem::query()
+                                        ->with("productParam")
+                                        ->get()
+                                        ->mapWithKeys(function ($item) {
+                                            $paramName = $item->productParam
+                                                ? $item->productParam->name
+                                                : "Unknown";
+                                            $name = "$paramName: $item->title ($item->value)";
+                                            return [$item->id => $name];
+                                        });
+                                })
+                                ->columnSpanFull(),
                             Forms\Components\Select::make("parametrs")
+                                ->label('Второстепенные')
                                 ->multiple()
                                 ->relationship("parametrs", "title")
                                 ->preload()
