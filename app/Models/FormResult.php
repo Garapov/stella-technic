@@ -32,7 +32,6 @@ class FormResult extends Model
             $recipients = $model->recipients == "" ? [] : explode(',', $model->recipients);
             Mail::to(env('MAIL_ADMIN_ADDRESS', 'ruslangarapov@yandex.ru'))
             ->cc($recipients)->queue((new FormSened($model))->onQueue('mails'));
-
         });
     }
 }

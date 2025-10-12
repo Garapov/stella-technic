@@ -292,7 +292,7 @@ class Checkout extends Component
             "shipping_address" => $this->delivery_address,
             "delivery" => Delivery::find($this->selected_delivery),
             "payment" => PaymentMethod::find($this->selected_payment_method),
-            "file" => $this->file ? $this->file->store(path: "orders") : null,
+            "file" => $this->file ? $this->file->store("orders", 'public') : null,
             "message" => $this->comment,
             "status" => "pending",
         ]);

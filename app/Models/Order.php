@@ -2,11 +2,16 @@
 
 namespace App\Models;
 
+use App\Mail\AdminsOrderNotification;
+use App\Mail\FormSened;
+use App\Notifications\OrderCreatedNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
+
+use Illuminate\Support\Facades\Mail;
 
 class Order extends Model
 {
@@ -83,6 +88,8 @@ class Order extends Model
                 ->success()
                 ->send()
                 ->sendToDatabase($recipient);
+
+            Mail::to(env('MAIL_ADMIN_ADDRESS', 'ruslangarapov@yandex.ru'))->queue((new AdminsOrderNotification($order))->onQueue('mails'));
         });
     }
 

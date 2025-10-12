@@ -37,7 +37,7 @@ class OrderCreatedNotification extends Notification
             $message->line($item['name'] . ' - ' . $item['quantity'] . ' шт. x ' . number_format($item['price'], 2) . ' ₽ = ' . number_format($item['quantity'] * $item['price'], 2) . ' ₽');
         }
 
-        $message->line('Общая сумма заказа: ' . number_format($this->order->total, 2) . ' ₽')
+        $message->line('Общая сумма заказа: ' . number_format($this->order->total_price, 2) . ' ₽')
             ->action('Посмотреть заказ', route('orders.index'))
             ->line('Если у вас есть вопросы, пожалуйста, свяжитесь с нами.');
 
