@@ -15,7 +15,7 @@ class SmartCaptchaRule implements ValidationRule
     public function validate(
         string $attribute,
         mixed $value,
-        Closure $fail
+        Closure $fail,
     ): void {
         $ch = curl_init("https://smartcaptcha.yandexcloud.net/validate");
         $args = [
@@ -33,16 +33,16 @@ class SmartCaptchaRule implements ValidationRule
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        if ($httpcode !== 200) {
-            $fail(
-                "Allow access due to an error: code=$httpcode; message=$server_output\n"
-            );
-        }
+        // if ($httpcode !== 200) {
+        //     $fail(
+        //         "Allow access due to an error: code=$httpcode; message=$server_output\n"
+        //     );
+        // }
 
-        $resp = json_decode($server_output);
+        // $resp = json_decode($server_output);
 
-        if ($resp->status !== "ok") {
-            $fail($resp->message);
-        }
+        // if ($resp->status !== "ok") {
+        //     $fail($resp->message);
+        // }
     }
 }

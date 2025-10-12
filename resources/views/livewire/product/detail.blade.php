@@ -67,7 +67,7 @@
 }">
 
     @if ($variation->seo)
-        
+
         @forelse($variation->seo as $seo_tag)
             @foreach($seo_tag['data'] as $key => $tag)
 
@@ -96,7 +96,7 @@
             @seo(['image' => Storage::disk(config('filesystems.default'))->url($variation->gallery[0])])
         @endif
     @endif
-    
+
     <h1 class="text-lg sm:text-3xl font-semibold text-slate-700 dark:text-white mb-4">{{ $variation->h1 ?? $variation->name }} {{ $variation->sku }}</h1>
 
     <div class="flex items-center gap-4 mb-4">
@@ -105,14 +105,14 @@
         </div>
         <div class="text-slate-500">|</div>
         @if ($variation->product->brand)
-            
+
             <div class="flex items-center gap-2">
                 Бренд: <div class="flex items-center gap-1">
                     <img src="{{ Storage::disk(config('filesystems.default'))->url($variation->product->brand->image) }}" alt="{{ $variation->product->brand->name }}" class="h-6" />
                     <span class="text-slate-500 font-semibold">{{ $variation->product->brand->name }}</span>
                 </div>
             </div>
-            
+
         @endif
     </div>
 
@@ -144,7 +144,7 @@
                                                         <li class="splide__slide"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
                                                     @endforeach
                                                 @endif
-                                                
+
                                                 @if ($variation->is_constructable && $variation->rows)
                                                     <li class="splide__slide">
                                                         <img src="{{ asset('assets/3dicon.png') }}" alt="3dicon" class="w-full  aspect-[1/1] object-cover"  />
@@ -174,7 +174,7 @@
                                                     <li class="splide__slide" data-fancybox="product_detail_page_gallery" data-src="{{ Storage::disk(config('filesystems.default'))->url($image) }}"> <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" alt="Product1" class="w-full  aspect-[1/1] object-cover"  /></li>
                                                 @endforeach
                                             @endif
-                                            
+
                                             @if ($variation->is_constructable && $variation->rows)
                                                 <li class="splide__slide">
                                                     <iframe name="constructor" src="{{ route('client.constructor_embeded', ['variation_id' => $variation->id]) }}" frameborder="no" border="0" scrolling="no" width="100%" height="100%"></iframe>
@@ -196,7 +196,7 @@
                 </div>
                 <div class="md:col-span-3 col-span-full md:hidden block">
                     <div class="flex flex-col items-start gap-4">
-                        <x-product.params :variation="$variation" :groupedParams="$groupedParams" />                        
+                        <x-product.params :variation="$variation" :groupedParams="$groupedParams" />
                     </div>
                 </div>
             </div>
@@ -220,7 +220,7 @@
                 </ul>
                 <div class="text-medium rounded-b-lg bg-white shadow w-full p-4" x-show="activeTab == 0">
                     <dl class="grid grid-cols-1 gap-x-4 md:grid-cols-2 text-slate-700">
-                        @foreach($variation->paramItems->merge($variation->parametrs)->sortBy('sort') as $paramItem)
+                        @foreach($variation->paramItems->merge($variation->parametrs)->sortBy('productParam.sort') as $paramItem)
                             @if ($paramItem->productParam->is_hidden)
                                 @continue
                             @endif
@@ -261,16 +261,16 @@
                         </ul>
                     </div>
                 @endif
-                
-                
+
+
             </div>
 
         </div>
 
         <div class="md:col-span-2 col-span-full hidden md:block">
             <div class="md:sticky top-20">
-                <x-product.params :variation="$variation" :groupedParams="$groupedParams" /> 
-                
+                <x-product.params :variation="$variation" :groupedParams="$groupedParams" />
+
 
                 @if (count($deliveries) > 0)
                     {{-- <div class="bg-slate-50 p-4 rounded-lg flex flex-col gap-4 mt-4">
@@ -309,7 +309,7 @@
 
 
                                 </div>
-                            </div> 
+                            </div>
 
                             <div class="flex flex-col gap-4">
 
@@ -318,7 +318,7 @@
                     </div>--}}
 
 
-                    
+
                     <div class="border border-b-0 border-gray-200 bg-slate-50 rounded-lg flex flex-col mt-4 overflow-hidden" x-data="{
                         openedTab: 0,
                         openTab(index) {
@@ -361,7 +361,7 @@
     </div>
 
 
-    
+
     @php
         $paramItemIds = $variation->paramItems->merge($variation->parametrs)->filter(fn($param) => $param->productParam->is_for_crossail)->pluck('id');
         $crossSellsVariants = \App\Models\ProductVariant::whereHas('paramItems', function ($query) use ($paramItemIds) {

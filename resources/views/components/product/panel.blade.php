@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-4">
-    <div class="flex flex-col gap-4 border border-2 border-green-600 shadow-lg shadow-green-900/20 bg-white p-4 rounded-xl">
+    <div class="flex flex-col gap-4 shadow-lg shadow-gray-900/20 bg-white p-4 rounded-xl">
         <div class="flex items-center flex-wrap justify-between gap-4">
             <div class="flex items-center gap-4">
                 <h4 class="text-slate-900 text-4xl font-semibold">{{ $variation->new_price ? Number::format($variation->new_price, 0) : Number::format($variation->getActualPrice(), 0) }} ₽</h4>
@@ -79,18 +79,18 @@
                         <button type="button" class="size-5 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-md border border-blue-500 bg-white text-blue-500 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" tabindex="-1" aria-label="Decrease Quantity" @click="decreaseQuantity">
                             <x-heroicon-o-minus class="shrink-0 size-3.5" />
                         </button>
-                        
+
                     </div>
                 </div>
             </div>
-            
+
             <button type="button" class="text-white flex-1 bg-green-600 hover:bg-green-400 focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg px-4 py-2 text-center flex items-center justify-center" @click="addVariationToCart()">
                 <x-fas-cart-arrow-down class="w-6 h-6 mr-2" />
                 <span>В КОРЗИНУ</span>
             </button>
 
             <button class="rounded-lg p-2 text-blue-500 bg-white border-2 border-blue-500 flex-1 font-bold" @click="$store.application.forms.buy_one_click = true">Купить в один клик</button>
-            
+
             @if ($variation->is_constructable)
                 <a href="{{ route('client.constructor', ['variation_id' => $variation->id]) }}" class="w-full text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Редактировать в конструкторе</a>
             @endif
@@ -103,11 +103,11 @@
     <ul class="grid grid-cols-1 gap-4 md:grid-cols-2">
 
         @php
-            $counter = 0;   
+            $counter = 0;
         @endphp
-        
-        @foreach($variation->paramItems->merge($variation->parametrs)->sortBy('sort') as $key => $paramItem)
-            
+
+        @foreach($variation->paramItems->merge($variation->parametrs)->sortBy('productParam.sort') as $key => $paramItem)
+
             <li class="flex items-center justify-between text-xs gap-2 @if ($counter > 5 || $paramItem->productParam->is_hidden) hidden @endif">
                 <strong class="font-medium">{{ $paramItem->productParam->name }}</strong>
                 <span class="grow border-b border-slate-300 border-dashed"></span>
@@ -115,11 +115,11 @@
             </li>
 
             @php
-                $counter++;   
+                $counter++;
             @endphp
-            
+
         @endforeach
-        
+
         {{-- @foreach($variation->parametrs as $parametr)
             <li class="flex items-center justify-between text-sm gap-2">
                 <strong class="font-medium text-slate-500">{{ $parametr->productParam->name }}</strong>

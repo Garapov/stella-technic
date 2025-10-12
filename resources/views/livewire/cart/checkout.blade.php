@@ -346,11 +346,11 @@
                                 <label for="delivery_address{{ $delivery->id}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Адрес доставки</label>
                                 <textarea id="delivery_address{{ $delivery->id}}" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4" placeholder="Введите адрес доставки" wire:model.live="delivery_address"></textarea>
                                 <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                                @foreach ($delivery->images as $image)
-                                    <div class="rounded-lg overflow-hidden">
-                                    <img src="{{ asset('storage/' . $image) }}" class="w-full h-full object-cover">
-                                    </div>
-                                @endforeach
+                                    @foreach ($delivery->images as $image)
+                                        <div class="rounded-lg overflow-hidden">
+                                            <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" class="w-full h-full object-cover">
+                                        </div>
+                                    @endforeach
                                 </div>
                             @endif
                             @break
