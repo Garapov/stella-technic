@@ -47,6 +47,10 @@ class ProductParamResource extends Resource
                     "color" => "Цвет",
                     "switch" => "Да/нет",
                 ]),
+            Forms\Components\TagsInput::make('tags')
+                ->label('Теги')
+                ->placeholder('Введите тег и нажмите Enter')
+                ->helperText('Введите несколько тегов, разделяя их запятыми. Теги превратятся в фильтры на странице списка параметров.'),
             Forms\Components\Toggle::make("allow_filtering")
                 ->label("Разрешить фильтрацию")
                 ->inline(false)
@@ -93,7 +97,7 @@ class ProductParamResource extends Resource
                                 "switch" => "Да/нет",
                             }
                             : "",
-                    ),
+                    )->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextInputColumn::make("sort")->label(
                     "Сортировка",
                 ),
@@ -108,7 +112,7 @@ class ProductParamResource extends Resource
                 ),
                 Tables\Columns\ToggleColumn::make("fixed")->label(
                     "Зафиксирован",
-                ),
+                )->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make("created_at")
                     ->label("Дата создания")
                     ->dateTime()

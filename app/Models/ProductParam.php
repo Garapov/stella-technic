@@ -21,7 +21,12 @@ class ProductParam extends Model
         'icon',
         'is_hidden',
         'sort',
-        'is_for_crossail'
+        'is_for_crossail',
+        'tags',
+    ];
+
+    public $casts = [
+        'tags' => 'array',
     ];
 
     public function params(): HasMany
