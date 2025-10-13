@@ -10,22 +10,22 @@
 **Имя:** {{ $order->user['name'] }} <br>
 **Email:** {{ $order->user['email'] }} <br>
 **Телефон:** {{ $order->user['phone'] }} <br>
-@if ($order->user['inn'])
+@if (isset($order->user['inn']))
 **ИНН:** {{ $order->user['inn'] }} <br>
 @endif
-@if ($order->user['kpp'])
+@if (isset($order->user['kpp']))
 **КПП:** {{ $order->user['kpp'] }} <br>
 @endif
-@if ($order->user['bik'])
+@if (isset($order->user['bik']))
 **БИК:** {{ $order->user['bik'] }} <br>
 @endif
-@if ($order->user['correspondent_account'])
+@if (isset($order->user['correspondent_account']))
 **Кор. счет:** {{ $order->user['correspondent_account'] }} <br>
 @endif
-@if ($order->user['bank_account'])
+@if (isset($order->user['bank_account']))
 **Банк. счет:** {{ $order->user['bank_account'] }} <br>
 @endif
-@if ($order->user['yur_address'])
+@if (isset($order->user['yur_address']))
 **Юр. адрес:** {{ $order->user['yur_address'] }} <br>
 @endif
 @endif

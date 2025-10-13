@@ -65,7 +65,7 @@ class Detail extends Component
 
         // Получаем текущие параметры
         
-        $currentParams = $this->variation->paramItems
+        $currentParams = $this->variation->paramItems->sortBy('productParam.sort')
             ->unique(function ($item) {
                 
                 return $item->productParam->name . "_" . $item->title;
@@ -78,6 +78,7 @@ class Detail extends Component
                         "title" => $param->title,
                         "value" => $param->value,
                         "is_fixed" => $param->productParam->fixed,
+                        "sort" => $param->sort
                     ],
                 ];
             })
@@ -88,7 +89,7 @@ class Detail extends Component
 
         foreach ($variants as $variant) {
             // Собираем уникальные параметры для варианта
-            $variantParams = $variant->paramItems
+            $variantParams = $variant->paramItems->sortBy('productParam.sort')
                 ->unique(function ($item) {
                     return $item->productParam->name . "_" . $item->title;
                 })
@@ -99,6 +100,7 @@ class Detail extends Component
                             "title" => $param->title,
                             "value" => $param->value,
                             "is_fixed" => $param->productParam->fixed,
+                            "sort" => $param->sort
                         ],
                     ];
                 })
@@ -134,6 +136,7 @@ class Detail extends Component
                                 $currentParams[$paramName]["title"] ===
                                     $param["title"],
                             "is_available" => false,
+                            "sort" => $param['sort']
                         ];
                     }
                 }

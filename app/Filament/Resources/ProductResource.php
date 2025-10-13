@@ -181,7 +181,7 @@ class ProductResource extends Resource
                                 ->hint('В этих категориях товар будет отображаться в листинге, но ссылка будет всегда на основную категорию.')
                                 ->hintColor('warning')
                                 ->hintIcon('heroicon-c-shield-exclamation')
-                                ->helperText(fn($state, ?Model $record) => array_diff($record->categories->pluck('id')->toArray(), $state) ? new HtmlString('<strong class="text-red-500">Зафиксирована разница между базой данных и содержимым поля</strong>') : ''),
+                                ->helperText(fn($state, ?Model $record) =>  $record ? (array_diff($record->categories->pluck('id')->toArray(), $state) ? new HtmlString('<strong class="text-red-500">Зафиксирована разница между базой данных и содержимым поля</strong>') : '') : false),
                         ])
                         ->columnSpan("full"),
                     // Tab::make("Параметры")
