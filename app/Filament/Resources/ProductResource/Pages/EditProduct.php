@@ -9,6 +9,7 @@ use App\Filament\Exports\ProductVariantExporter;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use GuzzleHttp\Psr7\Request;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
 
 class EditProduct extends EditRecord
@@ -23,6 +24,7 @@ class EditProduct extends EditRecord
             Actions\RestoreAction::make(),
             ExportAction::make()
                 ->exporter(ProductVariantExporter::class)
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('product_id', $this->record->id))
         ];
     }
 

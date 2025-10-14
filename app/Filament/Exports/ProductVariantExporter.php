@@ -155,7 +155,7 @@ class ProductVariantExporter extends Exporter
 
     public static function getCompletedNotificationBody(Export $export): string
     {
-        $body = 'Экспорт завершен. Экспортированно ' . number_format($export->successful_rows) .' строк.';
+        $body = 'Экспорт вариаций завершен. Экспортированно ' . number_format($export->successful_rows) .' строк.';
 
         if ($failedRowsCount = $export->getFailedRowsCount()) {
             $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' ошибок.';
