@@ -58,7 +58,7 @@ export default ({
         selectedColor: selectedColor,
         embeded: embeded,
         addedRows: addedRows,
-        colors: ["red", "green", "blue", "#ffeb00", "gray"],
+        colors: ["red", "green", "blue", "yellow", "gray"],
         desks: desks,
         boxes: boxes,
         debugMode: debugMode,
@@ -239,10 +239,13 @@ export default ({
             this.addedRows.forEach((box) => {
                 price += this.boxes["box_" + box.size].price * ROW_CONFIGS[box.size][this.selectedWidth];
             });
+            console.log('this.addedRows', this.addedRows);
             return new Intl.NumberFormat("ru-RU", {
                 style: "currency",
                 currency: "RUB",
             }).format(price);
+
+            
         },
         openPanel() {
             this.panelOpened = true;
@@ -252,45 +255,107 @@ export default ({
         },
         addToCart() {
 
+
+            console.log('this.addedRows', this.addedRows);
+
             let constructor_product = {
                 id: this.selectedDesk.id,
                 name: this.selectedDesk.name,
                 boxes: {
                     small: {
-                        id: this.boxes.box_small.id,
-                        count: 0
+                        red: {
+                            id: this.boxes.box_small.id,
+                            count: 0
+                        },
+                        green: {
+                            id: this.boxes.box_small.id,
+                            count: 0
+                        },
+                        blue: {
+                            id: this.boxes.box_small.id,
+                            count: 0
+                        },
+                        yellow: {
+                            id: this.boxes.box_small.id,
+                            count: 0
+                        },
+                        gray: {
+                            id: this.boxes.box_small.id,
+                            count: 0
+                        },
                     },
                     medium:  {
-                        id: this.boxes.box_medium.id,
-                        count: 0
+                        red: {
+                            id: this.boxes.box_medium.id,
+                            count: 0
+                        },
+                        green: {
+                            id: this.boxes.box_medium.id,
+                            count: 0
+                        },
+                        blue: {
+                            id: this.boxes.box_medium.id,
+                            count: 0
+                        },
+                        yellow: {
+                            id: this.boxes.box_medium.id,
+                            count: 0
+                        },
+                        gray: {
+                            id: this.boxes.box_medium.id,
+                            count: 0
+                        },
                     },
                     large:  {
-                        id: this.boxes.box_large.id,
-                        count: 0
+                        red: {
+                            id: this.boxes.box_large.id,
+                            count: 0
+                        },
+                        green: {
+                            id: this.boxes.box_large.id,
+                            count: 0
+                        },
+                        blue: {
+                            id: this.boxes.box_large.id,
+                            count: 0
+                        },
+                        yellow: {
+                            id: this.boxes.box_large.id,
+                            count: 0
+                        },
+                        gray: {
+                            id: this.boxes.box_large.id,
+                            count: 0
+                        },
                     },
                 }
             }
             this.addedRows.forEach((row) => {
-                switch (row.size) {
-                    case 'small':
-                        constructor_product.boxes.small.count += ROW_CONFIGS[row.size][this.selectedWidth];
-                        break;
-                    case 'medium':
-                        constructor_product.boxes.medium.count += ROW_CONFIGS[row.size][this.selectedWidth];
-                        break;
-                    case 'large':
-                        constructor_product.boxes.large.count += ROW_CONFIGS[row.size][this.selectedWidth];
-                        break;
+                constructor_product.boxes[row.size][row.color].count += ROW_CONFIGS[row.size][this.selectedWidth];
+                console.log('constructor_product.boxes[row.size][row.color]', constructor_product.boxes[row.size][row.color], row.size, row.color);
+
+                // switch (row.size) {
+                //     case 'small':
+                //         constructor_product.boxes.small.count += ROW_CONFIGS[row.size][this.selectedWidth];
+                //         break;
+                //     case 'medium':
+                //         constructor_product.boxes.medium.count += ROW_CONFIGS[row.size][this.selectedWidth];
+                //         break;
+                //     case 'large':
+                //         constructor_product.boxes.large.count += ROW_CONFIGS[row.size][this.selectedWidth];
+                //         break;
                 
-                    default:
-                        break;
-                }
+                //     default:
+                //         break;
+                // }
                 // Alpine.store("cart").addVariationToCart({
                 //     count: ROW_CONFIGS[box.size][this.selectedWidth],
                 //     variationId: this.boxes["box_" + box.size].id,
                 //     name: `${this.boxes["box_" + box.size].name}`,
                 // });
             });
+
+            console.log('constructor_product', constructor_product);
 
             Alpine.store("cart").addConstructionToCart(constructor_product).then(res => {
                 this.clearAll();

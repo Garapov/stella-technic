@@ -198,15 +198,15 @@ class Checkout extends Component
             $product = ProductVariant::where("id", $item["id"])->first();
             $small_box = ProductVariant::where(
                 "id",
-                $item["boxes"]["small"]["id"],
+                $item["boxes"]["small"]["red"]["id"],
             )->first();
             $medium_box = ProductVariant::where(
                 "id",
-                $item["boxes"]["medium"]["id"],
+                $item["boxes"]["medium"]["red"]["id"],
             )->first();
             $large_box = ProductVariant::where(
                 "id",
-                $item["boxes"]["large"]["id"],
+                $item["boxes"]["large"]["red"]["id"],
             )->first();
 
             if (!$product || !$small_box || !$medium_box || !$large_box) {
@@ -220,9 +220,9 @@ class Checkout extends Component
 
             $price =
                 $product->price +
-                $small_box->price * $item["boxes"]["small"]["count"] +
-                $medium_box->price * $item["boxes"]["medium"]["count"] +
-                $large_box->price * $item["boxes"]["large"]["count"];
+                $small_box->price * $item["boxes"]["small"]["red"]["count"] +
+                $medium_box->price * $item["boxes"]["medium"]["red"]["count"] +
+                $large_box->price * $item["boxes"]["large"]["red"]["count"];
 
             $item["price"] = $price;
 

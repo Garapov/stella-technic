@@ -108,7 +108,7 @@
 
         @foreach($variation->paramItems->merge($variation->parametrs)->sortBy('productParam.sort') as $key => $paramItem)
 
-            <li class="flex items-center justify-between text-xs gap-2 @if ($counter > 5 || $paramItem->productParam->is_hidden) hidden @endif">
+            <li class="flex items-center justify-between text-xs gap-2 @if ($counter > 7 || $paramItem->productParam->is_hidden) hidden @endif">
                 <strong class="font-medium">{{ $paramItem->productParam->name }}</strong>
                 <span class="grow border-b border-slate-300 border-dashed"></span>
                 <span class="font-bold">{{ $paramItem->title }}</span>

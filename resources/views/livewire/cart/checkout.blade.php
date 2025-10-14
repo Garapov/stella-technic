@@ -1,43 +1,26 @@
 <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16"  x-data="{
   products: [],
+  constructs: [],
   isLoading: true,
   isReloading: false,
   userAuthenticated: @js(auth()->user() ? true : false),
   init() {
     this.loadProducts();
     this.loadConstructs();
+    this.isLoading = false;
+    this.isReloading = false;
   },
   loadProducts() {
     $wire.loadProducts($store.cart.list).then((products) => {
       this.products = products;
-      this.isLoading = false;
-      this.isReloading = false;
+      console.log('this.products',this.products);
     });
   },
   loadConstructs() {
     $wire.loadConstructs($store.cart.constructor).then((constructs) => {
       this.constructs = constructs;
-      this.isLoading = false;
-      this.isReloading = false;
+      console.log('this.constructs',this.constructs);
     });
-  },
-  removeCartItem(id) {
-    this.isReloading = true;
-    $store.cart.removeFromCart(id);
-    this.loadProducts();
-    this.loadConstructs();
-  },
-  removeConstruct(id) {
-    this.isReloading = true;
-    $store.cart.removeConstructFromCart(id);
-    this.loadProducts();
-    this.loadConstructs();
-  },
-  increaseQuantity(id) {
-    $store.cart.increase(id);
-  },
-  decreaseQuantity(id) {
-    $store.cart.decrease(id);
   },
   getTotalPrice() {
     let total = 0;
@@ -83,15 +66,17 @@
         <div class="h-32 bg-gray-200 rounded mb-4"></div>
       </div>
     </div>
-    <template x-if="!isLoading && !products.length">
+    <template x-if="!isLoading && (!products.length || !constructs.length)">
         <div class="mt-6 text-center">
+            <div x-text="products.length"></div>
+            <div x-text="constructs.length"></div>
             <p class="text-lg text-gray-600">Ваша корзина пуста</p>
             <a href="{{ route('client.catalog.all') }}" class="mt-4 inline-block px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-500">
                 Перейти в каталог
             </a>
         </div>
     </template>
-    <template x-if="!isLoading && products.length">
+    <template x-if="!isLoading && (products.length || constructs.length)">
         <form @submit.prevent="makeOrder" class="mt-6 sm:mt-8 md:gap-6 lg:flex xl:gap-8" wire:loading.class="opacity-50" wire:loading.attr="disabled" wire:target="placeOrder, type, checkCompany">
             <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-5xl">
             @if ($message)

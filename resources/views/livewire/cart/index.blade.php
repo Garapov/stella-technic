@@ -166,22 +166,94 @@
                                   <div class="flex flex-col gap-4">
                                     <a href="#" class="text-base font-medium text-gray-900 hover:underline dark:text-white" x-text="construct.product.name"></a>
                                     <div class="flex items-center gap-4">
-                                      <template x-if="construct.boxes.small.count > 0">
+                                      <template x-if="construct.boxes.small.red.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.small.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.small.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-medium text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.small.red.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.small.green.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.small.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.small.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-medium text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.small.green.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.small.blue.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.small.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.small.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-medium text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.small.blue.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.small.yellow.count > 0">
                                         <div class="flex flex-col gap-2 relative">
                                           <img class="h-20 w-20" :src="construct.boxes.small.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.small.product.gallery[0]}` : default_image" alt="imac image" />
                                           <span class="bg-blue-200 text-xs font-medium text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.small.count"></span>
                                         </div>
                                       </template>
-                                      <template x-if="construct.boxes.medium.count > 0">
+                                      <template x-if="construct.boxes.small.gray.count > 0">
                                         <div class="flex flex-col gap-2 relative">
-                                          <img class="h-20 w-20" :src="construct.boxes.medium.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.medium.product.gallery[0]}` : default_image" alt="imac image" />
-                                          <span class="bg-blue-200 text-xs font-medium text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.medium.count"></span>
+                                          <img class="h-20 w-20" :src="construct.boxes.small.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.small.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-medium text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.small.gray.count"></span>
                                         </div>
                                       </template>
-                                      <template x-if="construct.boxes.large.count > 0">
+                                      <template x-if="construct.boxes.medium.red.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.medium.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.medium.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-medium text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.medium.red.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.medium.green.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.medium.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.medium.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-medium text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.medium.green.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.medium.blue.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.medium.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.medium.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-medium text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.medium.blue.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.medium.yellow.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.medium.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.medium.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-medium text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.medium.yellow.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.medium.gray.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.medium.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.medium.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-medium text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.medium.gray.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.large.red.count > 0">
                                         <div class="flex flex-col gap-2 relative">
                                           <img class="h-20 w-20" :src="construct.boxes.large.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.large.product.gallery[0]}` : default_image" alt="imac image" />
-                                          <span class="bg-blue-200 text-xs font-large text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.large.count"></span>
+                                          <span class="bg-blue-200 text-xs font-large text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.large.red.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.large.green.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.large.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.large.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-large text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.large.green.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.large.blue.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.large.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.large.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-large text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.large.blue.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.large.yellow.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.large.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.large.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-large text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.large.yellow.count"></span>
+                                        </div>
+                                      </template>
+                                      <template x-if="construct.boxes.large.gray.count > 0">
+                                        <div class="flex flex-col gap-2 relative">
+                                          <img class="h-20 w-20" :src="construct.boxes.large.product.gallery.length ? `https://s3.stella-technic.ru/${construct.boxes.large.product.gallery[0]}` : default_image" alt="imac image" />
+                                          <span class="bg-blue-200 text-xs font-large text-blue-800 text-center p-0.5 leading-none rounded-full px-2 dark:bg-blue-900 dark:text-blue-200 absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0" x-text="construct.boxes.large.gray.count"></span>
                                         </div>
                                       </template>
                                     </div>

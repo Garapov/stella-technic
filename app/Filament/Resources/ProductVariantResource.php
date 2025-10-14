@@ -354,7 +354,7 @@ class ProductVariantResource extends Resource
                                             "red" => "Красный",
                                             "green" => "Зеленый",
                                             "blue" => "Синий",
-                                            "#ffeb00" => "Желтый",
+                                            "yellow" => "Желтый",
                                             "gray" => "Серый",
                                         ])
                                         ->required(),
