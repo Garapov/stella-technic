@@ -427,135 +427,134 @@ class VariantsRelationManager extends RelationManager
                     ->modalWidth("7xl"),
             ])
             ->actions([
-                Tables\Actions\ReplicateAction::make()
-                    ->iconButton()
-                    ->excludeAttributes(['slug', 'uuid'])
-                    ->after(function (Model $replica, ProductVariant $record): void {
-                        Log::info('Replicating record with data: ', $record->toArray());
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ReplicateAction::make()
+                        ->excludeAttributes(['slug', 'uuid'])
+                        ->after(function (Model $replica, ProductVariant $record): void {
+                            Log::info('Replicating record with data: ', $record->toArray());
 
-                        if ($record->paramItems) {
-                            $replica->paramItems()->sync($record->paramItems->pluck('id')->toArray());
-                        }
-                        if ($record->parametrs) {
-                            $replica->parametrs()->sync($record->parametrs->pluck('id')->toArray());
-                        }
-                        if ($record->upSells) {
-                            $replica->upSells()->sync($record->upSells->pluck('id')->toArray());
-                        }
-                        if ($record->crossSells) {
-                            $replica->crossSells()->sync($record->crossSells->pluck('id')->toArray());
-                        }
-
-                        if ($record->crossSells) {
-                            $replica->update([
-                                'name' => $record->name . ' (копия)',
-                                'sku' => $record->sku . '-copy-' . Str::random(5),
-                                'is_hidden' => true,
-                            ]);
-                        }
-                    })
-                    ->successRedirectUrl(fn (Model $replica): string => \App\Filament\Resources\ProductVariantResource::getUrl('edit', ['record' => $replica->slug ])),
-                Tables\Actions\EditAction::make()
-                    ->modalWidth("7xl")
-                    ->iconButton(),
-                Tables\Actions\DeleteAction::make()
-                    ->iconButton()
-                    ->after(function ($record) {
-                        redirect(request()->header("Referer"));
-                    }),
-                    Tables\Actions\ForceDeleteAction::make()->iconButton(),
-                    Tables\Actions\RestoreAction::make()->iconButton(),
-                Tables\Actions\Action::make("Перенести")
-                    ->icon("carbon-port-definition")
-                    ->iconButton()
-                    ->form([
-                        Forms\Components\Select::make("parent_product")
-                            ->label("Новый родитель для вариации")
-                            ->options(
-                                fn() => Product::all()->pluck("name", "id")
-                            )
-                            ->required()
-                            ->searchable(),
-                    ])
-                    ->action(function (array $data, $record) {
-                        // Collect the ids of $model->paramItems
-                        $paramItemIds = $record->paramItems
-                            ->pluck("id")
-                            ->toArray();
-
-                        if (
-                            $parent_product = Product::where(
-                                "id",
-                                $data["parent_product"]
-                            )->first()
-                        ) {
-                            // Ensure links is an array
-                            if (!is_array($parent_product->links)) {
-                                $parent_product->links = [];
+                            if ($record->paramItems) {
+                                $replica->paramItems()->sync($record->paramItems->pluck('id')->toArray());
+                            }
+                            if ($record->parametrs) {
+                                $replica->parametrs()->sync($record->parametrs->pluck('id')->toArray());
+                            }
+                            if ($record->upSells) {
+                                $replica->upSells()->sync($record->upSells->pluck('id')->toArray());
+                            }
+                            if ($record->crossSells) {
+                                $replica->crossSells()->sync($record->crossSells->pluck('id')->toArray());
                             }
 
-                            // Add the new link
-                            $newLink = [
-                                "row" => $paramItemIds,
-                            ];
+                            if ($record->crossSells) {
+                                $replica->update([
+                                    'name' => $record->name . ' (копия)',
+                                    'sku' => $record->sku . '-copy-' . Str::random(5),
+                                    'is_hidden' => true,
+                                ]);
+                            }
+                        })
+                        ->successRedirectUrl(fn (Model $replica): string => \App\Filament\Resources\ProductVariantResource::getUrl('edit', ['record' => $replica->slug ])),
+                    Tables\Actions\EditAction::make()
+                        ->modalWidth("7xl"),
+                    
+                    Tables\Actions\Action::make("Перенести")
+                        ->icon("carbon-port-definition")
+                        ->form([
+                            Forms\Components\Select::make("parent_product")
+                                ->label("Новый родитель для вариации")
+                                ->options(
+                                    fn() => Product::all()->pluck("name", "id")
+                                )
+                                ->required()
+                                ->searchable(),
+                        ])
+                        ->action(function (array $data, $record) {
+                            // Collect the ids of $model->paramItems
+                            $paramItemIds = $record->paramItems
+                                ->pluck("id")
+                                ->toArray();
 
-                            // Check if the link already exists
-                            $linkExists = false;
+                            if (
+                                $parent_product = Product::where(
+                                    "id",
+                                    $data["parent_product"]
+                                )->first()
+                            ) {
+                                // Ensure links is an array
+                                if (!is_array($parent_product->links)) {
+                                    $parent_product->links = [];
+                                }
 
-                            // dd($parent_product->links);
-                            foreach ($parent_product->links as $link) {
-                                if (
-                                    isset($link["row"]) &&
-                                    $link["row"] === $paramItemIds
-                                ) {
-                                    $linkExists = true;
-                                    break;
+                                // Add the new link
+                                $newLink = [
+                                    "row" => $paramItemIds,
+                                ];
+
+                                // Check if the link already exists
+                                $linkExists = false;
+
+                                // dd($parent_product->links);
+                                foreach ($parent_product->links as $link) {
+                                    if (
+                                        isset($link["row"]) &&
+                                        $link["row"] === $paramItemIds
+                                    ) {
+                                        $linkExists = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!$linkExists) {
+                                    $links = $parent_product->links;
+                                    $links[] = $newLink;
+
+                                    $parent_product->links = $links;
+                                    // dd($parent_product->links);
+                                    $parent_product->save();
                                 }
                             }
 
-                            if (!$linkExists) {
-                                $links = $parent_product->links;
-                                $links[] = $newLink;
-
-                                $parent_product->links = $links;
-                                // dd($parent_product->links);
-                                $parent_product->save();
+                            // Find the $record->product->links object with a 'row' array of ids equal to the ids of $record->paramItems
+                            // if ($product = $record->product) {
+                            // Ensure links is an array
+                            if (!is_array($record->product->links)) {
+                                $record->product->links = [];
                             }
-                        }
 
-                        // Find the $record->product->links object with a 'row' array of ids equal to the ids of $record->paramItems
-                        // if ($product = $record->product) {
-                        // Ensure links is an array
-                        if (!is_array($record->product->links)) {
-                            $record->product->links = [];
-                        }
+                            // Remove the 'row' that matches the paramItemIds
+                            $record->product->links = array_filter(
+                                $record->product->links,
+                                function ($link) use ($paramItemIds) {
+                                    return !isset($link["row"]) ||
+                                        array_intersect(
+                                            $paramItemIds,
+                                            $link["row"]
+                                        ) !== $paramItemIds;
+                                }
+                            );
 
-                        // Remove the 'row' that matches the paramItemIds
-                        $record->product->links = array_filter(
-                            $record->product->links,
-                            function ($link) use ($paramItemIds) {
-                                return !isset($link["row"]) ||
-                                    array_intersect(
-                                        $paramItemIds,
-                                        $link["row"]
-                                    ) !== $paramItemIds;
-                            }
-                        );
+                            // Save the remaining data
+                            $record->product->save();
 
-                        // Save the remaining data
-                        $record->product->save();
+                            $record->product_id = $data["parent_product"];
+                            $record->save();
 
-                        $record->product_id = $data["parent_product"];
-                        $record->save();
-
-                        redirect(request()->header("Referer"));
-                        // }
-                    }),
-                Tables\Actions\Action::make('Открыть')
-                    ->icon('ionicon-open-outline')
-                    ->iconButton()
-                    ->url(fn (ProductVariant $record): string => route('client.catalog', $record->urlChain()))
-                    ->openUrlInNewTab()
+                            redirect(request()->header("Referer"));
+                            // }
+                        }),
+                    Tables\Actions\Action::make('Открыть_на_сайте')
+                        ->icon('ionicon-open-outline')
+                        ->url(fn (ProductVariant $record): string => route('client.catalog', $record->urlChain()))
+                        ->openUrlInNewTab(),
+                    Tables\Actions\DeleteAction::make()
+                        ->after(function ($record) {
+                            redirect(request()->header("Referer"));
+                        }),
+                    
+                ]),
+                Tables\Actions\ForceDeleteAction::make()->iconButton(),
+                Tables\Actions\RestoreAction::make()->iconButton(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
