@@ -100,24 +100,28 @@
     <h3 class="text-md font-bold">
         Технические характиристики:
     </h3>
-    <ul class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 
         @php
             $counter = 0;
         @endphp
 
-        @foreach($variation->paramItems->merge($variation->parametrs)->sortBy('productParam.sort') as $key => $paramItem)
-
-            <li class="flex items-center justify-between text-xs gap-2 @if ($counter > 7 || $paramItem->productParam->is_hidden) hidden @endif">
-                <strong class="font-medium">{{ $paramItem->productParam->name }}</strong>
-                <span class="grow border-b border-slate-300 border-dashed"></span>
-                <span class="font-bold">{{ $paramItem->title }}</span>
-            </li>
-
+        @foreach($variation->paramItems->merge($variation->parametrs)->sortBy('productParam.sort')->split(2) as $key => $paramItemGroup)
+            <ul class="flex flex-col gap-4">
+                @foreach ($paramItemGroup as $paramItem)
+                    <li class="flex items-center justify-between text-xs gap-2 @if ($counter > 3 || $paramItem->productParam->is_hidden) hidden @endif">
+                        <strong class="font-medium">{{ $paramItem->productParam->name }}</strong>
+                        <span class="grow border-b border-slate-300 border-dashed"></span>
+                        <span class="font-bold">{{ $paramItem->title }}</span>
+                    </li>
+                    @php
+                        $counter++;
+                    @endphp
+                @endforeach
+            </ul>
             @php
-                $counter++;
+                $counter = 0;
             @endphp
-
         @endforeach
 
         {{-- @foreach($variation->parametrs as $parametr)
@@ -127,7 +131,7 @@
                 <span class="font-medium">{{ $parametr->title }}</span>
             </li>
         @endforeach --}}
-    </ul>
+    </div>
     <div class="flex items-center justify-end">
         <a href="#params" class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline" @click="activeTab = 0">
             Все характиристики

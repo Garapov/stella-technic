@@ -219,18 +219,22 @@
                     @endif
                 </ul>
                 <div class="text-medium rounded-b-lg bg-white shadow w-full p-4" x-show="activeTab == 0">
-                    <dl class="grid grid-cols-1 gap-x-4 md:grid-cols-2 text-slate-700">
-                        @foreach($variation->paramItems->merge($variation->parametrs)->sortBy('productParam.sort') as $paramItem)
-                            @if ($paramItem->productParam->is_hidden)
+                    <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2 text-slate-700">
+                        @foreach($variation->paramItems->merge($variation->parametrs)->where('is_hidden', false)->sortBy('productParam.sort')->split(2) as $paramItemGroup)
+                            {{-- @if ($paramItem->productParam->is_hidden)
                                 @continue
-                            @endif
-                            <li class="flex items-center justify-between text-sm gap-2 px-3 py-2">
-                                <strong class="font-medium">{{ $paramItem->productParam->name }}</strong>
-                                <span class="grow border-b border-gray-200 border-dotted border-b-2"></span>
-                                <span class="font-bold">{{ $paramItem->title }}</span>
-                            </li>
+                            @endif --}}
+                            <dl class="flex flex-col gap-4">
+                                @foreach ($paramItemGroup as $paramItem)
+                                    <li class="flex items-center justify-between text-sm gap-2 px-3 py-2">
+                                        <strong class="font-medium">{{ $paramItem->productParam->name }}</strong>
+                                        <span class="grow border-b border-gray-200 border-dotted border-b-2"></span>
+                                        <span class="font-bold">{{ $paramItem->title }}</span>
+                                    </li>
+                                @endforeach
+                            </dl>
                         @endforeach
-                    </dl>
+                    </div>
                 </div>
                 @if ($variation->description)
                     <div class="text-medium text-gray-900 bg-white shadow rounded-b-lgw-full p-4" x-show="activeTab == 1">

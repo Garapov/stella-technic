@@ -27,7 +27,6 @@ class Clients extends PageBlock
                     ->label('Показать общую ссылку'),
                 Select::make('clients')
                     ->label('Клиенты')
-                    // ->options(Client::all()->pluck('name', 'id'))
                     ->searchable()
                     ->getSearchResultsUsing(fn (string $search): array => Client::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
                     ->getOptionLabelsUsing(fn (array $values): array => Client::whereIn('id', $values)->pluck('name', 'id')->toArray())
