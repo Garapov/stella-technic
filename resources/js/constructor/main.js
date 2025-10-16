@@ -237,7 +237,7 @@ export default ({
             price += this.selectedDesk.price;
 
             this.addedRows.forEach((box) => {
-                price += this.boxes["box_" + box.size].price * ROW_CONFIGS[box.size][this.selectedWidth];
+                price += this.boxes[`box_${box.size}_${this.selectedColor}`].price * ROW_CONFIGS[box.size][this.selectedWidth];
             });
             console.log('this.addedRows', this.addedRows);
             return new Intl.NumberFormat("ru-RU", {

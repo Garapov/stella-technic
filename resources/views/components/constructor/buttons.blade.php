@@ -51,9 +51,7 @@
         <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
             <template x-for="(size, index) in sizes" :key="index">
                 
-                <div class="flex flex-col items-center gap-2 flex-1" x-data="{
-                    box: boxes[`box_${size.value}`],
-                }">
+                <div class="flex flex-col items-center gap-2 flex-1">
                     <div class="relative text-blue-500 cursor-pointer" x-data="{
                         popover: false,
                     }" @mouseover="popover = true"  @mouseover.away = "popover = false">
@@ -76,10 +74,10 @@
                         >
                             <div class="w-[350px] flex items-center gap-2">
                                 <div class="w-[90px]">
-                                    <img :src="`https://stella-technic.ru${box.image}`" alt="">
+                                    <img :src="`https://s3.stella-technic.ru/${boxes[`box_${size.value}_${selectedColor}`].gallery[0]}`" alt="">
                                 </div>
                                 <div class="flex-1">
-                                    <div class="text-md font-bold" x-text="box.name"></div>
+                                    <div class="text-md font-bold" x-text="boxes[`box_${size.value}_${selectedColor}`].name"></div>
                                 </div>
                             </div>
                             <div class="absolute -bottom-1  h-2 w-2 rotate-45 bg-white" :class="{

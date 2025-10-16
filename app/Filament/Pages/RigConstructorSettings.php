@@ -12,7 +12,8 @@ use Filament\Forms\Components\Select;
 use TomatoPHP\FilamentSettingsHub\Pages\SiteSettings;
 use Filament\Pages\Actions\Action;
 use App\Models\ProductVariant;
-
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Section;
 use Filament\Pages\Page;
 
 class RigConstructorSettings extends SiteSettings
@@ -27,17 +28,6 @@ class RigConstructorSettings extends SiteSettings
                     Tabs\Tab::make("Стойки")->schema([
                         Select::make("deck_low_slim")
                             ->label("Стойка 735x1515")
-                            ->options(function () {
-                                return ProductVariant::query()
-                                        ->get()
-                                        ->mapWithKeys(function ($variation) {
-                                            return [$variation->id => $variation->name . " ($variation->sku)"];
-                                        });
-                                })
-                            ->searchable()
-                            ->required(),
-                        Select::make("deck_high_slim")
-                            ->label("Стойка 735x2020")
                             ->options(function () {
                                 return ProductVariant::query()
                                         ->get()
@@ -71,34 +61,200 @@ class RigConstructorSettings extends SiteSettings
                             ->required(),
                     ]),
                     Tabs\Tab::make("Ящики")->schema([
-                        Select::make("box_small")
-                            ->label("Ящик V1")
-                            ->options(
-                                fn() => ProductVariant::all()->pluck(
-                                    "name",
-                                    "id"
-                                )
-                            )
+                        Section::make('Ящик V1')
+                            ->collapsible()
+                            ->collapsed()
+                            ->description('Привяжите ящики V1 согласно цветам')
+                            ->schema([
+                                Select::make("box_small_red")
+                                    ->label("Красный")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                                Select::make("box_small_green")
+                                    ->label("Зеленый")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                                Select::make("box_small_blue")
+                                    ->label("Синий")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                                Select::make("box_small_yellow")
+                                    ->label("Желтый")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                                Select::make("box_small_gray")
+                                    ->label("Серый")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                            ])
+                            ->columns(1),
+                       
+                        Section::make('Ящик V2')
+                            ->collapsible()
+                            ->collapsed()
+                            ->description('Привяжите ящики V2 согласно цветам')
+                            ->schema([
+                                Select::make("box_medium_red")
+                                    ->label("Красный")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                                Select::make("box_medium_green")
+                                    ->label("Зеленый")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                                Select::make("box_medium_blue")
+                                    ->label("Синий")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                                Select::make("box_medium_yellow")
+                                    ->label("Желтый")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                                Select::make("box_medium_gray")
+                                    ->label("Серый")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                            ])
+                            ->columns(1),
+                        Section::make('Ящик V3')
+                            ->collapsible()
+                            ->collapsed()
+                            ->description('Привяжите ящики V3 согласно цветам')
+                            ->schema([
+                                Select::make("box_large_red")
+                                    ->label("Красный")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                                Select::make("box_large_green")
+                                    ->label("Зеленый")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                                Select::make("box_large_blue")
+                                    ->label("Синий")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                                Select::make("box_large_yellow")
+                                    ->label("Желтый")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                                Select::make("box_large_gray")
+                                    ->label("Серый")
+                                    ->options(
+                                        fn() => ProductVariant::all()->pluck(
+                                            "name",
+                                            "id"
+                                        )
+                                    )
+                                    ->searchable()
+                                    ->required(),
+                            ])
+                            ->columns(1),
+                    ]),
+                    Tabs\Tab::make("Дополнительные товары")->schema([
+                        Select::make("deck_bracing")
+                            ->label("Перегородка")
+                             ->options(function () {
+                                return ProductVariant::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($variation) {
+                                            return [$variation->id => $variation->name . " ($variation->sku)"];
+                                        });
+                                })
                             ->searchable()
                             ->required(),
-                        Select::make("box_medium")
-                            ->label("Ящик V2")
-                            ->options(
-                                fn() => ProductVariant::all()->pluck(
-                                    "name",
-                                    "id"
-                                )
-                            )
-                            ->searchable()
-                            ->required(),
-                        Select::make("box_large")
-                            ->label("Ящик V3")
-                            ->options(
-                                fn() => ProductVariant::all()->pluck(
-                                    "name",
-                                    "id"
-                                )
-                            )
+                        Select::make("deck_stand")
+                            ->label("Подставка")
+                            ->options(function () { 
+                                return ProductVariant::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($variation) {
+                                            return [$variation->id => $variation->name . " ($variation->sku)"];
+                                        });
+                                })
                             ->searchable()
                             ->required(),
                     ]),
