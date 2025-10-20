@@ -4,7 +4,7 @@
   </div>
   @if (setting('map'))
     <div class="lg:container px-4 lg:py-24 py-10 lg:mx-auto flex">
-      <div class="lg:w-1/3 md:w-1/2 bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md">
+      <div class="lg:w-1/3 bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md">
         @livewire('general.forms.map')
       </div>
     </div>

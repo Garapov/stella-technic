@@ -15,8 +15,7 @@ class Popular extends Component
     public function render()
     {
         $products = ProductVariant::where('is_popular', true)
-            ->with(['paramItems', 'parametrs', 'product'])
-            ->paginate(4, pageName: 'popular-products');
+            ->with(['paramItems', 'parametrs', 'product'])->take(10)->get();
 
 
         return view('livewire.main.popular', [

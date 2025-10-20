@@ -14,7 +14,7 @@ class EditProductCategory extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            // Actions\DeleteAction::make(),
             Actions\Action::make('open')
                 ->label('Открыть страницу')
                 ->url(fn (Model $record) : string => route('client.catalog', ['path' => $record->urlChain()]))

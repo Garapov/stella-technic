@@ -14,6 +14,7 @@ import dropdown from "./components/dropdown";
 import constructor from "./constructor/main";
 import mainSlider from "./components/main-slider";
 import clientsSlider from "./components/clients";
+import brandsSlider from "./components/brands";
 
 import cart from "./components/cart";
 import favorites from "./components/favorites";
@@ -36,7 +37,12 @@ document.addEventListener("alpine:init", () => {
     Alpine.data("construct", constructor);
     Alpine.data("main_slider", mainSlider);
     Alpine.data("clients", clientsSlider);
+    Alpine.data("brands", brandsSlider);
 });
+
+
+
+// alert('Разрешение экрана ' + window.innerWidth + 'x' + window.innerHeight)
 
 document.addEventListener("livewire:init", () => {
     window.Livewire.on("cart-cleared", (event) => {

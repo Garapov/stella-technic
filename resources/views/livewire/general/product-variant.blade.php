@@ -1,14 +1,6 @@
 <div class="rounded-lg border border-gray-200 bg-white p-0 shadow-sm dark:border-gray-700 dark:bg-gray-900 relative flex flex-col overflow-hidden relative">
     <div class="absolute left-2 right-2 top-2 z-10 flex items-center justify-between gap-2">
-        @if ($variant->count > 0 && !$variant->is_pre_order)
-            <div class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-green-900 dark:text-green-300">В наличии</div>
-        @endif
-        @if ($variant->count < 1)
-            <div class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-gray-300">Нет в наличии</div>
-        @endif
-        @if ($variant->count > 0 && $variant->is_pre_order)
-            <div class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-yellow-900 dark:text-yellow-300">Предзаказ</div>
-        @endif
+        
         <button type="button"
             @click.prevent="$store.favorites.toggleProduct({{ $variant->id }})"
             class="rounded-lg p-2 text-gray-500 bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
@@ -65,6 +57,7 @@
             </div>
         @endif
     </div>
+    
     <div class="p-4 flex-auto shrink flex flex-col gap-2 justify-between">
         <div class="mb-2">
             <div class="mb-2 flex items-center justify-between gap-2">
@@ -97,9 +90,19 @@
             </div>
         @endif
 
+        <div class="flex">
+            @if ($variant->count > 0 && !$variant->is_pre_order)
+                <div class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-green-900 dark:text-green-300">В наличии</div>
+            @endif
+            @if ($variant->count < 1)
+                <div class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-gray-300">Нет в наличии</div>
+            @endif
+            @if ($variant->count > 0 && $variant->is_pre_order)
+                <div class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-yellow-900 dark:text-yellow-300">Предзаказ</div>
+            @endif
+        </div>
 
-
-        <div class="flex items-end justify-between gap-4 mt-2 relative">
+        <div class="flex items-end justify-between gap-4 relative">
             <div class="flex flex-col gap-2">
 
                 <div class="flex items-center gap-4">
@@ -136,7 +139,7 @@
                 
                 @if ($variant->count > 0)
                     <button type="button"
-                    class="inline-flex items-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800" x-show="!$store.cart.list[{{ $variant->id }}]"
+                    class="inline-flex items-center rounded-lg bg-green-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-500 dark:hover:bg-green-500 dark:focus:ring-green-800" x-show="!$store.cart.list[{{ $variant->id }}]"
                     @click="$store.cart.addVariationToCart({
                         count: 1,
                         variationId: {{ $variant->id }},
@@ -144,6 +147,8 @@
                     });">
                         <x-carbon-shopping-cart-plus class="h-5 w-5" />
                     </button>
+
+                    
 
 
                     <div class="relative flex items-center" x-show="$store.cart.list[{{ $variant->id }}]">

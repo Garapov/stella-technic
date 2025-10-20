@@ -351,9 +351,19 @@
                                                 {{ explode("|", $delivery->points)[0] }}
                                             </div>
                                         @endif
+                                        
                                     @endif
                                     <div class="text-xs text-gray-500 font-semibold">
-                                        {{ $delivery->description }}
+                                        {!! $delivery->text !!}
+                                        @if($delivery->images)
+                                            <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                                                @foreach ($delivery->images as $image)
+                                                    <div class="rounded-lg overflow-hidden">
+                                                        <img src="{{ Storage::disk(config('filesystems.default'))->url($image) }}" class="w-full h-full object-cover">
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

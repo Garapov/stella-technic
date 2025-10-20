@@ -44,7 +44,7 @@
                         </div>
                     </div>
                     @if (count($slides) > 1)
-                        <div class="group-hover:opacity-70 opacity-0 flex items-center justify-between gap-4 p-2 absolute right-0 bottom-0 bg-white dark:bg-gray-700 rounded-tl-lg">
+                        <div class="lg:group-hover:opacity-70 lg:opacity-0 flex items-center justify-between gap-4 p-2 lg:absolute lg:right-0 lg:bottom-0 lg:bg-white rounded-tl-lg">
                             <div class="flex items-center gap-2" data-glide-el="controls[nav]">
                                 @foreach ($slides as $key=>$slide)
                                     <div class="h-2.5 rounded-full transition-width" :class="{'w-6 bg-blue-400': index == {{ $key }}, 'w-2.5 bg-gray-400': index != {{ $key }} }" data-glide-dir="={{ $key }}"></div>

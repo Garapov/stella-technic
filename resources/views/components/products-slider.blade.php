@@ -6,6 +6,10 @@
                 perView: 5,
                 gap: 20,
                 bound: true,
+                peek: {
+                    before: 0,
+                    after: 0
+                },
                 breakpoints: {
                     1366: {
                         perView: 4
@@ -17,7 +21,11 @@
                         perView: 2
                     },
                     800: {
-                        perView: 1
+                        perView: 1,
+                        peek: {
+                            before: 0,
+                            after: 100
+                        },
                     }
                 }
             }).mount(),
@@ -29,10 +37,10 @@
             },
         }">
             <div class="" x-ref="slider">
-                <div class="flex items-center justify-between mb-10">
+                <div class="flex md:items-center justify-between gap-4 mb-10">
                     <p class="lg:text-4xl text-xl text-slate-900 dark:text-white font-semibold">{{ $title }}</p>
-                    <div class="flex items-center gap-8">
-                        <div class="flex items-center gap-2" data-glide-el="controls[nav]">
+                    <div class="flex items-center justify-between md:justify-end gap-8 w-full md:w-auto">
+                        <div class="md:flex hidden items-center gap-2" data-glide-el="controls[nav]">
                             @foreach ($variations as $key=>$variation)
                                 @if ($key > count($variations) - 5)
                                     @continue
@@ -49,13 +57,6 @@
                             </button>
                         </div>
                     </div>
-                    {{-- <div class="flex items-center gap-8">
-                        <a href="{{ route('client.catalog.popular') }}"
-                            class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:navigate>
-                            Смотреть все
-                            <x-fas-arrow-right class="w-4 h-4 ms-2 rtl:rotate-180" />
-                        </a>
-                    </div> --}}
                 </div>
                 <div class="glide__track" data-glide-el="track">
                     <div class="glide__slides whitespace-normal">

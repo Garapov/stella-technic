@@ -60,6 +60,9 @@
                     @endif
                 @endif
             @endif
+            @php
+                $batches = $all_products->where('batch_id', '!=', null)->groupBy('batch_id');
+            @endphp
             <div class="grid grid-cols-9 gap-4">
                 @if ($display_filter)
                     <div class="col-span-2" wire:loading.class="opacity-25 pointer-events-none">
@@ -83,16 +86,18 @@
                             </div>
                             <div class="flex items-center space-x-4">
                                 <!-- Display Mode Toggle -->
-                                <div class="inline-flex rounded-md shadow-xs" role="group">
-                                    <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-s-lg @if ($mode === 'list') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
-                                        wire:click="changeDisplayMode('list')">
-                                        <x-carbon-horizontal-view class="w-4 h-4" />
+                                @if (count($batches) > 0)
+                                    <div class="inline-flex rounded-md shadow-xs" role="group">
+                                        <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-s-lg @if ($mode === 'list') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
+                                            wire:click="changeDisplayMode('list')">
+                                            <x-carbon-horizontal-view class="w-4 h-4" />
+                                        </div>
+                                        <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-e-lg @if ($mode === 'block') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
+                                            wire:click="changeDisplayMode('block')" >
+                                            <x-carbon-vertical-view class="w-4 h-4" />
+                                        </div>
                                     </div>
-                                    <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-e-lg @if ($mode === 'block') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
-                                        wire:click="changeDisplayMode('block')" >
-                                        <x-carbon-vertical-view class="w-4 h-4" />
-                                    </div>
-                                </div>
+                                @endif
 
                                 <!-- Sort Dropdown -->
                                 <div class="relative" x-data="{sortingOpened: false}">
@@ -168,9 +173,7 @@
                                     {{ $products->links() }}
                                 </div>
                             @else
-                                @php
-                                    $batches = $all_products->where('batch_id', '!=', null)->groupBy('batch_id');
-                                @endphp
+                                
                                 <div class="flex flex-col gap-4">
                                     @forelse ($batches as $key => $batch)
                                         <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900 relative flex flex-col gap-4">
