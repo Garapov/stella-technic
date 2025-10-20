@@ -48,38 +48,12 @@ class OrderResource extends Resource
                                         ->minValue(1)
                                         ->default(1)
                                         ->disabled(),
-                                    Forms\Components\TextInput::make("price")
+                                    Forms\Components\TextInput::make("total_price")
                                         ->label("Цена")
                                         ->numeric()
                                         ->required()
                                         ->prefix("₽")
-                                        ->default(0)
-                                        ->afterStateUpdated(function (
-                                            Forms\Set $set,
-                                            $state,
-                                            Forms\Get $get
-                                        ) {
-                                            // Recalculate total when price changes
-                                            $items = $get("cart_items");
-                                            $total = collect($items)
-                                                ->map(function ($item) use (
-                                                    $state,
-                                                    $get
-                                                ) {
-                                                    $price =
-                                                        $item["name"] ===
-                                                        $get("name")
-                                                            ? $state
-                                                            : $item["price"] ??
-                                                                0;
-                                                    $quantity =
-                                                        $item["quantity"] ?? 1;
-                                                    return $price * $quantity;
-                                                })
-                                                ->sum();
-
-                                            $set("total_price", $total);
-                                        }),
+                                        ->default(0),
                                 ])
                                 ->itemLabel(
                                     fn(array $state): ?string => $state[

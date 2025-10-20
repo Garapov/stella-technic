@@ -26,34 +26,73 @@ class Index extends Component
     public function loadConstructs($constructItems = [])
     {
         $this->constructs = collect([]);
+
         if (empty($constructItems)) {
             return $this->constructs;
         }
-        foreach($constructItems as $item ) {
-            if ($item == null) continue;
-            $product = ProductVariant::where("id", $item['id'])->first();
-            $small_box = ProductVariant::where("id", $item['boxes']['small']['red']['id'])->first();
-            $medium_box = ProductVariant::where("id", $item['boxes']['medium']['red']['id'])->first();
-            $large_box = ProductVariant::where("id", $item['boxes']['large']['red']['id'])->first();
 
-            
-            if (!$product || !$small_box || !$medium_box || !$large_box) continue;
+        // Собираем все ID товаров и коробок (безопасно)
+        $allIds = collect($constructItems)
+            ->filter(fn ($item) => is_array($item) && isset($item['id']))
+            ->flatMap(function ($item) {
+                $ids = [$item['id']];
+                if (!isset($item['boxes']) || !is_array($item['boxes'])) {
+                    return $ids;
+                }
+
+                foreach ($item['boxes'] as $size => $colors) {
+                    if (!is_array($colors)) continue;
+                    foreach ($colors as $color => $box) {
+                        if (isset($box['id'])) {
+                            $ids[] = $box['id'];
+                        }
+                    }
+                }
+
+                return $ids;
+            })
+            ->unique()
+            ->values();
+
+        if ($allIds->isEmpty()) {
+            return $this->constructs;
+        }
+
+        // Загружаем все варианты одним запросом
+        $variants = ProductVariant::whereIn('id', $allIds)->get()->keyBy('id');
+
+        // dd($variants);
+
+        foreach ($constructItems as $item) {
+            if (!is_array($item) || !isset($item['id'])) continue;
+
+            $product = $variants->get($item['id']);
+            if (!$product) continue;
 
             $item['product'] = $product;
-            $item['boxes']['small']['product'] = $small_box;
-            $item['boxes']['medium']['product'] = $medium_box;
-            $item['boxes']['large']['product'] = $large_box;
+            $totalPrice = $product->price;
 
-            $price = $product->price + ($small_box->price * $item['boxes']['small']['red']['count']) + ($medium_box->price * $item['boxes']['medium']['red']['count']) + ($large_box->price * $item['boxes']['large']['red']['count']);
+            // Обрабатываем все коробки (все размеры и цвета)
+            if (isset($item['boxes']) && is_array($item['boxes'])) {
+                foreach ($item['boxes'] as $size => &$colors) {
+                    foreach ($colors as $color => &$box) {
+                        $variant = $variants->get($box['id'] ?? null);
+                        if ($variant) {
+                            $box['product'] = $variant;
+                            $totalPrice += $variant->price * ((int)($box['count'] ?? 0));
+                        }
+                    }
+                }
+            }
 
-            $item['price'] = $price;
-
-            
+            $item['price'] = $totalPrice;
             $this->constructs->put($item['id'], $item);
+            // dd($this->constructs);
         }
 
         return $this->constructs;
     }
+
 
     public function loadProducts($cartItems = [])
     {

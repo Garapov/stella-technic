@@ -50,6 +50,7 @@ class Order extends Model
 
     protected $casts = [
         'cart_items' => 'array',
+        'constructs' => 'array',
         'delivery' => 'collection',
         'payment' => 'collection',
         'user' => 'collection',
@@ -64,20 +65,20 @@ class Order extends Model
     {
         parent::boot();
 
-        static::saving(function ($order) {
-            // Calculate total price if not set or if cart items have changed
-            if (empty($order->total_price) || !empty($order->cart_items)) {
-                $order->total_price = collect($order->cart_items)
-                    ->reduce(function ($total, $item) {
-                        return $total + 
-                            (floatval($item['price'] ?? 0) * 
-                             intval($item['quantity'] ?? 1));
-                    }, 0);
-            }
+        // static::saving(function ($order) {
+        //     // Calculate total price if not set or if cart items have changed
+        //     if (empty($order->total_price) || !empty($order->cart_items)) {
+        //         $order->total_price = collect($order->cart_items)
+        //             ->reduce(function ($total, $item) {
+        //                 return $total + 
+        //                     (floatval($item['price'] ?? 0) * 
+        //                      intval($item['quantity'] ?? 1));
+        //             }, 0);
+        //     }
 
-            // Validate and set status
-            $order->status = $order->validateStatus($order->status);
-        });
+        //     // Validate and set status
+        //     $order->status = $order->validateStatus($order->status);
+        // });
 
         static::created(function ($order) {
             $recipient = User::where('id', 1)->first();

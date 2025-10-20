@@ -257,6 +257,7 @@ export default ({
 
 
             console.log('this.addedRows', this.addedRows);
+            console.log('this.boxes', this.boxes);
 
             let constructor_product = {
                 id: this.selectedDesk.id,
@@ -264,67 +265,67 @@ export default ({
                 boxes: {
                     small: {
                         red: {
-                            id: this.boxes.box_small.id,
+                            id: this.boxes.box_small_red.id,
                             count: 0
                         },
                         green: {
-                            id: this.boxes.box_small.id,
+                            id: this.boxes.box_small_green.id,
                             count: 0
                         },
                         blue: {
-                            id: this.boxes.box_small.id,
+                            id: this.boxes.box_small_blue.id,
                             count: 0
                         },
                         yellow: {
-                            id: this.boxes.box_small.id,
+                            id: this.boxes.box_small_yellow.id,
                             count: 0
                         },
                         gray: {
-                            id: this.boxes.box_small.id,
+                            id: this.boxes.box_small_gray.id,
                             count: 0
                         },
                     },
                     medium:  {
                         red: {
-                            id: this.boxes.box_medium.id,
+                            id: this.boxes.box_medium_red.id,
                             count: 0
                         },
                         green: {
-                            id: this.boxes.box_medium.id,
+                            id: this.boxes.box_medium_green.id,
                             count: 0
                         },
                         blue: {
-                            id: this.boxes.box_medium.id,
+                            id: this.boxes.box_medium_blue.id,
                             count: 0
                         },
                         yellow: {
-                            id: this.boxes.box_medium.id,
+                            id: this.boxes.box_medium_yellow.id,
                             count: 0
                         },
                         gray: {
-                            id: this.boxes.box_medium.id,
+                            id: this.boxes.box_medium_gray.id,
                             count: 0
                         },
                     },
                     large:  {
                         red: {
-                            id: this.boxes.box_large.id,
+                            id: this.boxes.box_large_red.id,
                             count: 0
                         },
                         green: {
-                            id: this.boxes.box_large.id,
+                            id: this.boxes.box_large_green.id,
                             count: 0
                         },
                         blue: {
-                            id: this.boxes.box_large.id,
+                            id: this.boxes.box_large_blue.id,
                             count: 0
                         },
                         yellow: {
-                            id: this.boxes.box_large.id,
+                            id: this.boxes.box_large_yellow.id,
                             count: 0
                         },
                         gray: {
-                            id: this.boxes.box_large.id,
+                            id: this.boxes.box_large_gray.id,
                             count: 0
                         },
                     },
@@ -333,29 +334,10 @@ export default ({
             this.addedRows.forEach((row) => {
                 constructor_product.boxes[row.size][row.color].count += ROW_CONFIGS[row.size][this.selectedWidth];
                 console.log('constructor_product.boxes[row.size][row.color]', constructor_product.boxes[row.size][row.color], row.size, row.color);
-
-                // switch (row.size) {
-                //     case 'small':
-                //         constructor_product.boxes.small.count += ROW_CONFIGS[row.size][this.selectedWidth];
-                //         break;
-                //     case 'medium':
-                //         constructor_product.boxes.medium.count += ROW_CONFIGS[row.size][this.selectedWidth];
-                //         break;
-                //     case 'large':
-                //         constructor_product.boxes.large.count += ROW_CONFIGS[row.size][this.selectedWidth];
-                //         break;
-                
-                //     default:
-                //         break;
-                // }
-                // Alpine.store("cart").addVariationToCart({
-                //     count: ROW_CONFIGS[box.size][this.selectedWidth],
-                //     variationId: this.boxes["box_" + box.size].id,
-                //     name: `${this.boxes["box_" + box.size].name}`,
-                // });
             });
 
             console.log('constructor_product', constructor_product);
+
 
             Alpine.store("cart").addConstructionToCart(constructor_product).then(res => {
                 this.clearAll();

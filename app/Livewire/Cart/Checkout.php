@@ -132,7 +132,7 @@ class Checkout extends Component
 
         if ($this->deliveries->isNotEmpty()) {
             $this->selected_delivery = $this->deliveries->first()->id;
-            $this->initMap($this->deliveries[$this->selected_delivery - 1]);
+            // $this->initMap($this->deliveries[$this->selected_delivery - 1]);
         }
     }
 
@@ -144,14 +144,15 @@ class Checkout extends Component
         ]);
     }
 
-    public function initMap($delivery)
-    {
-        if ($delivery->type == "map") {
-            if ($delivery->points) {
-                $this->dispatch("init-map", delivery: $delivery);
-            }
-        }
-    }
+    // public function initMap($delivery)
+    // {
+    //     // dd(count($this->constructs));
+    //     if ($delivery->type == "map") {
+    //         if ($delivery->points && (count($this->products) > 0 || count($this->constructs) > 0)) {
+    //             $this->dispatch("init-map", delivery: $delivery);
+    //         }
+    //     }
+    // }
 
     public function updatedType()
     {
@@ -188,53 +189,76 @@ class Checkout extends Component
     public function loadConstructs($constructItems = [])
     {
         $this->constructs = collect([]);
+
         if (empty($constructItems)) {
             return $this->constructs;
         }
+
+        // Собираем все ID товаров и коробок (безопасно)
+        $allIds = collect($constructItems)
+            ->filter(fn ($item) => is_array($item) && isset($item['id']))
+            ->flatMap(function ($item) {
+                $ids = [$item['id']];
+                if (!isset($item['boxes']) || !is_array($item['boxes'])) {
+                    return $ids;
+                }
+
+                foreach ($item['boxes'] as $size => $colors) {
+                    if (!is_array($colors)) continue;
+                    foreach ($colors as $color => $box) {
+                        if (isset($box['id'])) {
+                            $ids[] = $box['id'];
+                        }
+                    }
+                }
+
+                return $ids;
+            })
+            ->unique()
+            ->values();
+
+        if ($allIds->isEmpty()) {
+            return $this->constructs;
+        }
+
+        // Загружаем все варианты одним запросом
+        $variants = ProductVariant::whereIn('id', $allIds)->get()->keyBy('id');
+
+        // dd($variants);
+
         foreach ($constructItems as $item) {
-            if ($item == null) {
-                continue;
+            if (!is_array($item) || !isset($item['id'])) continue;
+
+            $product = $variants->get($item['id']);
+            if (!$product) continue;
+
+            $item['product'] = $product;
+            $totalPrice = $product->price;
+
+            // Обрабатываем все коробки (все размеры и цвета)
+            if (isset($item['boxes']) && is_array($item['boxes'])) {
+                foreach ($item['boxes'] as $size => &$colors) {
+                    foreach ($colors as $color => &$box) {
+                        $variant = $variants->get($box['id'] ?? null);
+                        if ($variant) {
+                            $box['product'] = $variant;
+                            $totalPrice += $variant->price * ((int)($box['count'] ?? 0));
+                        }
+                    }
+                }
             }
-            $product = ProductVariant::where("id", $item["id"])->first();
-            $small_box = ProductVariant::where(
-                "id",
-                $item["boxes"]["small"]["red"]["id"],
-            )->first();
-            $medium_box = ProductVariant::where(
-                "id",
-                $item["boxes"]["medium"]["red"]["id"],
-            )->first();
-            $large_box = ProductVariant::where(
-                "id",
-                $item["boxes"]["large"]["red"]["id"],
-            )->first();
 
-            if (!$product || !$small_box || !$medium_box || !$large_box) {
-                continue;
-            }
-
-            $item["product"] = $product;
-            $item["boxes"]["small"]["product"] = $small_box;
-            $item["boxes"]["medium"]["product"] = $medium_box;
-            $item["boxes"]["large"]["product"] = $large_box;
-
-            $price =
-                $product->price +
-                $small_box->price * $item["boxes"]["small"]["red"]["count"] +
-                $medium_box->price * $item["boxes"]["medium"]["red"]["count"] +
-                $large_box->price * $item["boxes"]["large"]["red"]["count"];
-
-            $item["price"] = $price;
-
-            $this->constructs->put($item["id"], $item);
+            $item['price'] = $totalPrice;
+            $this->constructs->put($item['id'], $item);
+            // dd($this->constructs);
         }
 
         return $this->constructs;
     }
 
-    public function placeOrder($products)
+    public function placeOrder($products, $constructs, $price, $discountedPrice)
     {
-        //// dd($this->captcha_token);
+        // dd($products, $constructs, $price, $discountedPrice);
         // Validate input
         $this->validate();
 
@@ -273,12 +297,7 @@ class Checkout extends Component
             ]);
         }
 
-        // Calculate total price
-        $totalPrice = 0;
-        foreach ($products as $product) {
-            $price = $product["new_price"] ?? $product["price"];
-            $totalPrice += $price * $product["quantity"];
-        }
+        
 
         // Create order
         $order = Order::create([
@@ -287,7 +306,8 @@ class Checkout extends Component
             "email" => $this->email,
             "phone" => $this->phone,
             "cart_items" => $products,
-            "total_price" => $totalPrice,
+            "constructs" => $constructs,
+            "total_price" => $discountedPrice < $price ? $discountedPrice : $price,
             "user" => $user,
             "shipping_address" => $this->delivery_address,
             "delivery" => Delivery::find($this->selected_delivery),

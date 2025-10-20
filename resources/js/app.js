@@ -41,6 +41,7 @@ document.addEventListener("alpine:init", () => {
 document.addEventListener("livewire:init", () => {
     window.Livewire.on("cart-cleared", (event) => {
         Alpine.store("cart").list = [];
+        Alpine.store("cart").constructor = [];
     });
 
     window.Livewire.on("favorites-cleared", (event) => {
@@ -73,34 +74,36 @@ document.addEventListener("articles_slider", (data) => {
     }
 });
 
-document.addEventListener("init-map", (data) => {
+// document.addEventListener("init-map", (data) => {
 
-    if (data.detail.delivery && data.detail.delivery.points) {
-        ymaps.ready(() => {
-            setTimeout(() => {
-                let map, point, coordinates, address;
+//     console.log('data', data);
 
-                [address, coordinates] = data.detail.delivery.points.split("|");
-                coordinates = coordinates.split(",");
+//     if (data.detail.delivery && data.detail.delivery.points) {
+//         ymaps.ready(() => {
+//             setTimeout(() => {
+//                 let map, point, coordinates, address;
 
-                map = new ymaps.Map(
-                    document.getElementById(
-                        `delivery-map-${data.detail.delivery.id}`,
-                    ),
-                    {
-                        center: coordinates,
-                        zoom: 13,
-                        controls: [],
-                    },
-                );
-                if (!point) {
-                    point = new ymaps.Placemark(coordinates);
-                    map.geoObjects.add(point);
-                }
-            }, 1000);
-        });
-    }
-});
+//                 [address, coordinates] = data.detail.delivery.points.split("|");
+//                 coordinates = coordinates.split(",");
+
+//                 map = new ymaps.Map(
+//                     document.getElementById(
+//                         `delivery-map-${data.detail.delivery.id}`,
+//                     ),
+//                     {
+//                         center: coordinates,
+//                         zoom: 13,
+//                         controls: [],
+//                     },
+//                 );
+//                 if (!point) {
+//                     point = new ymaps.Placemark(coordinates);
+//                     map.geoObjects.add(point);
+//                 }
+//             }, 1000);
+//         });
+//     }
+// });
 
 
 document.addEventListener("cache-cleared", (data) => {

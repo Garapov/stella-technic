@@ -7,19 +7,19 @@
   init() {
     this.loadProducts();
     this.loadConstructs();
-    this.isLoading = false;
-    this.isReloading = false;
   },
   loadProducts() {
     $wire.loadProducts($store.cart.list).then((products) => {
       this.products = products;
-      console.log('this.products',this.products);
+      this.isLoading = false;
+      this.isReloading = false;
     });
   },
   loadConstructs() {
     $wire.loadConstructs($store.cart.constructor).then((constructs) => {
       this.constructs = constructs;
-      console.log('this.constructs',this.constructs);
+      this.isLoading = false;
+      this.isReloading = false;
     });
   },
   getTotalPrice() {
@@ -49,7 +49,8 @@
     let newProds = this.products.map(product => {
       return {...product, quantity: $store.cart.list[product.id]};
     });
-    $wire.placeOrder(newProds);
+    let constructs = 
+    $wire.placeOrder(newProds, this.constructs, this.getTotalPrice(), this.getDiscountedPrice());
   }
 }">
   <div class="mx-auto container px-4 2xl:px-0">
@@ -66,7 +67,7 @@
         <div class="h-32 bg-gray-200 rounded mb-4"></div>
       </div>
     </div>
-    <template x-if="!isLoading && (!products.length || !constructs.length)">
+    <template x-if="!isLoading && (products.length < 1 && Object.keys(constructs).length > 1)">
         <div class="mt-6 text-center">
             <div x-text="products.length"></div>
             <div x-text="constructs.length"></div>
@@ -76,7 +77,7 @@
             </a>
         </div>
     </template>
-    <template x-if="!isLoading && (products.length || constructs.length)">
+    <template x-if="!isLoading && (products.length > 0 || Object.keys(constructs).length > 0)">
         <form @submit.prevent="makeOrder" class="mt-6 sm:mt-8 md:gap-6 lg:flex xl:gap-8" wire:loading.class="opacity-50" wire:loading.attr="disabled" wire:target="placeOrder, type, checkCompany">
             <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-5xl">
             @if ($message)
@@ -306,7 +307,40 @@
                     selected_delivery: $wire.$entangle('selected_delivery'),
                 }">
                 @foreach ($deliveries as $delivery)
-                    <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800" :class="{ 'hidden': selected_delivery != {{ $delivery->id }} }" wire:key="deliveries.info.{{ $delivery->id }}">
+                    <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 dark:border-gray-700 dark:bg-gray-800" :class="{ 'hidden': selected_delivery != {{ $delivery->id }} }" wire:key="deliveries.info.{{ $delivery->id }}" @if ($delivery->type == 'map' && $delivery->points)
+                x-data="{
+                    address: '{{ $delivery->points }}',
+                    coordinates: [],
+                    init() {
+                        [address, coordinates] = this.address.split('|');
+                        this.coordinates = coordinates.split(',');
+                        this.initMap();
+                    },
+                    initMap() {
+                        ymaps.ready(() => {
+                            setTimeout(() => {
+                                let map, point;
+
+                                map = new ymaps.Map(
+                                    document.getElementById(
+                                        `delivery-map-{{ $delivery->id }}`,
+                                    ),
+                                    {
+                                        center: this.coordinates,
+                                        zoom: 13,
+                                        controls: [],
+                                    },
+                                );
+                                if (!point) {
+                                    point = new ymaps.Placemark(this.coordinates);
+                                    map.geoObjects.add(point);
+                                }
+                            }, 1000);
+                        });
+                    }
+                }"
+            
+            @endif>
                         @switch($delivery->type)
                         @case('map')
                             @if ($delivery->points)
