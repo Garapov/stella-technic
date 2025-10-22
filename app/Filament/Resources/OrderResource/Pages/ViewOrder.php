@@ -4,6 +4,7 @@ namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Filament\Resources\OrderResource;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class ViewOrder extends ViewRecord
 {
@@ -13,4 +14,10 @@ class ViewOrder extends ViewRecord
     {
         return [\Filament\Actions\EditAction::make()];
     }
+
+    protected function beforeFill()
+    {
+        // dd($this->record);
+    }
+
 }

@@ -45,7 +45,8 @@ class Order extends Model
         'payment',
         'file',
         'shipping_address',
-        'message'
+        'message',
+        'constructs'
     ];
 
     protected $casts = [

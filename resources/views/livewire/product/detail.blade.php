@@ -22,7 +22,7 @@
                       rewind          : true,
                       isNavigation    : true,
                       gap             : 10,
-                      perPage : 7,
+                      perPage : 5,
                       heightRatio: 0.1,
                       focus           : 'center',
                       pagination      : false,
@@ -99,11 +99,11 @@
 
     <h1 class="text-lg sm:text-3xl font-semibold text-slate-700 dark:text-white mb-4">{{ $variation->h1 ?? $variation->name }} {{ $variation->sku }}</h1>
 
-    <div class="flex items-center gap-4 mb-4">
+    <div class="flex md:items-center md:flex-row flex-col gap-4 mb-4">
         <div class="flex items-center gap-2">
             Артикул: <span class="text-slate-500 font-semibold">{{ $variation->sku }}</span>
         </div>
-        <div class="text-slate-500">|</div>
+        <div class="text-slate-500 hidden md:block">|</div>
         @if ($variation->product->brand)
 
             <div class="flex items-center gap-2">
@@ -129,9 +129,9 @@
                     <div class="flex flex-col-reverse gap-4 p-4 rounded-lg shadow bg-white" x-ignore>
                         @if ($variation->gallery || $variation->videos)
                             <div class="grid grid-cols-8 gap-2">
-                                <section class="splide gallery-thumbnails" aria-label="Splide Basic HTML Example" ref="gallerySlider">
-                                    <div class="h-full">
-                                        <div class="splide__track vertical-carousel-height-fix">
+                                <section class="splide gallery-thumbnails hidden md:block" aria-label="Splide Basic HTML Example" ref="gallerySlider">
+                                    <div class="h-full flex felx-col justify-center">
+                                        <div class="w-full splide__track vertical-carousel-height-fix">
                                             <ul class="splide__list">
                                                 @if ($variation->videos)
                                                     @foreach ($variation->videos as $video)

@@ -89,7 +89,8 @@
 }
 
 .vertical-carousel-height-fix {
-    height: 100% !important;
+    height: calc(100% - 80px) !important;
+    margin: auto 0;
 }
 
 .splide__arrow svg {
@@ -97,7 +98,13 @@
 }
 .splide__pagination {
     bottom: auto;
-    top: calc(100% + 0.5rem);
+    top: calc(100% + 1.5rem);
+}
+.gallery-thumbnails .splide__arrow--prev {
+    top: 0 !important;
+}
+.gallery-thumbnails .splide__arrow--next {
+    bottom: 0 !important;
 }
 
 input[type=range].range-thumb::-webkit-slider-thumb {

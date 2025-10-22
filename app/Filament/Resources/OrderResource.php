@@ -18,6 +18,7 @@ use Filament\Forms\Components\Split;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Get;
+use Filament\Forms\Components\Placeholder;
 
 class OrderResource extends Resource
 {
@@ -38,6 +39,9 @@ class OrderResource extends Resource
                 Split::make([
                     Tabs::make("Tabs")->tabs([
                         Tabs\Tab::make("Информация о заказе")->schema([
+                            Placeholder::make('info')
+                                ->label('Товары из каталога')
+                                ->content('Список товаров из каталога'),
                             Repeater::make("cart_items")
                                 ->label(false)
                                 ->schema([
@@ -48,7 +52,7 @@ class OrderResource extends Resource
                                         ->minValue(1)
                                         ->default(1)
                                         ->disabled(),
-                                    Forms\Components\TextInput::make("total_price")
+                                    Forms\Components\TextInput::make("price")
                                         ->label("Цена")
                                         ->numeric()
                                         ->required()
