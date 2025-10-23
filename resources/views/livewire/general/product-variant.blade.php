@@ -1,5 +1,5 @@
 <div class="rounded-lg border border-gray-200 bg-white p-0 shadow-sm dark:border-gray-700 dark:bg-gray-900 relative flex flex-col overflow-hidden relative">
-    <div class="absolute left-2 right-2 top-2 z-10 flex items-center justify-between gap-2">
+    <div class="absolute left-2 right-2 top-2 z-2 flex items-center justify-between gap-2">
         
         <button type="button"
             @click.prevent="$store.favorites.toggleProduct({{ $variant->id }})"

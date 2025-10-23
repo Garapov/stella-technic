@@ -46,7 +46,7 @@ class ProductVariantImporter extends Importer
                         throw new RowImportFailedException($e->getMessage());
                     }
 
-                    $requiredFields = ["name", "image", "categories"];
+                    $requiredFields = ["name", "image"];
 
                     foreach ($requiredFields as $field) {
                         if (empty($data[$field])) {
@@ -113,10 +113,20 @@ class ProductVariantImporter extends Importer
             ImportColumn::make("name")
                 ->ignoreBlankState()
                 ->rules(["nullable"]),
+            ImportColumn::make("product.category_id")
+                ->rules(["required", "integer"]),
             ImportColumn::make("price")
                 ->numeric()
                 ->ignoreBlankState()
                 ->rules(["required", "integer"]),
+            ImportColumn::make("h1")
+                ->numeric()
+                ->ignoreBlankState()
+                ->rules(["required"]),
+            ImportColumn::make("uuid")
+                ->numeric()
+                ->ignoreBlankState()
+                ->rules(["required"]),
             ImportColumn::make("new_price")
                 ->numeric()
                 ->ignoreBlankState()
