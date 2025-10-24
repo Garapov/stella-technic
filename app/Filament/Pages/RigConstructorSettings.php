@@ -236,7 +236,7 @@ class RigConstructorSettings extends SiteSettings
                     ]),
                     Tabs\Tab::make("Дополнительные товары")->schema([
                         Select::make("deck_bracing")
-                            ->label("Перегородка")
+                            ->label("Держатель")
                              ->options(function () {
                                 return ProductVariant::query()
                                         ->get()
@@ -247,7 +247,7 @@ class RigConstructorSettings extends SiteSettings
                             ->searchable()
                             ->required(),
                         Select::make("deck_stand")
-                            ->label("Подставка")
+                            ->label("Платформа")
                             ->options(function () { 
                                 return ProductVariant::query()
                                         ->get()

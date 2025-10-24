@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use TomatoPHP\FilamentSettingsHub\Pages\SocialMenuSettings;
 
@@ -19,7 +20,13 @@ class SocialSettings extends SocialMenuSettings
                     ->minItems(1)
                     ->label(trans('filament-settings-hub::messages.settings.social.form.site_social'))
                     ->schema([
-                        IconPicker::make('icon')->label('Иконка')->required(),
+                        FileUpload::make("icon")
+                                ->required()
+                                ->image()
+                                ->label("Иконка")
+                                ->directory("social_icons")
+                                ->visibility("public")
+                                ->preserveFilenames(),
                         TextInput::make('link')->url()->label(trans('filament-settings-hub::messages.settings.social.form.link'))->required(),
                     ])
                     ->hint(config('filament-settings-hub.show_hint') ? 'setting("site_social")' : null),

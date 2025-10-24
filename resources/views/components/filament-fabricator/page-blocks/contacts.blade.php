@@ -75,7 +75,7 @@
                                     @foreach(setting("site_social") as $social)
                                         <a href="{{ $social['link'] }}" class="text-gray-500 hover:text-gray-900 dark:hover:text-white" target="_blank">
                                             <span class="block w-10 h-10">
-                                                @svg($social['icon'])
+                                                <img src="{{ Storage::disk(config('filesystems.default'))->url($social['icon']) }}" class="w-full" alt="">
                                             </span>
                                         </a>
                                     @endforeach
