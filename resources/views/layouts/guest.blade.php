@@ -28,6 +28,7 @@
 
         @livewire('general.footer')
         @livewire('general.forms.callback')
+        @livewire('general.forms.buyoneclick')
         @livewireScripts
     </body>
 </html>

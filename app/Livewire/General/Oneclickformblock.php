@@ -4,6 +4,7 @@ namespace App\Livewire\General;
 
 use App\Models\Former;
 use App\Models\FormResult;
+use App\Models\ProductVariant;
 use App\Rules\SmartCaptchaRule;
 use Livewire\Component;
 
@@ -80,17 +81,31 @@ class Oneclickformblock extends Component
         if ($this->variation_count < 2) $this->variation_count = 1;
     }
 
+    public function reloadForm() {
+        unset($this->fields["variation"]);
+        unset($this->fields["variation_count"]);
+        $this->variation_count = 1;
+        session()->forget('oneclick_error');
+        session()->forget('success');
+        // dd($this->fields);
+    }
 
-    public function save()
+
+    public function save($variation_id)
     {
-        // dd($this->form);
+        $this->variation = ProductVariant::find($variation_id);
+
+        if (!$this->variation) {
+            return session()->flash("oneclick_error", "Мы не смогли отправить форму, перезагрузите страницу и попробуйте заново!");
+        }
+
         $validated = $this->validate();
 
         $this->fields["variation"] = [
             "name" => "variation",
             "label" => "Вариация",
             "type" => "text",
-            "value" => $this->variation->name,
+            "value" => $this->variation->name . ' (арт. ' . $this->variation->sku . ')',
         ];
         $this->fields["variation_count"] = [
             "name" => "variation_count",

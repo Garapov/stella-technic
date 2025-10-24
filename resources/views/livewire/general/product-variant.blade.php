@@ -107,11 +107,12 @@
 
                 <div class="flex items-center gap-4">
                     <span class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
-                        {{ $variant->new_price ?? $variant->getActualPrice() }} ₽
+                        {{ $variant->new_price ?? ($variant->price > 0 ? Number::format($variant->getActualPrice(), 0) . ' ₽' : 'По запросу') }} 
+                        
                     </span>
                     @if($variant->new_price)
                         <span class="text-lg line-through leading-tight text-gray-600 dark:text-white">
-                            {{ $variant->getActualPrice() }} ₽
+                           @if ($variant->price > 0) {{ Number::format($variant->getActualPrice(), 0) }} ₽ @else По запросу @endif
                         </span>
                     @endif
                 </div>
@@ -138,6 +139,7 @@
             <div class="flex items-center gap-3">
                 
                 @if ($variant->count > 0)
+                <button class="rounded-lg p-2 text-blue-500 bg-white border-2 border-blue-500 flex-1 font-bold" @click="$store.application.forms.buy_one_click = true, $store.application.one_click_variation = {{json_encode($variant)}}">Купить в один клик</button>
                     <button type="button"
                     class="inline-flex items-center rounded-lg bg-green-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-500 dark:hover:bg-green-500 dark:focus:ring-green-800" x-show="!$store.cart.list[{{ $variant->id }}]"
                     @click="$store.cart.addVariationToCart({

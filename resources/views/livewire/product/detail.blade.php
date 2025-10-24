@@ -405,5 +405,5 @@
 
     @livewire('general.recently', key($variation->id))
 
-    @livewire('general.forms.buyoneclick', ['variation' => $variation])
+    
 </div>

@@ -2,7 +2,7 @@
     <div class="flex flex-col gap-4 shadow-lg shadow-gray-900/20 bg-white p-4 rounded-xl">
         <div class="flex items-center flex-wrap justify-between gap-4">
             <div class="flex items-center gap-4">
-                <h4 class="text-slate-900 text-4xl font-semibold">{{ $variation->new_price ? Number::format($variation->new_price, 0) : Number::format($variation->getActualPrice(), 0) }} ₽</h4>
+                <h4 class="text-slate-900 text-4xl font-semibold">{{ $variation->new_price ? Number::format($variation->new_price, 0) : ($variation->price > 0 ? Number::format($variation->getActualPrice(), 0) . ' ₽' : 'По запросу') }} </h4>
                 @if (!auth()->user() && $variation->auth_price)
                     <div class="relative flex items-center gap-2 text-green-500 border border-green-500 bg-white text-md font-medium me-2 px-2.5 py-0.5 rounded-md" x-data="{
                         popover: false,
@@ -25,7 +25,7 @@
                 @endif
 
                 @if ($variation->new_price)
-                    <p class="text-slate-500 text-lg"><strike>{{Number::format($variation->price, 0)}} ₽</strike></p>
+                    <p class="text-slate-500 text-lg"><strike>{{$variation->price > 0 ? Number::format($variation->price, 0) . ' ₽' : 'По запросу'}} </strike></p>
                 @endif
             </div>
             <div class="flex items-center gap-4">
@@ -89,7 +89,7 @@
                 <span>В КОРЗИНУ</span>
             </button>
 
-            <button class="rounded-lg p-2 text-blue-500 bg-white border-2 border-blue-500 flex-1 font-bold" @click="$store.application.forms.buy_one_click = true">Купить в один клик</button>
+            <button class="rounded-lg p-2 text-blue-500 bg-white border-2 border-blue-500 flex-1 font-bold" @click="$store.application.forms.buy_one_click = true, $store.application.one_click_variation = {{json_encode($variation)}}">Купить в один клик</button>
 
             @if ($variation->is_constructable)
                 <a href="{{ route('client.constructor', ['variation_id' => $variation->id]) }}" class="w-full text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Редактировать в конструкторе</a>

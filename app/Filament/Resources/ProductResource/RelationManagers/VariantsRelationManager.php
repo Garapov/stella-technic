@@ -151,7 +151,7 @@ class VariantsRelationManager extends RelationManager
                                 ->panelLayout("grid")
                                 ->imageEditor()
                                 ->preserveFilenames()
-                                ->imageCropAspectRatio("1:1")
+                                // ->imageCropAspectRatio("1:1")
                                 ->imageEditorMode(2),
                             Forms\Components\FileUpload::make("videos")
                                 ->label("Видео")

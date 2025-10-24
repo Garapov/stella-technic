@@ -6,6 +6,7 @@ export default (() => {
                 callback: false,
                 buy_one_click: false,
             },
+            one_click_variation: null,
             burger: false,
             init() {
                 window.addEventListener('resize', () => {
