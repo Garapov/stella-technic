@@ -42,7 +42,10 @@ class HasIdFilter extends Filter
                 ->all();
 
             if (empty($values)) return;
-            $query->whereHas($this->column, function ($subquery) use ($values) {
+            $query->whereHas('parametrs', function ($subquery) use ($values) {
+                $table = $subquery->getModel()->getTable();
+                $subquery->whereIn("{$table}.id", $values);
+            })->orWhereHas('paramItems', function ($subquery) use ($values) {
                 $table = $subquery->getModel()->getTable();
                 $subquery->whereIn("{$table}.id", $values);
             });

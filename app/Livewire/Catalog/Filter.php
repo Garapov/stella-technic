@@ -283,7 +283,7 @@ class Filter extends Component
 
     public function toggleParam($id, $source)
     {
-        
+        // dd($source);
         if (isset($this->selectedParams[$id])) {
             unset($this->selectedParams[$id]);
         } else {

@@ -23,6 +23,7 @@ class Items extends Component
 
     #[Url]
     public $sort = "id:asc";
+    #[Url]
     public $filters = [];
 
     #[Url]
@@ -109,6 +110,8 @@ class Items extends Component
 
     public function render()
     {
+
+        // dd($this->filters);
         $builder = ProductVariant::where('is_hidden', false)
             ->whereHas('product', function ($q) {
                 $q->where('is_hidden', false);
@@ -116,7 +119,7 @@ class Items extends Component
             ->filter($this->filters)
             ->sort([$this->sort]);
 
-        if ($this->type === 'products' || in_array($this->category?->type, ['variations', 'filter'])) {
+        if ($this->type === 'products' || in_array($this->category?->type, ['variations'])) {
             $builder->whereIn('id', $this->product_ids);
         } else {
             $builder->whereIn('product_id', $this->product_ids);
