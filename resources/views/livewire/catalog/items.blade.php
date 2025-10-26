@@ -72,11 +72,11 @@
                     </div>
                 @endif
                 <div class="flex flex-col gap-4 @if ($display_filter) md:col-span-7 @else md:col-span-full @endif col-span-full">
-                    @if ($category && $category->title)
-                        <div class="items-start md:items-end justify-between flex flex-col md:flex-row gap-4">
+                    @if ($category && ($category->title || $category->h1))
+                        <div class="items-start justify-between flex flex-col gap-4">
                             <div>
-                                <h1 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl flex items-center">
-                                    <span>{{ $category->title }}</span> <span class="bg-blue-100 text-blue-800 text-xs font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300 whitespace-nowrap">
+                                <h1 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl flex md:items-center items-start gap-2 flex-col md:flex-row">
+                                    <span>{{ $category->h1 ?? $category->title }}</span> <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300 whitespace-nowrap">
                                         @php
                                             $count = $all_products->count();
                                         @endphp
@@ -84,15 +84,15 @@
                                     </span>
                                 </h1>
                             </div>
-                            <div class="flex items-center space-x-4">
+                            <div class="flex items-center justify-between w-full md:gap-4 gap-1">
                                 <!-- Display Mode Toggle -->
                                 @if (count($batches) > 0)
                                     <div class="inline-flex rounded-md shadow-xs" role="group">
-                                        <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-s-lg @if ($mode === 'list') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
+                                        <div class="inline-flex items-center md:px-3 md:py-2 p-1.5 text-sm font-medium border rounded-s-lg @if ($mode === 'list') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
                                             wire:click="changeDisplayMode('list')">
                                             <x-carbon-horizontal-view class="w-4 h-4" />
                                         </div>
-                                        <div class="inline-flex items-center px-3 py-2 text-sm font-medium border rounded-e-lg @if ($mode === 'block') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
+                                        <div class="inline-flex items-center md:px-3 md:py-2 p-1.5 text-sm font-medium border rounded-e-lg @if ($mode === 'block') bg-blue-500 border-blue-500 text-white @else bg-white border-gray-200 text-gray-900 cursor-pointer @endif"
                                             wire:click="changeDisplayMode('block')" >
                                             <x-carbon-vertical-view class="w-4 h-4" />
                                         </div>
@@ -114,7 +114,7 @@
                                         @click.outside="sortingOpened = false"
                                         x-show="sortingOpened"
                                         style="display: none;">
-                                        <ul class="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400">
+                                        <ul class="p-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                                             @foreach ($this->getSortOptions() as $value => $option)
                                                 <li>
                                                     <button type="button" @click="$wire.updateSort('{{ $value }}'); sortingOpened = false"
@@ -134,7 +134,7 @@
                                     </div>
                                 </div>
 
-                                <div class="inline-flex md:hidden items-center px-3 py-2 text-sm font-medium border rounded-lg bg-white border-gray-200 text-gray-900 cursor-pointer"
+                                <div class="inline-flex md:hidden items-center px-3 py-2 text-xs font-medium border rounded-lg bg-white border-gray-200 text-gray-900 cursor-pointer"
                                         @click="isFilterOpened = !isFilterOpened" >
                                     <x-carbon-filter class="w-5 h-5" />
                                     <span class="block md:hidden ml-2">Фильтр</span>
@@ -162,7 +162,7 @@
                         <div>
                             @if ($displayMode == 'block')
                                 <div>
-                                    <div class="mb-4 grid gap-4 grid-cols-2 md:mb-8 @if ($display_filter) lg:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 @else lg:grid-cols-3 xl:grid-cols-5 @endif">
+                                    <div class="mb-4 md:mx-0 -mx-[20px] grid md:gap-4 gap-1 grid-cols-2 md:mb-8 @if ($display_filter) lg:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 @else lg:grid-cols-3 xl:grid-cols-5 @endif">
                                         @foreach ($products as $variant)
                                             @livewire('general.product-variant', [
                                                 'variant' => $variant,

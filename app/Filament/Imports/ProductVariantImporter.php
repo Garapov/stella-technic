@@ -111,23 +111,55 @@ class ProductVariantImporter extends Importer
                 })
                 ->rules(["required", "json"]),
             ImportColumn::make("name")
+                ->label("Название")
                 ->ignoreBlankState()
                 ->rules(["nullable"]),
             ImportColumn::make("product.category_id")
-                ->rules(["required", "integer"]),
+                ->guess(["product.category_id", "category_id", "category"])
+                ->label("Id основной категории")
+                ->ignoreBlankState()
+                ->fillRecordUsing(function (
+                    $state,
+                    ProductVariantImporter $importer,
+                    $record
+                ) {
+                    $record->product->update([
+                        "category_id" => $state
+                    ]);
+
+                    return null;
+                })
+                ->rules(["integer"]),
             ImportColumn::make("price")
+                ->label("Цена")
                 ->numeric()
                 ->ignoreBlankState()
                 ->rules(["required", "integer"]),
             ImportColumn::make("h1")
-                ->numeric()
+                ->label("H1")
                 ->ignoreBlankState()
                 ->rules(["required"]),
             ImportColumn::make("uuid")
-                ->numeric()
+                ->label("UID")
                 ->ignoreBlankState()
                 ->rules(["required"]),
+            ImportColumn::make("slug")
+                ->label("Ссылка")
+                ->ignoreBlankState()
+                ->rules(["required"]),
+            ImportColumn::make("seo")
+                ->label("SEO")
+                ->ignoreBlankState()
+                ->rules(["json"])
+                ->fillRecordUsing(function (
+                    $state,
+                    ProductVariantImporter $importer,
+                    $record
+                ): void {
+                    $record->seo = \json_decode($state, true);
+                }),
             ImportColumn::make("new_price")
+                ->label("Цена со скидкой")
                 ->numeric()
                 ->ignoreBlankState()
                 ->rules(["integer", "nullable"]),
@@ -142,17 +174,20 @@ class ProductVariantImporter extends Importer
             //     ->requiredMapping()
             //     ->rules(['required', 'url']),
             ImportColumn::make("sku")->label("SKU"),
-            ImportColumn::make("short_description")->ignoreBlankState(),
-            ImportColumn::make("description")->ignoreBlankState(),
+            ImportColumn::make("short_description")->label("Короткое описание")->ignoreBlankState(),
+            ImportColumn::make("description")->label("Описание")->ignoreBlankState(),
             ImportColumn::make("is_popular")
-                ->requiredMapping()
+                ->label("Популярный")
+                ->ignoreBlankState()
                 ->boolean()
                 ->rules(["boolean"]),
             ImportColumn::make("count")
-                ->requiredMapping()
+                ->label("Остаток")
+                ->ignoreBlankState()
                 ->numeric()
                 ->rules(["required", "integer"]),
             ImportColumn::make("paramItems")
+                ->label("Ключевые параметры")
                 ->fillRecordUsing(function (
                     $state,
                     ProductVariantImporter $importer,
@@ -209,6 +244,7 @@ class ProductVariantImporter extends Importer
                 })
                 ->rules(["required", "json"]),
             ImportColumn::make("parametrs")
+                ->label("Второстепенные параметры")
                 ->fillRecordUsing(function (
                     $state,
                     ProductVariantImporter $importer,
@@ -255,6 +291,7 @@ class ProductVariantImporter extends Importer
                 })
                 ->rules(["required", "json"]),
             ImportColumn::make("synonims")
+                ->label("Синонимы")
                 ->ignoreBlankState()
                 ->fillRecordUsing(function (
                     $state,
@@ -269,6 +306,7 @@ class ProductVariantImporter extends Importer
                 })
                 ->rules(["nullable"]),
             ImportColumn::make("gallery")
+                ->label("Галерея")
                 ->array(",")
                 ->fillRecordUsing(function (
                     $state,

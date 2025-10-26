@@ -21,23 +21,22 @@
                 <ul>
                     @foreach ($categories as $category)
                         <li class="bg-white dark:bg-gray-900" x-data="{ open: false }" @click="open = !open" :class="open ? 'text-gray-900 dark:text-white': 'text-gray-500 dark:text-gray-400'">
-                            <button type="button" class="flex items-center justify-between w-full py-5 font-medium text-left rtl:text-right text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 gap-3">
+                            <button type="button" class="flex items-center justify-between w-full py-5 font-medium text-left rtl:text-right text-gray-900 border-b border-gray-300 gap-3">
                                 <span class="text-sm">{{ $category->title }}</span>
                                 <span class="transition-all" :class="open ? 'rotate-180': 'rotate-0'">
                                     <x-eva-arrow-ios-downward-outline class="w-4 h-4"/>
                                 </span>
                             </button>
-                            <ul x-show="open" class="py-4 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+                            <ul x-show="open" class="py-4 border-b border-gray-300">
                                 <li>
                                     <a href="{{ route('client.catalog', $category->slug) }}" wire:navigate class="flex items-center justify-between py-1 text-md font-medium text-blue-600 dark:text-blue-400" @click="$store.application.burger = false">
-                                        {{ $category->title }}
-                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium ms-2 px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300">{{ $category->products->count() }}</span>
+                                        Перейти в категорию
                                     </a>
                                 </li>
                                 @foreach ($category->categories as $subcategory)
-                                    @if ($subcategory->products->count() == 0)
+                                    {{-- @if ($subcategory->products->count() == 0)
                                         @continue
-                                    @endif
+                                    @endif --}}
                                     <li>
                                         <a href="{{ route('client.catalog', $subcategory->slug) }}" wire:navigate class="block py-1 text-sm text-blue-600 dark:text-blue-400" @click="$store.application.burger = false">
                                             {{ $subcategory->title }}

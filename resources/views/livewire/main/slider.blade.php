@@ -12,7 +12,7 @@
                 })
             },
         }">
-            <div class="xl:px-[100px] px-[20px]">
+            <div class="xl:px-[100px] px-0">
                 <div class="glide relative group" x-ref="slider">
                     <div class="glide__track lg:rounded-xl overflow-hidden" data-glide-el="track">
                         <div class="glide__slides">
@@ -44,13 +44,13 @@
                         </div>
                     </div>
                     @if (count($slides) > 1)
-                        <div class="lg:group-hover:opacity-70 lg:opacity-0 flex items-center justify-between gap-4 p-2 lg:absolute lg:right-0 lg:bottom-0 lg:bg-white rounded-tl-lg">
+                        <div class="lg:group-hover:opacity-70 lg:opacity-0 flex items-center md:justify-between justify-center gap-4 p-2 lg:absolute lg:right-0 lg:bottom-0 lg:bg-white rounded-tl-lg">
                             <div class="flex items-center gap-2" data-glide-el="controls[nav]">
                                 @foreach ($slides as $key=>$slide)
-                                    <div class="h-2.5 rounded-full transition-width" :class="{'w-6 bg-blue-400': index == {{ $key }}, 'w-2.5 bg-gray-400': index != {{ $key }} }" data-glide-dir="={{ $key }}"></div>
+                                    <div class="md:h-2.5 h-1.5 rounded-full transition-width" :class="{'w-6 bg-blue-400': index == {{ $key }}, 'md:w-2.5 w-1.5 bg-gray-400': index != {{ $key }} }" data-glide-dir="={{ $key }}"></div>
                                 @endforeach
                             </div>
-                            <div class="flex items-center gap-2" data-glide-el="controls">
+                            <div class="hidden md:flex items-center gap-2" data-glide-el="controls">
                                 <button type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800" data-glide-dir="<">
                                     <x-eva-arrow-ios-back class="w-4 h-4" />
                                     <span class="sr-only">Предыдущий слайд</span>

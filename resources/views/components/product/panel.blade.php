@@ -141,13 +141,13 @@
         </a>
     </div>
     @if (count($features) > 0)
-        <div class="grid lg:grid-cols-4 grid-cols-1 gap-4">
+        <div class="md:grid lg:grid-cols-4 md:grid-cols-1 flex gap-4 overflow-x-auto">
             @foreach ($features as $feature)
                 <div class="bg-white shadow-md rounded-lg flex p-4 h-full items-center flex flex-col gap-2 items-center">
                     <div class="min-w-10 min-h-10 w-10 h-10 text-indigo-500 flex items-center justify-center">
                         <img src="{{ Storage::disk(config("filesystems.default"))->url($feature->icon) }}" alt="">
                     </div>
-                    <span class="title-font text-sm font-medium text-slate-600 text-center">{{ $feature->text }}</span>
+                    <span class="title-font text-sm font-medium text-slate-600 text-center w-[120px] md:w-auto">{{ $feature->text }}</span>
                 </div>
             @endforeach
         </div>

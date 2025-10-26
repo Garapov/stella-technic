@@ -40,7 +40,6 @@ class GenerateSitemap extends Command
                     return $url;
                 })
                 ->getSitemap()
-                // here we add one extra link, but you can add as many as you'd like
                 ->writeToFile(public_path('sitemap.xml'));
             Log::error('Sitemap success: ');
         } catch (\Throwable $e) {

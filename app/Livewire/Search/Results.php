@@ -25,8 +25,10 @@ class Results extends Component
         $results['products'] = ProductVariant::search($this->q)
             ->where('is_hidden', false)
             ->where('product_is_hidden', false)
+            ->take(10000)
             ->get();
-        $results['categories'] = ProductCategory::search($this->q)->get();
+        $results['categories'] = ProductCategory::search($this->q)->take(10000)->get();
+
         // $results['pages'] = Page::where('title', 'like', "%{$this->q}%")->get();
 
         return view('livewire.search.results', [

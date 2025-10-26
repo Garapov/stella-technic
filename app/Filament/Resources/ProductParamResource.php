@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductParamResource\Pages;
 use App\Filament\Resources\ProductParamResource\RelationManagers;
 use App\Models\ProductParam;
+use App\Tables\Columns\Count;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -80,7 +81,9 @@ class ProductParamResource extends Resource
                 Tables\Columns\TextColumn::make("id")
                     ->label("ID")
                     ->searchable(),
-                Tables\Columns\TextColumn::make("name")
+                Count::make("products_count")
+                    ->label("Кол-во товаров"),
+                Tables\Columns\TextInputColumn::make("name")
                     ->label("Название")
                     ->searchable(),
                 Tables\Columns\TextColumn::make("type")
@@ -103,13 +106,13 @@ class ProductParamResource extends Resource
                 ),
                 Tables\Columns\ToggleColumn::make("allow_filtering")->label(
                     "Разрешить фильтрацию",
-                ),
+                )->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\ToggleColumn::make("show_on_preview")->label(
                     "Показывать в листинге",
-                ),
+                )->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\ToggleColumn::make("show_on_table")->label(
                     "Показывать в таблице",
-                ),
+                )->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\ToggleColumn::make("fixed")->label(
                     "Зафиксирован",
                 )->toggleable(isToggledHiddenByDefault: true),

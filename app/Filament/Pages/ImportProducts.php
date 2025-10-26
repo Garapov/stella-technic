@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Imports\ProductImporter;
 use App\Filament\Imports\ProductVariantImporter;
+use App\Models\ProductVariant;
 use App\Models\Import;
 use Filament\Actions\ImportAction;
 use Filament\Pages\Page;
@@ -51,6 +52,14 @@ class ImportProducts extends Page implements HasTable
 
     public function table(Table $table): Table
     {
+        // $products = ProductVariant::whereIn('sku', [
+        //     'N48075TPRSW','N48100TPRSW','N48125TPRSW','N48075TPR','N48100TPR','N48125TPR','N48075TPRF','N48100TPRF','N48125TPRF','N48075TPRB','N48100TPRB','N48125TPRB','N48150TPRSW','N48200TPRSW','N48150TPR','N48200TPR','N48150TPRF','N48200TPRF','N48150TPRB','N48200TPRB','N48075TPRD','N48100TPRD','N48125TPRD','N48075TPRDB','N48100TPRDB','N48125TPRDB',
+        // ])->get();
+        // foreach($products as $prod) {
+        //     $prod->update([
+        //         'seo' => [],
+        //     ]);
+        // }
         return $table
             ->query(
                 Import::query()->where(

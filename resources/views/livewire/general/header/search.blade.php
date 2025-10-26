@@ -1,4 +1,4 @@
-<form action="{{ route('client.search') }}" class="relative items-center grow lg:flex hidden" x-data="{
+<form action="{{ route('client.search') }}" class="relative w-full" x-data="{
     isOpen: false,
     searchRequests: Alpine.$persist([]).as('searchRequests'),
     query: @entangle('q'),
@@ -95,7 +95,7 @@
                             <x-fas-arrow-right class="w-4 h-4 ms-2 rtl:rotate-180" />
                         </a>
                     </h2>
-                    <div class="grid grid-cols-4 xl:grid-cols-4 gap-2">
+                    <div class="grid grid-cols-1 md:grid-cols-4 xl:grid-cols-4 gap-2">
                         @foreach($results['categories'] as $key => $category)
                             @if ($key > 3)
                                 @continue

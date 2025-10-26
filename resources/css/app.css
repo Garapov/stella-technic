@@ -150,3 +150,11 @@ body #nprogress .bar .peg {
 }
 
 
+.content_block ul {
+    @apply list-disc;
+    @apply pl-6;
+    @apply marker:text-blue-500;
+}
+.content_block p {
+    @apply py-2;
+}

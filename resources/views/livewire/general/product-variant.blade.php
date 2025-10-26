@@ -19,7 +19,7 @@
     @php
         // $category = $category ?? $variant->product->categories->last();
         $schema = \Spatie\SchemaOrg\Schema::product()
-            ->name($variant->name ?? $variant->name)
+            ->name($variant->h1 ?? $variant->name)
             ->image(count($variant->gallery) > 0 ? Storage::disk(config('filesystems.default'))->url($variant->gallery[0]) : null)
             ->description($variant->short_description ?? $variant->description ?? '')
             ->sku($variant->sku)
@@ -43,70 +43,112 @@
                 <img class="absolute top-0 left-0 mx-auto h-full w-full object-cover"
                     src="{{ asset('assets/placeholder.svg') }}" />
             @endif
-            <div class="absolute top-0 left-0 h-full w-full flex gap-0">
+            <div class="absolute top-0 left-0 h-full w-full flex gap-0 pointer-events-none md:pointer-events-auto">
                 @foreach($variant->gallery as $key => $image)
                     <div class="relative w-full" @mouseenter="imageIdToDisplay = {{ $key }}"></div>
                 @endforeach
             </div>
         </a>
         @if($variant->gallery && count($variant->gallery) > 1)
-            <div class="flex items-center justify-center gap-1 absolute top-full left-0 w-full p-2">
+            <div class="md:flex hidden items-center justify-center gap-1 absolute top-full left-0 w-full p-2">
                 @foreach($variant->gallery as $key => $image)
                     <div class="w-1.5 h-1.5 rounded-full" :class="{ 'bg-blue-500': imageIdToDisplay === {{ $key }}, 'bg-gray-300': imageIdToDisplay !== {{ $key }} }"></div>
                 @endforeach
             </div>
         @endif
     </div>
+
+    <div class="flex md:hidden flex-col gap-2 px-4 pt-2 pb-0">
+
+        <div class="flex items-center gap-4">
+            <span class="md:text-2xl sm:text-xl text-lg font-semibold leading-tight text-gray-900 dark:text-white">
+                {{ $variant->new_price ?? ($variant->price > 0 ? Number::format($variant->getActualPrice(), 0) . ' ₽' : 'По запросу') }} 
+                
+            </span>
+            @if($variant->new_price)
+                <span class="text-lg line-through leading-tight text-gray-600 dark:text-white">
+                    @if ($variant->price > 0) {{ Number::format($variant->getActualPrice(), 0) }} ₽ @else По запросу @endif
+                </span>
+            @endif
+        </div>
+        @if (!auth()->user() && $variant->auth_price)
+            <div class="flex items-center gap-2 text-green-800 dark:text-green-300 bg-green-100 text-md font-medium me-2 px-2.5 py-0.5 rounded-md dark:bg-green-900" x-data="{
+                popover: false,
+            }" @mouseover="popover = true"  @mouseover.away = "popover = false">
+                <span>{{ $variant->auth_price }} ₽</span>
+                <x-carbon-information class="w-4 h-4" />
+
+                <div role="tooltip" class="absolute bottom-[calc(100%+10px)] left-0 z-10 inline-block w-full text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-xs dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800" x-show="popover">
+                    <div class="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg dark:border-gray-600 dark:bg-gray-700">
+                        <h3 class="font-semibold text-gray-900 dark:text-white">Цена для авторизованных пользователей</h3>
+                    </div>
+                    <div class="px-3 py-2">
+                        <p>Эта цена доступна для авторизованных пользователей. <a class="text-blue-500" href="{{ route('login') }}" wire:navigate>Войдите</a> или <a class="text-blue-500" href="{{ route('register') }}" wire:navigate>зарегистрируйтесь</a> для применения этой цены.</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+    </div>
     
-    <div class="p-4 flex-auto shrink flex flex-col gap-2 justify-between">
-        <div class="mb-2">
-            <div class="mb-2 flex items-center justify-between gap-2">
-                @if($variant->new_price)
+    <div class="md:p-4 px-4 pt-2 pb-2 flex-auto shrink flex flex-col gap-2 justify-between">
+        <div class="md:mb-2">
+            @if($variant->new_price)
+                <div class="mb-2 flex items-center justify-between gap-2">
                     <span class="me-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-white">
                         Скидка {{ round(100 - ($variant->new_price * 100 / $variant->getActualPrice())) }}%
                     </span>
-                @endif
-            </div>
+                </div>
+            @endif
 
             <a href="{{ route('client.catalog', $variant->urlChain()) }}"
-                class="text-md font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate>
-                {{ $variant->h1 ?? $variant->name }}
+                class="lg:text-base text-xs font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate>
+                {{ $variant->name ?? $variant->h1 }} {{ $variant->sku }}
             </a>
         </div>
         @if($variant->paramItems || $variant->parametrs)
-            <div class="flex-grow">
-                <ul class="flex flex-col gap-1 p-2 bg-slate-50 rounded-lg shadow-sm">
-                    @foreach($variant->paramItems->merge($variant->parametrs)->sortBy('productParam.sort') as $paramItem)
-                        @if (!$paramItem->productParam->show_on_preview)
-                            @continue
-                        @endif
-                        <li class="flex items-center gap-1 justify-between dark:text-white">
-                            <span class="text-sm font-medium">{{ $paramItem->productParam->name }}</span>
-                            <span class="grow border-b border-dashed"></span>
-                            <span class="text-md font-semibold">{{ $paramItem->title }}</span>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
+            @php
+                $show_params = false;
+                foreach($variant->paramItems->merge($variant->parametrs)->sortBy('productParam.sort') as $paramItem):
+                    if (!$paramItem->productParam->show_on_preview || $show_params) continue;
+                    $show_params = true;
+                endforeach
+            @endphp
+            @if ($show_params)
+                <div class="flex-grow hidden md:block">
+                    <ul class="flex flex-col gap-1 p-2 bg-slate-50 rounded-lg shadow-sm">
+                        @foreach($variant->paramItems->merge($variant->parametrs)->sortBy('productParam.sort') as $paramItem)
+                            @if (!$paramItem->productParam->show_on_preview)
+                                @continue
+                            @endif
+                            <li class="flex items-center gap-1 justify-between dark:text-white">
+                                <span class="md:text-sm text-xs">{{ $paramItem->productParam->name }}</span>
+                                <span class="grow border-b border-dashed"></span>
+                                <span class="md:text-sm text-xs font-medium">{{ $paramItem->title }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
         @endif
 
         <div class="flex">
             @if ($variant->count > 0 && !$variant->is_pre_order)
-                <div class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-green-900 dark:text-green-300">В наличии</div>
+                <div class="text-green-600 text-sm font-medium me-2">В наличии</div>
             @endif
             @if ($variant->count < 1)
-                <div class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-gray-300">Нет в наличии</div>
+                <div class="text-gray-800 text-sm font-medium me-2">Нет в наличии</div>
             @endif
             @if ($variant->count > 0 && $variant->is_pre_order)
-                <div class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-yellow-900 dark:text-yellow-300">Предзаказ</div>
+                <div class="text-yellow-800 text-sm font-medium me-2">Предзаказ</div>
             @endif
         </div>
 
         <div class="flex items-end justify-between gap-4 relative">
-            <div class="flex flex-col gap-2">
+            <div class="md:flex hidden flex-col gap-2">
 
                 <div class="flex items-center gap-4">
-                    <span class="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
+                    <span class="text-2xl font-semibold leading-tight text-gray-900 dark:text-white">
                         {{ $variant->new_price ?? ($variant->price > 0 ? Number::format($variant->getActualPrice(), 0) . ' ₽' : 'По запросу') }} 
                         
                     </span>
@@ -136,7 +178,7 @@
 
             </div>
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 w-full md:w-auto">
                 
                 @if ($variant->count > 0)
                     
@@ -145,13 +187,13 @@
 
 
 
-                    <div class="relative" x-data="{ showTooltip: false }" @click="showTooltip = !showTooltip"
+                    <div class="relative w-full md:w-auto" x-data="{ showTooltip: false }" @click="showTooltip = !showTooltip"
                             @click.outside="showTooltip = false">
                         <button type="button"
                             
-                            class="inline-flex items-center rounded-lg bg-green-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-500 dark:hover:bg-green-500 dark:focus:ring-green-800">
-                            <span class="sr-only">Купить</span>
+                            class="inline-flex items-center justify-center rounded-lg bg-green-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 w-full md:w-auto">
                             <x-carbon-shopping-cart-plus class="h-5 w-5" />
+                            <span class="md:sr-only ms-2">Купить</span>
                         </button>
                         <div x-show="showTooltip"
                             x-cloak
@@ -162,13 +204,13 @@
                             x-transition:leave-start="opacity-100 translate-y-0"
                             x-transition:leave-end="opacity-0 translate-y-1"
                             class="absolute bottom-full right-0 z-10 mb-2 rounded-md bg-slate-100 shadow px-3 py-2 text-sm font-medium text-white shadow-sm whitespace-nowrap">
-                            <div class="flex gap-2">
-                                <button class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 border border-blue-700 inset-ring inset-ring-blue-700/10" @click.stop="$store.application.forms.buy_one_click = true, $store.application.one_click_variation = {{json_encode($variant)}}">Купить в один клик</button>
+                            <div class="flex flex-col md:flex-row gap-2">
+                                <button class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 border border-blue-700 inset-ring inset-ring-blue-700/10 text-center" @click.stop="$store.application.forms.buy_one_click = true, $store.application.one_click_variation = {{json_encode($variant)}}">Купить в один клик</button>
 
 
 
                                 <button type="button"
-                                    class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 border border-green-700 inset-ring inset-ring-green-600/20" x-show="!$store.cart.list[{{ $variant->id }}]"
+                                    class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 border border-green-700 inset-ring inset-ring-green-600/20 text-center" x-show="!$store.cart.list[{{ $variant->id }}]"
                                     @click.stop="$store.cart.addVariationToCart({
                                         count: 1,
                                         variationId: {{ $variant->id }},

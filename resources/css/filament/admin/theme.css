@@ -8,7 +8,7 @@
 @media (min-width: 1024px) {
     .filepond--root[data-style-panel-layout="grid"] .filepond--item {
         width: calc(
-            100% / 4 - 0.5rem
+            100% / 6 - 0.6rem
         );
     }
 }

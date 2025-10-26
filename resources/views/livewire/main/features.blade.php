@@ -2,7 +2,7 @@
 
         <section class="text-gray-600 body-font bg-slate-50 flex flex-col">
 
-            <div class="xl:px-[100px] px-[20px] py-10 flex flex-col gap-10">
+            <div class="xl:px-[100px] px-[20px] xl:py-10 pt-4 pb-10 flex flex-col gap-10">
                  @if (count($features) > 0)
                     {!! $featuresScheme !!}
                     <div class="text-center order-2 lg:order-none">

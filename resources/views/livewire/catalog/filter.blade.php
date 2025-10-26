@@ -19,7 +19,7 @@
         $wire.resetFilters();
         this.rangeSlider.value = [@js($products->min('price')), @js($products->max('price'))];
     }
-}">
+}" x-cloak>
 
     <div class="flex flex-col gap-2">
         <div class="flex items-center justify-between">

@@ -55,7 +55,7 @@ class ParamsRelationManager extends RelationManager
             ->recordTitleAttribute("title")
             ->columns([
                 Tables\Columns\TextColumn::make("id")->label("ID"),
-                Tables\Columns\TextColumn::make("title")->label("Название"),
+                Tables\Columns\TextInputColumn::make("title")->label("Название"),
                 Tables\Columns\TextInputColumn::make("sort")->label(
                     "Сортировка",
                 ),

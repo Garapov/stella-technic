@@ -48,6 +48,9 @@ class ProductVariantResource extends Resource
                             TextInput::make("h1")
                                 ->required()
                                 ->label("H1"),
+                            TextInput::make("slug")
+                                ->unique(table: ProductVariant::class, ignoreRecord: true)
+                                ->label("Ссылка"),
                             TextInput::make("price")
                                 ->required()
                                 ->numeric()

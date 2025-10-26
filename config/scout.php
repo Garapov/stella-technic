@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\ProductVariant;
+
 return [
 
     /*
@@ -137,6 +139,10 @@ return [
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
+
+            ProductVariant::class => [
+                'filterableAttributes' => ['is_hidden', 'product_is_hidden']
+            ],
         ],
     ],
 

@@ -110,7 +110,7 @@
                 @if (setting('cookies'))
                     <a href="{{ \Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId(setting('cookies')) }}" wire:navigate class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Использование cookie</a>
                 @endif
-                <a href="#" class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Карта сайта</a>
+                <a href="/sitemap.xml" target="_blank" class="hidden py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Карта сайта</a>
             </div>
             <div class="flex mt-4 sm:justify-center sm:mt-0">
                 @if (setting("site_social"))

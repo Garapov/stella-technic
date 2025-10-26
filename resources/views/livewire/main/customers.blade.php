@@ -5,7 +5,7 @@
                 <div class="flex items-center justify-between mb-10">
                     <p class="lg:text-4xl text-xl text-slate-900 dark:text-white font-semibold">Наши клиенты</p>
                     <div class="flex items-center gap-8">
-                        <div class="flex items-center gap-2" data-glide-el="controls">
+                        <div class="hidden md:flex items-center gap-2" data-glide-el="controls">
                             @foreach ($clients as $key=>$client)
                                 @if ($key > count($clients) - 6)      
                                     @continue
@@ -24,21 +24,21 @@
                     </div>
                 </div>
                 <div class="flex justify-between gap-8 sm:gap-12 md:grid-cols-3 lg:grid-cols-6 text-gray-400">
-                <div class="glide">
-                    <div class="glide__track" data-glide-el="track">
-                      <ul class="glide__slides items-stretch">
-                        
-                        @foreach ($clients as $client)
-                            <li class="glide__slide h-auto">
-                                <div class="flex justify-center items-center h-full p-4 rounded bg-white">
-                                    <img src="{{ Storage::disk(config('filesystems.default'))->url($client->image) }}" alt="">    
-                                </div>
-                            </li>
-                        
-                        @endforeach
-                      </ul>
+                    <div class="glide">
+                        <div class="glide__track" data-glide-el="track">
+                            <ul class="glide__slides items-stretch">
+                                
+                                @foreach ($clients as $client)
+                                    <li class="glide__slide h-auto">
+                                        <div class="flex justify-center items-center h-full p-4 rounded bg-white">
+                                            <img src="{{ Storage::disk(config('filesystems.default'))->url($client->image) }}" alt="">    
+                                        </div>
+                                    </li>
+                                
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
-                  </div>
                 
                 </div>
             </div>

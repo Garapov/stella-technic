@@ -10,7 +10,7 @@
         if (document.querySelector('.gallery-slider')) {
             setTimeout(() => {
                     this.gallerySlider = new window.splide('.gallery-slider', {
-                      type       : 'fade',
+                      {{-- type       : 'fade', --}}
                       heightRatio: 1,
                       pagination : true,
                       arrows     : false,
@@ -109,7 +109,7 @@
             <div class="flex items-center gap-2">
                 Бренд: <div class="flex items-center gap-1">
                     <img src="{{ Storage::disk(config('filesystems.default'))->url($variation->product->brand->image) }}" alt="{{ $variation->product->brand->name }}" class="h-6" />
-                    <span class="text-slate-500 font-semibold">{{ $variation->product->brand->name }}</span>
+                    {{-- <span class="text-slate-500 font-semibold">{{ $variation->product->brand->name }}</span> --}}
                 </div>
             </div>
 
@@ -129,7 +129,7 @@
                     <div class="flex flex-col-reverse gap-4 p-4 rounded-lg shadow bg-white" x-ignore>
                         @if ($variation->gallery || $variation->videos)
                             <div class="grid grid-cols-8 gap-2">
-                                <section class="splide gallery-thumbnails hidden md:block" aria-label="Splide Basic HTML Example" ref="gallerySlider">
+                                <section class="splide gallery-thumbnails !invisible pointer-events-none md:pointer-events-auto md:!visible absolute md:relative" aria-label="Splide Basic HTML Example" ref="gallerySlider">
                                     <div class="h-full flex felx-col justify-center">
                                         <div class="w-full splide__track vertical-carousel-height-fix">
                                             <ul class="splide__list">
@@ -154,7 +154,7 @@
                                         </div>
                                     </div>
                                 </section>
-                                <section class="splide gallery-slider col-span-7" aria-label="Splide Basic HTML Example" ref="gallerySlider">
+                                <section class="splide gallery-slider md:col-span-7 col-span-full" aria-label="Splide Basic HTML Example" ref="gallerySlider">
                                     <div class="splide__track">
                                         <ul class="splide__list">
                                             @if ($variation->videos)
@@ -237,9 +237,9 @@
                     </div>
                 </div>
                 @if ($variation->description)
-                    <div class="text-medium text-gray-900 bg-white shadow rounded-b-lgw-full p-4" x-show="activeTab == 1">
+                    <div class="text-medium text-gray-900 bg-white shadow rounded-b-lgw-full py-8 px-10 content_block flex flex-col gap-4" x-show="activeTab == 1">
                         <!-- <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Подробное описание</h3> -->
-                        {!! nl2br(str($variation->description)->sanitizeHtml()) !!}
+                        {!! str($variation->description)->sanitizeHtml() !!}
                     </div>
                 @endif
                 @if (!empty($files))

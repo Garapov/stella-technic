@@ -1,6 +1,6 @@
 <div>
 
-    <div class="rounded-lg bg-blue-500 flex items-center w-full mb-4">
+    {{-- <div class="rounded-lg bg-blue-500 flex items-center w-full mb-4">
         <input type="search" id="search-dropdown"
         class="rounded-lg bg-white block p-2.5 w-full text-sm text-gray-900 dark:placeholder-gray-400 dark:text-white border border-blue-500"
         placeholder="Поиск" name="q" wire:model.live="q" @focus="isOpen = true" @blur="isOpen = false" style="outline: none; box-shadow: none;" />
@@ -12,11 +12,25 @@
             </svg>
             <span class="sr-only">Поиск</span>
         </button>
-    </div>
-
+    </div> --}}
+    @if ($q != '' && ($results['products']->count() > 0 || $results['categories']->count() > 0))
+        <div class="p-4 mb-4 text-md text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+            Результат поиска по запросу <span class="font-medium">"{{ $q }}"</span>. Найдено {{ $results['products']->count() }} товаров и {{ $results['categories']->count() }} категорий.
+        </div>
+    @endif
+    @if ($q != '' && ($results['products']->count() < 1 && $results['categories']->count() < 1))
+        <div class="p-4 mb-4 text-md text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+            По запросу <span class="font-medium">"{{ $q }}"</span> ничего не найдено.
+        </div>
+    @endif
+    @if ($q == '')
+        <div class="p-4 text-md text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300" role="alert">
+            Для показа результатов введите запрос в поле поиска выше.
+        </div>
+    @endif
     @if ($q != '' && ($results['products']->count() > 0 || $results['categories']->count() > 0))
         @if ($results['categories']->count() > 0)
-            <div class="grid grid-cols-2 md:grid-cols-8 gap-4 mb-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-4">
                 @foreach ($results['categories'] as $subcategory)
                 
                     <x-catalog.category.big :subcategory="$subcategory" />

@@ -66,6 +66,7 @@ class ProductVariant extends Model
         "videos" => "array",
         "is_default" => "boolean",
         "is_popular" => "boolean",
+        "is_hidden" => "boolean",
         "seo" => "array",
         "rows" => "array",
         "files" => "array",

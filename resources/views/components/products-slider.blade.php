@@ -39,7 +39,7 @@
             <div class="" x-ref="slider">
                 <div class="flex md:items-center justify-between gap-4 mb-10">
                     <p class="lg:text-4xl text-xl text-slate-900 dark:text-white font-semibold">{{ $title }}</p>
-                    <div class="flex items-center justify-between md:justify-end gap-8 w-full md:w-auto">
+                    <div class="flex items-center justify-between md:justify-end gap-8">
                         <div class="md:flex hidden items-center gap-2" data-glide-el="controls[nav]">
                             @foreach ($variations as $key=>$variation)
                                 @if ($key > count($variations) - 5)

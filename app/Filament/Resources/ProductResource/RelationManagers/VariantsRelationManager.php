@@ -51,6 +51,9 @@ class VariantsRelationManager extends RelationManager
                             TextInput::make("h1")
                                 ->required()
                                 ->label("H1"),
+                            TextInput::make("slug")
+                                ->unique(table: ProductVariant::class, ignoreRecord: true)
+                                ->label("Ссылка"),
                             TextInput::make("price")
                                 ->required()
                                 ->numeric()
@@ -72,9 +75,10 @@ class VariantsRelationManager extends RelationManager
                                 ->label("Остаток"),
                             TextInput::make("sku")
                                 ->required()
+                                ->unique(table: ProductVariant::class, ignoreRecord: true)
                                 ->label("Артикул"),
                             TextInput::make("uuid")
-                                ->label("UID"),
+                                ->label("UID")->unique(table: ProductVariant::class, ignoreRecord: true),
                             Toggle::make("is_popular")
                                 ->label("Популярный")
                                 ->inline(false),

@@ -11,6 +11,7 @@ class AddLastModified
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // dd($request);
         // 1) Вычисляем метку последнего изменения для этого запроса
         $lastModified = $this->resolveLastModified($request);
 

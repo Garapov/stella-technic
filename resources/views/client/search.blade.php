@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <section class="py-4 bg-white md:py-4 dark:bg-gray-900 antialiased">
+    {{-- <section class="py-4 bg-white md:py-4 dark:bg-gray-900 antialiased">
         <div class="xl:px-[100px] px-[20px]">
             <!-- Heading & Filters -->
 
@@ -12,8 +12,10 @@
             </div>
 
         </div>
-    </section>
+    </section> --}}
     <div class="xl:px-[100px] px-[20px] py-4">
         @livewire('search.results')
+        @livewire('general.recently')
     </div>
+    @livewire('main.popular')
 </x-guest-layout>
