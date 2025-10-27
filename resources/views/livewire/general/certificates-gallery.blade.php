@@ -42,7 +42,7 @@
                 <div class="xl:px-[100px] px-[20px]">
                     <div class="flex items-center justify-between mb-10">
                         <p class="lg:text-4xl text-xl text-slate-900 dark:text-white font-semibold">{{ $title }}</p>
-                        <a href="{{ route('client.posts.index') }}"
+                        <a href="{{ route('client.certificates') }}"
                             class=" items-center font-medium text-blue-600 dark:text-blue-500 hover:underline hidden md:inline-flex" wire:navigate>
                             Смотреть все
                             <x-fas-arrow-right class="w-4 h-4 ms-2 rtl:rotate-180" />
