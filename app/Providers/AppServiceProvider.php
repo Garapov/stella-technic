@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Paginator::defaultView('vendor.pagination.tailwind');
+        // Paginator::defaultView('vendor.pagination.tailwind');
 
         FilamentClearCache::addCommand('responsecache:clear');
         
