@@ -45,24 +45,26 @@
     </div>
     <div class="bg-slate-100 border-gray-200 px-4 lg:px-6 dark:bg-slate-700 lg:block hidden">
         <div class="py-8 lg:flex gap-12 justify-between items-center xl:px-[100px] px-[20px]">
-            <div class="flex items-center gap-4">
-                <x-fas-phone class="w-4 h-4 text-gray-900 dark:text-gray-300" />
-                <div class="flex flex-col gap-2">
-                    <span class="text-sm text-gray-900 dark:text-gray-300 whitespace-nowrap">+7 (495) 661-17-17</span>
-                </div>
-            </div>
+            @if (setting('site_phone'))
+                <a href="tel:{{ setting('site_phone') }}" class="flex items-center gap-4">
+                    <x-fas-phone class="w-4 h-4 text-gray-900 dark:text-gray-300" />
+                    <div class="flex flex-col gap-2">
+                        <span class="text-sm text-gray-900 dark:text-gray-300 whitespace-nowrap">{{ setting('site_phone') }}</span>
+                    </div>
+                </a>
+            @endif
 
-            <div class="flex items-center gap-4">
+             <a href="mailto:{{ setting("site_email") }}" class="flex items-center gap-4">
                 <x-fas-mail-bulk class="w-4 h-4 text-gray-900 dark:text-gray-300" />
                 <div class="flex flex-col gap-2">
-                    <span class="text-sm text-gray-900 dark:text-gray-300 whitespace-nowrap">info18@stella-technic.ru</span>
+                    <span class="text-sm text-gray-900 dark:text-gray-300 whitespace-nowrap">{{ setting("site_email") }}</span>
                 </div>
-            </div>
+            </a>
 
             <div class="flex items-center gap-4">
                 <x-fas-clock-rotate-left class="w-4 h-4 text-gray-900 dark:text-gray-300" />
                 <div class="flex flex-col gap-0">
-                    <span class="text-sm text-gray-900 dark:text-gray-300 whitespace-nowrap">пн-пт с 9:00 до 18:00</span>
+                    <span class="text-sm text-gray-900 dark:text-gray-300 whitespace-nowrap">{{ setting('site_worktime') }}</span>
                     <span class="text-xs text-gray-700 dark:text-gray-200">отгрузки: пн-чт: с 9:30 до 17:30 пт: с 9:30 до 17:00</span>
                 </div>
             </div>
