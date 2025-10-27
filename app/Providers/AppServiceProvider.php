@@ -15,6 +15,7 @@ use TomatoPHP\FilamentSettingsHub\Facades\FilamentSettingsHub;
 use TomatoPHP\FilamentSettingsHub\Services\Contracts\SettingHold;
 use Z3d0X\FilamentFabricator\Resources\PageResource;
 use CmsMulti\FilamentClearCache\Facades\FilamentClearCache;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Paginator::defaultView('vendor.pagination.tailwind');
+
         FilamentClearCache::addCommand('responsecache:clear');
         
         Gate::before(function ($user, $ability) {
