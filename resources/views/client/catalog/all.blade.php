@@ -37,7 +37,7 @@
                 
                 <div class="py-10 dark:bg-dark">
                     <div class="">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             @foreach ($categories as $category)
                                 @livewire('general.category', [
                                     'category' => $category,

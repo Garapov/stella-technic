@@ -50,6 +50,8 @@ class ProductCategoryResource extends Resource
                         TextInput::make("title")
                             ->label("Заголовок")
                             ->required(),
+                        TextInput::make("h1")
+                                ->label("H1"),
                         TextInput::make("slug")->label("Имя в ссылке"),
                         Textarea::make("description")
                             ->label("Описание")

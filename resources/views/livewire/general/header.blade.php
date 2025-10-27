@@ -12,6 +12,8 @@
 
         {!! $organization !!}
 
+        
+
 
         <div class="lg:bg-white bg-slate-50 py-2.5 dark:bg-gray-800 relative  lg:block hidden">
             <div class="flex flex-wrap justify-between items-center lg:mx-auto xl:px-[100px] px-[20px]">

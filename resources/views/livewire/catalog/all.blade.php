@@ -5,7 +5,7 @@
                 <div class="flex items-center justify-between mb-10">
                     <p class="lg:text-4xl text-xl text-slate-900 dark:text-white font-semibold">Категории товаров</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     @foreach ($categories as $category)
                         @livewire('general.category', [
                             'category' => $category,

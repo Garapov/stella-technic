@@ -40,7 +40,8 @@ class ProductCategory extends Model implements MenuPanelable
         "duplicate_id",
         "params_to_one",
         "sort",
-        "tabs_categories"
+        "tabs_categories",
+        "h1"
     ];
 
     protected $casts = [

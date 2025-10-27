@@ -1,20 +1,54 @@
 <div class="rounded-lg border border-gray-200 bg-white p-0 shadow-sm dark:border-gray-700 dark:bg-gray-900 relative flex flex-col overflow-hidden relative">
-    <div class="absolute left-2 right-2 top-2 z-10 flex items-center justify-between gap-2">
-        
-        <button type="button"
-            @click.prevent="$store.favorites.toggleProduct({{ $variant->id }})"
-            class="rounded-lg p-2 text-gray-500 bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-            <span class="sr-only">Добавить в избранное</span>
-            <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                :class="{ 'text-red-500 fill-red-500': $store.favorites.list[{{ $variant->id }}] }">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-            </svg>
-        </button>
-    </div>
+    
     <div class="w-full relative" x-data="{
         imageIdToDisplay: 0,
     }">
+        <div class="absolute right-2 bottom-2 top-2 z-10 flex flex-col items-end justify-between gap-2">
+        
+            <button type="button"
+                @click.prevent="$store.favorites.toggleProduct({{ $variant->id }})"
+                class="rounded-lg p-2 text-gray-500 bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                <span class="sr-only">Добавить в избранное</span>
+                <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    :class="{ 'text-red-500 fill-red-500': $store.favorites.list[{{ $variant->id }}] }">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                </svg>
+            </button>
+            
+            <div class="flex flex-col items-end gap-1 pointer-events-none">
+                @if ($variant->is_rebate)
+                    <div class="mb-2 flex items-center justify-between gap-2">
+                        <span class="me-2 rounded bg-amber-400 px-2.5 py-0.5 text-xs font-medium text-amber-900">
+                            Уценка
+                        </span>
+                    </div>
+                @endif
+                @if ($variant->created_at->diffInMonths(now()) < 1)
+                    <div class="mb-2 flex items-center justify-between gap-2">
+                        <span class="me-2 rounded bg-teal-400 px-2.5 py-0.5 text-xs font-medium text-white">
+                            Новинка
+                        </span>
+                    </div>
+                @endif
+                @if($variant->new_price)
+                    <div class="mb-2 flex items-center justify-between gap-2">
+                        <span class="me-2 rounded bg-red-500 px-2.5 py-0.5 text-xs font-medium text-white">
+                            Скидка {{ round(100 - ($variant->new_price * 100 / $variant->getActualPrice())) }}%
+                        </span>
+                    </div>
+                @endif
+                
+                @if ($variant->is_popular)
+                    <div class="mb-2 flex items-center justify-between gap-2">
+                        <span class="me-2 rounded bg-blue-500 px-2.5 py-0.5 text-xs font-medium text-white">
+                            Популярный
+                        </span>
+                    </div>
+                @endif
+                
+            </div>
+        </div>
         
     @php
         // $category = $category ?? $variant->product->categories->last();
@@ -61,12 +95,12 @@
     <div class="flex md:hidden flex-col gap-2 px-4 pt-2 pb-0">
 
         <div class="flex items-center gap-4">
-            <span class="md:text-2xl sm:text-xl text-lg font-semibold leading-tight text-gray-900 dark:text-white">
-                {{ $variant->new_price ?? ($variant->price > 0 ? Number::format($variant->getActualPrice(), 0) . ' ₽' : 'По запросу') }} 
+            <span class="md:text-2xl sm:text-xl text-lg font-semibold leading-tight  @if($variant->new_price) text-blue-500 @else text-gray-900 @endif dark:text-white">
+                {{ $variant->new_price ? Number::format($variant->new_price, 0) . ' ₽' : ($variant->price > 0 ? Number::format($variant->getActualPrice(), 0) . ' ₽' : 'По запросу') }}
                 
             </span>
             @if($variant->new_price)
-                <span class="text-lg line-through leading-tight text-gray-600 dark:text-white">
+                <span class="md:text-lg text-sm line-through leading-tight text-gray-600 dark:text-white">
                     @if ($variant->price > 0) {{ Number::format($variant->getActualPrice(), 0) }} ₽ @else По запросу @endif
                 </span>
             @endif
@@ -93,13 +127,7 @@
     
     <div class="md:p-4 px-4 pt-2 pb-2 flex-auto shrink flex flex-col gap-2 justify-between">
         <div class="md:mb-2">
-            @if($variant->new_price)
-                <div class="mb-2 flex items-center justify-between gap-2">
-                    <span class="me-2 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-white">
-                        Скидка {{ round(100 - ($variant->new_price * 100 / $variant->getActualPrice())) }}%
-                    </span>
-                </div>
-            @endif
+            
 
             <a href="{{ route('client.catalog', $variant->urlChain()) }}"
                 class="lg:text-base text-xs font-semibold leading-tight text-gray-900 hover:underline dark:text-white" wire:navigate>
@@ -134,7 +162,11 @@
 
         <div class="flex">
             @if ($variant->count > 0 && !$variant->is_pre_order)
-                <div class="text-green-600 text-sm font-medium me-2">В наличии</div>
+                @if ($variant->price > 0)
+                    <div class="text-green-600 text-sm font-medium me-2">В наличии</div>
+                @else
+                    <div class="text-blue-600 text-sm font-medium me-2">Под заказ</div>
+                @endif
             @endif
             @if ($variant->count < 1)
                 <div class="text-gray-800 text-sm font-medium me-2">Нет в наличии</div>
@@ -148,8 +180,8 @@
             <div class="md:flex hidden flex-col gap-2">
 
                 <div class="flex items-center gap-4">
-                    <span class="text-2xl font-semibold leading-tight text-gray-900 dark:text-white">
-                        {{ $variant->new_price ?? ($variant->price > 0 ? Number::format($variant->getActualPrice(), 0) . ' ₽' : 'По запросу') }} 
+                    <span class="text-2xl font-semibold leading-tight @if($variant->new_price) text-blue-500 @else text-gray-900 @endif dark:text-white">
+                        {{ $variant->new_price ? Number::format($variant->new_price, 0) . ' ₽' : ($variant->price > 0 ? Number::format($variant->getActualPrice(), 0) . ' ₽' : 'По запросу') }} 
                         
                     </span>
                     @if($variant->new_price)
@@ -205,12 +237,12 @@
                             x-transition:leave-end="opacity-0 translate-y-1"
                             class="absolute bottom-full right-0 z-10 mb-2 rounded-md bg-slate-100 shadow px-3 py-2 text-sm font-medium text-white shadow-sm whitespace-nowrap">
                             <div class="flex flex-col md:flex-row gap-2">
-                                <button class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 border border-blue-700 inset-ring inset-ring-blue-700/10 text-center" @click.stop="$store.application.forms.buy_one_click = true, $store.application.one_click_variation = {{json_encode($variant)}}">Купить в один клик</button>
+                                <button class="inline-flex items-center rounded-md bg-blue-500 px-2 py-2 text-xs font-medium text-white border border-blue-500 inset-ring inset-ring-blue-700/10 text-center" @click.stop="$store.application.forms.buy_one_click = true, $store.application.one_click_variation = {{json_encode($variant)}}">Купить в один клик</button>
 
 
 
                                 <button type="button"
-                                    class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 border border-green-700 inset-ring inset-ring-green-600/20 text-center" x-show="!$store.cart.list[{{ $variant->id }}]"
+                                    class="inline-flex items-center rounded-md bg-green-500 px-2 py-2 text-xs font-medium text-white border border-green-500 inset-ring inset-ring-green-600/20 text-center" x-show="!$store.cart.list[{{ $variant->id }}]"
                                     @click.stop="$store.cart.addVariationToCart({
                                         count: 1,
                                         variationId: {{ $variant->id }},

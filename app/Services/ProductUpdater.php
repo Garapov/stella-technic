@@ -94,7 +94,7 @@ class ProductUpdater
             $variation->update([
                 'seo' => $data->seo ?? [],
                 'uuid' => $data->uuid ?? null,
-                'price' => $data->price ?? $variation->price,
+                // 'price' => $data->price ?? $variation->price,
                 'slug' => $data->slug ?? $variation->slug,
                 'h1' => $data->h1 ?? $variation->h1,
                 'count' => $data->quantity ?? $variation->count

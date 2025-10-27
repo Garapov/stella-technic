@@ -110,10 +110,10 @@
                                   </a>
                                   <div class="flex flex-col gap-2">
                                     <a href="#" class="md:text-base text-sm font-medium text-gray-900 hover:underline dark:text-white block md:max-w-[300px] w-full pr-6 md:pr-0" x-text="cart_item.name"></a>
-                                    <div class="text-start">
-                                      <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.new_price ?? (userAuthenticated & cart_item.auth_price ? cart_item.auth_price : cart_item.price))"></p>
+                                    {{-- <div class="text-start">
+                                      <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="cart_item.price > 0 ? new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.new_price ?? (userAuthenticated & cart_item.auth_price ? cart_item.auth_price : cart_item.price)) : 'По запросу'"></p>
                                       <p class="text-md line-through font-extrabold leading-tight text-gray-600 dark:text-white" x-show="cart_item.new_price !== null" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format((userAuthenticated & cart_item.auth_price ? cart_item.auth_price : cart_item.price))"></p>
-                                    </div>
+                                    </div> --}}
                                   </div>
                                   
                                 </div>
@@ -133,7 +133,7 @@
                                       </button>
                                   </div>
                                   <div class="text-end">
-                                      <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.new_price ? cart_item.new_price * $store.cart.list[cart_item.id] : (userAuthenticated & cart_item.auth_price ? cart_item.auth_price * $store.cart.list[cart_item.id] : cart_item.price * $store.cart.list[cart_item.id]))"></p>
+                                      <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="cart_item.price > 0 ? new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.new_price ? cart_item.new_price * $store.cart.list[cart_item.id] : (userAuthenticated & cart_item.auth_price ? cart_item.auth_price * $store.cart.list[cart_item.id] : cart_item.price * $store.cart.list[cart_item.id])) : 'По запросу'"></p>
                                       <p class="text-md line-through font-extrabold leading-tight text-gray-600 dark:text-white" x-show="cart_item.new_price !== null" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format((userAuthenticated & cart_item.auth_price ? cart_item.auth_price * $store.cart.list[cart_item.id] : cart_item.price * $store.cart.list[cart_item.id]))"></p>
                                   </div>
                                   <div class="flex flex-col md:flex-row items-center gap-4 md:static absolute mt:top-auto top-4 md:right-auto right-4">

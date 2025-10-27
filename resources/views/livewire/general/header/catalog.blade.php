@@ -20,7 +20,7 @@
     
     <div class="w-[calc(100vw-200px)] absolute top-full left-[50%] transform translate-x-[-50%] z-[999] hidden overflow-auto border border-blue-gray-50 bg-white p-3 font-sans text-sm font-normal text-blue-gray-500  shadow-lg shadow-blue-gray-500/10 focus:outline-none lg:block rounded-lg" role="menu" x-show="isOpened"  x-cloak>
         <div class="grid grid-cols-5 gap-3" >
-            <ul class="flex flex-col max-h-[60vh] overflow-y-auto">
+            <ul class="flex flex-col max-h-[70vh] overflow-y-auto">
                 @foreach ($categories->sortBy('sort') as $category)
                     <li>
                         <a href="{{ route('client.catalog', ['path' => $category->urlChain()]) }}" wire:navigate class="flex flex-center justify-between gap-2 text-gray-900 font-semibold p-2 rounded-lg" :class="{ 'text-blue-600 bg-slate-50': selectedCategory == {{ $category->id }}}" @mouseover="changeSelectedCategory({{ $category->id }})">

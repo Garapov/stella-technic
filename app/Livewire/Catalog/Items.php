@@ -22,7 +22,7 @@ class Items extends Component
     public $tagCategories = [];
 
     #[Url]
-    public $sort = "id:asc";
+    public $sort = "count:asc";
     #[Url]
     public $filters = [];
 
@@ -50,6 +50,9 @@ class Items extends Component
             $this->category = ProductCategory::with(['products:id', 'variations:id', 'paramItems:id', 'categories:id,parent_id,is_tag,title'])
                 ->where("slug", $slug)->first();
 
+
+            if (!$this->category || !$this->category->is_visible) abort(404);
+
             $this->product_ids = $this->selector->fromCategory($this->category);
             $this->nonTagCategories = $this->category?->categories->where('is_tag', false) ?? [];
             $this->tagCategories = $this->category?->categories->where('is_tag', true) ?? [];
@@ -72,7 +75,7 @@ class Items extends Component
     public function getSortOptions()
     {
         return [
-            "id:asc" => [
+            "count:asc" => [
                 "label" => "По умолчанию",
                 "icon" => "M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25",
             ],

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
+use Illuminate\Database\Eloquent\Builder;
 
 class Post extends Model
 {
@@ -18,6 +19,7 @@ class Post extends Model
         "image",
         "is_popular",
         "short_content",
+        "created_at"
     ];
 
     protected $casts = [
@@ -33,6 +35,13 @@ class Post extends Model
             ->generateSlugsFrom("title")
             ->saveSlugsTo("slug")
             ->doNotGenerateSlugsOnUpdate();
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('orderByCreatedAt', function (Builder $query) {
+            $query->orderByDesc('created_at'); // DESC — от новых к старым
+        });
     }
 
     /**

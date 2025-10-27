@@ -44,6 +44,9 @@ class PostResource extends Resource
                         ),
                 ]),
                 Section::make([
+                    Forms\Components\DateTimePicker::make('created_at')
+                        ->label("Дата публикации")
+                        ->seconds(false),
                     Forms\Components\Toggle::make("is_popular")
                         ->label("Популярная")
                         ->required(),

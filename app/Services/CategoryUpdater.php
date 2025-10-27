@@ -30,7 +30,8 @@ class CategoryUpdater
 
                         $category->update([
                             'seo' => $body->data->seo ?? [],
-                            'slug' => $body->data->slug ?? $category->slug
+                            'slug' => $body->data->slug ?? $category->slug,
+                            'h1' => $body->data->h1 ?? $category->h1
                         ]);
                     } catch (\Exception $e) {
                         Log::error("DB error for TITLE {$category_title}: " . $e->getMessage());

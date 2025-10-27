@@ -71,6 +71,7 @@
                         ])
                     </div>
                 @endif
+                
                 <div class="flex flex-col gap-4 @if ($display_filter) md:col-span-7 @else md:col-span-full @endif col-span-full">
                     @if ($category && ($category->title || $category->h1))
                         <div class="items-start justify-between flex flex-col gap-4">
@@ -98,7 +99,6 @@
                                         </div>
                                     </div>
                                 @endif
-
                                 <!-- Sort Dropdown -->
                                 <div class="relative" x-data="{sortingOpened: false}">
                                     <button type="button" class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"

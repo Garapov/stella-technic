@@ -41,6 +41,9 @@ class CategoriesRelationManager extends RelationManager
                         Tabs\Tab::make('Основная информация')
                             ->schema([
                                 TextInput::make("title")->label("Заголовок")->required(),
+                                TextInput::make("h1")
+                                    ->required()
+                                    ->label("H1"),
                                 TextInput::make("slug")->label("Имя в ссылке"),
                                 Textarea::make("description")->label("Описание")->required(),
                                 Section::make('Параметры фильтрации')

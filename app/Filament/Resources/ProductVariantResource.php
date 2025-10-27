@@ -78,6 +78,9 @@ class ProductVariantResource extends Resource
                             Toggle::make("is_popular")
                                 ->label("Популярный")
                                 ->inline(false),
+                            Toggle::make("is_rebate")
+                                ->label("Уценка")
+                                ->inline(false),
                             Toggle::make("is_constructable")
                                 ->label("Конструктор")
                                 ->live()

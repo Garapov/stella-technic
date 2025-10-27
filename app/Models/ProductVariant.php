@@ -58,7 +58,8 @@ class ProductVariant extends Model
         "deleted_at",
         "is_hidden",
         "h1",
-        "videos"
+        "videos",
+        "is_rebate"
     ];
 
     protected $casts = [
