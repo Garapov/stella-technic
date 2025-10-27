@@ -66,7 +66,7 @@
   }
 }">
 
-  <div class="mx-auto container px-4 2xl:px-0">
+  <div class="xl:px-[100px] px-[20px]">
     <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">
       <div>
         {{ Breadcrumbs::render('cart') }}
@@ -102,53 +102,56 @@
               <template x-if="!isReloading && (products.length > 0 || Object.keys(constructs).length > 0)">
                 <div class="flex flex-col gap-6" x-show="!isReloading">
                     <template x-for="cart_item in products" :key="cart_item.id">
-                        <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
+                        <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6 relative">
                             <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
                                 <div class="flex items-center gap-4">
                                   <a href="#" class="shrink-0">
-                                      <img class="h-40 w-40" :src="`https://s3.stella-technic.ru/${cart_item.gallery[0]}`" alt="imac image" />
+                                      <img class="md:h-40 md:w-40 w-20 h-20" :src="`https://s3.stella-technic.ru/${cart_item.gallery[0]}`" alt="imac image" />
                                   </a>
-                                  <a href="#" class="text-base font-medium text-gray-900 hover:underline dark:text-white" x-text="cart_item.name"></a>
-                                </div>
-                                <div class="text-end">
-                                    <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.new_price ?? (userAuthenticated & cart_item.auth_price ? cart_item.auth_price : cart_item.price))"></p>
-                                    <p class="text-md line-through font-extrabold leading-tight text-gray-600 dark:text-white" x-show="cart_item.new_price !== null" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format((userAuthenticated & cart_item.auth_price ? cart_item.auth_price : cart_item.price))"></p>
-                                </div>
-                                <div class="relative flex items-center">
-                                    <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"  @click="decreaseQuantity(cart_item.id)">
-                                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
-                                        </svg>
-                                    </button>
-                                    <output class="bg-gray-50 border-x-0 border border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-12 py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" x-text="$store.cart.list[cart_item.id]"> </output>
-                                    <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" @click="increaseQuantity(cart_item.id)">
-                                        <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                                <div class="flex items-center justify-between md:justify-end gap-4">
-                                    <div class="text-end">
-                                        <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.new_price ? cart_item.new_price * $store.cart.list[cart_item.id] : (userAuthenticated & cart_item.auth_price ? cart_item.auth_price * $store.cart.list[cart_item.id] : cart_item.price * $store.cart.list[cart_item.id]))"></p>
-                                        <p class="text-md line-through font-extrabold leading-tight text-gray-600 dark:text-white" x-show="cart_item.new_price !== null" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format((userAuthenticated & cart_item.auth_price ? cart_item.auth_price * $store.cart.list[cart_item.id] : cart_item.price * $store.cart.list[cart_item.id]))"></p>
+                                  <div class="flex flex-col gap-2">
+                                    <a href="#" class="md:text-base text-sm font-medium text-gray-900 hover:underline dark:text-white block md:max-w-[300px] w-full pr-6 md:pr-0" x-text="cart_item.name"></a>
+                                    <div class="text-start">
+                                      <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.new_price ?? (userAuthenticated & cart_item.auth_price ? cart_item.auth_price : cart_item.price))"></p>
+                                      <p class="text-md line-through font-extrabold leading-tight text-gray-600 dark:text-white" x-show="cart_item.new_price !== null" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format((userAuthenticated & cart_item.auth_price ? cart_item.auth_price : cart_item.price))"></p>
                                     </div>
-                                    <div class="flex items-center gap-4">
-                                        <button type="button" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 hover:underline dark:text-gray-400 dark:hover:text-white" @click.prevent="$store.favorites.toggleProduct(cart_item.id)">
-                                            <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                :class="{ 'text-red-500 fill-red-500': $store.favorites.list[cart_item.id] }">
-                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                                            </svg>
-                                        </button>
+                                  </div>
+                                  
+                                </div>
+                                <div class="flex items-center gap-8">
+                                  
+                                  <div class="relative flex items-center">
+                                      <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"  @click="decreaseQuantity(cart_item.id)">
+                                          <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                                          </svg>
+                                      </button>
+                                      <output class="bg-gray-50 border-x-0 border border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-12 py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" x-text="$store.cart.list[cart_item.id]"> </output>
+                                      <button type="button" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" @click="increaseQuantity(cart_item.id)">
+                                          <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                                          </svg>
+                                      </button>
+                                  </div>
+                                  <div class="text-end">
+                                      <p class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(cart_item.new_price ? cart_item.new_price * $store.cart.list[cart_item.id] : (userAuthenticated & cart_item.auth_price ? cart_item.auth_price * $store.cart.list[cart_item.id] : cart_item.price * $store.cart.list[cart_item.id]))"></p>
+                                      <p class="text-md line-through font-extrabold leading-tight text-gray-600 dark:text-white" x-show="cart_item.new_price !== null" x-text="new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format((userAuthenticated & cart_item.auth_price ? cart_item.auth_price * $store.cart.list[cart_item.id] : cart_item.price * $store.cart.list[cart_item.id]))"></p>
+                                  </div>
+                                  <div class="flex flex-col md:flex-row items-center gap-4 md:static absolute mt:top-auto top-4 md:right-auto right-4">
+                                      <button type="button" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 hover:underline dark:text-gray-400 dark:hover:text-white" @click.prevent="$store.favorites.toggleProduct(cart_item.id)">
+                                          <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                              :class="{ 'text-red-500 fill-red-500': $store.favorites.list[cart_item.id] }">
+                                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                          </svg>
+                                      </button>
 
-                                        <button type="button" class="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500" @click.prevent="removeCartItem(cart_item.id)">
-                                            <svg class="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
-                                            </svg>
-                                        </button>
+                                      <button type="button" class="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500" @click.prevent="removeCartItem(cart_item.id)">
+                                          <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                                          </svg>
+                                      </button>
                                     </div>
                                 </div>
-
 
                             </div>
                         </div>

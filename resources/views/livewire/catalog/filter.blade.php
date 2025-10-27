@@ -288,7 +288,7 @@
                         @php
                             $counter = 0;
                         @endphp
-                        @foreach($params->sortBy('sort') as $paramItemId => $paramData)
+                        @foreach($params->sortBy('sort')->sortBy('value') as $paramItemId => $paramData)
                             <li class="flex items-center @unless(in_array($paramItemId, $availableFilters)) opacity-30 cursor-not-allowed pointer-events-none @endunless"
                                 @if($counter > 4 && !isset($selectedParams[$paramItemId])) x-show="showAll" @endif>
                                 <input

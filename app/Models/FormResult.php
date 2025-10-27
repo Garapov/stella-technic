@@ -30,8 +30,8 @@ class FormResult extends Model
 
         static::created(function (Model $model) {
             $recipients = $model->recipients == "" ? [] : explode(',', $model->recipients);
-            Mail::to(env('MAIL_ADMIN_ADDRESS', 'ruslangarapov@yandex.ru'))
-            ->cc($recipients)->queue((new FormSened($model))->onQueue('mails'));
+            Mail::to(env('MAIL_ADMIN_ADDRESS'))
+             ->queue((new FormSened($model))->onQueue('mails'));
         });
     }
 }

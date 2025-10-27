@@ -221,11 +221,12 @@
                 <div class="text-medium rounded-b-lg bg-white shadow w-full p-4" x-show="activeTab == 0">
                     <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2 text-slate-700">
                         @foreach($variation->paramItems->merge($variation->parametrs)->where('is_hidden', false)->sortBy('productParam.sort')->split(2) as $paramItemGroup)
-                            {{-- @if ($paramItem->productParam->is_hidden)
-                                @continue
-                            @endif --}}
+                            
                             <dl class="flex flex-col gap-4">
                                 @foreach ($paramItemGroup as $paramItem)
+                                    @if ($paramItem->productParam->is_hidden)
+                                        @continue
+                                    @endif
                                     <li class="flex items-center justify-between text-sm gap-2 px-3 py-2">
                                         <strong class="font-medium">{{ $paramItem->productParam->name }}</strong>
                                         <span class="grow border-b border-gray-200 border-dotted border-b-2"></span>
@@ -378,19 +379,19 @@
 
     @php
         $paramItemIds = $variation->paramItems->merge($variation->parametrs)->filter(fn($param) => $param->productParam->is_for_crossail)->pluck('id');
-        $crossSellsVariants = \App\Models\ProductVariant::whereHas('paramItems', function ($query) use ($paramItemIds) {
+        $crossSellsVariants = \App\Models\ProductVariant::where('product_id', $variation->product->id)->whereHas('paramItems', function ($query) use ($paramItemIds) {
             $query->whereIn('product_param_items.id', $paramItemIds);
-        })
+        }) 
         ->orWhereHas('parametrs', function ($query) use ($paramItemIds) {
             $query->whereIn('product_param_items.id', $paramItemIds);
         })
         ->get()
-        ->filter(function ($variant) use ($paramItemIds) {
+        ->filter(function ($variant) use ($paramItemIds, $variation) {
             $allParamItems = $variant->paramItems->merge($variant->parametrs)->pluck('id')->unique();
 
             // Проверяем, что все элементы из $paramItemIds есть в $allParamItems
-            return collect($paramItemIds)->every(function ($id) use ($allParamItems) {
-                return $allParamItems->contains($id);
+            return collect($paramItemIds)->every(function ($id) use ($allParamItems, $variation, $variant) {
+                return $allParamItems->contains($id) && $variant->product->id == $variation->product->id && $variation->id != $variant->id;
             });
         });
     @endphp
