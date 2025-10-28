@@ -21,6 +21,8 @@ class Items extends Component
     public $nonTagCategories = [];
     public $tagCategories = [];
 
+    public $variations = [];
+
     #[Url]
     public $sort = "count:asc";
     #[Url]
@@ -33,6 +35,9 @@ class Items extends Component
     public $inset = false;
     public $type = "category";
 
+    // public $all_products = [];
+    // public $products = [];
+
     protected ProductSelector $selector;
 
     public function boot(ProductSelector $selector)
@@ -44,6 +49,9 @@ class Items extends Component
     {
         $this->display_filter = $display_filter;
         $this->inset = $inset;
+        $this->variations = collect([]);
+        // $this->all_products = collect([]);
+        // $this->products = collect([]);
 
         if ($path) {
             $slug = collect(explode('/', $path))->last();
@@ -52,8 +60,11 @@ class Items extends Component
 
 
             if (!$this->category || !$this->category->is_visible) abort(404);
-
-            $this->product_ids = $this->selector->fromCategory($this->category);
+            if ($this->category->type == 'filter') {
+                $this->variations = $this->selector->fromCategory($this->category);
+            } else {
+                $this->product_ids = $this->selector->fromCategory($this->category);
+            }
             $this->nonTagCategories = $this->category?->categories->where('is_tag', false) ?? [];
             $this->tagCategories = $this->category?->categories->where('is_tag', true) ?? [];
             $this->type = 'category';
@@ -68,6 +79,11 @@ class Items extends Component
             $this->product_ids = $products;
             $this->type = 'products';
         }
+
+
+        // $this->renderProducts();
+
+        // dd($this->all_products);
 
         
     }
@@ -111,43 +127,73 @@ class Items extends Component
         $this->resetPage();
     }
 
+    public function makeBuilder() {
+        if ($this->variations->isEmpty()) {
+
+            $builder = ProductVariant::where('is_hidden', false)
+                ->whereHas('product', function ($q) {
+                    $q->where('is_hidden', false);
+                })
+                ->filter($this->filters)
+                ->sort([$this->sort]);
+
+            if ($this->type === 'products' || in_array($this->category?->type, ['variations'])) {
+                $builder->whereIn('id', $this->product_ids);
+            } else {
+                $builder->whereIn('product_id', $this->product_ids);
+            }
+
+
+            
+        } else {
+            $builder = ProductVariant::where('is_hidden', false)
+                ->whereHas('product', function ($q) {
+                    $q->where('is_hidden', false);
+                })
+                ->whereIn('id', $this->variations->pluck('id'))
+                ->filter($this->filters)
+                ->sort([$this->sort]);
+        }
+
+        return $builder;
+    }
+
+    public function renderAllProducts() {
+
+        
+
+        return $this->makeBuilder()->with([
+                'product.brand',
+                'product.categories',
+                'paramItems.productParam',
+                'parametrs.productParam',
+                'batch',
+            ])->get();
+
+
+            // dd($this->all_products);
+    }
+    public function renderPaginatedProducts() {
+            return $this->makeBuilder()->with([
+                'product.brand',
+                'product.categories',
+                'paramItems.productParam',
+                'parametrs.productParam',
+                'batch',
+            ])->paginate(40);
+            // dd($this->all_products);
+    }
+
     public function render()
     {
 
         // dd($this->filters);
-        $builder = ProductVariant::where('is_hidden', false)
-            ->whereHas('product', function ($q) {
-                $q->where('is_hidden', false);
-            })
-            ->filter($this->filters)
-            ->sort([$this->sort]);
 
-        if ($this->type === 'products' || in_array($this->category?->type, ['variations'])) {
-            $builder->whereIn('id', $this->product_ids);
-        } else {
-            $builder->whereIn('product_id', $this->product_ids);
-        }
-
-
-        $all_products = $builder->with([
-            'product.brand',
-            'product.categories',
-            'paramItems.productParam',
-            'parametrs.productParam',
-            'batch',
-        ])->get();
-
-        $products = $builder->with([
-            'product.brand',
-            'product.categories',
-            'paramItems.productParam',
-            'parametrs.productParam',
-            'batch',
-        ])->paginate(40);
+        
 
         return view("livewire.catalog.items", [
-            "products" => $products,
-            "all_products" => $all_products,
+            "products" => $this->renderPaginatedProducts(),
+            "all_products" => $this->renderAllProducts(),
             "mode" => $this->displayMode,
             "nonTagCategories" => $this->nonTagCategories,
             "tagCategories" => $this->tagCategories,

@@ -146,12 +146,12 @@ class ProductSelector
             'ids' => $variants,
         ]);
 
-        $products = $variants
-            ->pluck('product')
-            ->filter() // убирает null
-            ->unique('id')
-            ->values()
-            ->pluck('id');
+        // $products = $variants
+        //     ->pluck('product')
+        //     ->filter() // убирает null
+        //     ->unique('id')
+        //     ->values()
+        //     ->pluck('id');
             // ->when($category_id, function ($query) use ($category_id) {
             //     $query->whereHas('product.categories', function ($q) use ($category_id) {
             //         $q->whereIn("product_categories.id", (array) $category_id);
@@ -159,6 +159,6 @@ class ProductSelector
             // })
             
         // dd($products);
-        return $products;
+        return $variants;
     }
 }
