@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('product_categories', function (Blueprint $table) {
-            //
+            $table->string('viewtype')->default('block');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('product_categories', function (Blueprint $table) {
-            //
+            $table->dropColumn('viewtype');
         });
     }
 };

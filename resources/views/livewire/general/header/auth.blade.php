@@ -12,9 +12,11 @@
                     <li>
                         <a href="{{ route('profile.edit') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" wire:navigate>Личный кабинет</a>
                     </li>
+                    @if (auth()->user() && auth()->user()->hasRole('super_admin'))
                     <li>
-                        <a href="{{ route('filament.admin.resources.users.index') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Админка</a>
+                        <a href="/admin" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Админка</a>
                     </li>
+                    @endif
                 </ul>
                 <div class="py-2">
                     <form method="POST" action="{{ route('logout') }}">
@@ -23,7 +25,7 @@
                         <a href="route('logout')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                                 onclick="event.preventDefault();
                                             this.closest('form').submit();">
-                            {{ __('Log Out') }}
+                            Выйти
                         </a>
                     </form>
                 </div>

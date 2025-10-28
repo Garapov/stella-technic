@@ -280,6 +280,12 @@ class Checkout extends Component
                 return $new_user;
             });
 
+            if (!$user->phone) {
+                $user->update([
+                    "phone" => $this->phone,
+                ]);
+            }
+
             // Login the user
             Auth::login($user);
         }

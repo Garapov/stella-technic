@@ -60,6 +60,8 @@ class Items extends Component
 
 
             if (!$this->category || !$this->category->is_visible) abort(404);
+
+            $this->displayMode = $this->category->viewtype;
             if ($this->category->type == 'filter') {
                 $this->variations = $this->selector->fromCategory($this->category);
             } else {

@@ -192,6 +192,12 @@ class CategoriesRelationManager extends RelationManager
                             'duplicator' => 'Дубликат категории'
                         ])
                         ->live(),
+                    Select::make("viewtype")
+                        ->label("Тип отображения")
+                        ->options([
+                            "block" => "Товары",
+                            "list" => "Серии",
+                        ]),
                     Toggle::make("is_visible")->inline(false)->default(true)->label("Видимость"),
                     Toggle::make("tabs_categories")
                         ->inline(false)

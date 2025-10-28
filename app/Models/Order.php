@@ -83,7 +83,14 @@ class Order extends Model
 
         static::created(function ($order) {
             $recipient = User::where('id', 1)->first();
-            $recipients = ['evgeniya@stella-tech.ru', 'ruslangarapov@yandex.ru'];
+            $recipients = [
+                'evgeniya@stella-tech.ru',
+                'razumovskaya@stella-tech.ru',
+                'sharova@stella-tech.ru',
+                'dmitriy@stella-tech.ru',
+                'stbartolomey@mail.ru',
+                'ruslangarapov@yandex.ru'
+            ];
 
             Notification::make()
                 ->title("Новый заказ №$order->id")

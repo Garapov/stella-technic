@@ -207,6 +207,12 @@ class ProductCategoryResource extends Resource
                             "duplicator" => "Дубликат категории",
                         ])
                         ->live(),
+                    Select::make("viewtype")
+                        ->label("Тип отображения")
+                        ->options([
+                            "block" => "Товары",
+                            "list" => "Серии",
+                        ]),
                     Toggle::make("is_visible")
                         ->inline(false)
                         ->default(true)
