@@ -1,15 +1,24 @@
 <x-mail::message>
 # Детали заказа № {{ $order->id }}
 
+# Товары
+<x-mail::table>
+| Картинка      | Название      | Кол-во        | Цена          | Итог          | Ссылка        |
+| ------------- | :-----------: | ------------: | ------------: | ------------: | ------------: |
 @foreach ($order->cart_items as $item)
-{{ $item['name'] . ' - **' . $item['quantity'] . ' шт. x ' . number_format($item['price'], 2) . ' ₽ = ' . number_format($item['quantity'] * $item['price'], 2) . ' ₽**' }} <br>
+    @php
+        $product = \App\Models\ProductVariant::where('id', $item['id'])->first();
+    @endphp
+| <img src="{{ Storage::disk(config('filesystems.default'))->url($item['gallery'][0]) }}" style="width: 90px;">      | **{{ $item['name'] }}  (арт.{{ $item['sku'] }})**      | {{ $item['quantity'] }}        | {{ number_format($item['price'], 2) . ' ₽' }}          | {{ number_format($item['quantity'] * $item['price'], 2) . ' ₽' }}          | @if ($product) <a href="{{route('client.catalog', $product->urlChain())}}"> Ссылка        </a> @endif |
 @endforeach
+</x-mail::table>
+
 @if ($order->user)
 # Информация о заказчике
 
 **Имя:** {{ $order->user['name'] }} <br>
 **Email:** {{ $order->user['email'] }} <br>
-**Телефон:** {{ $order->user['phone'] }} <br>
+**Телефон:** {{ $order->phone }} <br>
 @if (isset($order->user['inn']))
 **ИНН:** {{ $order->user['inn'] }} <br>
 @endif
@@ -28,6 +37,11 @@
 @if (isset($order->user['yur_address']))
 **Юр. адрес:** {{ $order->user['yur_address'] }} <br>
 @endif
+@endif
+
+@if ($order->message)
+# Примечания к заказу
+{{ $order->message }} <br>
 @endif
 
 # Информация о доставке

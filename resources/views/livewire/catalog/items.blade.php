@@ -42,7 +42,7 @@
                     @endif
                 @else
                     @if (count($nonTagCategories) > 0)
-                        <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-4 p-4 rounded-lg bg-slate-100">
+                        <div class="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 gap-2 mb-4 p-4 rounded-lg bg-slate-100">
                             @foreach ($nonTagCategories->sortBy('sort') as $subcategory)
                             
                                 <x-catalog.category.big :subcategory="$subcategory" />
@@ -179,11 +179,11 @@
                                     @forelse ($batches as $key => $batch)
                                         <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900 relative flex flex-col gap-4">
                                             <h3 class="text-lg sm:text-xl font-semibold text-slate-900 text-grey-600 dark:text-white">{{ $batch->first()->batch->name }}</h3>
-                                            <div class="grid grid-cols-4 gap-4">
+                                            <div class="md:grid grid-cols-4 flex flex-col gap-4">
                                                 <div class="rounded-lg overflow-hidden">
-                                                    <img src="{{ Storage::disk(config('filesystems.default'))->url($batch->first()->batch->image) }}" alt="" />
+                                                    <img src="{{ Storage::disk(config('filesystems.default'))->url($batch->first()->batch->image) }}" alt="" class="w-1/2 md:w-full" />
                                                 </div>
-                                                <div class="col-span-3 flex flex-col gap-4">
+                                                <div class="md:col-span-3 flex flex-col gap-4">
                                                     <div class="flex flex-col gap-2 text-gray-600 dark:text-gray-400 p-4 rounded-xl bg-gray-100 dark:bg-gray-600">
                                                         {!! str($batch->first()->batch->description)->sanitizeHtml() !!}
                                                     </div>

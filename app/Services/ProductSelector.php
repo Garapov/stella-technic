@@ -133,18 +133,18 @@ class ProductSelector
         })
         ->tap(function ($query) use ($relation) {
             // Логируем SQL и параметры
-            Log::debug('ProductVariant::whereHas SQL', [
-                'relation' => $relation,
-                'sql' => $query->toSql(),
-                'bindings' => $query->getBindings(),
-            ]);
+            // Log::debug('ProductVariant::whereHas SQL', [
+            //     'relation' => $relation,
+            //     'sql' => $query->toSql(),
+            //     'bindings' => $query->getBindings(),
+            // ]);
         })->get();
 
         // Логируем результат
-        Log::debug('ProductVariant::whereHas result', [
-            'count' => $variants->count(),
-            'ids' => $variants,
-        ]);
+        // Log::debug('ProductVariant::whereHas result', [
+        //     'count' => $variants->count(),
+        //     'ids' => $variants,
+        // ]);
 
         // $products = $variants
         //     ->pluck('product')

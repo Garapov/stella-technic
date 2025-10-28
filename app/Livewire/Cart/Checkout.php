@@ -258,9 +258,12 @@ class Checkout extends Component
 
     public function placeOrder($products, $constructs, $price, $discountedPrice)
     {
+        // dd($products);
         // dd($products, $constructs, $price, $discountedPrice);
         // Validate input
         $this->validate();
+
+        // dd($this->phone);
 
         if (Auth::id()) {
             $user = User::where("id", Auth::id())->first();
@@ -302,6 +305,8 @@ class Checkout extends Component
                 "yur_address" => $this->yur_address,
             ]);
         }
+
+        
 
         
 

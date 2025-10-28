@@ -32,7 +32,7 @@ class Oneclickformblock extends Component
                 "label" => $field["label"],
                 "type" => $field["type"],
                 "options" => $field["options"],
-                "mask_enabled" => $field["mask_enabled"],
+                "mask_enabled" => $field["mask_enabled"] ?? false,
                 "mask" => $field["mask"],
                 "value" => $field["value"] ?? "",
             ];
@@ -84,6 +84,7 @@ class Oneclickformblock extends Component
     public function reloadForm() {
         unset($this->fields["variation"]);
         unset($this->fields["variation_count"]);
+        unset($this->fields["variation_price"]);
         $this->variation_count = 1;
         session()->forget('oneclick_error');
         session()->forget('success');
@@ -103,9 +104,15 @@ class Oneclickformblock extends Component
 
         $this->fields["variation"] = [
             "name" => "variation",
-            "label" => "Вариация",
+            "label" => "Товар",
             "type" => "text",
             "value" => $this->variation->name . ' (арт. ' . $this->variation->sku . ')',
+        ];
+        $this->fields["variation_price"] = [
+            "name" => "variation_price",
+            "label" => "Цена",
+            "type" => "text",
+            "value" => $this->variation->price . ' ₽',
         ];
         $this->fields["variation_count"] = [
             "name" => "variation_count",
