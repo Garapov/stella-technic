@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Support\Collection;
 use App\Models\ProductVariant;
+use Illuminate\Support\Facades\Log;
 
 class ProductSelector
 {
@@ -37,6 +38,8 @@ class ProductSelector
 
             case "filter":
                 $paramItemIds = $category->paramItems->pluck("id");
+
+                
                 $byParamItems = $this->variantsByRelation(
                     "paramItems",
                     $paramItemIds,
@@ -49,7 +52,10 @@ class ProductSelector
                     $category->duplicate_id,
                     $category
                 );
+
+                
                 $result = $byParamItems->merge($byParametrs)->unique();
+                // dd($result);
                 // dd($result);
                 break;
 
@@ -97,36 +103,62 @@ class ProductSelector
         $category_id = null,
         $category = null
     ): Collection {
-        if ($category->params_to_one) {
-            // Загружаем обе связи
-            $query = ProductVariant::with(['paramItems:id', 'parametrs:id']);
+        // if ($category->params_to_one) {
+        //     // Загружаем обе связи
+        //     $query = ProductVariant::with(['paramItems:id', 'parametrs:id']);
+            
+        //     if ($category_id) {
+        //         $query->whereHas('product.categories', function ($q) use ($category_id) {
+        //             $q->whereIn('product_categories.id', (array) $category_id);
+        //         });
+        //     }
 
-            if ($category_id) {
-                $query->whereHas('product.categories', function ($q) use ($category_id) {
-                    $q->whereIn('product_categories.id', (array) $category_id);
-                });
-            }
+        //     return $query->get()->filter(function ($variant) use ($ids) {
+        //         // Объединяем id из обеих связей
+        //         $allParamIds = $variant->paramItems->pluck('id')
+        //             ->merge($variant->parametrs->pluck('id'))
+        //             ->unique();
 
-            return $query->get()->filter(function ($variant) use ($ids) {
-                // Объединяем id из обеих связей
-                $allParamIds = $variant->paramItems->pluck('id')
-                    ->merge($variant->parametrs->pluck('id'))
-                    ->unique();
-
-                // Проверяем, все ли нужные ids найдены
-                return $ids->diff($allParamIds)->isEmpty();
-            })->pluck('id');
-        }
-
+        //         // Проверяем, все ли нужные ids найдены
+        //         return $ids->diff($allParamIds)->isEmpty();
+        //     })->pluck('id');
+        // }
         // Старая логика: достаточно совпадения в одной связи
-        return ProductVariant::whereHas($relation, function ($q) use ($ids) {
-            $q->whereIn("product_param_items.id", $ids);
+        $variants = ProductVariant::with('product')->whereHas($relation, function ($q) use ($ids, $relation) {
+            if ($relation === 'paramItems') {
+                $q->whereIn('product_variant_product_param_item.product_param_item_id', $ids->toArray());
+            } else {
+                $q->whereIn('variation_product_param_item.product_param_item_id', $ids->toArray());
+            }
         })
-            ->when($category_id, function ($query) use ($category_id) {
-                $query->whereHas('product.categories', function ($q) use ($category_id) {
-                    $q->whereIn("product_categories.id", (array) $category_id);
-                });
-            })
-            ->pluck("id");
+        ->tap(function ($query) use ($relation) {
+            // Логируем SQL и параметры
+            Log::debug('ProductVariant::whereHas SQL', [
+                'relation' => $relation,
+                'sql' => $query->toSql(),
+                'bindings' => $query->getBindings(),
+            ]);
+        })->get();
+
+        // Логируем результат
+        Log::debug('ProductVariant::whereHas result', [
+            'count' => $variants->count(),
+            'ids' => $variants,
+        ]);
+
+        $products = $variants
+            ->pluck('product')
+            ->filter() // убирает null
+            ->unique('id')
+            ->values()
+            ->pluck('id');
+            // ->when($category_id, function ($query) use ($category_id) {
+            //     $query->whereHas('product.categories', function ($q) use ($category_id) {
+            //         $q->whereIn("product_categories.id", (array) $category_id);
+            //     });
+            // })
+            
+        // dd($products);
+        return $products;
     }
 }
