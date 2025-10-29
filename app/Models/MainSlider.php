@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,7 @@ use Outerweb\ImageLibrary\Models\Image;
 class MainSlider extends Model
 {
     /** @use HasFactory<\Database\Factories\MainSliderFactory> */
-    use HasFactory;
+    use HasFactory, Cachable;
 
     protected $fillable = [
         "title",

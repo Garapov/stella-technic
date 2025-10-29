@@ -12,6 +12,7 @@ use Spatie\Sluggable\SlugOptions;
 use Spatie\Searchable\SearchResult;
 use Datlechin\FilamentMenuBuilder\Concerns\HasMenuPanel;
 use Datlechin\FilamentMenuBuilder\Contracts\MenuPanelable;
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Log;
@@ -21,7 +22,7 @@ use Laravel\Scout\Searchable;
 class ProductCategory extends Model implements MenuPanelable
 {
     /** @use HasFactory<\Database\Factories\ProductCategoryFactory> */
-    use HasFactory, HasSlug, HasMenuPanel, Searchable;
+    use HasFactory, HasSlug, HasMenuPanel, Searchable, Cachable;
 
     public $searchableType = 'Категории';
 

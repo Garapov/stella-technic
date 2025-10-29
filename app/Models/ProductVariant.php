@@ -19,11 +19,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Scout\Searchable;
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 
 class ProductVariant extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductVariantFactory> */
-    use HasFactory, SoftDeletes, HasSlug, Filterable, Sortable, Searchable;
+    use HasFactory, SoftDeletes, HasSlug, Filterable, Sortable, Searchable, Cachable;
 
     protected $fillable = [
         "product_id",

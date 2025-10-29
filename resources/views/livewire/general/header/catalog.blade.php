@@ -49,12 +49,6 @@
                                     @foreach ($group->sortBy('sort') as $subcategory)
                                         @livewire('general.category', [
                                             'category' => $subcategory,
-                                            'counts' => $variationCounts,
-                                            'minPrices' => $minPrices,
-                                            'allCategoryIds' => $allCategoryIds,
-                                            'show_counts' => true,
-                                            'show_price' => true,
-                                            'show_image' => true,
                                             'transparent' => false
                                         ], key($subcategory->id))
                                     @endforeach

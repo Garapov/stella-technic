@@ -38,7 +38,9 @@ class Detail extends Component
         // dd($this->variation->parametrs->pluck('value', 'productParam.name')->toArray());
 
         $this->product = $this->variation->product;
-        $this->groupedParams = $this->getGroupedParams();
+        $this->groupedParams = Cache::rememberForever('grouped-params:product_' . $this->variation->sku . '_params', function () {
+            return $this->getGroupedParams();
+        });
 
         if ($this->variation->show_category_files) {
         

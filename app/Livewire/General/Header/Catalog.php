@@ -2,24 +2,21 @@
 
 namespace App\Livewire\General\Header;
 
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Spatie\SchemaOrg\Schema;
 
 class Catalog extends Component
 {
     public $categories;
-    public $allCategoryIds;
-    public $variationCounts;
-    public $minPrices;
     public $schema;
 
-    public function mount($categories, $allCategoryIds = [], $variationCounts = [], $minPrices = [])
+    public function mount($categories)
     {
-        $this->categories = $categories;
-        $this->allCategoryIds = $allCategoryIds;
-        $this->variationCounts = $variationCounts;
-        $this->minPrices = $minPrices;        
-        $this->schema = $this->makeSchema()->toScript();
+        $this->categories = $categories;        
+        $this->schema = Cache::rememberForever('schemes:catalog', function () {
+            return $this->makeSchema()->toScript();
+        });
     }
 
     protected function makeSchema()
@@ -87,9 +84,6 @@ class Catalog extends Component
     {
         return view('livewire.general.header.catalog', [
             'categories' => $this->categories,
-            'variationCounts' => $this->variationCounts,
-            'minPrices' => $this->minPrices,
-            'allCategoryIds' => $this->allCategoryIds,
             'schema' => $this->schema
         ]);
     }

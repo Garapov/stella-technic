@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Delivery extends Model
 {
     /** @use HasFactory<\Database\Factories\DeliveryFactory> */
-    use HasFactory;
+    use HasFactory, Cachable;
 
     protected $fillable = [
         'name',

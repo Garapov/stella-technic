@@ -44,9 +44,6 @@
                             @endif
                             @livewire('general.category', [
                                 'category' => $category,
-                                'counts' => $variationCounts,
-                                'minPrices' => $minPrices,
-                                'show_counts' => true,
                             ], key($category->id))
                         @endforeach
                     </div>

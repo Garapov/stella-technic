@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Catalog;
 
+use App\Facades\ShortHash;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductVariant;
@@ -10,16 +11,21 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Request;
 
 class Items extends Component
 {
     use WithPagination;
 
+    protected string $pageName = 'catalog-page';
+
     public $items = null;
     public $product_ids = [];
     public ?ProductCategory $category = null;
-    public $nonTagCategories = [];
-    public $tagCategories = [];
+    public $nonTagCategoriesGlobal = [];
+    public $tagCategoriesGlobal = [];
 
     public $variations = [];
 
@@ -47,6 +53,7 @@ class Items extends Component
 
     public function mount($path = null, $brand_slug = null, $products = null, $display_filter = false, $inset = false)
     {
+        
         $this->display_filter = $display_filter;
         $this->inset = $inset;
         $this->variations = collect([]);
@@ -60,15 +67,20 @@ class Items extends Component
 
 
             if (!$this->category || !$this->category->is_visible) abort(404);
-
             $this->displayMode = $this->category->viewtype;
+
+            $url = $this->normalizeUrlForCache($this->getRealUrl());
+            $hash = ShortHash::make($url . json_encode($this->filters) . $this->sort);
+
             if ($this->category->type == 'filter') {
                 $this->variations = $this->selector->fromCategory($this->category);
             } else {
                 $this->product_ids = $this->selector->fromCategory($this->category);
             }
-            $this->nonTagCategories = $this->category?->categories->where('is_tag', false) ?? [];
-            $this->tagCategories = $this->category?->categories->where('is_tag', true) ?? [];
+            $this->nonTagCategoriesGlobal = $this->category?->categories->where('is_tag', false) ?? [];
+
+            $this->tagCategoriesGlobal = $this->category?->categories->where('is_tag', true) ?? [];
+            
             $this->type = 'category';
         }
 
@@ -186,10 +198,45 @@ class Items extends Component
             // dd($this->all_products);
     }
 
-    public function render()
+    protected function getRealUrl(): string
     {
+        // Если компонент монтировался на реальной странице — используем её
+        if (property_exists($this, 'redirectTo') && $this->redirectTo) {
+            return $this->redirectTo;
+        }
 
-        // dd($this->filters);
+        // Попробуем взять из URL параметров Livewire
+        $url = Request::header('Referer');
+        if ($url && str_contains($url, '/catalog')) {
+            return $url;
+        }
+
+        // Если ничего не нашли — fallback
+        return url()->previous() ?: url('/');
+    }
+
+    protected function normalizeUrlForCache(string $url): string
+    {
+        // 1. Разбираем query string
+        $parsed = parse_url($url);
+        parse_str($parsed['query'] ?? '', $query);
+
+        // 2. Сортируем ключи, чтобы порядок не влиял на хеш
+        ksort($query);
+
+        // 3. Сериализуем обратно в предсказуемую строку
+        $normalizedQuery = http_build_query($query);
+
+        // 4. Возвращаем "базовый" URL без кодирования спецсимволов
+        return ($parsed['path'] ?? '') . '?' . $normalizedQuery;
+    }
+
+    public function render()
+    {      
+        $url = $this->normalizeUrlForCache($this->getRealUrl());
+        $hash = ShortHash::make($url . json_encode($this->filters) . $this->sort);
+
+        Log::info("Catalog Items Render Hash: " . $hash);
 
         
 
@@ -197,8 +244,8 @@ class Items extends Component
             "products" => $this->renderPaginatedProducts(),
             "all_products" => $this->renderAllProducts(),
             "mode" => $this->displayMode,
-            "nonTagCategories" => $this->nonTagCategories,
-            "tagCategories" => $this->tagCategories,
+            "nonTagCategories" => $this->nonTagCategoriesGlobal,
+            "tagCategories" => $this->tagCategoriesGlobal,
             "category" => $this->category
         ]);
     }

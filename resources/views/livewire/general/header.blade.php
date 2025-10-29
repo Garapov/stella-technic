@@ -5,9 +5,6 @@
 
         @livewire('general.header.burger', [
             'categories' => $categories,
-            'variationCounts' => $variationCounts,
-            'minPrices' => $minPrices,
-            'allCategoryIds' => $allCategoryIds,
         ])
 
         {!! $organization !!}
@@ -85,9 +82,6 @@
                 @if (count($categories) > 0)
                     @livewire('general.header.catalog', [
                         'categories' => $categories,
-                        'variationCounts' => $variationCounts,
-                        'minPrices' => $minPrices,
-                        'allCategoryIds' => $allCategoryIds,
                     ])
                 @endif
 

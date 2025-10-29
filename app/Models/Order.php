@@ -10,12 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
-
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Support\Facades\Mail;
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, Cachable;
 
     // Exact enum values from database schema
     public const STATUS_PENDING = 'pending';

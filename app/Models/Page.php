@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Datlechin\FilamentMenuBuilder\Concerns\HasMenuPanel;
 use Datlechin\FilamentMenuBuilder\Contracts\MenuPanelable;
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Z3d0X\FilamentFabricator\Models\Page as ModelsPage;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
 class Page extends ModelsPage implements Searchable,MenuPanelable
 {
-    use HasMenuPanel;
+    use HasMenuPanel, Cachable;
 
     public $searchableType = 'Страницы';
 

@@ -9,15 +9,9 @@ use Livewire\Component;
 class Burger extends Component
 {
     public $categories;
-    public $allCategoryIds;
-    public $variationCounts;
-    public $minPrices;
-    public function mount($categories = [], $allCategoryIds = [], $variationCounts = [], $minPrices = [])
+    public function mount($categories = [])
     {
         $this->categories = $categories;
-        $this->allCategoryIds = $allCategoryIds;
-        $this->variationCounts = $variationCounts;
-        $this->minPrices = $minPrices;
     }
     public function render()
     {

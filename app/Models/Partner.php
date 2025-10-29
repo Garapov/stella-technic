@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
@@ -10,7 +11,7 @@ use Spatie\Sluggable\SlugOptions;
 class Partner extends Model
 {
     /** @use HasFactory<\Database\Factories\PartnerFactory> */
-    use HasFactory, HasSlug;
+    use HasFactory, HasSlug, Cachable;
 
     protected $fillable = [
         'name',

@@ -4,6 +4,7 @@ namespace App\Livewire\General\Header;
 
 use Livewire\Component;
 use Datlechin\FilamentMenuBuilder\Models\Menu as MenuModel;
+use Illuminate\Support\Facades\Cache;
 use Spatie\SchemaOrg\Schema;
 
 class Menu extends Component
@@ -12,8 +13,10 @@ class Menu extends Component
     public $menu;
     public function mount()
     {
-        $this->menu = MenuModel::location('header');
-        $this->schema = $this->makeSchema()->toScript();
+        $this->menu = Cache::rememberForever('menus:header', function () { return MenuModel::location('header'); });
+        $this->schema = Cache::rememberForever('schemes:header_menu', function () {
+            $this->makeSchema()->toScript();
+        });
     }
 
     protected function makeSchema()

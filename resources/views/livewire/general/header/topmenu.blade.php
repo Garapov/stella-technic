@@ -16,7 +16,7 @@
 
                             @php
                                 $hasLinkable = $child->linkable ?? null;
-                                $url = $hasLinkable && $child->linkable_type == 'App\Models\Page' ? Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId($child->linkable->id) : $child->url;
+                                $url = $hasLinkable && $child->linkable_type == 'App\Models\Page' ? Cache::rememberForever('fabricator:page_' . $child->linkable->id . '_url', function () use ($child) { return Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId($child->linkable->id); }) : $child->url;
                             @endphp
 
                                 <li>
@@ -30,7 +30,7 @@
                 @else
                     @php
                         $hasLinkable = $menuItem->linkable ?? null;
-                        $url = $hasLinkable && $menuItem->linkable_type == 'App\Models\Page' ? Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId($menuItem->linkable->id) : $menuItem->url;
+                        $url = $hasLinkable && $menuItem->linkable_type == 'App\Models\Page' ? Cache::rememberForever('fabricator:page_'.$menuItem->linkable->id.'_url', function () use ($menuItem) { return Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId($menuItem->linkable->id); }) : $menuItem->url;
                     @endphp
                     <a href="{{ $url }}" wire:navigate
                         class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"

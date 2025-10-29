@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Former extends Model
 {
     /** @use HasFactory<\Database\Factories\FormerFactory> */
-    use HasFactory;
+    use HasFactory, Cachable;
 
     protected $fillable = [
         'name',

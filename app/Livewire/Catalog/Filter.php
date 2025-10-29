@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class Filter extends Component
 {
@@ -245,35 +246,38 @@ class Filter extends Component
 
     protected function initializeParameters()
     {
+        $mergedParams = collect([]);
+        if (!Cache::has('filter_params:' . url()->current())) {
+            $primaryParams = $this->products->flatMap(fn($product) => $product->paramItems ?? []);
+            $secondaryParams = $this->products->flatMap(fn($product) => $product->parametrs ?? []);
 
-        $primaryParams = $this->products->flatMap(fn($product) => $product->paramItems ?? []);
-        $secondaryParams = $this->products->flatMap(fn($product) => $product->parametrs ?? []);
-
-        $mergedParams = $primaryParams
-            ->merge($secondaryParams)
-            ->sortBy('productParam.sort')
-            ->filter(fn($paramItem) =>
-                $paramItem &&
-                $paramItem->productParam &&
-                $paramItem->productParam->allow_filtering &&
-                $paramItem->productParam->name
-            )
-            ->map(function ($item) use ($primaryParams) {
-                return [
-                    'id' => $item->id,
-                    'title' => $item->title ?? '',
-                    'value' => $item->value ?? '',
-                    'param_id' => $item->product_param_id,
-                    'type' => $item->productParam->type ?? 'default',
-                    'group' => $item->productParam->name,
-                    'sort' => $item->sort,
-                    'source' => $primaryParams->contains($item) ? 'paramItems' : 'parametrs',
-                ];
-            });
-
-        $this->parameters = $mergedParams->groupBy('group')->map(fn($items) =>
-            $items->keyBy('id')
-        );
+            $mergedParams = $primaryParams
+                ->merge($secondaryParams)
+                ->sortBy('productParam.sort')
+                ->filter(fn($paramItem) =>
+                    $paramItem &&
+                    $paramItem->productParam &&
+                    $paramItem->productParam->allow_filtering &&
+                    $paramItem->productParam->name
+                )
+                ->map(function ($item) use ($primaryParams) {
+                    return [
+                        'id' => $item->id,
+                        'title' => $item->title ?? '',
+                        'value' => $item->value ?? '',
+                        'param_id' => $item->product_param_id,
+                        'type' => $item->productParam->type ?? 'default',
+                        'group' => $item->productParam->name,
+                        'sort' => $item->sort,
+                        'source' => $primaryParams->contains($item) ? 'paramItems' : 'parametrs',
+                    ];
+                });
+        }
+        $this->parameters = Cache::rememberForever('filter_params:' . url()->current(), function () use ($mergedParams) {
+            return $mergedParams->groupBy('group')->map(fn($items) =>
+                $items->keyBy('id')
+            );
+        });
     }
 
     public function render()

@@ -27,10 +27,6 @@
                     @foreach ($categories->sortBy('sort') as $category)
                         @livewire('general.category', [
                             'category' => $category,
-                            'counts' => $variationCounts,
-                            'allCategoryIds' => $allCategoryIds,
-                            'show_counts' => false,
-                            'show_price' => false,
                         ], key($category->id))
                     @endforeach
 

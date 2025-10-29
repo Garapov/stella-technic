@@ -88,7 +88,7 @@
                     >
                     <label for="checked-checkbox" class="ms-2 text-sm font-medium @error('confirmation') text-red-500 @else text-gray-900 dark:text-gray-300  @enderror">Я согласен на обработку моих
                         @if (setting('politics'))
-                            <a href="{{ \Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId(setting('politics')) }}" class="text-blue-600" wire:navigate>персональных данных</a>
+                            <a href="{{ Cache::rememberForever('fabricator:page_' . setting('politics') . '_url', function () { return \Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId(setting('politics')); }) }}" class="text-blue-600" wire:navigate>персональных данных</a>
                         @else
                             персональных данных
                         @endif

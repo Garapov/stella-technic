@@ -40,11 +40,7 @@
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             @foreach ($categories as $category)
                                 @livewire('general.category', [
-                                    'category' => $category,
-                                    // 'counts' => $variationCounts,
-                                    // 'minPrices' => $minPrices,
-                                    'show_counts' => true,
-                                    'show_price' => true
+                                    'category' => $category
                                 ], key($category->id))
                             @endforeach
                         </div>

@@ -18,7 +18,7 @@
                     @foreach ($menu->menuItems as $manuItem)
                         @php
                             $hasLinkable = $manuItem->linkable ?? null;
-                            $url = $hasLinkable && $manuItem->linkable_type == 'App\Models\Page' ? Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId($manuItem->linkable->id) : $manuItem->url;
+                            $url = $hasLinkable && $manuItem->linkable_type == 'App\Models\Page' ? Cache::rememberForever('fabricator:page_' . $manuItem->linkable->id . '_url', function () use ($manuItem) { return Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId($manuItem->linkable->id); }) : $manuItem->url;
                         @endphp
                         <ul class="space-y-4" aria-labelledby="mega-menu-dropdown-button">
                             <li>
@@ -29,7 +29,7 @@
                             @foreach ($manuItem->children as $childMenuItem)
                                 @php
                                     $hasLinkable = $childMenuItem->linkable ?? null;
-                                    $url = $hasLinkable && $childMenuItem->linkable_type == 'App\Models\Page' ? Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId($childMenuItem->linkable->id) : $childMenuItem->url;
+                                    $url = $hasLinkable && $childMenuItem->linkable_type == 'App\Models\Page' ? Cache::rememberForever('fabricator:page_' . $childMenuItem->linkable->id . '_url', function () use ($childMenuItem) { return Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId($childMenuItem->linkable->id); }) : $childMenuItem->url;
                                 @endphp
                                 <li>
                                     <a href="{{ $url }}" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500" wire:navigate>
@@ -106,11 +106,11 @@
             <span class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white">© 1991-2025 Все права защищены</span>
             <div class="flex lg:items-center gap-4 lg:flex-row flex-col">
                 @if (setting('politics'))
-                    <a href="{{ \Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId(setting('politics')) }}" wire:navigate class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Политика конфиденциальности</a>
+                    <a href="{{ Cache::rememberForever('fabricator:page_' . setting('politics') . '_url', function () { return \Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId(setting('politics')); }) }}" wire:navigate class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Политика конфиденциальности</a>
                 @endif
 
                 @if (setting('cookies'))
-                    <a href="{{ \Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId(setting('cookies')) }}" wire:navigate class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Использование cookie</a>
+                    <a href="{{ Cache::rememberForever('fabricator:page_' . setting('cookies') . '_url', function () { return \Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId(setting('cookies')); }) }}" wire:navigate class="block py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Использование cookie</a>
                 @endif
                 <a href="/sitemap.xml" target="_blank" class="hidden py-2 pr-4 pl-3 text-sm text-primary-700 rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Карта сайта</a>
             </div>
