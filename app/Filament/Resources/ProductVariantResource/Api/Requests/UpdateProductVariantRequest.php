@@ -22,8 +22,8 @@ class UpdateProductVariantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'price' => 'required|integer',
+            'name' => 'string',
+            'price' => 'integer',
             'new_price' => 'integer',
             'short_description' => 'string',
             'description' => 'string',
