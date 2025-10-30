@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Brand extends Model
 {
     /** @use HasFactory<\Database\Factories\BrandFactory> */
-    use HasFactory, HasSlug, Cachable;
+    use HasFactory, HasSlug;
 
     protected $fillable = [
         'name',

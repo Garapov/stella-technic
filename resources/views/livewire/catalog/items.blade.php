@@ -66,9 +66,7 @@
             <div class="grid grid-cols-9 gap-4">
                 @if ($display_filter)
                     <div class="col-span-2" wire:loading.class="opacity-25 pointer-events-none">
-                        @livewire('catalog.filter', [
-                            'products' => $all_products,
-                        ])
+                        <livewire:catalog.filter :products="$all_products" />
                     </div>
                 @endif
                 

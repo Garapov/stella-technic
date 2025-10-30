@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class ProductParam extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductParamFactory> */
-    use HasFactory, Cachable;
+    use HasFactory;
 
     protected $fillable = [
         'name',

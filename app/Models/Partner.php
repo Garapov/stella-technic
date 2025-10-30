@@ -11,7 +11,7 @@ use Spatie\Sluggable\SlugOptions;
 class Partner extends Model
 {
     /** @use HasFactory<\Database\Factories\PartnerFactory> */
-    use HasFactory, HasSlug, Cachable;
+    use HasFactory, HasSlug;
 
     protected $fillable = [
         'name',

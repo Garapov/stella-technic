@@ -5,8 +5,10 @@ namespace App\Livewire\Main;
 use Livewire\Component;
 use App\Models\Brand;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Lazy;
 use Spatie\SchemaOrg\Schema;
 
+#[Lazy()]
 class Brands extends Component
 {
     public $brands;
@@ -45,9 +47,15 @@ class Brands extends Component
     }
     public function render()
     {
+        // sleep(20);
         return view('livewire.main.brands', [
             'brands' => $this->brands,
             'schema' => $this->schema
         ]);
+    }
+
+    public function placeholder()
+    {
+        return view('placeholders.main.brands');
     }
 }

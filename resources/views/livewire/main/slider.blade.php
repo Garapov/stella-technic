@@ -1,5 +1,5 @@
 <div>
-    @if (count($slides) > 0)
+    @if (count($this->slides) > 0)
         <div class="lg:py-10  bg-white dark:bg-gray-700" x-data="{
             slider: new window.glide($refs.slider, {
                 autoplay: 5000,
@@ -16,7 +16,7 @@
                 <div class="glide relative group" x-ref="slider">
                     <div class="glide__track lg:rounded-xl overflow-hidden" data-glide-el="track">
                         <div class="glide__slides">
-                            @foreach ($slides as $slide)
+                            @foreach ($this->slides as $slide)
                                 <div class="whitespace-normal @if (!$slide->background_image) p-10 @endif" style="background-color: {{ $slide->background }};">
                                     @if ($slide->background_image)
                                         <a href="{{ url($slide->link) }}" wire:navigate>
@@ -43,10 +43,10 @@
                             @endforeach
                         </div>
                     </div>
-                    @if (count($slides) > 1)
+                    @if (count($this->slides) > 1)
                         <div class="lg:group-hover:opacity-70 lg:opacity-0 flex items-center md:justify-between justify-center gap-4 p-2 lg:absolute lg:right-0 lg:bottom-0 lg:bg-white rounded-tl-lg">
                             <div class="flex items-center gap-2" data-glide-el="controls[nav]">
-                                @foreach ($slides as $key=>$slide)
+                                @foreach ($this->slides as $key=>$slide)
                                     <div class="md:h-2.5 h-1.5 rounded-full transition-width" :class="{'w-6 bg-blue-400': index == {{ $key }}, 'md:w-2.5 w-1.5 bg-gray-400': index != {{ $key }} }" data-glide-dir="={{ $key }}"></div>
                                 @endforeach
                             </div>

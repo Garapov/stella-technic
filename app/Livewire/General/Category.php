@@ -13,6 +13,7 @@ class Category extends Component
     public $show_counts = false;
     public $show_price = false;
     public $transparent = false;
+    public $show_image = null;
 
     public function mount($category, $show_counts = false, $show_price = false, $transparent = false, $allCategoryIds = [], $counts = [], $minPrices = [], $show_image = true)
     {

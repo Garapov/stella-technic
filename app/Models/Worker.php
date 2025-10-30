@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Worker extends Model
 {
     /** @use HasFactory<\Database\Factories\WorkerFactory> */
-    use HasFactory, Cachable;
+    use HasFactory;
 
     protected $fillable = [
         'image',

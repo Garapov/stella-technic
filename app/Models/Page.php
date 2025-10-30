@@ -11,7 +11,7 @@ use Spatie\Searchable\SearchResult;
 
 class Page extends ModelsPage implements Searchable,MenuPanelable
 {
-    use HasMenuPanel, Cachable;
+    use HasMenuPanel;
 
     public $searchableType = 'Страницы';
 

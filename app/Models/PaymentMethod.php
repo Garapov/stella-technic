@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class PaymentMethod extends Model
 {
     /** @use HasFactory<\Database\Factories\PaymentMethodFactory> */
-    use HasFactory, Cachable;
+    use HasFactory;
 
     protected $fillable = [
         'name',

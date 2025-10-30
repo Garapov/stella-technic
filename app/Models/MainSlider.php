@@ -11,7 +11,7 @@ use Outerweb\ImageLibrary\Models\Image;
 class MainSlider extends Model
 {
     /** @use HasFactory<\Database\Factories\MainSliderFactory> */
-    use HasFactory, Cachable;
+    use HasFactory;
 
     protected $fillable = [
         "title",

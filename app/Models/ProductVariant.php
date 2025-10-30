@@ -24,7 +24,7 @@ use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 class ProductVariant extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductVariantFactory> */
-    use HasFactory, SoftDeletes, HasSlug, Filterable, Sortable, Searchable, Cachable;
+    use HasFactory, SoftDeletes, HasSlug, Filterable, Sortable, Searchable;
 
     protected $fillable = [
         "product_id",

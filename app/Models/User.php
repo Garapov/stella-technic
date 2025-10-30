@@ -20,7 +20,7 @@ use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 class User extends Authenticatable implements FilamentUser 
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens, HasRoles, HasSuperAdmin, TwoFactorAuthenticatable, Cachable;
+    use HasFactory, Notifiable, HasApiTokens, HasRoles, HasSuperAdmin, TwoFactorAuthenticatable;
 
     protected array $guard_name = ['api', 'web'];
 

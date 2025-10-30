@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Mail;
 
 class Order extends Model
 {
-    use HasFactory, Cachable;
+    use HasFactory;
 
     // Exact enum values from database schema
     public const STATUS_PENDING = 'pending';

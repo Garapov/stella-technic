@@ -5,67 +5,55 @@ namespace App\Livewire\Main;
 use App\Models\Feature;
 use App\Models\ProductCategory;
 use App\Models\ProductVariant;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Lazy;
 use Livewire\Component;
 use Spatie\SchemaOrg\Schema;
 
+#[Lazy()]
 class Features extends Component
 {
-    public $categories;
-    public $allCategoryIds;
-    public $variationCounts;
-    // public $minPrices;
-    public $features;
-    public $featuresScheme;
-
-    public function mount()
+    #[Computed()]
+    public function categories()
     {
-        $this->categories = ProductCategory::where('parent_id', '-1')->with([
+        return ProductCategory::where('parent_id', '-1')->with([
             'categories',
             'products'
-        ])->get();
+        ])->get()->sortBy('sort');
+    }
 
-        $this->features = Feature::where('show_on_main', true)->get()->sortBy('sort');
-
+    #[Computed()]
+    public function features()
+    {
+        return Feature::where('show_on_main', true)->get()->sortBy('sort');
+    }
+    
+    #[Computed()]
+    public function featuresScheme(): string {
         $listItems = [];
+
         if ($this->features) {
 
             foreach ($this->features as $index => $feature) {
-                // элемент списка
                 $listItems[] = Schema::listItem()
                     ->position($index + 1)
                     ->name($feature->text);
             }
-
-            // ItemList (общий список)
-            $this->featuresScheme = Schema::itemList()
-                ->name('Преимущества компании')
-                ->itemListElement($listItems)->toScript();
         }
 
-            // Schema::listItem()
-            //         ->position(1)
-            //         ->name('Более 30 лет на рынке оборудования и хранения для складов'),
-
-        $this->allCategoryIds = ProductCategory::all()->pluck('id')->toArray();
-
-        // Получаем счётчики вариантов
-        // $this->variationCounts = ProductVariant::selectRaw('count(*) as count, product_product_category.product_category_id')
-        //     ->join('products', 'products.id', '=', 'product_variants.product_id')
-        //     ->join('product_product_category', 'products.id', '=', 'product_product_category.product_id')
-        //     ->whereIn('product_product_category.product_category_id', $this->allCategoryIds)
-        //     ->groupBy('product_product_category.product_category_id')
-        //     ->pluck('count', 'product_product_category.product_category_id');
+        return Schema::itemList()
+                ->name('Преимущества компании')
+                ->itemListElement($listItems)->toScript();
     }
     
     public function render()
     {
-        return view('livewire.main.features', [
-            'features' => $this->features,
-            'categories' => $this->categories,
-            // 'counts' => $this->variationCounts,
-            // 'minPrices' => $this->minPrices,
-            'allCategoryIds' => $this->allCategoryIds,
-            'featuresScheme' => $this->featuresScheme
-        ]);
+        // sleep(20);
+        return view('livewire.main.features');
+    }
+
+    public function placeholder()
+    {
+        return view('placeholders.main.features');
     }
 }

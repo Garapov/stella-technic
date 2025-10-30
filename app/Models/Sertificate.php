@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Sertificate extends Model
 {
     /** @use HasFactory<\Database\Factories\SertificateFactory> */
-    use HasFactory, Cachable;
+    use HasFactory;
 
     protected $fillable = [
         'name',

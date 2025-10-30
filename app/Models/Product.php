@@ -22,7 +22,7 @@ use Illuminate\Support\Str;
 class Product extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductFactory> */
-    use HasFactory, HasSlug, SoftDeletes, Cachable;
+    use HasFactory, HasSlug, SoftDeletes;
 
 
     protected $fillable = [

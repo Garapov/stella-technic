@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Delivery extends Model
 {
     /** @use HasFactory<\Database\Factories\DeliveryFactory> */
-    use HasFactory, Cachable;
+    use HasFactory;
 
     protected $fillable = [
         'name',

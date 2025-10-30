@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 class Post extends Model
 {
     /** @use HasFactory<\Database\Factories\ArticleFactory> */
-    use HasFactory, HasSlug, Cachable;
+    use HasFactory, HasSlug;
 
     protected $fillable = [
         "title",

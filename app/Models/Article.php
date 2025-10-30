@@ -11,7 +11,7 @@ use Spatie\Sluggable\SlugOptions;
 class Article extends Model
 {
     /** @use HasFactory<\Database\Factories\ArticleFactory> */
-    use HasFactory, HasSlug, Cachable;
+    use HasFactory, HasSlug;
 
     protected $fillable = [
         "title",

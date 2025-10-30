@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Vacancy extends Model
 {
     /** @use HasFactory<\Database\Factories\VacancyFactory> */
-    use HasFactory, Cachable;
+    use HasFactory;
 
     protected $fillable = [
         'title',

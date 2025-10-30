@@ -11,7 +11,7 @@ use Spatie\Sluggable\SlugOptions;
 class Client extends Model
 {
     /** @use HasFactory<\Database\Factories\ClientFactory> */
-    use HasFactory, HasSlug, Cachable;
+    use HasFactory, HasSlug;
 
     protected $fillable = [
         'image',

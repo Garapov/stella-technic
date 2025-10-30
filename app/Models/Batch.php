@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Batch extends Model
 {
     /** @use HasFactory<\Database\Factories\BatchFactory> */
-    use HasFactory, Cachable;
+    use HasFactory;
 
     protected $fillable = ["image", "name", "description"];
 

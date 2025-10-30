@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Feature extends Model
 {
     /** @use HasFactory<\Database\Factories\FeatureFactory> */
-    use HasFactory, Cachable;
+    use HasFactory;
 
     protected $fillable = [
         'icon',
