@@ -1,13 +1,13 @@
 <div>
-    @if (count($clients))
+    @if (count($this->clients))
         <section class="bg-slate-50" x-data="clients" id="clients-slider">
             <div class="py-10 xl:px-[100px] px-[20px]">
                 <div class="flex items-center justify-between mb-10">
                     <p class="lg:text-4xl text-xl text-slate-900 dark:text-white font-semibold">Наши клиенты</p>
                     <div class="flex items-center gap-8">
                         <div class="hidden md:flex items-center gap-2" data-glide-el="controls">
-                            @foreach ($clients as $key=>$client)
-                                @if ($key > count($clients) - 6)      
+                            @foreach ($this->clients as $key=>$client)
+                                @if ($key > count($this->clients) - 6)      
                                     @continue
                                 @endif
                                 <div class="h-2.5 rounded-full transition-width" :class="{'w-6 bg-blue-400': index == {{ $key }}, 'w-2.5 bg-gray-400': index != {{ $key }} }" data-glide-dir="={{ $key }}"></div>
@@ -28,7 +28,7 @@
                         <div class="glide__track" data-glide-el="track">
                             <ul class="glide__slides items-stretch">
                                 
-                                @foreach ($clients as $client)
+                                @foreach ($this->clients as $client)
                                     <li class="glide__slide h-auto">
                                         <div class="flex justify-center items-center h-full p-4 rounded bg-white">
                                             <img src="{{ Storage::disk(config('filesystems.default'))->url($client->image) }}" alt="">    

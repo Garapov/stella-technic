@@ -5,16 +5,27 @@ namespace App\Livewire\Main;
 use Livewire\Component;
 use App\Models\Post;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Lazy;
 use Spatie\SchemaOrg\Schema;
 
+#[Lazy()]
 class News extends Component
 {
-    public $news;
-    public $schema;
-    public function mount()
+    public function render()
     {
-        $this->news = Post::where("is_popular", true)->get();
+        return view("livewire.main.news");
+    }
 
+    #[Computed()]
+    public function news()
+    {
+        return Post::where("is_popular", true)->get();
+    }
+
+    #[Computed()]
+    public function schema()
+    {
         $itemListElements = [];
         if ($this->news) {
             foreach ($this->news as $index => $post) {
@@ -32,16 +43,14 @@ class News extends Component
             }
         }
 
-        $this->schema = Schema::itemList()
+        return Schema::itemList()
             ->name('Посты блога')
             ->itemListElement($itemListElements)
             ->toScript();
     }
-    public function render()
+
+    public function placeholder()
     {
-        return view("livewire.main.news", [
-            "news" => $this->news,
-            "schema" => $this->schema,
-        ]);
+        return view('placeholders.main.news');
     }
 }

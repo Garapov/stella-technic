@@ -48,7 +48,6 @@ class Features extends Component
     
     public function render()
     {
-        // sleep(20);
         return view('livewire.main.features');
     }
 

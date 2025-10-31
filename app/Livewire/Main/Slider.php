@@ -12,7 +12,6 @@ class Slider extends Component
 {
     public function render()
     {
-        // sleep(10);
         return view('livewire.main.slider');
     }
 

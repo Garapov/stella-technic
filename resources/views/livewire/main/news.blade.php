@@ -1,6 +1,6 @@
 <div>
-    @if (count($news))
-    {!! $schema !!}
+    @if (count($this->news))
+    {!! $this->schema !!}
         <section class="px-4 py-10 dark:bg-gray-800 glide" x-data="{
             slider: new window.glide($refs.slider, {
                 autoplay: 5000,
@@ -28,8 +28,8 @@
                     <p class="lg:text-4xl text-xl text-slate-900 dark:text-white font-semibold">Новости</p>
                     <div class="md:flex hidden items-center gap-8">
                         <div class="flex items-center gap-2" data-glide-el="controls[nav]">
-                            @foreach ($news as $key=>$item)
-                                @if ($key > count($news) - 3)
+                            @foreach ($this->news as $key=>$item)
+                                @if ($key > count($this->news) - 3)
                                     @continue
                                 @endif
                                 <div class="h-2.5 rounded-full transition-width" :class="{'w-6 bg-blue-400': index == {{ $key }}, 'w-2.5 bg-gray-400': index != {{ $key }} }" data-glide-dir="={{ $key }}"></div>
@@ -44,7 +44,7 @@
                 </div>
                 <div class="glide__track" data-glide-el="track">
                     <ul class="glide__slides">
-                        @foreach ($news as $item)    
+                        @foreach ($this->news as $item)    
                             @livewire('general.post', [
                                 'post' => $item,
                             ], key($item->id))

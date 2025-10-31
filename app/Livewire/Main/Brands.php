@@ -47,7 +47,6 @@ class Brands extends Component
     }
     public function render()
     {
-        // sleep(20);
         return view('livewire.main.brands', [
             'brands' => $this->brands,
             'schema' => $this->schema

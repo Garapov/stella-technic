@@ -5,17 +5,22 @@ namespace App\Livewire\Main;
 use Livewire\Component;
 use App\Models\Sertificate;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Lazy;
 use Spatie\SchemaOrg\Schema;
 
+#[Lazy()]
 class Certificates extends Component
 {
-    public $certificates;
     public $scheme;
 
-    public function mount()
+    public function render()
     {
-        $this->certificates = Sertificate::where('show_on_main', true)->get();
+        return view('livewire.main.certificates');
+    }
 
+    #[Computed()]
+    public function scheme(): string {
         $listItems = [];
         if ($this->certificates) {
 
@@ -31,16 +36,21 @@ class Certificates extends Component
                     );
             }
 
-            // ItemList (общий список)
-            $this->scheme = Schema::itemList()
-                ->name('Сертификаты компании')
-                ->itemListElement($listItems)->toScript();
         }
+
+        return Schema::itemList()
+                ->name('Сертификаты компании')
+                ->itemListElement($listItems)->toScript();;
     }
-    public function render()
+
+    #[Computed()]
+    public function certificates()
     {
-        return view('livewire.main.certificates', [
-            'certificates' => $this->certificates,
-        ]);
+        return Sertificate::where('show_on_main', true)->get();
+    }
+
+    public function placeholder()
+    {
+        return view('placeholders.main.certificates');
     }
 }

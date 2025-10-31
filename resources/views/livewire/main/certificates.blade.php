@@ -1,7 +1,7 @@
 <div>
-    {!! $scheme !!}
+    {!! $this->scheme !!}
 
     @livewire('general.certificates_gallery', [
-        'certificates' => $certificates,
+        'certificates' => $this->certificates,
     ])
 </div>
