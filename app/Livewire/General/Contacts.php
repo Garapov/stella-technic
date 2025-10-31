@@ -5,7 +5,7 @@ namespace App\Livewire\General;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
-#[Lazy()]
+// #[Lazy()]
 class Contacts extends Component
 {
     public function render()
