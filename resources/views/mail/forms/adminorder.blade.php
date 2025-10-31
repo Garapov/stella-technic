@@ -46,6 +46,9 @@
 
 # Информация о доставке
 **Название:** {{ $order->delivery['name'] }} <br>
+@if ($order->shipping_address)
+**Адрес доставки:** {{ $order->shipping_address }} <br>
+@endif
 
 # Информация об оплате
 **Название:** {{ $order->payment['name'] }} <br>

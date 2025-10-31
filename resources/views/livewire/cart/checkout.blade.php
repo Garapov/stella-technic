@@ -124,24 +124,24 @@
             <div class="mb-10">
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     <label>
-                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('name') text-red-700 dark:text-red-500 @enderror"> ФИО получателя*: </span>
-                        <input type="text" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('name') border-red-500 dark:border-red-500 @enderror" placeholder="Иванов Иван Иванович" wire:model.live="name" />
+                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('name') text-red-700 dark:text-red-500 @enderror"> ФИО получателя<span class="text-red-500 text-xl">*</span> </span>
+                        <input type="text" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder:text-gray-200 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('name') border-red-500 dark:border-red-500 @enderror" placeholder="Иванов Иван Иванович" wire:model.live="name" />
                         @error('name')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
                     </label>
 
                     <label>
-                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('email') text-red-700 dark:text-red-500 @enderror"> Email*: </span>
-                        <input type="email" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('email') border-red-500 dark:border-red-500 @enderror" placeholder="ivanov112@gmail.com" wire:model.live="email" />
+                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('email') text-red-700 dark:text-red-500 @enderror"> Email<span class="text-red-500 text-xl">*</span> </span>
+                        <input type="email" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder:text-gray-200 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('email') border-red-500 dark:border-red-500 @enderror" placeholder="ivanov112@gmail.com" wire:model.live="email" />
                         @error('email')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
                     </label>
 
                     <label>
-                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('phone') text-red-700 dark:text-red-500 @enderror"> Телефон*: </span>
-                        <input type="tel" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('phone') border-red-500 dark:border-red-500 @enderror" placeholder="8 (999) 999-99-99" wire:model.live="phone" x-mask="9 (999) 999-99-99" />
+                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('phone') text-red-700 dark:text-red-500 @enderror"> Телефон<span class="text-red-500 text-xl">*</span> </span>
+                        <input type="tel" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder:text-gray-200 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('phone') border-red-500 dark:border-red-500 @enderror" placeholder="8 (999) 999-99-99" wire:model.live="phone" x-mask="9 (999) 999-99-99" />
                         @error('phone')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
@@ -149,8 +149,8 @@
                     @if ($type === 'legal')
                     <label class="col-span-full">
                         <input class="hidden" id="file_input" type="file" wire:model.live="file">
-                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('file') text-red-700 dark:text-red-500 @enderror"> Файл с реквизитами: </span>
-                        <div class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 flex items-center justify-between @error('file') border-red-500 dark:border-red-500 text-red-700 dark:text-red-500 @enderror">
+                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('file') text-red-700 dark:text-red-500 @enderror"> Файл с реквизитами </span>
+                        <div class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder:text-gray-200 dark:focus:border-blue-500 dark:focus:ring-blue-500 flex items-center justify-between @error('file') border-red-500 dark:border-red-500 text-red-700 dark:text-red-500 @enderror">
                         <div class="flex items-center gap-4">
                             <div class="w-6 h-6" wire:loading.class="hidden" wire:target="file">
                             @if ($file)
@@ -176,9 +176,9 @@
                         @enderror
                     </label>
                     <label>
-                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('inn') text-red-700 dark:text-red-500 @enderror"> ИНН*: </span>
+                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('inn') text-red-700 dark:text-red-500 @enderror"> ИНН<span class="text-red-500 text-xl">*</span> </span>
                         <div class="flex flex-center gap-2">
-                            <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('inn') border-red-500 dark:border-red-500 @enderror" placeholder="7710362760" wire:model.live="inn" />
+                            <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder:text-gray-200 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('inn') border-red-500 dark:border-red-500 @enderror" placeholder="7710362760" wire:model.live="inn" />
                             <div wire:click="checkCompany" class="text-white bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800 cursor-pointer">
                             <x-heroicon-o-arrow-small-right wire:loading.class="hidden" wire:target="checkCompany" class="w-5 h-5" />
                             <x-fas-spinner class="animate-spin w-5 h-5" wire:loading wire:target="checkCompany" />
@@ -190,60 +190,60 @@
                     </label>
 
                     <label>
-                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('company_name') text-red-700 dark:text-red-500 @enderror"> Название компании*: </span>
-                        <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('company_name') border-red-500 dark:border-red-500 @enderror" placeholder="Stella Technic" wire:model.live="company_name" />
+                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('company_name') text-red-700 dark:text-red-500 @enderror"> Название компании<span class="text-red-500 text-xl">*</span> </span>
+                        <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder:text-gray-200 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('company_name') border-red-500 dark:border-red-500 @enderror" placeholder="Stella Technic" wire:model.live="company_name" />
                         @error('company_name')
                             <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
                     </label>
 
                     <label>
-                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('kpp') text-red-700 dark:text-red-500 @enderror"> КПП: </span>
-                        <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('kpp') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="kpp" />
+                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('kpp') text-red-700 dark:text-red-500 @enderror"> КПП </span>
+                        <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder:text-gray-200 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('kpp') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="kpp" />
                         @error('kpp')
                             <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
                     </label>
 
                     <label>
-                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('bik') text-red-700 dark:text-red-500 @enderror"> БИК*: </span>
-                        <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('bik') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="bik" />
+                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('bik') text-red-700 dark:text-red-500 @enderror"> БИК<span class="text-red-500 text-xl">*</span> </span>
+                        <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder:text-gray-200 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('bik') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="bik" />
                         @error('bik')
                             <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
                     </label>
 
                     <label>
-                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('correspondent_account') text-red-700 dark:text-red-500 @enderror"> Корреспондентский счет*: </span>
-                        <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('correspondent_account') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="correspondent_account" />
+                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('correspondent_account') text-red-700 dark:text-red-500 @enderror"> Корреспондентский счет<span class="text-red-500 text-xl">*</span> </span>
+                        <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder:text-gray-200 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('correspondent_account') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="correspondent_account" />
                         @error('correspondent_account')
                             <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
                     </label>
 
                     <label>
-                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('bank_account') text-red-700 dark:text-red-500 @enderror"> Банковский счет*: </span>
-                        <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('bank_account') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="bank_account" />
+                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('bank_account') text-red-700 dark:text-red-500 @enderror"> Банковский счет<span class="text-red-500 text-xl">*</span> </span>
+                        <input class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder:text-gray-200 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('bank_account') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="bank_account" />
                         @error('bank_account')
                             <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
                     </label>
 
                     <label class="col-span-1 md:col-span-2 lg:col-span-3">
-                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('yur_address') text-red-700 dark:text-red-500 @enderror"> Юр. адрес*: </span>
-                        <textarea class="block w-full h-20 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('yur_address') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="yur_address"></textarea>
+                        <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('yur_address') text-red-700 dark:text-red-500 @enderror"> Юр. адрес<span class="text-red-500 text-xl">*</span> </span>
+                        <textarea class="block w-full h-20 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder:text-gray-200 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('yur_address') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="yur_address"></textarea>
                         @error('yur_address')
                             <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
                     </label>
 
-                    <label class="col-span-1 md:col-span-2 lg:col-span-3">
+                    {{-- <label class="col-span-1 md:col-span-2 lg:col-span-3">
                         <span class="mb-2 block text-sm font-medium text-gray-900 dark:text-white @error('legal_address') text-red-700 dark:text-red-500 @enderror"> Фактический адрес: </span>
-                        <textarea class="block w-full h-20 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('legal_address') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="legal_address"></textarea>
+                        <textarea class="block w-full h-20 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder:text-gray-200 dark:focus:border-blue-500 dark:focus:ring-blue-500 @error('legal_address') border-red-500 dark:border-red-500 @enderror" placeholder="" wire:model.live="legal_address"></textarea>
                         @error('legal_address')
                             <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                         @enderror
-                    </label>
+                    </label> --}}
                     @endif
                 </div>
             </div>
@@ -253,7 +253,7 @@
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-1">
                     <label>
-                    <textarea class="block w-full h-40 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="Укажите желаемое время и дату доставки, информацию о проезде к вашему дому" wire:model.live="comment" > </textarea>
+                    <textarea class="block w-full h-40 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder:text-gray-200 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="Укажите желаемое время и дату доставки, информацию о проезде к вашему дому" wire:model.live="comment" > </textarea>
                     </label>
                 </div>
             </div>
@@ -441,6 +441,20 @@
                     </div>
 
                     <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-blue-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-500 dark:focus:ring-blue-800">Оформить заказ</button>
+
+                    @if ($errors->any())
+                        <div class="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                            <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                            </svg>
+                            <span class="sr-only">Info</span>
+                            <div>
+                                @foreach ($errors->all() as $error)
+                                    <div>{{ $error }}</div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 
