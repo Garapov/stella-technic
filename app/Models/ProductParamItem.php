@@ -13,7 +13,7 @@ use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 class ProductParamItem extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductParamItemFactory> */
-    use HasFactory, Filterable;
+    use HasFactory, Filterable, Cachable;
 
     protected $fillable = [
         'product_param_id',

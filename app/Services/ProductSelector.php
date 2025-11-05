@@ -26,7 +26,7 @@ class ProductSelector
 
         switch ($category->type) {
             case "duplicator":
-                $result = is_array($category->duplicate_id) && count($category->duplicate_id)
+                $product_ids = is_array($category->duplicate_id) && count($category->duplicate_id)
                 ? ProductCategory::with('products:id')
                     ->whereIn('id', $category->duplicate_id)
                     ->get()
@@ -35,7 +35,8 @@ class ProductSelector
                     ->pluck('id')       // получаем только ID продуктов
                 : collect();
 
-                dd($result);
+                // dd($result);
+                $result = ProductVariant::whereIn('product_id', $product_ids)->get();
                 break;
 
             case "filter":

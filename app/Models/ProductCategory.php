@@ -22,7 +22,7 @@ use Laravel\Scout\Searchable;
 class ProductCategory extends Model implements MenuPanelable
 {
     /** @use HasFactory<\Database\Factories\ProductCategoryFactory> */
-    use HasFactory, HasSlug, HasMenuPanel, Searchable;
+    use HasFactory, HasSlug, HasMenuPanel, Searchable, Cachable;
 
     public $searchableType = 'Категории';
 

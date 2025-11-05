@@ -27,5 +27,15 @@
         </div>
 
     @endif
-    <livewire:catalog.items-lazy-list :category="$this->category"  />
+    <div class="grid grid-cols-9 gap-4" x-data="{
+        isFilterOpened: false
+    }">
+        <div class="col-span-2" wire:loading.class="opacity-25 pointer-events-none">
+            <livewire:catalog.items-lazy-filter :category="$this->category"  />
+        </div>
+        
+        <div class="flex flex-col gap-4 md:col-span-7 col-span-full">
+            <livewire:catalog.items-lazy-list :category="$this->category"  />
+        </div>
+    </div>
 </div>

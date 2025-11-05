@@ -41,6 +41,8 @@ class HasIdFilter extends Filter
                 ->values()
                 ->all();
 
+            // dd($this->values);
+
             if (empty($values)) return;
             $query->whereHas('parametrs', function ($subquery) use ($values) {
                 $table = $subquery->getModel()->getTable();

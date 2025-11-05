@@ -100,31 +100,24 @@ class ProductVariant extends Model
 
     public function urlChain()
     {
-        // return Cache::rememberForever("variation_{$this->id}_url_chain", function () {
+        return Cache::rememberForever("variations:urls:" . $this->slug, function () {
             $urlChain = [];
 
             $currentCategory = ProductCategory::find($this->product->category_id && $this->product->category_id != 0 ? $this->product->category_id : $this->product->categories->last()->id);
-            // if ($this->sku == '641107'){
-            //     dd($this->product->category_id);
-            // }
-            // dd($this->product->category_id && $this->product->category_id != 0 ?? $this->product->categories->last()->id);
+            
             array_unshift($urlChain, $currentCategory->slug);
 
             while ($currentCategory->parent_id && $currentCategory->parent_id != '-1') {                
                 $parentCategory = ProductCategory::find($currentCategory->parent_id);
                 $currentCategory = $parentCategory;
-                array_unshift($urlChain, $currentCategory->slug);
-                
+                array_unshift($urlChain, $currentCategory->slug);   
             }
-            // if ($this->sku == '641107'){
-            //     dd($urlChain);
-            // }
 
             $urlChain[] = $this->slug;
 
 
             return join('/', $urlChain);
-        // });
+        });
     }
 
     /**
