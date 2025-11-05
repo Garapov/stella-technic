@@ -1,5 +1,5 @@
 {{-- {{ dd($values) }} --}}
-<div class="p-3 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-900 dark:border-gray-700 flex flex-col gap-3" x-data="{
+<div class="p-3 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-900 dark:border-gray-700 flex flex-col gap-3" wire:loading.class="opacity-50 pointer-events-none" x-data="{
     isOpened: true,
     minPrice: {{ $variations->min('price') }},
     maxPrice: {{ $variations->max('price') }},

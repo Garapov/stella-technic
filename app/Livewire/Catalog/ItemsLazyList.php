@@ -80,7 +80,7 @@ class ItemsLazyList extends Component
     #[Computed()]
     public function variations()
     {
-        return $this->variationsBuilder()->paginate(12, pageName: 'page');
+        return $this->variationsBuilder()->paginate(40, pageName: 'page');
     }
 
     #[Computed()]
