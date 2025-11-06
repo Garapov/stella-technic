@@ -9,6 +9,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Illuminate\Support\Str;
 
 #[Lazy()]
 class ItemsLazyFilter extends Component
@@ -54,6 +55,33 @@ class ItemsLazyFilter extends Component
                 return $this->selector->fromCategory($this->category)->where('is_hidden', false)->pluck('id')->toArray();
             })
         );
+    }
+
+    function filterParamsByValues(array $params, array $values): array
+    {
+        $min = min($values);
+        $max = max($values);
+
+        return array_filter($params, function ($param) use ($min, $max) {
+            return (float)$param['value'] >= $min && (float)$param['value'] <= $max;
+        });
+    }
+
+    public function setSliderFilter($items, $values, $paramName) {
+        $params = collect($this->filterParamsByValues($items, $values))->sortBy('value');
+
+        // dd($params);    
+        $key = Str::snake(Str::of($paramName)->transliterate()->toString());
+        $this->filters['$includes'][$key] = [];
+
+        $this->filters['$includes'][$key] = $params->pluck('id')->toArray();
+
+        // foreach($params as $param) {
+        //     $this->setFirstSelectedGroupIds($param['id']);
+        // }
+
+        // dd($this->filters);
+        $this->dispatch("filters-changed", filters: $this->filters);
     }
 
     public function setPrice($priceRange)

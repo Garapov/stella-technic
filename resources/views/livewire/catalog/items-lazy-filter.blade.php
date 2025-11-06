@@ -12,7 +12,11 @@
         <x-catalog.filter.price :variations="$this->variations"/>
 
         @foreach($this->paramGroups as $paramName => $paramGroup)
-            <x-catalog.filter.checkboxes :paramName="$paramName" :paramGroup="$paramGroup" :availableParams="$this->availableParams" />
+            @if ($paramGroup[0]->productParam->type == 'slider')
+                <x-catalog.filter.slider :paramName="$paramName" :paramGroup="$paramGroup" :availableParams="$this->availableParams" />
+            @else
+                <x-catalog.filter.checkboxes :paramName="$paramName" :paramGroup="$paramGroup" :availableParams="$this->availableParams" />
+            @endif
         @endforeach
     </div>
 </div>
