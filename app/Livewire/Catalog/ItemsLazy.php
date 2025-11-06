@@ -16,6 +16,18 @@ class ItemsLazy extends Component
         return ProductCategory::where("slug", Request::segment(count(Request::segments())))->first();
     }
 
+    #[Computed()]
+    public function nonTagCategories()
+    {
+        return $this->category?->categories->where('is_tag', false) ?? collect([]);
+    }
+
+    #[Computed()]
+    public function tagCategories()
+    {
+        return $this->category?->categories->where('is_tag', true) ?? collect([]);
+    }
+
     
     public function render()
     {

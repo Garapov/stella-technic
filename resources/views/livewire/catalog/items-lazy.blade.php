@@ -32,17 +32,17 @@
                 <x-catalog.category.tabs :categories="$this->category->categories" lazy />
             @endif
         @else
-            @if (count($nonTagCategories) > 0)
+            @if (count($this->nonTagCategories) > 0)
                 <div class="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 gap-2 mb-4 p-4 rounded-lg bg-slate-100">
-                    @foreach ($nonTagCategories->sortBy('sort') as $subcategory)
+                    @foreach ($this->nonTagCategories->sortBy('sort') as $subcategory)
                     
                         <x-catalog.category.big :subcategory="$subcategory" lazy />
                     @endforeach
                 </div>
             @endif
-            @if (count($tagCategories) > 0)
+            @if (count($this->tagCategories) > 0)
                 <ul class="flex items-center gap-2 overflow-auto pb-2 mb-8">
-                    @foreach ($tagCategories as $subcategory)
+                    @foreach ($this->tagCategories as $subcategory)
                         <li>
                             <x-catalog.category.small :subcategory="$subcategory" lazy />
                         </li>
