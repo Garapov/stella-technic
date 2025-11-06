@@ -101,32 +101,37 @@
                         @php
                             // Сбор всех параметров с show_on_table == true
                             $uniqueParamNames = collect();
-                            foreach ($batch as $item) {
-                                // Сбор параметров из paramItems
-                                if ($item->paramItems) {
-                                    foreach ($item->paramItems as $paramItem) {
-                                        if ($paramItem->productParam && $paramItem->productParam->show_on_table) {
-                                            $uniqueParamNames[$paramItem->productParam->name] = [
-                                                'icon' => $paramItem->productParam->icon,
-                                                'name' => $paramItem->productParam->name,
-                                            ];
+                            if (!Cache::has('filter:uniqueParamNames:' . $this->category->slug . ':' . $batch->first()->batch->name)) {
+                                foreach ($batch as $item) {
+                                    // dd($batch->first()->batch);
+                                    // Сбор параметров из paramItems
+                                    if ($item->paramItems) {
+                                        foreach ($item->paramItems as $paramItem) {
+                                            if ($paramItem->productParam && $paramItem->productParam->show_on_table) {
+                                                $uniqueParamNames[$paramItem->productParam->name] = [
+                                                    'icon' => $paramItem->productParam->icon,
+                                                    'name' => $paramItem->productParam->name,
+                                                ];
+                                            }
                                         }
                                     }
-                                }
 
-                                // Сбор параметров из parameters
-                                if ($item->parametrs) {
-                                    foreach ($item->parametrs as $parameter) {
-                                        if ($parameter->productParam->show_on_table) {
-                                            $uniqueParamNames[$parameter->productParam->name] = [
-                                                'icon' => $parameter->productParam->icon,
-                                                'name' => $parameter->productParam->name,
-                                            ];
+                                    // Сбор параметров из parameters
+                                    if ($item->parametrs) {
+                                        foreach ($item->parametrs as $parameter) {
+                                            if ($parameter->productParam->show_on_table) {
+                                                $uniqueParamNames[$parameter->productParam->name] = [
+                                                    'icon' => $parameter->productParam->icon,
+                                                    'name' => $parameter->productParam->name,
+                                                ];
+                                            }
                                         }
                                     }
                                 }
                             }
-                            $uniqueParamNames = $uniqueParamNames->unique();
+                            $uniqueParamNames = Cache::rememberForever('filter:uniqueParamNames:' . $this->category->slug . ':' . $batch->first()->batch->name, function () use ($uniqueParamNames) {
+                                return $uniqueParamNames->unique();
+                            })
                         @endphp
                         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

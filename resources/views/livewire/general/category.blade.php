@@ -2,9 +2,9 @@
     isOpened: false
 }">
     @if ($show_image)
-        <div class="md:w-[20%] w-[60%] md:absolute md:top-1.5 md:right-0 @if($transparent) opacity-20 @endif text-blue-900 flex md:items-end items-center justify-end mx-auto">
+        <a href="{{ route('client.catalog', ['path' => $category->urlChain()]) }}" wire:navigate class="md:w-[20%] w-[60%] md:absolute md:top-1.5 md:right-0 @if($transparent) opacity-20 @endif text-blue-900 flex md:items-end items-center justify-end mx-auto">
             <img src="{{ Storage::disk(config('filesystems.default'))->url($category->image) }}" class="object-cover h-full">
-        </div>
+        </a>
     @endif
     <div class="flex flex-col items-start gap-2 @if(!$transparent) md:w-[80%] @endif w-full">
         

@@ -94,7 +94,9 @@ class ItemsLazyFilter extends Component
     public function variations()
     {
         if ($this->category) {
-            return $this->variationsBuilder()->get();
+            return Cache::rememberForever('filter:variations:' . $this->category->slug, function () {
+                return $this->variationsBuilder()->get();
+            });
         }
         return collect();
     }
@@ -108,15 +110,12 @@ class ItemsLazyFilter extends Component
     #[Computed()]
     public function paramGroups()
     {
-        $parametrs = [];
-
-        if ($this->variations) {
-            $parametrs = $this->variations->flatMap(fn($variant) => $variant->parametrs->concat($variant->paramItems))->flatten()->filter(fn ($item) =>  $item->productParam->allow_filtering)->unique('id')->sortBy('productParam.sort')->groupBy('productParam.name');
+        if ($this->category) {
+            return Cache::rememberForever('filter:paramGroups:' . $this->category->slug, function () {
+                return $this->variations->flatMap(fn($variant) => $variant->parametrs->concat($variant->paramItems))->flatten()->filter(fn ($item) =>  $item->productParam->allow_filtering)->unique('id')->sortBy('productParam.sort')->groupBy('productParam.name');
+            });
         }
-
-        // dd($parametrs);
-
-        return $parametrs;
+        return collect();
     }
 
     #[Computed()]

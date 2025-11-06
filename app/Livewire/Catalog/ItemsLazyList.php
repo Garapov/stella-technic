@@ -42,9 +42,9 @@ class ItemsLazyList extends Component
     {
         $this->category = $category;
 
-        if ($this->category) {
-            $this->displayMode = $this->category->viewtype;
-        }
+        // if ($this->category) {
+        //     $this->displayMode = $this->category->viewtype;
+        // }
     }
 
     #[On("filters-changed")]
@@ -69,7 +69,7 @@ class ItemsLazyList extends Component
         }
         if ($this->category) {
             return ProductVariant::whereIn('id', 
-                Cache::remember('catalog:all_products:' . $this->category->slug, 60, function () {
+                Cache::rememberForever('catalog:all_products:' . $this->category->slug, function () {
                     return $this->selector->fromCategory($this->category)->where('is_hidden', false)->pluck('id')->toArray();
                 })
             )->filter($this->filters)->sort([$this->sort])->with('parametrs');
@@ -80,7 +80,7 @@ class ItemsLazyList extends Component
     #[Computed()]
     public function variations()
     {
-        return $this->variationsBuilder()->paginate(40, pageName: 'page');
+        return $this->variationsBuilder()->paginate(20, pageName: 'page');
     }
 
     #[Computed()]
