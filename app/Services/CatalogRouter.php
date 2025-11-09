@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ProductCategory;
 use App\Models\ProductVariant;
+use Illuminate\Support\Facades\Cache;
 
 class CatalogRouter
 {
@@ -31,21 +32,23 @@ class CatalogRouter
 
         if ($productSlug) {
             
-            $product = ProductVariant::where('slug', $productSlug)->with([
-                'product',
-                'paramItems',
-                'parametrs',
-                'paramItems.productParam',
-                'parametrs.productParam',
-                'product.categories',
-                'product.categories',
-                'product.variants',
-                'product.variants.paramItems',
-                'product.variants.paramItems.productParam',
-                'product.brand',
-                'crossSells',
-                'upSells',
-            ])->first();
+            $product = Cache::rememberForever('product-detail:slug_' . $productSlug, function () use ($productSlug) {
+                return ProductVariant::where('slug', $productSlug)->with([
+                    'product',
+                    'paramItems',
+                    'parametrs',
+                    'paramItems.productParam',
+                    'parametrs.productParam',
+                    'product.categories',
+                    'product.categories',
+                    'product.variants',
+                    'product.variants.paramItems',
+                    'product.variants.paramItems.productParam',
+                    'product.brand',
+                    'crossSells',
+                    'upSells',
+                ])->first();
+            });
             
 
             if (!$product) {

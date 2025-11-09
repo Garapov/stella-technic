@@ -29,14 +29,14 @@
         @if ($this->category->tabs_categories)
 
             @if ($this->category->categories)
-                <x-catalog.category.tabs :categories="$this->category->categories" lazy />
+                <x-catalog.category.tabs :categories="$this->category->categories" lazy="on-load" />
             @endif
         @else
             @if (count($this->nonTagCategories) > 0)
                 <div class="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 gap-2 mb-4 p-4 rounded-lg bg-slate-100">
                     @foreach ($this->nonTagCategories->sortBy('sort') as $subcategory)
                     
-                        <x-catalog.category.big :subcategory="$subcategory" lazy />
+                        <x-catalog.category.big :subcategory="$subcategory" lazy="on-load" />
                     @endforeach
                 </div>
             @endif
@@ -44,7 +44,7 @@
                 <ul class="flex items-center gap-2 overflow-auto pb-2 mb-8">
                     @foreach ($this->tagCategories as $subcategory)
                         <li>
-                            <x-catalog.category.small :subcategory="$subcategory" lazy />
+                            <x-catalog.category.small :subcategory="$subcategory" lazy="on-load" />
                         </li>
                     @endforeach
                 </ul>
@@ -56,11 +56,11 @@
         isFilterOpened: false
     }">
         <div class="col-span-2" wire:loading.class="opacity-25 pointer-events-none">
-            <livewire:catalog.items-lazy-filter :category="$this->category"  />
+            <livewire:catalog.items-lazy-filter :category="$this->category" lazy="on-load"  />
         </div>
         
         <div class="flex flex-col gap-4 md:col-span-7 col-span-full">
-            <livewire:catalog.items-lazy-list :category="$this->category"  />
+            <livewire:catalog.items-lazy-list :category="$this->category" lazy="on-load"  />
         </div>
     </div>
 </div>

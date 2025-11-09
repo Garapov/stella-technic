@@ -1,6 +1,6 @@
 <section class="text-gray-600 body-font relative" >
   <div class="lg:absolute inset-0 bg-gray-300 h-60 lg:h-full" x-ignore>
-    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3Af74d2d95ea3687afda44204e9ba0e8da341df786c24878b1b020b131c063a975&amp;source=constructor" width="100%" height="100%" frameborder="0"></iframe>
+    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A3c39575fc1625b6ab043bf4fa509e46589f618b409e7807add106f61743d9b02&amp;source=constructor" width="100%" height="100%" frameborder="0"></iframe>
   </div>
   @if (setting('map'))
     <div class="lg:container px-4 lg:py-24 py-10 lg:mx-auto flex">

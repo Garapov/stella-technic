@@ -4,7 +4,8 @@
             @if ($variation)
                 <div class="mb-10">{{ Breadcrumbs::render('product', $variation) }}</div>
             @endif
-            @livewire('product.detail', ['variation' => $variation], key($variation->slug))
+            {{-- @livewire('product.detail', ['variation' => $variation], key($variation->slug)) --}}
+            <livewire:product.detail-lazy :variation="$variation" :key="$variation->slug" />
         </div>
     </section>
     <x-floating-control-panel>
