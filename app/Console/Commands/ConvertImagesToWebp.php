@@ -16,7 +16,7 @@ class ConvertImagesToWebp extends Command
         {--model=App\\Models\\ProductVariant : Полное имя модели}
         {--field=gallery : Поле, содержащее ссылки на изображения}
         {--delete_original=true : Маркер удаления оригиналов после конверсии}
-        {--item_ids : массив ID через запятую для обработки только указанных записей}
+        {--item_ids= : массив ID через запятую для обработки только указанных записей}
         {--disk=tws3 : Диск хранения (например: s3, public)}';
 
     protected $description = 'Конвертирует изображения в WebP с заданного диска и обновляет ссылки в указанной модели (удаляет оригиналы по умолчанию)';
@@ -49,7 +49,7 @@ class ConvertImagesToWebp extends Command
             $query->withoutTrashed();
         }
         // dd($item_ids);
-        if (!isArray(explode(',', $item_ids))) {
+        if ($item_ids) {
             $query->whereIn('id', [$item_ids]);
             $this->line("Фильтр по ID: [$item_ids]");
         }
