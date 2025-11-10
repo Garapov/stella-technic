@@ -59,7 +59,7 @@
                                     @endforeach
                                 @endif
 
-                                @if ($this->rows)
+                                @if ($variation->is_constructable &&  $this->rows)
                                     <li class="splide__slide">
                                         <img src="{{ asset('assets/3dicon.png') }}" alt="3dicon" class="w-full  aspect-[1/1] object-cover"  />
                                     </li>
