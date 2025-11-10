@@ -111,8 +111,9 @@ class ItemsLazyFilter extends Component
     public function paramGroups()
     {
         if ($this->category) {
+            
             return Cache::rememberForever('filter:paramGroups:' . $this->category->slug, function () {
-                return $this->variations->flatMap(fn($variant) => $variant->parametrs->concat($variant->paramItems))->flatten()->filter(fn ($item) =>  $item->productParam->allow_filtering)->unique('id')->sortBy('productParam.sort')->groupBy('productParam.name');
+                return $this->variations->flatMap(fn($variant) => $variant->parametrs->concat($variant->paramItems))->flatten()->filter(fn ($item) =>  $item->productParam->allow_filtering)->unique('id')->sortBy('productParam.sort')->groupBy('productParam.name')->filter(fn ($group) =>  count($group) > 1);
             });
         }
         return collect();
