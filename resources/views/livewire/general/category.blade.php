@@ -1,4 +1,4 @@
-<div class="glide__slide px-3 md:py-10 py-3 bg-white border border-gray-200 rounded-lg shadow-sm relative overflow-hidden h-auto flex flex-col justify-between md:gap-8 gap-2"  x-data="{
+<div class="glide__slide px-3 md:py-10 py-3 bg-white border border-gray-200 rounded-lg shadow-sm relative overflow-hidden h-auto flex flex-col justify-between md:gap-8 gap-2 hover:border-blue-400"  x-data="{
     isOpened: false
 }">
     @if ($show_image)

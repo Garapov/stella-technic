@@ -96,12 +96,12 @@
 
         <div class="flex items-center gap-4">
             <span class="md:text-2xl sm:text-xl text-lg font-semibold leading-tight  @if($variant->new_price) text-blue-500 @else text-gray-900 @endif dark:text-white">
-                {{ $variant->new_price ? Number::format($variant->new_price, 0) . ' ₽' : ($variant->price > 0 ? Number::format($variant->getActualPrice(), 0) . ' ₽' : 'По запросу') }}
+                {{ $variant->new_price ? Number::format($variant->new_price, locale: 'ru') . ' ₽' : ($variant->price > 0 ? Number::format($variant->getActualPrice(), locale: 'ru') . ' ₽' : 'По запросу') }}
                 
             </span>
             @if($variant->new_price)
                 <span class="md:text-lg text-sm line-through leading-tight text-gray-600 dark:text-white">
-                    @if ($variant->price > 0) {{ Number::format($variant->getActualPrice(), 0) }} ₽ @else По запросу @endif
+                    @if ($variant->price > 0) {{ Number::format($variant->getActualPrice(), locale: 'ru') }} ₽ @else По запросу @endif
                 </span>
             @endif
         </div>
@@ -181,12 +181,12 @@
 
                 <div class="flex items-center gap-4">
                     <span class="text-2xl font-semibold leading-tight @if($variant->new_price) text-blue-500 @else text-gray-900 @endif dark:text-white">
-                        {{ $variant->new_price ? Number::format($variant->new_price, 0) . ' ₽' : ($variant->price > 0 ? Number::format($variant->getActualPrice(), 0) . ' ₽' : 'По запросу') }} 
+                        {{ $variant->new_price ? Number::format($variant->new_price, locale: 'ru') . ' ₽' : ($variant->price > 0 ? Number::format($variant->getActualPrice(), locale: 'ru') . ' ₽' : 'По запросу') }} 
                         
                     </span>
                     @if($variant->new_price)
                         <span class="text-lg line-through leading-tight text-gray-600 dark:text-white">
-                           @if ($variant->price > 0) {{ Number::format($variant->getActualPrice(), 0) }} ₽ @else По запросу @endif
+                           @if ($variant->price > 0) {{ Number::format($variant->getActualPrice(), locale: 'ru') }} ₽ @else По запросу @endif
                         </span>
                     @endif
                 </div>

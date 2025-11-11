@@ -3,14 +3,15 @@
 
 # Товары
 <x-mail::table>
-| Картинка      | Название      | Кол-во        | Цена          | Итог          | Ссылка        |
-| ------------- | :-----------: | ------------: | ------------: | ------------: | ------------: |
+| Картинка      | Название      | Кол-во        | Цена          | Стоимость          | Ссылка        |
+| ------------- | :-----------: | ------------: | ------------: | -----------------: | ------------: |
 @foreach ($order->cart_items as $item)
     @php
         $product = \App\Models\ProductVariant::where('id', $item['id'])->first();
     @endphp
-| <img src="{{ Storage::disk(config('filesystems.default'))->url($item['gallery'][0]) }}" style="width: 90px;">      | **{{ $item['name'] }}  (арт.{{ $item['sku'] }})**      | {{ $item['quantity'] }}        | {{ number_format($item['price'], 2) . ' ₽' }}          | {{ number_format($item['quantity'] * $item['price'], 2) . ' ₽' }}          | @if ($product) <a href="{{route('client.catalog', $product->urlChain())}}"> Ссылка        </a> @endif |
+| <div style="padding: 5px; font-eweight: bold; white-space: nowrap;"><img src="{{ Storage::disk(config('filesystems.default'))->url($item['gallery'][0]) }}" style="display: block;width: 90px;"></div>      | <div style="padding: 5px; font-eweight: bold; white-space: nowrap;"><strong>{{ $item['name'] }}  (арт. {{ $item['sku'] }}) </strong></div>      | <div style="padding: 5px; font-eweight: bold; white-space: nowrap;">{{ $item['quantity'] }}</div>        | <div style="padding: 5px; font-eweight: bold; white-space: nowrap;">{{ Number::format($item['price'], locale: 'ru') . ' ₽' }}</div>          | <div style="padding: 5px; font-eweight: bold; white-space: nowrap;">{{ Number::format($item['quantity'] * $item['price'], locale: 'ru') . ' ₽' }}</div>          | @if ($product) <div style="padding: 5px; font-eweight: bold; white-space: nowrap;"><a href="{{route('client.catalog', $product->urlChain())}}"> Ссылка        </a></div> @endif |
 @endforeach
+|               |               |                |              |                    | <h2 style="padding: 5px; font-eweight: bold; white-space: nowrap;">Итого: {{ Number::format($order->total_price, locale: 'ru') . ' ₽' }}</h2> |
 </x-mail::table>
 
 @if ($order->user)
