@@ -5,8 +5,6 @@ namespace App\Providers\Filament;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use CmsMulti\FilamentClearCache\FilamentClearCachePlugin;
 use Datlechin\FilamentMenuBuilder\MenuPanel\ModelMenuPanel;
-// use App\Filament\Plugins\BlogPlugin;
-use App\Filament\Plugins\MenuBuilderPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -23,7 +21,6 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-// use Outerweb\FilamentImageLibrary\Filament\Plugins\FilamentImageLibraryPlugin;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 use Z3d0X\FilamentFabricator\FilamentFabricatorPlugin;
 use App\Filament\Pages\ImportProducts;
@@ -35,6 +32,8 @@ use TomatoPHP\FilamentSettingsHub\Facades\FilamentSettingsHub;
 use TomatoPHP\FilamentSettingsHub\Services\Contracts\SettingHold;
 use App\Filament\Pages\GeneralSettings;
 use App\Filament\Pages\SocialSettings;
+use Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin;
+
 // use Filament\Support\Assets\Css;
 // use Filament\Support\Assets\Js;
 
@@ -122,10 +121,8 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([Authenticate::class])
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
-                // BlogPlugin::make(),
                 FilamentClearCachePlugin::make(),
                 FilamentFabricatorPlugin::make(),
-                // FilamentImageLibraryPlugin::make(),
                 FilamentTourPlugin::make(),
                 ApiServicePlugin::make(),
                 FilamentSpatieRolesPermissionsPlugin::make(),
@@ -140,7 +137,9 @@ class AdminPanelProvider extends PanelProvider
                     )
                     ->withoutMyProfileComponents(["update_password"])
                     ->enableTwoFactorAuthentication(),
-                MenuBuilderPlugin::make()
+                FilamentMenuBuilderPlugin::make()
+                    ->navigationGroup("Страницы")
+                    ->navigationLabel("Меню")
                     ->addLocations([
                         "top_menu" => "Верхнее меню",
                         "search_menu" => "Поисковое меню",

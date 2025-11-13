@@ -15,6 +15,7 @@ use TomatoPHP\FilamentSettingsHub\Facades\FilamentSettingsHub;
 use TomatoPHP\FilamentSettingsHub\Services\Contracts\SettingHold;
 use Z3d0X\FilamentFabricator\Resources\PageResource;
 use CmsMulti\FilamentClearCache\Facades\FilamentClearCache;
+use Datlechin\FilamentMenuBuilder\Resources\MenuResource;
 use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
@@ -34,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // Paginator::defaultView('vendor.pagination.tailwind');
 
+        
+
         FilamentClearCache::addCommand('responsecache:clear');
         
         Gate::before(function ($user, $ability) {
@@ -49,7 +52,9 @@ class AppServiceProvider extends ServiceProvider
                 ]);
             }
         });
-        PageResource::navigationGroup("Страницы");
+        
+
+        // dd(MenuResource::getNavigationGroup());
 
         FilamentSettingsHub::register([
             SettingHold::make()
@@ -65,6 +70,10 @@ class AppServiceProvider extends ServiceProvider
                 ->page(FormsSettings::class)
                 ->group("Настройки страниц"),
         ]);
+
+        PageResource::navigationGroup("Страницы");
+        // MenuResource::navigationGroup("Aналитика");
+        
 
         
     }

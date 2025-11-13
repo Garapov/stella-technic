@@ -28,6 +28,8 @@ class SitesSettings extends Settings
 
     public ?array $site_social = [];
 
+    public ?string $site_message = null;
+
     public ?string $politics = null;
 
     public ?string $cookies = null;

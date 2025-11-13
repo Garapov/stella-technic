@@ -60,19 +60,25 @@ class GeneralSettings extends SiteSettings
                                     ? 'setting("site_keywords")'
                                     : null
                             ),
-                        FileUpload::make("site_profile")
-                            ->directory("logos")
-                            ->label(
-                                trans(
-                                    "filament-settings-hub::messages.settings.site.form.site_profile"
-                                )
-                            )
+                        Textarea::make("site_message")
+                            ->label("Сообщение на сайте")
                             ->columnSpan(2)
                             ->hint(
-                                config("filament-settings-hub.show_hint")
-                                    ? 'setting("site_profile")'
-                                    : null
+                                'setting("site_message")'
                             ),
+                        // FileUpload::make("site_profile")
+                        //     ->directory("logos")
+                        //     ->label(
+                        //         trans(
+                        //             "filament-settings-hub::messages.settings.site.form.site_profile"
+                        //         )
+                        //     )
+                        //     ->columnSpan(2)
+                        //     ->hint(
+                        //         config("filament-settings-hub.show_hint")
+                        //             ? 'setting("site_profile")'
+                        //             : null
+                        //     ),
                         FileUpload::make("site_logo")
                             ->directory("logos")
                             ->label(

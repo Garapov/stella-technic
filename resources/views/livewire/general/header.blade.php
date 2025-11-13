@@ -1,6 +1,11 @@
 <div>
-
-
+    @if (setting("site_message"))
+        <div class="py-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+            <div class="xl:px-[100px] px-[20px]">
+                {{ setting("site_message") }}
+            </div>
+        </div>
+    @endif
     <header class="md:shadow relative z-50">
 
         @livewire('general.header.burger', [
@@ -8,10 +13,7 @@
         ])
 
         {!! $organization !!}
-
         
-
-
         <div class="lg:bg-white bg-slate-50 py-2.5 dark:bg-gray-800 relative  lg:block hidden">
             <div class="flex flex-wrap justify-between items-center lg:mx-auto xl:px-[100px] px-[20px]">
                 <div class="hidden justify-between items-center w-full lg:flex lg:w-auto">

@@ -1,13 +1,12 @@
 <div>
     @if (count($this->slides) > 0)
         <div class="lg:py-10  bg-white dark:bg-gray-700" x-data="{
-            slider: null,
-            index: 0,
-            init() {
-                this.slider = new window.glide($refs.slider, {
+            slider: new window.glide($refs.slider, {
                     autoplay: 5000,
                     gap: 0,
-                }).mount();
+                }).mount(),
+            index: 0,
+            init() {
                 this.slider.on('move.after', () => {
                     this.index = this.slider.index;
                 })
