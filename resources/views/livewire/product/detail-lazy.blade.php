@@ -67,6 +67,7 @@
                             name: '{{ $variation->name }}'
                         });
                         this.cart_quantity = 1;
+                        
                     },
                     increaseQuantity() {
                         this.cart_quantity = this.cart_quantity + 1;

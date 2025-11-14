@@ -10,6 +10,12 @@ use Livewire\Component;
 class ItemsLazy extends Component
 {
 
+    public function mount() {
+        if (setting('points_catalog')) {
+            $this->js(setting('points_catalog')); 
+        }
+    }
+
     #[Computed()]
     public function category()
     {

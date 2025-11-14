@@ -17,22 +17,18 @@
         <script src="https://smartcaptcha.yandexcloud.net/captcha.js" defer></script>
         <script src="{{ 'https://api-maps.yandex.ru/2.1/?apikey='. config('services.maps.key') . '&lang=ru_RU&suggest_apikey=' . config('services.maps.suggestion_key') }}"></script>
 
-        <!-- Alfa-Track Tag Manager Container -->
-        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-5NB54DPN');</script>
-        <!-- End Alfa-Track Tag Manager Container -->
+        @if (setting('head_scripts'))
+            {!! setting('head_scripts') !!}
+        @endif
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
         
     </head>
     <body class="font-sans text-gray-900 antialiased">
-        <!-- Alfa-Track Tag Manager Container (noscript) -->
-        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5NB54DPN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-        <!-- End Alfa-Track Tag Manager Container (noscript) -->
+        @if (setting('body_scripts'))
+            {!! setting('body_scripts') !!}
+        @endif
         @livewire('general.header')
         <div class="bg-white dark:bg-gray-800">
             {{ $slot }}
@@ -42,5 +38,8 @@
         @livewire('general.forms.callback')
         @livewire('general.forms.buyoneclick')
         @livewireScripts
+         @if (setting('body_end_scripts'))
+            {!! setting('body_end_scripts') !!}
+        @endif
     </body>
 </html>

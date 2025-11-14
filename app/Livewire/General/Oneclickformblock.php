@@ -128,6 +128,10 @@ class Oneclickformblock extends Component
             "recipients" => $this->form->recipients,
         ]);
 
+        if ($this->form->point) {
+            $this->js($this->form->point); 
+        }
+
         session()->flash("success", $this->form->thanks_text);
     }
 }

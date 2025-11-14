@@ -53,6 +53,8 @@ class Items extends Component
 
     public function mount($path = null, $brand_slug = null, $products = null, $display_filter = false, $inset = false)
     {
+
+        
         
         $this->display_filter = $display_filter;
         $this->inset = $inset;

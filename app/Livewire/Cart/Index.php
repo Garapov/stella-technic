@@ -17,6 +17,10 @@ class Index extends Component
     {
         $this->products = [];
         $this->constructs = [];
+
+        if (setting('points_cart')) {
+            $this->js(setting('points_cart')); 
+        }
     }
 
     public function render()

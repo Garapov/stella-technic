@@ -134,6 +134,10 @@ class Checkout extends Component
             $this->selected_delivery = $this->deliveries->first()->id;
             // $this->initMap($this->deliveries[$this->selected_delivery - 1]);
         }
+
+        if (setting('points_start_order')) {
+            $this->js(setting('points_start_order')); 
+        }
     }
 
     public function render()
@@ -327,6 +331,13 @@ class Checkout extends Component
             "message" => $this->comment,
             "status" => "pending",
         ]);
+
+        if (setting('points_end_order') && $this->type !== "legal") {
+            $this->js(setting('points_end_order')); 
+        }
+        if (setting('points_end_order') && $this->type == "legal") {
+            $this->js(setting('points_end_order_yur')); 
+        }
 
         // После создания заказа отправляем уведомление
         $user->notify(new OrderCreatedNotification($order));

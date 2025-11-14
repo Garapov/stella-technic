@@ -89,7 +89,8 @@ class Order extends Model
                 'sharova@stella-tech.ru',
                 'dmitriy@stella-tech.ru',
                 'stbartolomey@mail.ru',
-                'ruslangarapov@yandex.ru'
+                'ruslangarapov@yandex.ru',
+                'stella@stella-tech.ru'
             ];
 
             Notification::make()

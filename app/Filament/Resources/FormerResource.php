@@ -44,6 +44,10 @@ class FormerResource extends Resource
                     ->required()
                     ->label('Текст спасибо')
                     ->columnSpanFull(),
+                Textarea::make('point')
+                    ->required()
+                    ->label('Код после отправки формы')
+                    ->columnSpanFull(),
                 TextInput::make('button_text')
                     ->required()
                     ->label('Текст кнопки'),

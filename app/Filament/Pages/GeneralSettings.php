@@ -146,6 +146,58 @@ class GeneralSettings extends SiteSettings
                             ->options(fn() => Page::all()->pluck("title", "id"))
                             ->searchable(),
                     ]),
+                    Tabs\Tab::make("Скрипты")->schema([
+                        Textarea::make("head_scripts")
+                            ->label(
+                                "Код в шапке сайта (header)"
+                            ),
+                        Textarea::make("body_scripts")
+                            ->label(
+                                "Код после <body>"
+                            ),
+                        Textarea::make("body_end_scripts")
+                            ->label(
+                                "Код перед </body>"
+                            )
+                    ]),
+                    Tabs\Tab::make("Цели")->schema([
+                        Textarea::make("points_callback")
+                            ->label(
+                                "Код целей при клике на кнопку 'Заказать звонок'"
+                            ),
+                        Textarea::make("points_subscribe")
+                            ->label(
+                                "Код целей для формы подписки на новости"
+                            ),
+                        Textarea::make("points_catalog")
+                            ->label(
+                                "Код целей для просмотра каталога"
+                            ),
+                        Textarea::make("points_cart")
+                            ->label(
+                                "Код целей для просмотра корзины"
+                            ),
+                        Textarea::make("points_start_order")
+                            ->label(
+                                "Код целей для начала оформления заказа"
+                            ),
+                        Textarea::make("points_end_order")
+                            ->label(
+                                "Код целей для завершения оформления заказа физическим лицом"
+                            ),
+                        Textarea::make("points_end_order_yur")
+                            ->label(
+                                "Код целей для завершения оформления заказа юридическим лицом"
+                            ),
+                        Textarea::make("add_to_cart")
+                            ->label(
+                                "Код целей при добавлении товара в корзину"
+                            ),
+                        Textarea::make("open_one_click")
+                            ->label(
+                                "Код целей при открытии формы 'Купить в один клик'"
+                            )
+                    ]),
                 ])
                 ->columnSpanFull(),
         ];

@@ -29,6 +29,9 @@ class Subscription extends Component
 
         $this->email = null;
         $this->confirmation = null;
+        if (setting('points_subscribe')) {
+            $this->js(setting('points_subscribe')); 
+        }
         session()->flash('success', 'Вы успешно подписались на рассылку!');
     }
 

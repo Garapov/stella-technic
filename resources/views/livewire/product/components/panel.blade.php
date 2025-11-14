@@ -90,12 +90,12 @@
                 </div>
             </div>
 
-            <button type="button" class="text-white flex-1 bg-green-600 hover:bg-green-400 focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg px-4 py-2 text-center flex items-center justify-center" @click="addVariationToCart()">
+            <button type="button" class="text-white flex-1 bg-green-600 hover:bg-green-400 focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg px-4 py-2 text-center flex items-center justify-center" @click="addVariationToCart(); @if (setting('add_to_cart')) {{ setting('add_to_cart') }} @endif">
                 <x-fas-cart-arrow-down class="w-6 h-6 mr-2" />
                 <span>В КОРЗИНУ</span>
             </button>
 
-            <button class="rounded-lg p-2 text-blue-500 bg-white border-2 border-blue-500 flex-1 font-bold" @click="$store.application.forms.buy_one_click = true, $store.application.one_click_variation = @js($variation);">Купить в один клик</button>
+            <button class="rounded-lg p-2 text-blue-500 bg-white border-2 border-blue-500 flex-1 font-bold" @click="@if (setting('open_one_click')) {{ setting('open_one_click') }} @endif; $store.application.forms.buy_one_click = true; $store.application.one_click_variation = @js($variation);">Купить в один клик</button>
 
             @if ($variation->is_constructable)
                 <a href="{{ route('client.constructor', ['variation_id' => $variation->id]) }}" class="w-full text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Редактировать в конструкторе</a>

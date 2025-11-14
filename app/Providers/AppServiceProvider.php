@@ -37,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
 
         
 
-        FilamentClearCache::addCommand('responsecache:clear');
+        FilamentClearCache::addCommand('optimize:clear');
         
         Gate::before(function ($user, $ability) {
             return $user->hasTokenPermission($ability, $user) ?: null;
@@ -67,6 +67,12 @@ class AppServiceProvider extends ServiceProvider
                 ->order(3)
                 ->label("Настройки форм")
                 ->icon("carbon-data-format")
+                ->page(FormsSettings::class)
+                ->group("Настройки страниц"),
+            SettingHold::make()
+                ->order(3)
+                ->label("Настройки целей")
+                ->icon("carbon-point-of-presence")
                 ->page(FormsSettings::class)
                 ->group("Настройки страниц"),
         ]);
