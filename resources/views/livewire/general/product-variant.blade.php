@@ -237,7 +237,7 @@
                             x-transition:leave-end="opacity-0 translate-y-1"
                             class="absolute bottom-full right-0 z-10 mb-2 rounded-md bg-slate-100 shadow px-3 py-2 text-sm font-medium text-white shadow-sm whitespace-nowrap">
                             <div class="flex flex-col md:flex-row gap-2">
-                                <button class="inline-flex items-center rounded-md bg-blue-500 px-2 py-2 text-xs font-medium text-white border border-blue-500 inset-ring inset-ring-blue-700/10 text-center" @click.stop="@if (setting('open_one_click')) {{ setting('open_one_click') }} @endif; $store.application.forms.buy_one_click = true; $store.application.one_click_variation = {{json_encode($variant)}}">Купить в один клик</button>
+                                <button class="inline-flex items-center rounded-md bg-blue-500 px-2 py-2 text-xs font-medium text-white border border-blue-500 inset-ring inset-ring-blue-700/10 text-center" @click.stop="@if (setting('open_one_click')) {{ setting('open_one_click') }} @endif $store.application.forms.buy_one_click = true; $store.application.one_click_variation = {{json_encode($variant)}}">Купить в один клик</button>
 
 
 
