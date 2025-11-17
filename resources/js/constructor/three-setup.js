@@ -142,7 +142,7 @@ export function setupThreeEnvironment(container, projection, settings) {
     three.controls.maxPolarAngle = Math.PI / 2
     three.controls.enableDamping = true;
     three.controls.dampingFactor = 0.05;
-    three.controls.enablePan = false;
+    three.controls.enablePan = true;
     three.controls.enableZoom = true;
     if (projection) {
         three.controlsRTT = new OrbitControls(
@@ -309,7 +309,9 @@ export function setupLights(scene) {
     mainLight.shadow.mapSize.height = 2048; // Default is 512
     mainLight.shadow.radius = 0;
     mainLight.shadow.blurSamples = 0;
-    mainLight.position.set(0.1, 0.5, 0.5);
+    mainLight.shadow.bias = -0.0001;
+    mainLight.shadow.normalBias = 0.1;
+    mainLight.position.set(2, 5, 2);
     scene.add(mainLight);
 
     // const mainLightHelper = new THREE.DirectionalLightHelper( mainLight, 5 );
@@ -468,41 +470,38 @@ export function createWall(
 }
 
 export function createFloor(three) {
-    // const loader = new THREE.TextureLoader();
+    const loader = new THREE.TextureLoader();
 
-    // const texture = loader.load(
-    //     "/assets/models/dirty_concrete_wall_seamless.jpg",
-    //     function (texture) {
-    //         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    //         texture.offset.set(0, 0);
-    //         texture.repeat.set(3, 3);
-    //     },
-    // );
+    const texture = loader.load(
+        "/assets/models/concrete_bare_clean_seamless.jpg",
+        function (texture) {
+            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+            texture.offset.set(0, 0);
+            texture.repeat.set(3, 3);
+        },
+    );
 
-    // const material = new THREE.MeshPhongMaterial({
-    //     color: 0xffffff,
-    //     specular: 0xffffff,
-    //     shininess: 10,
-    //     map: texture,
-    // });
+    const material = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        specular: 0xffffff,
+        shininess: 10,
+        map: texture,
+    });
 
-    // const floor = new THREE.Mesh(new THREE.PlaneGeometry(3, 3), material);
-    // floor.position.x = 0.35;
-    // floor.receiveShadow = true;
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10), material);
+    floor.position.y = -5;
+    // floor.position.x = 2.5;
 
-    // Rotate the floor to be horizontal (plane geometries are vertical by default)
-    // floor.rotation.x = Math.PI / -2;
+    // Add shadow properties to the floor
+    floor.receiveShadow = true;
+    floor.castShadow = false;
+    floor.name = "floor";
 
-    // // Add shadow properties to the floor
-    // floor.receiveShadow = true;
-    // floor.castShadow = true;
-    // floor.name = "floor";
-
-    // three.scene.add(floor);
-    createWall(three, [0.35, 0, -1.5], 9, 9, 0);
-    createWall(three, [0.35, 0, 1.5], 9, 9, Math.PI);
-    createWall(three, [-2.15, 0, 0], 9, 9, Math.PI / 2);
-    createWall(three, [2.85, 0, 0], 9, 9, Math.PI / -2);
+    three.scene.add(floor);
+    // createWall(three, [0.35, 0, -1.5], 9, 9, 0);
+    // createWall(three, [0.35, 0, 1.5], 9, 9, Math.PI);
+    // createWall(three, [-2.15, 0, 0], 9, 9, Math.PI / 2);
+    // createWall(three, [2.85, 0, 0], 9, 9, Math.PI / -2);
 }
 
 // Запуск цикла рендеринга

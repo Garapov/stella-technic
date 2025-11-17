@@ -27,6 +27,17 @@ export function changeDeskCloneVisibility(three, visibility) {
 export function setPositionOnFloor(three) {
     return new Promise((resolve, reject) => {
         const model = three.scene.getObjectByName("models");
+        const floor = three.scene.getObjectByName("floor");
+        const clonedModel = three.scene.getObjectByName("clonedModels");
+        const wheel1 = three.scene.getObjectByName("wheel1");
+        const wheel1_copy = three.scene.getObjectByName("wheel1_copy");
+        const wheel2 = three.scene.getObjectByName("wheel2");
+        const wheel2_copy = three.scene.getObjectByName("wheel2_copy");
+        const model_ground_plane = model.getObjectByName("ground_plane");
+        const model_ground_plane_copy = model.getObjectByName("ground_plane_copy");
+        const clonedModel_ground_plane = clonedModel.getObjectByName("ground_plane");
+        const clonedModel_ground_plane_copy = clonedModel.getObjectByName("ground_plane_copy");
+        
         if (!model) reject("Не нашлось модели на сцене");
 
         model.getObjectByName("leg_right").visible = true;
@@ -40,6 +51,29 @@ export function setPositionOnFloor(three) {
             z: 2.887,
             duration: 1,
             ease: "power3.inOut",
+        }, 0);
+        tl.to(floor.position, {
+            y: -5,
+            duration: 1,
+            ease: "power3.inOut",
+        }, 0);
+
+        [wheel1, wheel1_copy, wheel2, wheel2_copy].forEach(mesh => {
+            // mesh.material.transparent = true;
+            tl.to(mesh.position, {
+                y: -0.45,
+                duration: 1,
+                ease: "power3.inOut",
+            }, 0);
+        });
+
+        [model_ground_plane, model_ground_plane_copy, clonedModel_ground_plane, clonedModel_ground_plane_copy].forEach(mesh => {
+            // mesh.material.transparent = true;
+            tl.to(mesh.position, {
+                y: -0.45,
+                duration: 1,
+                ease: "power3.inOut",
+            }, 0);
         });
 
         tl.to(
@@ -56,11 +90,34 @@ export function setPositionOnFloor(three) {
             },
             0.2,
         );
+        tl.to(
+            clonedModel.position,
+            {
+                y: 0,
+                duration: 1,
+                ease: "power3.inOut",
+                onComplete: () => {
+                    resolve(true);
+                    updateHeightCalculationBox(three, model);
+                },
+            },
+            0.2,
+        );
     });
 }
 export function setPositionOnWall(three) {
     return new Promise((resolve, reject) => {
         const model = three.scene.getObjectByName("models");
+        const clonedModel = three.scene.getObjectByName("clonedModels");
+        const floor = three.scene.getObjectByName("floor");
+        const wheel1 = three.scene.getObjectByName("wheel1");
+        const wheel1_copy = three.scene.getObjectByName("wheel1_copy");
+        const wheel2 = three.scene.getObjectByName("wheel2");
+        const wheel2_copy = three.scene.getObjectByName("wheel2_copy");
+        const model_ground_plane = model.getObjectByName("ground_plane");
+        const model_ground_plane_copy = model.getObjectByName("ground_plane_copy");
+        const clonedModel_ground_plane = clonedModel.getObjectByName("ground_plane");
+        const clonedModel_ground_plane_copy = clonedModel.getObjectByName("ground_plane_copy");
 
         if (!model) reject("Не нашлось модели на сцене");
 
@@ -74,7 +131,32 @@ export function setPositionOnWall(three) {
             y: 0,
             duration: 1,
             ease: "power3.inOut",
+        }, 0);
+        tl.to(floor.position, {
+            y: -5,
+            duration: 1,
+            ease: "power3.inOut",
+        }, 0);
+
+        [wheel1, wheel1_copy, wheel2, wheel2_copy].forEach(mesh => {
+            // mesh.material.transparent = true;
+            tl.to(mesh.position, {
+                y: -0.45,
+                duration: 1,
+                ease: "power3.inOut",
+            }, 0);
         });
+
+        [model_ground_plane, model_ground_plane_copy, clonedModel_ground_plane, clonedModel_ground_plane_copy].forEach(mesh => {
+            // mesh.material.transparent = true;
+            tl.to(mesh.position, {
+                y: -0.45,
+                duration: 1,
+                ease: "power3.inOut",
+            }, 0);
+        });
+
+
         tl.to(
             three.camera.position,
             {
@@ -89,6 +171,77 @@ export function setPositionOnWall(three) {
                 },
             },
             0.2,
+        );
+    });
+}
+
+export function setPositionOnWheels(three) {
+    return new Promise((resolve, reject) => {
+        const floor = three.scene.getObjectByName("floor");
+        const model = three.scene.getObjectByName("models");
+        const clonedModel = three.scene.getObjectByName("clonedModels");
+        const wheel1 = three.scene.getObjectByName("wheel1");
+        const wheel1_copy = three.scene.getObjectByName("wheel1_copy");
+        const wheel2 = three.scene.getObjectByName("wheel2");
+        const wheel2_copy = three.scene.getObjectByName("wheel2_copy");
+        const model_ground_plane = model.getObjectByName("ground_plane");
+        const model_ground_plane_copy = model.getObjectByName("ground_plane_copy");
+        const clonedModel_ground_plane = clonedModel.getObjectByName("ground_plane");
+        const clonedModel_ground_plane_copy = clonedModel.getObjectByName("ground_plane_copy");
+
+        if (!floor) reject("Не нашлось модели на сцене");
+
+
+        let tl = gsap.timeline({ repeat: 0 });
+
+        tl.to(floor.position, {
+            y: -5.15,
+            duration: 1,
+            ease: "power3.inOut",
+        }, 0);
+        [wheel1, wheel1_copy, wheel2, wheel2_copy].forEach(mesh => {
+            // mesh.material.transparent = true;
+            // gsap.to(mesh.scale, {
+            //     x: 0.0008,
+            //     y: 0.0008,
+            //     z: 0.0008,
+            //     duration: 1,
+            //     ease: "power3.inOut",
+            // });
+            tl.to(mesh.position, {
+                y: -0.15,
+                duration: 1,
+                ease: "power3.inOut",
+            }, 0);
+        });
+
+        [model_ground_plane, model_ground_plane_copy, clonedModel_ground_plane, clonedModel_ground_plane_copy].forEach(mesh => {
+            // mesh.material.transparent = true;
+            tl.to(mesh.position, {
+                y: 0,
+                duration: 1,
+                ease: "power3.inOut",
+            }, 0);
+        });
+        // gsap.to(clonedModel.position, {
+        //     y: 0.15,
+        //     duration: 1,
+        //     ease: "power3.inOut",
+        // });
+        tl.to(
+            three.camera.position,
+            {
+                x: 2,
+                y: 0,
+                z: 3,
+                duration: 1,
+                ease: "power3.inOut",
+                onComplete: () => {
+                    updateHeightCalculationBox(three, model);
+                    resolve(true);
+                },
+            },
+            0
         );
     });
 }
@@ -200,6 +353,7 @@ export function changeDescWidth(three, width) {
         "side_screw_left_1",
         "side_screw_left_2",
         "side_screw_left_3",
+        "ground_plane_copy"
     ];
 
     const moveRightObjects = [
@@ -215,6 +369,7 @@ export function changeDescWidth(three, width) {
         "side_screw_right_1",
         "side_screw_right_2",
         "side_screw_right_3",
+        "ground_plane"
     ];
 
     const moveTopObjects = [
@@ -231,6 +386,27 @@ export function changeDescWidth(three, width) {
         "plane_bottom_front",
         "main_screw_bottom",
     ];
+
+    tl.to(
+        [three.scene.getObjectByName("wheel1").position, three.scene.getObjectByName("wheel1_copy").position],
+        {
+            x: width === "wide" ? 0.94 : 0.72,
+            duration: 0.2,
+            ease: "power3.inOut",
+        },
+        0,
+    );
+    
+
+    tl.to(
+        [three.scene.getObjectByName("wheel2").position, three.scene.getObjectByName("wheel2_copy").position],
+        {
+            x: width === "wide" ? -0.180 : 0.035,
+            duration: 0.2,
+            ease: "power3.inOut",
+        },
+        0,
+    );
 
     // Применяем анимации для обоих наборов моделей
     [models, clonedModels].forEach((modelSet) => {

@@ -4,14 +4,14 @@
         <div class="text-xl italic font-semibold text-gray-900 dark:text-white">1. Выберите тип стойки</div>
         <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
             <template x-for="(deskType, index) in deskTypes" :key="index">
-                <button type="button" class="grow px-5 py-2.5 text-sm font-medium rounded-lg text-center" x-text="deskType" @click="selectedDeskType = deskType" :class="{ 'text-slate-400 border border-slate-400 bg-slate-100': selectedDeskType != deskType, 'text-white border border-blue-700 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300': selectedDeskType == deskType}"></button>
+                <button type="button" class="grow px-5 py-2.5 text-sm font-medium rounded-lg text-center" x-text="deskType" @click="selectedDeskType = deskType" :class="{ 'text-slate-400 border border-slate-400 bg-slate-100': selectedDeskType != deskType, 'text-white border border-blue-700 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300': selectedDeskType == deskType, 'opacity-50 pointer-events-none': selectedPosition == 'on_wheels' && deskType == 'Односторонняя'}"></button>
             </template>
         </div>
         <div class="flex flex-col gap-1">
             <div class="italic font-semibold text-gray-900 dark:text-white">Размещение:</div>
             <div class="flex item-center gap-2 rounded-md shadow-xs" role="group">
                 <template x-for="(position, index) in positions" :key="index">
-                    <button type="button" class="grow px-3 py-1.5 text-sm font-medium rounded-lg text-center" x-text="position.name" @click="selectedPosition = position.value" :class="{ 'text-slate-400 border border-slate-400 bg-slate-100': position.value != selectedPosition, 'text-white border border-blue-700 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300':  position.value == selectedPosition}"></button>
+                    <button type="button" class="grow px-3 py-1.5 text-sm font-medium rounded-lg text-center" x-text="position.name" @click="selectedPosition = position.value" :class="{ 'text-slate-400 border border-slate-400 bg-slate-100': position.value != selectedPosition, 'text-white border border-blue-700 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300':  position.value == selectedPosition, 'opacity-50 pointer-events-none': selectedDeskType == 'Односторонняя' && position.value == 'on_wheels'}"></button>
                 </template>
             </div>
         </div>

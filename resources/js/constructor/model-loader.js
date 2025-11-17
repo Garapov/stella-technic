@@ -48,12 +48,21 @@ export async function loadModels(three, models, logCallback, progressCallback) {
                     }
                 },
             ).then((object) => {
-                group.add(object);
+                if (object.name == "wheel1" || object.name == "wheel1_copy" || object.name == "wheel2" || object.name == "wheel2_copy") {
+                    three.scene.add(object);
+                    // object.scale.set(0.0001,0.0001,0.0001);
+                } else {
+                    group.add(object);
+                }
             });
         }),
     );
-    loadDoor(three);
-    loadWorkbench(three);
+
+    addPlaneToModel(three);
+    // loadDoor(three);
+    // loadWorkbench(three);
+
+    console.log(three.scene);
     logCallback("Все модели загружены");
     
     return true;
@@ -67,6 +76,48 @@ export function loadDoor(three) {
         door.position.set(2.2, 0, -1.5);
         three.scene.add(door);
     } );  
+}
+
+
+export function addPlaneToModel(three) {
+    // Находим группу models
+    const models = three.scene.getObjectByName("models", true);
+    if (!models) {
+        console.warn("Группа 'models' не найдена");
+        return;
+    }
+
+    // Обновляем мировые матрицы
+    models.updateWorldMatrix(true, true);
+
+    // Считаем bounding box группы
+    const box = new THREE.Box3().setFromObject(models);
+
+    // Создаём plane (квадрат высотой 1)
+    const geometry = new THREE.BoxGeometry(0.74, 0.005, 0.395);
+    geometry.translate(0.365, 0, 0);
+    const material = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+    });
+
+    const plane = new THREE.Mesh(geometry, material);
+    plane.name = "ground_plane";
+    plane.castShadow = true;
+    plane.receiveShadow = true;
+
+
+    plane.position.set(
+        0,
+        -0.45,
+        -0.2
+    );
+
+    // Добавляем в ту же родительскую группу
+    const plane_copy = plane.clone();
+    plane_copy.name = "ground_plane_copy";
+    
+    models.add(plane);
+    models.add(plane_copy);
 }
 
 export function loadWorkbench(three) {
@@ -112,13 +163,14 @@ async function loadModel(three, model, logCallback, progressCallback) {
     // });
 
     // materials.preload();
-    const material = new THREE.MeshPhongMaterial({
+    let material = new THREE.MeshPhongMaterial({
         color: 0xd0f0f0,
         shininess: 100,
     });
     // Загрузка объекта
     const object = await new Promise((resolve, reject) => {
         const objLoader = new OBJLoader();
+        
         // objLoader.setMaterials(materials);
         objLoader.load(
             model.obj,
@@ -138,22 +190,79 @@ async function loadModel(three, model, logCallback, progressCallback) {
                 ),
         );
     });
-
-    // Настройка материалов
-    object.traverse((child) => {
-        if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-        }
-    });
-    object.material = material;
+    
     object.name = model.name;
+
+    console.log(object.name + " загружен.", model);
+
+    if (model.png) {
+
+        const loader = new THREE.TextureLoader();
+
+        const texture = loader.load(model.png);
+        const normalMap = model.normal ? loader.load(model.normal) : null;
+        const heightMap = model.height ? loader.load(model.height) : null;
+        const metalnessMap = model.metallic ? loader.load(model.metallic) : null;
+        const roughnessMap = model.roughness ? loader.load(model.roughness) : null;
+
+        material = new THREE.MeshStandardMaterial({
+            map: texture,
+            normalMap: normalMap,
+            transparent: true,
+            // Height map - реальное смещение геометрии:
+            displacementMap: heightMap,
+            displacementScale: 0.02,  // сила смещения (подбирается)
+            displacementBias: 0,
+
+            // Height map как bump (если displacement не сработает):
+            bumpMap: heightMap,
+            bumpScale: 0.5,
+            metalnessMap: metalnessMap,
+            metalness: metalnessMap ? 1.0 : 0, // обязательно включить металл — иначе карта не работает
+            roughnessMap: roughnessMap,
+            roughness: roughnessMap ? 1.0 : 0, // чтобы карта работала
+        });
+
+        
+        
+    }
+    console.log('material', material);
+
+    if (object.name == "wheel1" || object.name == "wheel1_copy" || object.name == "wheel2" || object.name == "wheel2_copy") {
+
+        object.traverse((child) => {
+            if (child.isMesh) {
+                child.material = material;
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+    } else {
+        object.material = material;
+        object.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+    }
 
     // Применение позиции
     if (model.position) {
         const { x = 0, y = 0, z = 0 } = model.position;
         object.position.set(x, y, z);
     }
+    if (model.scale) {
+        const { x = 1, y = 1, z = 1 } = model.scale;
+        object.scale.set(x, y, z);
+    }
+
+    if (model.rotation) {
+        const { x = 1, y = 1, z = 1 } = model.rotation;
+        object.rotation.set(x, y, z);
+    }
+
+    
 
     // Добавление на сцену
     three.scene.add(object);
@@ -162,6 +271,8 @@ async function loadModel(three, model, logCallback, progressCallback) {
         addBoxForHeightCalculation(three, object);
     }
     model.object = object;
+
+    
 
     // Сообщаем о 100% прогрессе
     if (progressCallback) progressCallback(100);
@@ -176,6 +287,8 @@ export function makeLineClone(three, object) {
         clone.name = "lineClone";
         clone.position.x = -0.43;
         clone.visible = false;
+        clone.castShadow = true;
+        clone.receiveShadow = true;
         object.add(clone);
     }
 }

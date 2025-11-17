@@ -21,6 +21,7 @@ import {
     changeDeskCloneVisibility,
     setPositionOnFloor,
     setPositionOnWall,
+    setPositionOnWheels,
     changeDescHeight,
     changeDescWidth,
 } from "./desk-manager";
@@ -37,7 +38,7 @@ import { thickness } from "three/tsl";
 
 export default ({
     selectedColor = "red",
-    debugMode = false,
+    debugMode = true,
     desks = [],
     boxes = [],
     addedRows = [],
@@ -90,7 +91,7 @@ export default ({
         positions: [
             { name: "На полу", value: "on_floor" },
             { name: "На стене", value: "on_wall" },
-            // { name: "На колесах", value: "on_wheels" },
+            { name: "На колесах", value: "on_wheels" },
         ],
         selectedPosition: selectedPosition,
         width: [
@@ -422,6 +423,11 @@ export default ({
                             this.rebuildRows();
                         });
                     break;
+                case "on_wheels":
+                    setPositionOnWheels(three).then(() => {
+                        this.rebuildRows();
+                    });
+                    break;
                 default:
                     setPositionOnFloor(three).then(() => {
                         this.rebuildRows();
@@ -506,10 +512,10 @@ export default ({
                 Math.round((usedHeight / helperBoxHeight) * 100),
             );
 
-            console.log('usedHeight', this.usedHeight);
-            console.log('usedHeightPercent', this.usedHeightPercent);
-            console.log('remainingHeight', this.remainingHeight);
-            console.log('helperBoxHeight', helperBoxHeight);
+            // console.log('usedHeight', this.usedHeight);
+            // console.log('usedHeightPercent', this.usedHeightPercent);
+            // console.log('remainingHeight', this.remainingHeight);
+            // console.log('helperBoxHeight', helperBoxHeight);
 
             // Обновляем флаги доступности размеров
             this.canAddSmallRow =
@@ -643,7 +649,8 @@ export default ({
             // Создаем ряд
             const row = this.addBox(this.addedRows.length);
 
-            const boundingBox = new THREE.Box3().setFromObject(row);
+            // const boundingBox = new THREE.Box3().setFromObject(row);
+            
 
             // Добавляем данные
             this.addedRows.push({
