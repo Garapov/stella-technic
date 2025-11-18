@@ -1,4 +1,4 @@
-<div class="xl:px-[100px] px-[20px] py-4">
+<div class="xl:px-[100px] md:px-[20px] px-2 py-4">
     
     @if ($this->category)
         @if ($this->category->seo)
