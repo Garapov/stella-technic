@@ -69,12 +69,12 @@ class AppServiceProvider extends ServiceProvider
                 ->icon("carbon-data-format")
                 ->page(FormsSettings::class)
                 ->group("Настройки страниц"),
-            SettingHold::make()
-                ->order(3)
-                ->label("Настройки целей")
-                ->icon("carbon-point-of-presence")
-                ->page(FormsSettings::class)
-                ->group("Настройки страниц"),
+            // SettingHold::make()
+            //     ->order(3)
+            //     ->label("Настройки целей")
+            //     ->icon("carbon-point-of-presence")
+            //     ->page(FormsSettings::class)
+            //     ->group("Настройки страниц"),
         ]);
 
         PageResource::navigationGroup("Страницы");

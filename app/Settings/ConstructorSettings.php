@@ -29,7 +29,14 @@ class ConstructorSettings extends Settings
     public ?int $box_large_yellow;
     public ?int $box_large_gray;
     public ?int $deck_bracing;
+    public ?int $deck_bracing_big;
     public ?int $deck_stand;
+    public ?int $deck_stand_big;
+    public ?int $deck_prop;
+    public ?int $deck_prop_double;
+    public ?int $rotating_wheel;
+    public ?int $static_wheel;
+    public ?int $wall_mount;
 
     public static function group(): string
     {

@@ -344,6 +344,7 @@ class VariantsRelationManager extends RelationManager
                                 ->options([
                                     'on_floor' => 'На полу',
                                     'on_wall' => 'На стене',
+                                    'on_wheels' => 'На колесах',
                                 ])
                                 ->visible(fn(Get $get) => $get("constructor_type") == 'deck'),
 

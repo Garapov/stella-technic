@@ -27,6 +27,13 @@ class Tabs extends Component
     public function files()
     {
         $files = [];
+
+        if ($this->variation->product->category->files) {
+            foreach($this->variation->product->category->files as $file) {
+                $files[] = $file;
+            }
+        }
+        
         if ($this->variation->show_category_files) {
         
             foreach($this->variation->product->categories as $category) {

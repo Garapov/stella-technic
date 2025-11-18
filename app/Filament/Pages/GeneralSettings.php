@@ -175,7 +175,7 @@ class GeneralSettings extends SiteSettings
                             ),
                         Textarea::make("points_cart")
                             ->label(
-                                "Код целей для просмотра корзины"
+                                "Код целей для просмотра корзины (Первый шаг оформления заказа)"
                             ),
                         Textarea::make("points_start_order")
                             ->label(

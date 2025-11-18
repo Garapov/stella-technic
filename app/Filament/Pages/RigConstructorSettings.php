@@ -236,7 +236,18 @@ class RigConstructorSettings extends SiteSettings
                     ]),
                     Tabs\Tab::make("Дополнительные товары")->schema([
                         Select::make("deck_bracing")
-                            ->label("Держатель")
+                            ->label("Держатель 735мм")
+                             ->options(function () {
+                                return ProductVariant::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($variation) {
+                                            return [$variation->id => $variation->name . " ($variation->sku)"];
+                                        });
+                                })
+                            ->searchable()
+                            ->required(),
+                        Select::make("deck_bracing_big")
+                            ->label("Держатель 1150мм")
                              ->options(function () {
                                 return ProductVariant::query()
                                         ->get()
@@ -247,7 +258,73 @@ class RigConstructorSettings extends SiteSettings
                             ->searchable()
                             ->required(),
                         Select::make("deck_stand")
-                            ->label("Платформа")
+                            ->label("Платформа мобильная 735мм и 2 ручки")
+                            ->options(function () { 
+                                return ProductVariant::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($variation) {
+                                            return [$variation->id => $variation->name . " ($variation->sku)"];
+                                        });
+                                })
+                            ->searchable()
+                            ->required(),
+                        Select::make("deck_stand_big")
+                            ->label("Платформа мобильная 1150мм и 2 ручки")
+                            ->options(function () { 
+                                return ProductVariant::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($variation) {
+                                            return [$variation->id => $variation->name . " ($variation->sku)"];
+                                        });
+                                })
+                            ->searchable()
+                            ->required(),
+                        Select::make("deck_prop")
+                            ->label("Опора односторонняя")
+                            ->options(function () { 
+                                return ProductVariant::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($variation) {
+                                            return [$variation->id => $variation->name . " ($variation->sku)"];
+                                        });
+                                })
+                            ->searchable()
+                            ->required(),
+                        Select::make("deck_prop_double")
+                            ->label("Опора двусторонняя")
+                            ->options(function () { 
+                                return ProductVariant::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($variation) {
+                                            return [$variation->id => $variation->name . " ($variation->sku)"];
+                                        });
+                                })
+                            ->searchable()
+                            ->required(),
+                        Select::make("rotating_wheel")
+                            ->label("Колесо поворотное с тормозом")
+                            ->options(function () { 
+                                return ProductVariant::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($variation) {
+                                            return [$variation->id => $variation->name . " ($variation->sku)"];
+                                        });
+                                })
+                            ->searchable()
+                            ->required(),
+                        Select::make("static_wheel")
+                            ->label("Колесо неповоротное")
+                            ->options(function () { 
+                                return ProductVariant::query()
+                                        ->get()
+                                        ->mapWithKeys(function ($variation) {
+                                            return [$variation->id => $variation->name . " ($variation->sku)"];
+                                        });
+                                })
+                            ->searchable()
+                            ->required(),
+                        Select::make("wall_mount")
+                            ->label("Комплект кронштейнов для настенного монтажа")
                             ->options(function () { 
                                 return ProductVariant::query()
                                         ->get()

@@ -42,7 +42,9 @@ class Detail extends Component
             return $this->getGroupedParams();
         });
 
+        
         if ($this->variation->show_category_files) {
+
         
             foreach($this->product->categories as $category) {
                 if (!$category->files) continue;
