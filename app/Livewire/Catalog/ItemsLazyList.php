@@ -134,6 +134,17 @@ class ItemsLazyList extends Component
         $this->displayMode = $mode;
     }
 
+    public function resetFilters()
+    {
+        $this->filters = [];
+
+        $this->dispatch('filter_reset');
+
+        // $this->js('location.reload()');
+    }
+
+    
+
     public function placeholder()
     {
         // sleep(4);

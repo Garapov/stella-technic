@@ -10,6 +10,7 @@ use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 
 #[Lazy()]
 class ItemsLazyFilter extends Component
@@ -67,14 +68,9 @@ class ItemsLazyFilter extends Component
         });
     }
 
-    public function setSliderFilter($items, $values, $paramName) {
-        $params = collect($this->filterParamsByValues($items, $values))->sortBy('value');
+    public function setSliderFilter($value, $name) {
 
-        // dd($params);    
-        $key = Str::snake(Str::of($paramName)->transliterate()->toString());
-        $this->filters['$includes'][$key] = [];
-
-        $this->filters['$includes'][$key] = $params->pluck('id')->toArray();
+        $this->filters['$includes'][$name] = $value;
 
         // foreach($params as $param) {
         //     $this->setFirstSelectedGroupIds($param['id']);
@@ -129,6 +125,12 @@ class ItemsLazyFilter extends Component
     public function availableParams()
     {
         return $this->filteredVariations->flatMap(fn($variant) => $variant->parametrs->concat($variant->paramItems))->flatten()->filter(fn ($item) =>  $item->productParam->allow_filtering)->pluck('id')->unique()->toArray();
+    }
+
+    #[On('filter_reset')]
+    public function resetFilters()
+    {
+        $this->filters = [];
     }
 
     public function placeholder()

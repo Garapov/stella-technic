@@ -17,23 +17,24 @@
         foreach ($ar_values as $value) {
             $values[] = $value;
         }
-        $alpineKey = Str::snake(Str::of($paramName)->transliterate()->toString()); // уникальный ключ для Alpine
         $valuesHash = md5(json_encode($values));
 
         $items = $paramGroup->sortBy('value')->toArray();
         $selected_value_min = 0;
         $selected_value_max = count($values) - 1;
+
+        // dd($paramGroup);
         // dd([$paramGroup->whereIn('id', $this->filterParams['$includes'][$alpineKey])->min('value'), $paramGroup->whereIn('id', $this->filterParams['$includes'][$alpineKey])->max('value')]);
-        if (isset($this->filterParams['$includes']) && isset($this->filterParams['$includes'][$alpineKey]) && count($this->filterParams['$includes'][$alpineKey]) > 0) {
-            $selected_value_min = array_search($paramGroup->whereIn('id', $this->filterParams['$includes'][$alpineKey])->min('value'), $values) ?? 0;
-            $selected_value_max = array_search($paramGroup->whereIn('id', $this->filterParams['$includes'][$alpineKey])->max('value'), $values) ?? count($values) - 1;
+        if (isset($this->filterParams['$includes']) && isset($this->filterParams['$includes'][$paramName]['min'])  && isset($this->filterParams['$includes'][$paramName]['max'])) {
+            $selected_value_min = array_search($this->filterParams['$includes'][$paramName]['min'], $values) ?? 0;
+            $selected_value_max = array_search($this->filterParams['$includes'][$paramName]['max'], $values) ?? count($values) - 1;
 
             // dd([$selected_value_min, $selected_value_max]);
         }
     @endphp
 
     {{-- {{ dd($values) }} --}}
-    <div key="{{ $alpineKey . '_' . $valuesHash }}" wire:ignore x-data="{
+    <div key="{{$valuesHash}}" wire:ignore x-data="{
         values: @json($values),
         minIndex: {{$selected_value_min}},
         maxIndex: {{$selected_value_max}},
@@ -104,7 +105,12 @@
 
         setFilter() {
             {{-- this.onChange(); --}}
-            $wire.setSliderFilter({{ json_encode($paramGroup->sortBy('value')->toArray()) }}, [this.values[this.minIndex], this.values[this.maxIndex]], '{{ $paramName }}');
+            let filter_value = {
+                min: this.values[this.minIndex],
+                max: this.values[this.maxIndex],
+            }
+
+            $wire.setSliderFilter(filter_value, '{{ $paramName }}');
         },
 
         startDrag(e) {

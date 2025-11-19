@@ -22,7 +22,9 @@
               {{ $article->title }}
             </h1>
           </div>
-          <img src="{{ Storage::disk(config('filesystems.default'))->url($article->image) }}" class="w-full object-cover lg:rounded" style="height: 28em;">
+          <div class="flex justify-center">
+            <img src="{{ Storage::disk(config('filesystems.default'))->url($article->image) }}" class="max-w-full lg:rounded max-h-[400px]">
+          </div>
         </div>
 
         <div class="flex flex-col gap-4">

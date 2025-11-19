@@ -126,7 +126,7 @@
                                 @endif
                                 <div class="flex-1">
                                     <h3 class="font-semibold text-gray-900">{{ $product->name }} ({{ $product->sku }})</h3>
-                                    <p class="text-lg text-gray-500">{{Number::format($product->price, 0)}} ₽</p>
+                                    <p class="text-lg text-gray-500">{{ $product->new_price ? Number::format($product->new_price, locale: 'ru') . ' ₽' : ($product->price > 0 ? Number::format($product->getActualPrice(), locale: 'ru') . ' ₽' : 'По запросу') }}</p>
                                 </div>
                                 {{-- <p class="font-semibold text-gray-900 w-20 text-right">{{Number::format($product->price, 0)}} ₽</p> --}}
                                 {{-- <button class="text-gray-400 hover:text-red-500">

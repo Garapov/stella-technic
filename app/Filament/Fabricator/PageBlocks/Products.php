@@ -31,9 +31,15 @@ class Products extends PageBlock
                         Select::make("items")
                             ->label("Товары")
                             ->live()
-                            ->options(
-                                $products ? $products->pluck("name", "id") : []
-                            )
+                            ->options(function () {
+                                return ProductVariant::query()
+                                    ->get()
+                                    ->mapWithKeys(function ($item) {
+                                        return [
+                                            $item->id => "{$item->name} {$item->sku}",
+                                        ];
+                                    });
+                            })
                             ->searchable()
                             ->visible(
                                 fn(Get $get) => $get("type") == "products"

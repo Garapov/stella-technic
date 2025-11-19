@@ -44,13 +44,18 @@ class HasIdFilter extends Filter
             // dd($this->values);
 
             if (empty($values)) return;
-            $query->whereHas('parametrs', function ($subquery) use ($values) {
-                $table = $subquery->getModel()->getTable();
-                $subquery->whereIn("{$table}.id", $values);
-            })->orWhereHas('paramItems', function ($subquery) use ($values) {
-                $table = $subquery->getModel()->getTable();
-                $subquery->whereIn("{$table}.id", $values);
-            });
+            foreach ($values as $value) {
+                $query->where(function ($q) use ($value) {
+                    $q->whereHas('parametrs', function ($q2) use ($value) {
+                        $table = $q2->getModel()->getTable();
+                        $q2->where("{$table}.id", $value);
+                    })
+                    ->orWhereHas('paramItems', function ($q2) use ($value) {
+                        $table = $q2->getModel()->getTable();
+                        $q2->where("{$table}.id", $value);
+                    });
+                });
+            }
         };
     }
 }

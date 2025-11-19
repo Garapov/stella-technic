@@ -32,12 +32,15 @@
         {{-- @if (count($category->categories)) --}}
             <ul class="flex flex-col gap-0.5" x-show="isOpened" x-cloak>
                 @foreach ($category->categories->sortBy('sort') as $subcategory)
+                    @if (!$subcategory->is_visible)
+                        @continue
+                    @endif
                     <li>
-                    <a href="{{ route('client.catalog', ['path' => $subcategory->urlChain()]) }}" wire:navigate class="text-slate-900 text-sm flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-lg">
-                        {{ $subcategory->title }}
-                        {{-- @if ($show_counts && isset($counts[$subcategory->id]))<span class="bg-blue-100 text-blue-800 text-sm font-medium px-1.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300 text-xs">{{ $counts[$subcategory->id] }}</span>@endif --}}
-                    </a>
-                </li>
+                        <a href="{{ route('client.catalog', ['path' => $subcategory->urlChain()]) }}" wire:navigate class="text-slate-900 text-sm flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-lg">
+                            {{ $subcategory->title }}
+                            {{-- @if ($show_counts && isset($counts[$subcategory->id]))<span class="bg-blue-100 text-blue-800 text-sm font-medium px-1.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300 text-xs">{{ $counts[$subcategory->id] }}</span>@endif --}}
+                        </a>
+                    </li>
                 @endforeach
             </ul>
         {{-- @endif --}}

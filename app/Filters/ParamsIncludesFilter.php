@@ -8,38 +8,27 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ParamsIncludesFilter extends Filter
 {
-
-    /**
-     * Operator string to detect in the query params.
-     *
-     * @var string
-     */
     protected static string $operator = '$includes';
 
-
-    /**
-     * Apply filter logic to $query.
-     *
-     * @return Closure
-     */
     public function apply(): Closure
     {
         return function (Builder $query) {
+            $data = $this->values; // массив параметров с диапазонами
 
-            $data = $this->values;
-            $key = array_key_first($data);
-            $values = $data[$key];
-
-            // dd($values);
-
-            $query->where(function ($q) use ($values) {
-                $q->whereHas('paramItems', function ($subquery) use ($values) {
-                    $subquery->whereIn('product_param_items.id', $values);
-                })->orWhereHas('parametrs', function ($subquery) use ($values) {
-                    $subquery->whereIn('product_param_items.id', $values);
-                });
+            $query->where(function($q) use ($data) {
+                foreach ($data as $paramName => $range) {
+                    $q->where(function($q2) use ($paramName, $range) {
+                        $q2->whereHas('paramItems', function($sub) use ($paramName, $range) {
+                            $sub->whereHas('productParam', fn($q3) => $q3->where('name', $paramName))
+                                ->whereBetween('value', [$range['min'], $range['max']]);
+                        })->orWhereHas('parametrs', function($sub) use ($paramName, $range) {
+                            $sub->whereHas('productParam', fn($q3) => $q3->where('name', $paramName))
+                                ->whereBetween('value', [$range['min'], $range['max']]);
+                        });
+                    });
+                }
             });
-            
+
         };
     }
 }

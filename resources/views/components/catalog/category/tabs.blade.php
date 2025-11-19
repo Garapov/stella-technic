@@ -9,7 +9,7 @@
                     $counter = 0;
                 @endphp
                 @foreach($categories as $key => $category)
-                    @if (count($category->categories) < 1)
+                    @if (count($category->categories) < 1 || !$category->is_visible)
                         @continue
                     @endif
                     <li class="me-2">
@@ -25,7 +25,7 @@
                 $counter = 0;
             @endphp
             @foreach($categories as $key => $category)
-                @if (count($category->categories) < 1)
+                @if (count($category->categories) < 1 || $category->is_visible)
                     @continue
                 @endif
                 <a href="{{ route('client.catalog', $category->urlChain()) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800  whitespace-nowrap md:whitespace-auto md:inline-block hidden" x-show="activeTabIndex == {{$counter}}" x-cloak>Перейти в {{ $category->title }}</a>
@@ -40,13 +40,16 @@
         @endphp
     
         @foreach($categories as $key => $category)
-            @if (count($category->categories) < 1)
+            @if (count($category->categories) < 1 || !$category->is_visible)
                 @continue
             @endif
             <div class="flex flex-col gap-4 p-4 border border-slate-200 rounded-b-lg shadow-sm bg-slate-50 rounded-b-lg mt-[-1px]" x-show="activeTabIndex == {{ $counter }}" x-cloak>
                 <a href="{{ route('client.catalog', $category->urlChain()) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800  whitespace-nowrap md:whitespace-auto md:hidden inline-block " x-cloak>Перейти в {{ $category->title }}</a>
                 <div class="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 gap-2">
                     @foreach($category->categories as $key => $subcategory)
+                        @if (!$subcategory->is_visible)
+                            @continue
+                        @endif
                         <a href="{{ route('client.catalog', $subcategory->urlChain()) }}" class="p-2.5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-slate-200 hover:border-blue-400 hover:text-blue-700 flex flex-col-reverse md:flex-row items-center justify-between gap-2">
                             <span>{{ $subcategory->title }}</span>
                             @if (!empty($subcategory->image))

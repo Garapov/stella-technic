@@ -6,7 +6,7 @@
     </div>
     <div class="grid grid-cols-{{$grid}} gap-4 container mx-auto">
         @foreach ($columns as $column)
-            <div class="text-sm">
+            <div class="text-sm content_block">
                 {!! html_entity_decode($column) !!}
             </div>
         @endforeach

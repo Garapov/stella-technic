@@ -39,6 +39,9 @@
                     <div class="">
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             @foreach ($categories as $category)
+                                @if (!$category->is_visible)
+                                    @continue
+                                @endif
                                 @livewire('general.category', [
                                     'category' => $category
                                 ], key($category->id))

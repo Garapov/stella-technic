@@ -1,6 +1,6 @@
 <div>
     @if ($this->category && ($this->category->title || $this->category->h1))
-        <div class="items-start justify-between flex flex-col gap-4 mb-4">
+        <div class="items-start justify-between flex flex-col gap-4 mb-4" wire:loading.class="opacity-50 pointer-events-none">
             <div>
                 <h1 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl flex md:items-center items-start gap-2 flex-col md:flex-row">
                     <span>{{ $this->category->h1 ?? $this->category->title }}</span> <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300 whitespace-nowrap">
@@ -71,14 +71,30 @@
         </div>
     @endif
     @if ($displayMode == 'block' )
-        <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-4" wire:loading.class="opacity-50 pointer-events-none">
             <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-4 gap-1">
-                @foreach($this->variations as $variation)
+                @forelse($this->variations as $variation)
                     @livewire('general.product-variant', [
                         'variant' => $variation,
                         'category' => $this->category ?? null,
                     ], key('variant_' . $variation->id))
-                @endforeach
+                @empty
+                    <div class="flex flex-col items-center justify-center p-8 text-center col-span-full">
+                        <div class="mb-4">
+                            <svg class="w-12 h-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="mb-2 text-xl font-semibold text-gray-900 dark:text-white">Ничего не найдено</h3>
+                        <p class="text-gray-500 dark:text-gray-400">По выбранным фильтрам товары не найдены. Попробуйте изменить параметры поиска.</p>
+                        <button wire:click="resetFilters" class="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800">
+                            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Сбросить фильтры
+                        </button>
+                    </div>
+                @endforelse
             </div>
             {{ $this->variations->links() }}
         </div>
@@ -204,7 +220,7 @@
 
                                                 <div class="flex items-center justify-center gap-4">
                                                     <span class="text-lg font-extrabold leading-tight text-gray-900 dark:text-white">
-                                                        {{ $item->new_price ?? $item->getActualPrice() }} ₽
+                                                        {{ $item->new_price ? Number::format($item->new_price, locale: 'ru') . ' ₽' : ($item->price > 0 ? Number::format($item->getActualPrice(), locale: 'ru') . ' ₽' : 'По запросу') }}
                                                     </span>
                                                     @if($item->new_price)
                                                         <div class="flex items-center gap-2">
