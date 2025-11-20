@@ -13,8 +13,8 @@
 
         @foreach($this->paramGroups as $paramName => $paramGroup)
             @if ($paramGroup[0]->productParam->type == 'slider')
-                {{-- <x-catalog.filter.slider :paramName="$paramName" :paramGroup="$paramGroup" :availableParams="$this->availableParams" /> --}}
-                    <x-catalog.filter.checkboxes :paramName="$paramName" :paramGroup="$paramGroup" :availableParams="$this->availableParams" />
+                <x-catalog.filter.slider :paramName="$paramName" :paramGroup="$paramGroup" :availableParams="$this->availableParams" />
+                    {{-- <x-catalog.filter.checkboxes :paramName="$paramName" :paramGroup="$paramGroup" :availableParams="$this->availableParams" /> --}}
             @else
                 <x-catalog.filter.checkboxes :paramName="$paramName" :paramGroup="$paramGroup" :availableParams="$this->availableParams" />
             @endif
