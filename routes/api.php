@@ -8,4 +8,4 @@ use App\Http\Controllers\Api\ImportController;
 //     return response()->json(['message' => 'List of posts']);
 // });
 
-Route::post('update', [ImportController::class, 'update']);
+Route::post('1s/update', [ImportController::class, 'update']);
