@@ -23,7 +23,7 @@
             </h1>
           </div>
           <div class="flex justify-center">
-            <img src="{{ Storage::disk(config('filesystems.default'))->url($article->image) }}" class="max-w-full lg:rounded max-h-[400px]">
+            <img src="{{ Storage::disk(config('filesystems.default'))->url($post->image) }}" class="max-w-full lg:rounded max-h-[400px]">
           </div>
         </div>
 

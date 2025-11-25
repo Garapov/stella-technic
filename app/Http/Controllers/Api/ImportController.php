@@ -11,6 +11,7 @@ class ImportController extends Controller
 {
     public function update(Request $request)
     {
+        Log::info(['Request: ',  $request]);
         $data = $request->json()->all();
 
         if (! isset($data['items']) || ! is_array($data['items'])) {
