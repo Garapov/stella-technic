@@ -14,7 +14,7 @@ class ImportController extends Controller
         $data = $request->json()->all();
 
         if (! isset($data['items']) || ! is_array($data['items'])) {
-            return response()->json(['message' => 'Invalid data format'], 400);
+            return response()->json(['success' => false, 'message' => 'Invalid data format'], 400);
         }
 
         $processedCount = 0;
@@ -34,6 +34,7 @@ class ImportController extends Controller
         }
 
         return response()->json([
+            'success' => true,
             'message' => 'Data processed',
             'data_count' => count($data['items']),
             'processed_count' => $processedCount,
