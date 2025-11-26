@@ -217,6 +217,10 @@ class ProductCategoryResource extends Resource
                         ->inline(false)
                         ->default(true)
                         ->label("Видимость"),
+                    Toggle::make("is_tag")
+                        ->inline(false)
+                        ->default(false)
+                        ->label("Категория 'тег'"),
                     Toggle::make("tabs_categories")
                         ->inline(false)
                         ->default(true)
