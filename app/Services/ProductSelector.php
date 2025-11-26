@@ -5,9 +5,8 @@ namespace App\Services;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use Illuminate\Support\Collection;
 use App\Models\ProductVariant;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection;
 
 class ProductSelector
 {
@@ -15,17 +14,17 @@ class ProductSelector
 
     public function fromCategory(?ProductCategory $category): Collection
     {
-        if (!$category) {
+        if (! $category) {
             return collect();
         }
 
-        $key = "category_" . $category->id;
+        $key = 'category_'.$category->id;
         if (isset($this->memo[$key])) {
             return $this->memo[$key];
         }
 
         switch ($category->type) {
-            case "duplicator":
+            case 'duplicator':
                 $product_ids = is_array($category->duplicate_id) && count($category->duplicate_id)
                 ? ProductCategory::with('products:id')
                     ->whereIn('id', $category->duplicate_id)
@@ -34,35 +33,35 @@ class ProductSelector
                     ->flatten()           // объединяем в одну плоскую коллекцию
                     ->pluck('id')       // получаем только ID продуктов
                 : collect();
-
+                // dd(ProductCategory::with('products:id')
+                //     ->whereIn('id', $category->duplicate_id)
+                //     ->get());
                 // dd($result);
                 $result = ProductVariant::whereIn('product_id', $product_ids)->get();
                 break;
 
-            case "filter":
-                $paramItemIds = $category->paramItems->pluck("id");
+            case 'filter':
+                $paramItemIds = $category->paramItems->pluck('id');
 
-                
                 $byParamItems = $this->variantsByRelation(
-                    "paramItems",
+                    'paramItems',
                     $paramItemIds,
                     $category->duplicate_id,
                     $category
                 );
                 $byParametrs = $this->variantsByRelation(
-                    "parametrs",
+                    'parametrs',
                     $paramItemIds,
                     $category->duplicate_id,
                     $category
                 );
 
-                
                 $result = $byParamItems->merge($byParametrs)->unique();
                 // dd($result);
                 // dd($result);
                 break;
 
-            case "variations":
+            case 'variations':
                 $result = $category->variations;
                 break;
 
@@ -94,10 +93,10 @@ class ProductSelector
 
     public function fromBrandSlug(string $slug): Collection
     {
-        return Brand::where("slug", $slug)
-            ->with("products:id")
+        return Brand::where('slug', $slug)
+            ->with('products:id')
             ->first()
-            ?->products->pluck("id") ?? collect();
+            ?->products->pluck('id') ?? collect();
     }
 
     protected function variantsByRelation(
@@ -113,6 +112,7 @@ class ProductSelector
                 $q->whereIn('variation_product_param_item.product_param_item_id', $ids->toArray());
             }
         })->get();
+
         return $variants;
     }
 }

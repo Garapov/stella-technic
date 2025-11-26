@@ -68,7 +68,7 @@ class ItemsLazyList extends Component
         if ($this->category) {
             return ProductVariant::whereIn('id',
                 Cache::rememberForever('catalog:all_products:'.$this->category->slug, function () {
-                    return $this->selector->fromCategory($this->category)->where('is_hidden', false)->pluck('id')->toArray();
+                    return $this->selector->fromCategory($this->category)->where('is_hidden', false)->filter(fn ($variant) => $variant->product->is_hidden == false)->pluck('id')->toArray();
                 })
             )->filter($this->filters)->sort(['count:desc', $this->sort])->with('parametrs');
         }
