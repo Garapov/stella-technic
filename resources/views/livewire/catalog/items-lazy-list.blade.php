@@ -74,6 +74,9 @@
         <div class="flex flex-col gap-4" wire:loading.class="opacity-50 pointer-events-none">
             <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-4 gap-1">
                 @forelse($this->variations as $variation)
+                    @if ($variation->product->is_hidden)
+                        @continue
+                    @endif
                     @livewire('general.product-variant', [
                         'variant' => $variation,
                         'category' => $this->category ?? null,
