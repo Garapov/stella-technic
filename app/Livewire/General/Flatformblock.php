@@ -55,7 +55,9 @@ class Flatformblock extends Component
             $rules["fields." . $field["name"] . ".value"] = $field["rules"];
         }
         $rules["confirmation"] = "accepted";
-        $rules["captcha_token"] = ["required", new SmartCaptchaRule()];
+        if ($this->form->captcha) {
+            $rules['captcha_token'] = ['required', new SmartCaptchaRule];
+        }
 
         return $rules;
     }

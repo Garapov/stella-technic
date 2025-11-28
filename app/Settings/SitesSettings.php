@@ -58,8 +58,12 @@ class SitesSettings extends Settings
 
     public ?string $open_one_click = null;
 
+    public ?string $open_deadlines = null;
+
+    public ?string $open_preorder = null;
+
     public static function group(): string
     {
-        return "sites";
+        return 'sites';
     }
 }

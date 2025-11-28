@@ -5,6 +5,8 @@ export default (() => {
             forms: {
                 callback: false,
                 buy_one_click: false,
+                deadlines: false,
+                preorder: false,
             },
             one_click_variation: null,
             burger: false,

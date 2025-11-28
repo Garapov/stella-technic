@@ -37,6 +37,8 @@
         @livewire('general.footer')
         @livewire('general.forms.callback')
         @livewire('general.forms.buyoneclick')
+        @livewire('general.forms.deadlines')
+        @livewire('general.forms.preorder')
         @livewireScripts
          @if (setting('body_end_scripts'))
             {!! setting('body_end_scripts') !!}

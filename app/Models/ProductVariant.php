@@ -201,8 +201,12 @@ class ProductVariant extends Model
     {
         $status = 'available';
 
-        if ($this->count == 0 && $this->uuid) {
+        if ($this->count < 1 && $this->uuid && $this->price > 0) {
             $status = 'unavailable';
+        }
+
+        if ($this->is_pre_order) {
+            $status = 'preorder';
         }
 
         return $status;

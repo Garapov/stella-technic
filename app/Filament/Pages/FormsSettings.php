@@ -3,18 +3,11 @@
 namespace App\Filament\Pages;
 
 use App\Models\Former;
-use App\Settings\ConstructorSettings;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use TomatoPHP\FilamentSettingsHub\Pages\SiteSettings;
-use Filament\Pages\Actions\Action;
-use App\Models\ProductVariant;
 use App\Settings\FormsSettings as SettingsFormsSettings;
-use Filament\Pages\Page;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Pages\Actions\Action;
+use TomatoPHP\FilamentSettingsHub\Pages\SiteSettings;
 
 class FormsSettings extends SiteSettings
 {
@@ -23,33 +16,51 @@ class FormsSettings extends SiteSettings
     protected function getFormSchema(): array
     {
         return [
-            Tabs::make("Tabs")
+            Tabs::make('Tabs')
                 ->tabs([
-                    Tabs\Tab::make("Формы")->schema([
-                        Select::make("callback")
-                            ->label("Заказать звонок")
+                    Tabs\Tab::make('Формы')->schema([
+                        Select::make('callback')
+                            ->label('Заказать звонок')
                             ->options(
-                                fn() => Former::all()->pluck(
-                                    "name",
-                                    "id"
+                                fn () => Former::all()->pluck(
+                                    'name',
+                                    'id'
                                 )
                             )
                             ->searchable(),
-                        Select::make("map")
-                            ->label("Форма в блоке с картой")
+                        Select::make('map')
+                            ->label('Форма в блоке с картой')
                             ->options(
-                                fn() => Former::all()->pluck(
-                                    "name",
-                                    "id"
+                                fn () => Former::all()->pluck(
+                                    'name',
+                                    'id'
                                 )
                             )
                             ->searchable(),
-                        Select::make("buy_one_click")
-                            ->label("Купить в один клик")
+                        Select::make('buy_one_click')
+                            ->label('Купить в один клик')
                             ->options(
-                                fn() => Former::all()->pluck(
-                                    "name",
-                                    "id"
+                                fn () => Former::all()->pluck(
+                                    'name',
+                                    'id'
+                                )
+                            )
+                            ->searchable(),
+                        Select::make('deadlines')
+                            ->label('Уточнить сроки')
+                            ->options(
+                                fn () => Former::all()->pluck(
+                                    'name',
+                                    'id'
+                                )
+                            )
+                            ->searchable(),
+                        Select::make('preorder')
+                            ->label('Предзаказ')
+                            ->options(
+                                fn () => Former::all()->pluck(
+                                    'name',
+                                    'id'
                                 )
                             )
                             ->searchable(),
@@ -68,17 +79,17 @@ class FormsSettings extends SiteSettings
                 //     ->requiresConfirmation()
                 //     ->action(fn () => $this->generateSitemap())
                 //     ->label(trans('filament-settings-hub::messages.settings.site.site-map')),
-                Action::make("back")
+                Action::make('back')
                     ->action(
-                        fn() => redirect()->route(
-                            "filament." .
-                                filament()->getCurrentPanel()->getId() .
-                                ".pages.settings-hub",
+                        fn () => redirect()->route(
+                            'filament.'.
+                                filament()->getCurrentPanel()->getId().
+                                '.pages.settings-hub',
                             $tenant
                         )
                     )
-                    ->color("danger")
-                    ->label(trans("filament-settings-hub::messages.back")),
+                    ->color('danger')
+                    ->label(trans('filament-settings-hub::messages.back')),
             ];
         }
 
@@ -87,16 +98,16 @@ class FormsSettings extends SiteSettings
             //     ->requiresConfirmation()
             //     ->action(fn () => $this->generateSitemap())
             //     ->label(trans('filament-settings-hub::messages.settings.site.site-map')),
-            Action::make("back")
+            Action::make('back')
                 ->action(
-                    fn() => redirect()->route(
-                        "filament." .
-                            filament()->getCurrentPanel()->getId() .
-                            ".pages.settings-hub"
+                    fn () => redirect()->route(
+                        'filament.'.
+                            filament()->getCurrentPanel()->getId().
+                            '.pages.settings-hub'
                     )
                 )
-                ->color("danger")
-                ->label(trans("filament-settings-hub::messages.back")),
+                ->color('danger')
+                ->label(trans('filament-settings-hub::messages.back')),
         ];
     }
 }

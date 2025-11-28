@@ -8,7 +8,7 @@ use App\Models\ProductVariant;
 use App\Rules\SmartCaptchaRule;
 use Livewire\Component;
 
-class Oneclickformblock extends Component
+class Deadlinesformblock extends Component
 {
     public $form_id;
 
@@ -49,7 +49,7 @@ class Oneclickformblock extends Component
 
     public function render()
     {
-        return view('livewire.general.oneclickformblock');
+        return view('livewire.general.deadlinesformblock');
     }
 
     public function messages()
@@ -69,6 +69,7 @@ class Oneclickformblock extends Component
             $rules['fields.'.$field['name'].'.value'] = $field['rules'];
         }
         $rules['confirmation'] = 'accepted';
+
         if ($this->form->captcha) {
             $rules['captcha_token'] = ['required', new SmartCaptchaRule];
         }

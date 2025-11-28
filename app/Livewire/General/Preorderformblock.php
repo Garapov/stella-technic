@@ -8,7 +8,7 @@ use App\Models\ProductVariant;
 use App\Rules\SmartCaptchaRule;
 use Livewire\Component;
 
-class Oneclickformblock extends Component
+class Preorderformblock extends Component
 {
     public $form_id;
 
@@ -32,6 +32,7 @@ class Oneclickformblock extends Component
     {
         $this->form_id = $form_id;
         $this->form = Former::find($this->form_id);
+
         $this->captcha = $this->form->captcha;
         $this->variation = $variation;
         foreach ($this->form->fields as $field) {
@@ -49,7 +50,7 @@ class Oneclickformblock extends Component
 
     public function render()
     {
-        return view('livewire.general.oneclickformblock');
+        return view('livewire.general.preorderformblock');
     }
 
     public function messages()
@@ -69,6 +70,7 @@ class Oneclickformblock extends Component
             $rules['fields.'.$field['name'].'.value'] = $field['rules'];
         }
         $rules['confirmation'] = 'accepted';
+
         if ($this->form->captcha) {
             $rules['captcha_token'] = ['required', new SmartCaptchaRule];
         }
