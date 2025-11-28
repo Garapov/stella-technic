@@ -55,11 +55,12 @@ class ParamsRelationManager extends RelationManager
             ->recordTitleAttribute("title")
             ->columns([
                 Tables\Columns\TextColumn::make("id")->label("ID"),
-                Tables\Columns\TextInputColumn::make("title")->label("Название"),
+                Tables\Columns\TextInputColumn::make("title")->label("Название")->sortable(),
                 Tables\Columns\TextInputColumn::make("sort")->label(
                     "Сортировка",
-                ),
+                )->sortable(),
                 Tables\Columns\TextColumn::make("value")
+                    ->sortable()
                     ->formatStateUsing(function ($state, $record) {
                         $parentRecord = $this->getOwnerRecord();
                         return match ($parentRecord->type) {

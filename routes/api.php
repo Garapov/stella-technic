@@ -8,4 +8,4 @@ use Illuminate\Support\Facades\Route;
 //     return response()->json(['message' => 'List of posts']);
 // });
 
-Route::post('1s/update', [ImportController::class, 'update']);
+Route::post('1s/update', [ImportController::class, 'update'])->middleware('auth:sanctum');
