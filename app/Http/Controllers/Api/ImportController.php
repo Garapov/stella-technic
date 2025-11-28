@@ -11,10 +11,10 @@ class ImportController extends Controller
 {
     public function update(Request $request)
     {
-        Log::info(['Request: ',  $request]);
+        Log::info(['Request: ', $request]);
         $data = $request->json()->all();
 
-        if (! isset($data['items']) || ! is_array($data['items'])) {
+        if (!isset($data['items']) || !is_array($data['items'])) {
             return response()->json(['success' => false, 'message' => 'Invalid data format'], 400);
         }
 
@@ -26,7 +26,7 @@ class ImportController extends Controller
                 $this->processItem($item);
                 $processedCount++;
             } catch (\Exception $e) {
-                Log::error('Error processing item: '.json_encode($item).' Error: '.$e->getMessage());
+                Log::error('Error processing item: ' . json_encode($item) . ' Error: ' . $e->getMessage());
                 $errors[] = [
                     'guid' => $item['guid'] ?? 'unknown',
                     'error' => $e->getMessage(),
@@ -46,7 +46,7 @@ class ImportController extends Controller
     private function processItem($item)
     {
         $guid = $item['guid'] ?? null;
-        if (! $guid) {
+        if (!$guid) {
             throw new \Exception('GUID is missing');
         }
 

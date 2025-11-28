@@ -4,14 +4,15 @@ return [
     'navigation' => [
         'token' => [
             'cluster' => null,
-            'group' => 'User',
+            'group' => 'Настройки сайта',
             'sort' => -1,
             'icon' => 'heroicon-o-key',
+            'should_register_navigation' => true,
         ],
     ],
     'models' => [
         'token' => [
-            'enable_policy' => true,
+            'enable_policy' => false,
         ],
     ],
     'route' => [
