@@ -141,7 +141,7 @@ return [
             // ],
 
             ProductVariant::class => [
-                'filterableAttributes' => ['is_hidden', 'product_is_hidden']
+                'filterableAttributes' => ['is_hidden', 'product_is_hidden'],
             ],
         ],
     ],

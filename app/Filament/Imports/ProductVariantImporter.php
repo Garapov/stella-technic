@@ -141,8 +141,7 @@ class ProductVariantImporter extends Importer
                 ->rules(["required"]),
             ImportColumn::make("uuid")
                 ->label("UID")
-                ->ignoreBlankState()
-                ->rules(["required"]),
+                ->ignoreBlankState(),
             ImportColumn::make("slug")
                 ->label("Ссылка")
                 ->ignoreBlankState()
