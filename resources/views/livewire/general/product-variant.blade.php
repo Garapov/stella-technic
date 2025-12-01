@@ -1,5 +1,5 @@
 <div
-    class="rounded-lg p-0 shadow-sm relative flex flex-col overflow-hidden relative border @if ($variant->getStatus() == 'available') border-gray-200 bg-white @elseif($variant->getStatus() == 'preorder') border-blue-200 bg-white @elseif($variant->getStatus() == 'unavailable') grayscale border-gray-500 bg-slate-50 @endif">
+    class="rounded-lg p-0 shadow-sm relative flex flex-col overflow-hidden relative border @if ($variant->getStatus() == 'available') border-gray-200 bg-white @elseif($variant->getStatus() == 'preorder') border-blue-200 bg-white @elseif($variant->getStatus() == 'unavailable') border-gray-200 bg-slate-50 @endif">
 
     <div class="w-full relative" x-data="{
         imageIdToDisplay: 0,
@@ -117,8 +117,9 @@
         @if (!auth()->user() && $variant->auth_price)
             <div class="flex items-center gap-2 text-green-800 dark:text-green-300 bg-green-100 text-md font-medium me-2 px-2.5 py-0.5 rounded-md dark:bg-green-900"
                 x-data="{
-                                                        popover: false,
-                                                    }" @mouseover="popover = true" @mouseover.away="popover = false">
+                                                                popover: false,
+                                                            }" @mouseover="popover = true"
+                @mouseover.away="popover = false">
                 <span>{{ $variant->auth_price }} ₽</span>
                 <x-carbon-information class="w-4 h-4" />
 
@@ -209,8 +210,8 @@
                 @if (!auth()->user() && $variant->auth_price)
                     <div class="flex items-center gap-2 text-green-800 dark:text-green-300 bg-green-100 text-md font-medium me-2 px-2.5 py-0.5 rounded-md dark:bg-green-900"
                         x-data="{
-                                                                popover: false,
-                                                            }" @mouseover="popover = true"
+                                                                        popover: false,
+                                                                    }" @mouseover="popover = true"
                         @mouseover.away="popover = false">
                         <span>{{ $variant->auth_price }} ₽</span>
                         <x-carbon-information class="w-4 h-4" />

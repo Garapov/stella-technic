@@ -132,10 +132,10 @@
                         <x-fas-arrow-right class="w-4 h-4 ms-2 rtl:rotate-180" />
                     </a>
                 </h2>
-                <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-10">
                     @foreach($results['products']->groupBy(function ($prod) {
                         Log::info($prod->score);
-                        if ($prod->score > 0.9) {
+                        if ($prod->score > 0.71) {
                             return 'top';
                         } else {
                             return 'bottom';
@@ -172,7 +172,7 @@
                                 </a>
                             @endforeach
                         </div>
-                        @if ($key == 'top' && isset($productGroup['bottom']))
+                        @if ($key == 'top')
                             <hr class="border border-b border-slate-200">
                         @endif
                     @endforeach
