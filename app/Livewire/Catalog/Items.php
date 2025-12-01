@@ -30,7 +30,7 @@ class Items extends Component
     public $variations = [];
 
     #[Url]
-    public $sort = "count:asc";
+    public $sort = "count:desc";
     #[Url]
     public $filters = [];
 
@@ -196,7 +196,7 @@ class Items extends Component
                 'paramItems.productParam',
                 'parametrs.productParam',
                 'batch',
-            ])->paginate(40);
+            ])->sort([$this->sort])->paginate(40);
             // dd($this->all_products);
     }
 
@@ -240,7 +240,7 @@ class Items extends Component
 
         Log::info("Catalog Items Render Hash: " . $hash);
 
-        
+        // dd($this->renderPaginatedProducts());
 
         return view("livewire.catalog.items", [
             "products" => $this->renderPaginatedProducts(),

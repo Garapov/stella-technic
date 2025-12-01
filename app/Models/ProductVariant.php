@@ -201,7 +201,7 @@ class ProductVariant extends Model
     {
         $status = 'available';
 
-        if ($this->count < 1 && $this->uuid && $this->price > 0) {
+        if ($this->count < 2) {
             $status = 'unavailable';
         }
 
