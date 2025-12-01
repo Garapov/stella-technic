@@ -10,6 +10,7 @@
 
         @livewire('general.header.burger', [
             'categories' => $categories,
+            'menu' => $topmenu,
         ])
 
         {!! $organization !!}

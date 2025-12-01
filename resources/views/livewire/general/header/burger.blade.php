@@ -49,6 +49,47 @@
                 </ul>
             </nav>
         @endif
+
+        @if ($topmenu && $topmenu->menuItems)
+            <ul class="flex flex-col gap-2 py-4 font-medium lg:mt-0">
+                @foreach ($topmenu->menuItems as $menuItem)
+                    <li>
+                        @if (count($menuItem->children) > 0)
+                            <span class="relative z-30" x-data="{ open: false }" @click="open = !open" x-cloak>
+                                <span
+                                class="flex justify-between text-sm text-slate-700 hover:text-blue-500 font-bold flex items-center gap-1"
+                                aria-current="page">{{ $menuItem->title }} <x-eva-arrow-ios-downward class="w-3 h-3" x-show="!open" /><x-eva-arrow-ios-upward class="w-3 h-3" x-show="open" /></span>
+                                <ul class="flex flex-col font-medium p-2 mt-2 gap-1 z-60" x-show="open">
+                                    @foreach ($menuItem->children as $child)
+
+
+                                    @php
+                                        $hasLinkable = $child->linkable ?? null;
+                                        $url = $hasLinkable && $child->linkable_type == 'App\Models\Page' ? Cache::rememberForever('fabricator:page_' . $child->linkable->id . '_url', function () use ($child) { return Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId($child->linkable->id); }) : $child->url;
+                                    @endphp
+
+                                        <li>
+                                            <a href="{{ $url }}" wire:navigate
+                                                class="block text-sm rounded lg:p-0 text-slate-500 hover:text-blue-500 whitespace-nowrap"
+                                                aria-current="page">- {{ $child->title }}</a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </span>
+                        @else
+                            @php
+                                $hasLinkable = $menuItem->linkable ?? null;
+                                $url = $hasLinkable && $menuItem->linkable_type == 'App\Models\Page' ? Cache::rememberForever('fabricator:page_'.$menuItem->linkable->id.'_url', function () use ($menuItem) { return Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getPageUrlFromId($menuItem->linkable->id); }) : $menuItem->url;
+                            @endphp
+                            <a href="{{ $url }}" wire:navigate
+                                class="text-sm text-slate-700 hover:text-blue-500 font-bold"
+                                aria-current="page">{{ $menuItem->title }}</a>
+                        @endif
+                    </li>
+                    
+                @endforeach
+            </ul>
+        @endif
         @if (setting('site_phone'))
             <div class="flex flex-col">
                 <a href="tel:{{ setting('site_phone') }}" class="text-lg font-bold text-slate-700 dark:text-white">{{ setting('site_phone') }}</a>

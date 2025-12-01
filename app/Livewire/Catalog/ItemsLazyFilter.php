@@ -51,7 +51,8 @@ class ItemsLazyFilter extends Component
 
     public function variationsBuilder()
     {
-        return ProductVariant::whereIn('id', 
+        return ProductVariant::whereIn(
+            'id',
             Cache::remember('catalog:all_products:' . $this->category->slug, 60, function () {
                 return $this->selector->fromCategory($this->category)->where('is_hidden', false)->pluck('id')->toArray();
             })
@@ -64,11 +65,12 @@ class ItemsLazyFilter extends Component
         $max = max($values);
 
         return array_filter($params, function ($param) use ($min, $max) {
-            return (float)$param['value'] >= $min && (float)$param['value'] <= $max;
+            return (float) $param['value'] >= $min && (float) $param['value'] <= $max;
         });
     }
 
-    public function setSliderFilter($value, $name) {
+    public function setSliderFilter($value, $name)
+    {
 
         $this->filters['$includes'][$name] = $value;
 
@@ -107,9 +109,9 @@ class ItemsLazyFilter extends Component
     public function paramGroups()
     {
         if ($this->category) {
-            
+
             return Cache::rememberForever('filter:paramGroups:' . $this->category->slug, function () {
-                return $this->variations->flatMap(fn($variant) => $variant->parametrs->concat($variant->paramItems))->flatten()->filter(fn ($item) =>  $item->productParam->allow_filtering)->unique('id')->sortBy('productParam.sort')->groupBy('productParam.name')->filter(fn ($group) =>  count($group) > 1);
+                return $this->variations->flatMap(fn($variant) => $variant->parametrs->concat($variant->paramItems))->flatten()->filter(fn($item) => $item->productParam->allow_filtering)->unique('id')->sortBy('productParam.sort')->groupBy('productParam.name')->filter(fn($group) => count($group) > 1);
             });
         }
         return collect();
@@ -124,7 +126,7 @@ class ItemsLazyFilter extends Component
     #[Computed()]
     public function availableParams()
     {
-        return $this->filteredVariations->flatMap(fn($variant) => $variant->parametrs->concat($variant->paramItems))->flatten()->filter(fn ($item) =>  $item->productParam->allow_filtering)->pluck('id')->unique()->toArray();
+        return $this->filteredVariations->flatMap(fn($variant) => $variant->parametrs->concat($variant->paramItems))->flatten()->filter(fn($item) => $item->productParam->allow_filtering)->pluck('id')->unique()->toArray();
     }
 
     #[On('filter_reset')]
