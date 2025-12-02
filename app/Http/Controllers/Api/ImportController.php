@@ -23,8 +23,7 @@ class ImportController extends Controller
 
         foreach ($data['items'] as $item) {
             try {
-                $this->processItem($item);
-                $processedCount++;
+                
                 if (isset($item['variants']) && is_array($item['variants']) && count($item['variants']) > 0) {
                     foreach ($item['variants'] as $variant) {
                         
@@ -42,6 +41,10 @@ class ImportController extends Controller
                         }
                     }
                 }
+
+                $this->processItem($item);
+                $processedCount++;
+                Log::info(['$item: ', $item]);
                 
             } catch (\Exception $e) {
                 // Log::error('Error processing item: ' . json_encode($item) . ' Error: ' . $e->getMessage());
