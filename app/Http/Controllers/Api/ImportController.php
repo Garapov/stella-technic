@@ -11,7 +11,7 @@ class ImportController extends Controller
 {
     public function update(Request $request)
     {
-        Log::info(['Request: ', $request]);
+        
         $data = $request->json()->all();
 
         if (!isset($data['items']) || !is_array($data['items'])) {
@@ -27,13 +27,24 @@ class ImportController extends Controller
                 $processedCount++;
                 if (isset($item['variants']) && is_array($item['variants']) && count($item['variants']) > 0) {
                     foreach ($item['variants'] as $variant) {
-                        $this->processItem($variant);
-                        $processedCount++;
+                        
+                        try {
+                            Log::info(['$variant: ', $variant]);
+                            $this->processItem($variant);
+                            $processedCount++;
+                            
+                        } catch (\Exception $e) {
+                            // Log::error('Error processing item: ' . json_encode($item) . ' Error: ' . $e->getMessage());
+                            $errors[] = [
+                                'guid' => $item['guid'] ?? 'unknown',
+                                'error' => $e->getMessage(),
+                            ];
+                        }
                     }
                 }
                 
             } catch (\Exception $e) {
-                Log::error('Error processing item: ' . json_encode($item) . ' Error: ' . $e->getMessage());
+                // Log::error('Error processing item: ' . json_encode($item) . ' Error: ' . $e->getMessage());
                 $errors[] = [
                     'guid' => $item['guid'] ?? 'unknown',
                     'error' => $e->getMessage(),
