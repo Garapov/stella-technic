@@ -4,8 +4,7 @@
 }">
     @php
         $group_param_ids = $paramGroup->sortBy('value')->sortBy('sort')->flatten()->pluck('id');
-        // $is_first = isset($filters['parametrs']) && $filters['parametrs']['$hasid'] && $group_param_ids->contains($filters['parametrs']['$hasid'][0]) ? true : false;
-        $is_first = false;
+        $is_first = !empty($filters['parametrs']['$first']) && in_array($filters['parametrs']['$first'][0], $group_param_ids->toArray()) ? true : false;
     @endphp
     <div class="flex items-center justify-between cursor-pointer" @click="isOpened = !isOpened">
         <span class="text-[0.9rem] font-semibold dark:text-white">{{ $paramName }}</span>
@@ -18,10 +17,19 @@
         @foreach($paramGroup->sortBy('value')->sortBy('sort')->flatten() as $key => $paramData)
             <li class="flex items-center @unless(in_array($paramData->id, $availableParams) || $is_first) opacity-30 cursor-not-allowed pointer-events-none @endunless"
                 @if($key > 4) x-show="showAll" @endif>
-                <input type="checkbox" id="param_{{ $paramData->id }}" value="{{ $paramData->id }}"
-                    class="w-5 h-5 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                <input type="checkbox" id="param_first_{{ $paramData->id }}" value="{{ $paramData->id }}"
+                    class="w-5 h-5 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 @if (!empty($filters['parametrs']['$first']) && !$is_first) hidden @endif"
+                    wire:model.live="filters.parametrs.$first" />
+                <input type="checkbox" id="param_hasid_{{ $paramData->id }}" value="{{ $paramData->id }}"
+                    class="w-5 h-5 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 @if (empty($filters['parametrs']['$first']) || $is_first) hidden @endif"
                     wire:model.live="filters.parametrs.$hasid" />
-                <label for="param_{{ $paramData->id }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+
+                <label for="param_first_{{ $paramData->id }}"
+                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100 @if (!empty($filters['parametrs']['$first']) && !$is_first) hidden @endif">
+                    {{ $paramData['title'] }}
+                </label>
+                <label for="param_hasid_{{ $paramData->id }}"
+                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100 @if (empty($filters['parametrs']['$first']) || $is_first) hidden @endif">
                     {{ $paramData['title'] }}
                 </label>
             </li>

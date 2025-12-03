@@ -51,7 +51,7 @@ class Filter extends Component
         $firstSelectedId = null;
         foreach (["paramItems", "parametrs"] as $filterKey) {
             if (isset($this->filters[$filterKey])) {
-                foreach (['$hasid', '$related', '$includes'] as $type) {
+                foreach (['$hasid', '$first', '$related', '$includes'] as $type) {
                     if (!empty($this->filters[$filterKey][$type])) {
                         foreach ($this->filters[$filterKey][$type] as $id) {
                             $this->selectedParams[$id] = $filterKey;

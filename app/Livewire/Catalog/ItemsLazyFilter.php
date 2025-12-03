@@ -21,7 +21,8 @@ class ItemsLazyFilter extends Component
     #[Url()]
     public array $filters = [
         'parametrs' => [
-            '$hasid' => [], // создаём массив под ключом "$hasid"
+            '$hasid' => [],
+            '$first' => [],
         ],
     ];
 
@@ -46,6 +47,7 @@ class ItemsLazyFilter extends Component
     {
         // dd($this->filters);
         $this->dispatch("filters-changed", filters: $this->filters);
+        // $this->refresh();
         // Log::info('Filters changed', $this->filters);
     }
 
@@ -132,7 +134,12 @@ class ItemsLazyFilter extends Component
     #[On('filter_reset')]
     public function resetFilters()
     {
-        $this->filters = [];
+        $this->filters = [
+            'parametrs' => [
+                '$hasid' => [],
+                '$first' => [],
+            ],
+        ];
     }
 
     public function placeholder()

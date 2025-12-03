@@ -23,6 +23,7 @@ use Abbasudo\Purity\Filters\Strategies\NullFilter;
 use Abbasudo\Purity\Filters\Strategies\OrFilter;
 use Abbasudo\Purity\Filters\Strategies\StartsWithCaseSensitiveFilter;
 use Abbasudo\Purity\Filters\Strategies\StartsWithFilter;
+use App\Filters\FirstCheckbox;
 use App\Filters\ProductVariantHasBrand;
 use App\Filters\RelatedFilter;
 use App\Filters\HasIdFilter;
@@ -55,6 +56,7 @@ return [
         ContainsCaseSensitiveFilter::class,
         RelatedFilter::class,
         ProductVariantHasBrand::class,
+        FirstCheckbox::class,
         HasIdFilter::class,
         ParamsIncludesFilter::class
     ],

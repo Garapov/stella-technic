@@ -20,7 +20,12 @@ class ItemsLazyList extends Component
     public $category = null;
 
     #[Url()]
-    public $filters = [];
+    public $filters = [
+        'parametrs' => [
+            '$hasid' => [],
+            '$first' => [],
+        ],
+    ];
 
     #[Url]
     public $sort = 'count:desc';
@@ -134,7 +139,12 @@ class ItemsLazyList extends Component
 
     public function resetFilters()
     {
-        $this->filters = [];
+        $this->filters = [
+            'parametrs' => [
+                '$hasid' => [],
+                '$first' => [],
+            ],
+        ];
 
         $this->dispatch('filter_reset');
 
