@@ -46,6 +46,9 @@ class ItemsLazyFilter extends Component
     public function updatedFilters()
     {
         // dd($this->filters);
+        if (empty($this->filters['parametrs']['$first'])) {
+            $this->resetFilters();
+        }
         $this->dispatch("filters-changed", filters: $this->filters);
         // $this->refresh();
         // Log::info('Filters changed', $this->filters);
