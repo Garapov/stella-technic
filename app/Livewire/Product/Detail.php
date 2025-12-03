@@ -44,12 +44,17 @@ class Detail extends Component
 
         
         if ($this->variation->show_category_files) {
-
-        
-            foreach($this->product->categories as $category) {
-                if (!$category->files) continue;
-                foreach($category->files as $file) {
+            if (!empty($this->variation->product->category->files)) {
+                foreach($this->variation->product->category->files as $file) {
                     $this->files[] = $file;
+                }
+            }
+            if (!empty($this->product->categories)) {
+                foreach($this->product->categories as $category) {
+                    if (!$category->files) continue;
+                    foreach($category->files as $file) {
+                        $this->files[] = $file;
+                    }
                 }
             }
         }

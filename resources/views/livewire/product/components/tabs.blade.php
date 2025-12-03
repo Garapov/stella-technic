@@ -21,7 +21,7 @@
                     aria-current="page" @click="activeTab = 1">Подробное описание</span>
             </li>
         @endif
-        @if ($this->files ?? !empty($this->files))
+        @if ($this->files)
             <li class="me-2">
                 <span aria-current="page" class="inline-block p-4 rounded-t-lg"
                     :class="activeTab == 2 ? 'active bg-blue-600 text-white' : 'text-gray-600 bg-white shadow cursor-pointer'"

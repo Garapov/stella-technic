@@ -141,11 +141,12 @@ class ProductVariantImporter extends Importer
                 ->rules(["required"]),
             ImportColumn::make("uuid")
                 ->label("UID")
+                ->rules(["unique:product_variants,uuid"])
                 ->ignoreBlankState(),
             ImportColumn::make("slug")
                 ->label("Ссылка")
                 ->ignoreBlankState()
-                ->rules(["required"]),
+                ->rules(["required", "unique:product_variants,slug"]),
             ImportColumn::make("seo")
                 ->label("SEO")
                 ->ignoreBlankState()
@@ -172,7 +173,7 @@ class ProductVariantImporter extends Importer
             //     })
             //     ->requiredMapping()
             //     ->rules(['required', 'url']),
-            ImportColumn::make("sku")->label("SKU"),
+            ImportColumn::make("sku")->label("SKU")->rules(["unique:product_variants,sku"]),
             ImportColumn::make("short_description")->label("Короткое описание")->ignoreBlankState(),
             ImportColumn::make("description")->label("Описание")->ignoreBlankState(),
             ImportColumn::make("is_popular")
