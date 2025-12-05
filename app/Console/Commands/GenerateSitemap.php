@@ -41,7 +41,7 @@ class GenerateSitemap extends Command
                 })
                 ->getSitemap()
                 ->writeToFile(public_path('sitemap.xml'));
-            Log::error('Sitemap success: ');
+            // Log::info('Sitemap success: ');
         } catch (\Throwable $e) {
             Log::error('Sitemap error: ' . $e->getMessage());
         }
